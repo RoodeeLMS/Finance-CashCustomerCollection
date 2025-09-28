@@ -1,0 +1,97 @@
+---
+description: "Power Apps Error Prevention Checklist"
+globs: ["**/*.yaml", "**/*.yml", "**/*.msapp", "**/*.txt"]
+alwaysApply: true
+---
+
+
+# Power Apps Error Prevention Checklist
+
+## 🚫 ComboBox Errors to Avoid
+
+### ❌ NEVER DO:
+```powerapps
+Set(RequestStatusCombo, {SelectedItems: [...]})  // INVALID SYNTAX
+Set(ComboBox.SelectedItems, value)               // READ-ONLY PROPERTY
+```
+
+### ✅ CORRECT APPROACHES:
+```powerapps
+// Use Reset + DefaultSelectedItems
+Reset(RequestStatusCombo)
+
+// Use global variables for filtering
+Set(dashboardStatusFilter, "Draft")
+```
+
+## 🚫 Gallery Filter Errors to Avoid
+
+### ❌ PROBLEMATIC:
+```powerapps
+// May fail on first load
+Filter(data, field in ComboBox.SelectedItems.Value)
+```
+
+### ✅ ROBUST:
+```powerapps
+// Handles uninitialized ComboBox
+Filter(data, 
+    IsBlank(ComboBox.SelectedItems) || 
+    CountRows(ComboBox.SelectedItems) = 0 || 
+    field in ComboBox.SelectedItems.Value
+)
+```
+
+## 🚫 Cross-Screen Navigation Errors to Avoid
+
+### ❌ NEVER DO:
+```powerapps
+// Context variables don't persist between screens
+UpdateContext({filterValue: "Draft"})
+Navigate(scnRequest)
+```
+
+### ✅ CORRECT:
+```powerapps
+// Global variables persist between screens
+Set(dashboardStatusFilter, "Draft")
+Navigate(scnRequest)
+```
+
+## 🚫 YAML Syntax Errors to Avoid
+
+### ❌ COMMON MISTAKES:
+- Using `#` comments in YAML property values
+- Inconsistent indentation (mixing tabs/spaces)
+- Duplicate "Properties:" keys at same level
+- Missing `-` indicators for collections
+
+### ✅ CORRECT PATTERNS:
+```yaml
+OnSelect: |-
+  =Set(variable, "value");
+  Navigate(screen)
+
+Items: |+
+  =Filter(data, condition)
+```
+
+## 🚫 Button Control Property Errors
+
+### ❌ NOT SUPPORTED on Button@0.0.45:
+- Fill
+- Size  
+- RadiusBottomLeft/Right
+- RadiusTopLeft/Right
+
+### ✅ SUPPORTED Properties:
+- Align, BorderColor, BorderStyle, BorderThickness
+- Font, FontColor, Height, OnSelect
+- Padding*, Text, VerticalAlign, Visible, Width
+
+## 📋 Testing Checklist
+
+- [ ] ComboBox selections work without errors
+- [ ] Cross-screen navigation preserves state
+- [ ] YAML syntax validates without errors
+- [ ] Button controls use only supported properties

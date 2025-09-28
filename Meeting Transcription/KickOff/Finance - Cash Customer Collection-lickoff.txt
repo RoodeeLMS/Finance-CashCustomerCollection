@@ -1,0 +1,479 @@
+# Finance - Cash Customer Collection
+
+  Meeting started: 9/19/2025, 9:56:40 AM
+  Duration: 60 minutes
+  Participants: Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal, Chamnong,Nick,TH-Bangkok,Information Technology, Changsalak,Alisara,TH-Bangkok,Accounts Receivable, Nawawitrattana,Siri,TH-Bangkok,Credit Management, Nithijarernariya,Russarin,TH-Bangkok,Information Technology, Panich,Jarukit,TH-Bangkok,Accounts Receivable
+
+  [View original transcript](https://app.tactiq.io/api/2/u/m/r/IAya8hhzOuOLjG3R5EzH?o=txt)
+
+    
+
+  
+
+  
+    ## Highlights
+
+    > 21:50 Changsalak,Alisara,TH-Bangkok,Accounts Receivable: ค่ะ อะอย่างอันนี้อะค่ะ สมมุติในในไฟเดย์ศูนย์เนาะ ถ้ามันเป็น tomorrow วันพรุ่งเนี้ยไอ้อันเดรสเนี้ยมันจะกลายเป็นถูกเป็น day ลบหนึ่งไปก็ฟรายเดย์สุดก็คือวันที่เราทําโหลดเข้ามาใหม่อะค่ะ จะเห็นได้ว่าในกรอบสีฟ้าเนี้ยมันก็จะถูกไปดูสิว่ามันมีการดู pick กับ fine day ลบหนึ่งมั้ย ถ้าใช่ก็บวกหนึ่งเข้าไปรันแบบเนี้ยไปเรื่อยเรื่อยอะค่ะ
+> 26:01 Nawawitrattana,Siri,TH-Bangkok,Credit Management: ซึ่งจริงจริงแล้ว น้องเอ๊ะ เราไม่ได้จําเป็น ต้องต้องโชว์ assignment ก็ได้นะ
+
+  ## Transcript
+
+  00:00 Chamnong,Nick,TH-Bangkok,Information Technology: ดีครับผม
+00:04 Changsalak,Alisara,TH-Bangkok,Accounts Receivable: ฮัลโหล สวัสดีค่ะ คุณนิคเดี๋ยว น่าจะรอสักแป๊บนึงค่ะ
+00:10 Chamnong,Nick,TH-Bangkok,Information Technology: ครับผม
+01:18 Changsalak,Alisara,TH-Bangkok,Accounts Receivable: อีกประมาณ 2 นาที รอที่นัดเขา นะคะ แล้วเดี๋ยวเอ๋จะเริ่มเลย
+02:52 Changsalak,Alisara,TH-Bangkok,Accounts Receivable: เคอ่า ถ้าอย่างงั้นเอขอเริ่มเลยแล้วกันนะคะ เดี๋ยวพี่นัดน่าจะตามมาค่ะ คุณนิคก็คือ meeting เนี้ยอะค่ะ เอ๋จะมาอธิบายตัวโลจิกตัวที่เราตั้งใจที่จะให้มันเป็น auto เนาะก็คือเดี๋ยวขอเกริ่นนิดนึงว่าเดิมทีอะค่ะ ทาง a r จะต้องส่งแจ้งยอดให้กับลูกค้าเป็นตัว outstanding ในทุกทุกเช้า
+![Screenshot](undefined)
+03:18 Changsalak,Alisara,TH-Bangkok,Accounts Receivable: โดยส่งผ่านทางอีเมลล์อะค่ะ การส่งทางเนี้ยมันเหมือนเป็นการส่ง manual ในทุกทุกวันเลย ซึ่งเราทํางานในในแบบเป็นทุกทุกวันเลย ก็เลยอยากจะให้การส่งอีเมลอะค่ะ มันกลายเป็นเหมือนตัวออโต้อะค่ะ อืม ทีนี้ คร่าวคร่าวที่คิดไว้อะค่ะ ตัวมาเริ่มตัวตัวที่ดาต้าก่อนนะคะ ก็คือคิดว่าน่าจะมีตัว excel อ่า five ที่เป็น customer master data ค่ะ ที่แมนนวลแล้วก็เมนเทนบายเออาร์ค่ะ ไฟล์เนี้ยค่ะ จะประกอบไปด้วย customer email address ซึ่งหน้าตาจะเป็นประมาณนี้ค่ะ ที่เรามีเก็บรวบรวมข้อมูลไว้ค่ะ โดยข้อมูลหลักหลักที่ใช้อะค่ะ ก็จะมีตัว customer coach เนาะ แล้วก็
+![Screenshot](undefined)
+04:03 Changsalak,Alisara,TH-Bangkok,Accounts Receivable: เมื่อเนม ส่วนคอลัมน์เนี้ยอ่ะค่ะ เป็น customer email ที่เอาไว้ใช้ส่งหาลูกค้าค่ะ ข้อมูลก็จะมีเข้าไปประมาณนี้ค่ะ แล้วก็อันนี้ก็จะเป็น
+04:19 Chamnong,Nick,TH-Bangkok,Information Technology: มีเซล คิดว่าตอนแรกหลังหลังนะฮะ
+04:23 Changsalak,Alisara,TH-Bangkok,Accounts Receivable: ค่ะ เซลอีเมลก็คือเป็นเป็นเซลล์ที่เขาดูแลคัสตอมเมอร์นานๆค่ะ ก็คืออยากที่จะให้ซีซีไปในลูปด้วย ค่ะ แล้วก็มีข้อมูลที่เป็น a r back up ก็คือเป็น a r ที่เป็นเจ้าของเจ้าของงานที่ดูแลลูกค้านั้นนั้นค่ะ ก็มีใส่เข้าไปด้วย ซึ่งเข้าใจว่า excel file เนี้ยค่ะ มันจะ maintain by a r ค่ะ ก็คือถ้ามี new customer coach เข้ามาใหม่ a r ก็จะเข้ามา maintain ในไฟล์นี้ค่ะ
+04:59 Changsalak,Alisara,TH-Bangkok,Accounts Receivable: ค่ะ ต่อไปเป็นอีกฝ่ายหนึ่งที่เราดาวน์โหลดออกมาเป็นเหมือนทุกทุกวันนะคะก็คือดาวน์โหลดออกมาจาก customer light tem จาก save ค่ะ ซึ่ง หน้าตาก็จะเป็นประมาณนี้ค่ะ ที่เราอัปโหลดออก ประมาณนี้ แต่ว่าเดี๋ยวเดี๋ยวเดี๋ยว อันนี้มันเป็นตัวอย่างที่เอให้ดูเนาะ เดี๋ยวเดี๋ยวเอขอน อธิบายโลจิกก่อนให้ให้เสร็จแล้วก็เดี๋ยว เอ๊ะ มีโชว์ตัวอย่างให้ดูค่ะ
+![Screenshot](undefined)
+05:27 Changsalak,Alisara,TH-Bangkok,Accounts Receivable: โอเค พอเสร็จปุ๊บ พอ เรามีไฟล์ออกมาครบแล้วอะค่ะ ในส่วนของขั้นตอนการออโตเมทอ่ะค่ะ เราอยากที่จะให้ระบบอะค่ะ มันกรุ๊ปปิ้งตัว transaction amount อะค่ะ by customer code by customer นัมเบอร์นั้นนั้น จากจาก excelfi 2 เนาะ พอเสร็จปุ๊บ พอ grouping เรียบร้อยแล้วให้ระบบอะค่ะ มัน reit tech feel ถ้ามันเจอคําว่า exclus อะค่ะ เรา
+05:55 Changsalak,Alisara,TH-Bangkok,Accounts Receivable: จะให้fund script online tem ของ customer number นั้น ซึ่งที่เราอยากจะค่ะ
+05:59 Chamnong,Nick,TH-Bangkok,Information Technology: กิ๊ฟโอสกิฟท์ทั้งหมดเลย ออนไลน์ไอเทม
+06:04 Changsalak,Alisara,TH-Bangkok,Accounts Receivable: ใช่ค่ะ หน้าตาเอ๋ เอ๊ะ มีตัวอย่างให้ดูก็คือสมมุติอย่างเงี้ยค่ะ จะเห็นว่า by customer code เนี้ยค่ะ เออาร์ค่ะ พอเวลาได้รับแจ้งจากทางลูกค้าแล้วว่ามีการชําระเงินเข้ามาแล้วค่ะ ก็จะเข้าไปใส่ในใน s i p อะค่ะ ไป edit ข้อความตรงเทคเนาะว่ามีการจ่ายเข้ามาแล้ว แล้วก็คิดว่า จะให้เติมคําว่า exclus เข้าไป อืม พอ ระบบมันจับได้ว่า
+![Screenshot](undefined)
+06:36 Changsalak,Alisara,TH-Bangkok,Accounts Receivable: เจอ exclus ให้มัน script ตัว line ไอเทมที่มี exclus ออกหน้าตาที่มันจะจะแจ้งยอดอะค่ะ มันจะกลายเป็นยอดนี้แทน ก็คือจะเป็นบิลที่ลูกค้ายังไม่ได้ชําระ เพราะสิ่งที่เราตั้งใจอะค่ะ เราไม่อยากที่จะแจ้งบินซ้ําเพราะลูกค้าจ่ายมาแล้วเพียงแค่รอหลังบ้านอะค่ะ ดําเนินการตัดหนี้ไป
+06:57 Changsalak,Alisara,TH-Bangkok,Accounts Receivable: ค่ะ อันนี้อันนี้คุณนิคค่ะ
+06:59 Chamnong,Nick,TH-Bangkok,Information Technology: สอบถามอะฮะคราวนี้ ไฟล์นั่นคือเวลาอัปเดตมันจะทรัมป์ไฟเก่ามันเป็นไฟล์ใหม่ไปเรื่อยเรื่อยฮะ
+07:06 Changsalak,Alisara,TH-Bangkok,Accounts Receivable: เป็นเดลี่ดาวน์โหลดสายใหม่เป็นไปเรื่อยเรื่อยค่ะ
+07:09 Chamnong,Nick,TH-Bangkok,Information Technology: ซึ่งแปลว่า exclus เก่าทั้งหมดจะยังอยู่ถูกมั้ยฮะ
+07:13 Changsalak,Alisara,TH-Bangkok,Accounts Receivable: เอ เอ็กซ์ เอ็กซ์คลูต อั้ม เก่าจะยังอยู่และมันจะไม่อยู่ก็ต่อเมื่อตอนที่เออาร์ตัดนี่ไปแล้วค่ะ
+07:18 Chamnong,Nick,TH-Bangkok,Information Technology: อ๋อ หมายถึงว่า จะมีหายไปอีกสเต็ปนึง สเต็ปแรกคือเอ็กซ์ฟู้ด แปลว่าเหมือนเรา มาร์คไว้ก่อนว่าจ่ายแล้วแต่ว่า พอ สุดท้ายแล้วมันจะหายไปเองถูกไหมฮะ
+07:28 Changsalak,Alisara,TH-Bangkok,Accounts Receivable: ถูกต้องค่ะ
+07:29 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: อาจจะหายไปเองในวันรุ่งขึ้นนะคะ แต่สมมติว่าเราเราดาวน์โหลดวันจันทร์ใช่มั้ยคะ เราเรา exclu ไว้ว่าเดี๋ยวเราจะได้เงิน แต่ว่ามันอาจจะยังไม่ได้มันเลยมันมันเลยยังไม่ตัดหนี้ คือถ้าบุตรเท่าไหร่ถ้าเกิดว่ามันได้เงินแล้วอะค่ะ ไอ้ตัวบรรทัดที่เป็นลูกหนี้มันจะหายไปอะค่ะ มันจะแบบmatch ว่าแบบลูกหนี้นี้หายไปแล้วก็จ่ายรับเงินแล้วอะไรอย่างเงี้ย แต่ถ้าสมมุติว่าถ้าเราพี่คนนี้ดูวันจันทร์อะมันมันมีตัวเอ็กซ์มันมีบรรทัดนี้อยู่ แต่มีคําว่า exclusive อะไรเงี้ย ถ้าไปโหลดวันอังคารมาค่ะ รายนี้อาจจะหายไปเลยทั้งหลาย
+07:56 Chamnong,Nick,TH-Bangkok,Information Technology: เดี๋ยวเดี๋ยว เดี๋ยวเดี๋ยวขอไล่แปปนึงนะฮะ ตอนแรกตอนแรกมันจะเสร็จแล้วปึ๊บ ตรงนี้ตอนเช้าตอนเช้าวันจันทร์นะฮะ มันยังมี
+07:59 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: ได้
+08:04 Chamnong,Nick,TH-Bangkok,Information Technology: แล แล้วเราส่งอีเมล์ไปตอนเช้าวันจันทร์รอบนึงถูกมั้ยฮะ
+08:09 Changsalak,Alisara,TH-Bangkok,Accounts Receivable: ใช่ค่ะ
+08:10 Chamnong,Nick,TH-Bangkok,Information Technology: แล้วทีนี้ตอนไหนที่เค้าจะมาพิมพ์ในไฟล์เลยครับ แล้วเค้าพิมพ์ในไฟล์ไหนอ่ะ พิมพ์ในไฟล์ที่ผมโหลดมาแล้วเหรอฮะ หมายถึงว่าอัปเดตไฟล์เก่า
+08:18 Changsalak,Alisara,TH-Bangkok,Accounts Receivable: เข้าไปพิมพ์ในเข้าไปพิมพ์ในเอสเอพีค่ะ
+08:22 Chamnong,Nick,TH-Bangkok,Information Technology: มันเป็นเอสเอ
+08:22 Changsalak,Alisara,TH-Bangkok,Accounts Receivable: เราไปอีดิทเน็ตเทคใช่ค่ะ อันเนี้ยคือหมายถึงว่า
+08:22 Chamnong,Nick,TH-Bangkok,Information Technology: มันเป็นเอสเอพี
+08:28 Changsalak,Alisara,TH-Bangkok,Accounts Receivable: เออาร์ค่ะ ดาวน์โหลดตัวไดอารี่ออกมาแล้วเนาะ ซึ่งอาจจะหมายถึงว่า ณ วันที่เราทํางานวันจันทร์อะค่ะ ตัวเพศอันเนี้ย เราเราทํางานวันที่16เนาะแล้วไฟล์ที่เราดาวน์โหลดออกมาลูกค้าจ่ายมามามาเมื่อวานนี้แต่ว่ายังไม่ถูกหายเคลียร์ออกไปจากระบบอะค่ะ เออสิ่งที่เราอยากจะให้ตัวออโตเมทมันจับอะค่ะ ก็คือให้สคริปต์ตัวอันนี้ออกไปเพราะว่าเดี๋ยวไม่ไม่ วันนี้ก็พรุ่งนี้เดี๋ยวตัวเนี้ยมันจะหายออกไปเองจากระบบอะค่ะ
+08:55 Chamnong,Nick,TH-Bangkok,Information Technology: ครับ แต่ว่าแต่ว่าแต่ว่าพูดง่ายง่าย คือเราจะไม่มีการแก้ excel เหล่ากันหมดมาถูกมั้ยฮะ เราจะแก้ในในแทนแล้วแซ่บวันถัดไปจะมีคําว่าเอง แต่ว่ามันยังไม่เอาซะที เดียวผมก็คือวันศุกร์ วันจันทร์มันมียังไม่มี exhood พอวันพันวันจันทร์ระหว่างวันกว่าวันเนี่ยมีคนเข้าไปใส่ expose ใน sapp พอวันอังคารมันก็จะมีไฟล์ที่กลับมาซึ่งมี community food อยู่ ผมก็ตัดออกไปก่อน ตัดออกไปเลย แล้วพอวันพุธมันก็ไม่มีบรรทัดนั้นเลยแพลตฟอร์มประมาณนี้ถูกมั้ยฮะ
+09:01 Changsalak,Alisara,TH-Bangkok,Accounts Receivable: ใช่ค่ะ ใช่ค่ะ ใช่ใช่ ใช่ ใช่ค่ะ
+09:30 Chamnong,Nick,TH-Bangkok,Information Technology: โอเคครับ
+09:32 Changsalak,Alisara,TH-Bangkok,Accounts Receivable: โอเคได้ค่ะ ซึ่งคําว่า exclude อันเนี้ย เดี๋ยวเออาร์ค่ะ เค้าจะไป maintain เข้าใจในในใน side ของเค้าเองว่าเออ exclus เนี่ย มันคือ by like ที่มันถูกใจแล้ว หรือว่า เป็น partial payment หรือเป็นรักษาตลาด คืออันนี้ก็คือเราจะให้ระบบมันจับแค่คําว่า exclus เองเราจะแบบไม่ต้องไปจับจะได้ไม่ต้องไปจับคําที่มันหลากหลายไปมา กกว่านี้อะค่ะ เผื่อในอนาคตมันอาจจะมีคําที่มันมากกว่านี้ก็ก็ไม่จําเป็นที่จะต้อง maintain ให้เจอคําว่า expose ก็คือให้ sched ไปเลย ซึ่งคําว่า
+10:06 Changsalak,Alisara,TH-Bangkok,Accounts Receivable: ค่ะ ต่อไปถ้าระบบมันไม่ได้มันมันไม่ได้ตรวจเจอเข้ามา exclus แล้วอะค่ะ ก็คือนอกนอกเหนือจากคําพวกนี้ อืม ก็ให้เช็คตัว total amount bye customer ค่ะ โดยการเช็คอะค่ะ จะให้กรุ๊ปเป็น c n a t และ growth ตัวดีเอ็นอะเมาท์ ซึ่งซีเอ็นที่เราหมายถึงจะเป็นตัว negative amount และดีเอ็นจะเป็น positive อะเมาท์
+![Screenshot](undefined)
+10:34 Changsalak,Alisara,TH-Bangkok,Accounts Receivable: ค่ะ จากนั้นน่ะค่ะ ให้ซอสตัวดีเอ็นบายด็อกคิวเมนต์เดทเป็นแบบไฟโฟร์และซอสตัวซีเอ็นบายด็อกคิวเมนต์เดท แบบไฟโฟร์เช่นกันค่ะ ค่ะ ทีนี้รูของมันที่ที่มีคิดไว้อะค่ะ ถ้าระบบอะค่ะ มันตรวจเจอว่า by customer code นั้นไม่มีดีเอ็นก็ไม่ต้องส่งเพราะเข้าใจง่ายง่าย คือลูกค้าไม่มีบิลที่จะต้องชําระก็ไม่ต้องส่งแจ้งยอดให้ลูกค้าในวันนั้นค่ะ แต่ถ้าระบบมันเจอ d n ให้มันเช็คดังต่อไปนี้ค่ะ
+11:12 Changsalak,Alisara,TH-Bangkok,Accounts Receivable: คือหนึ่ง
+![Screenshot](undefined)
+11:15 Changsalak,Alisara,TH-Bangkok,Accounts Receivable: แอป Absolute c n มันน้อยกว่า absolute d n หรือไม่ ถ้าใช่ให้ไป step 4 แต่ถ้าไม่ใช่นั่นหมายถึงว่า absolute c n มากกว่า d n ให้ กรุ๊ปดีเอ็นน่ะค่ะ แล้ว fift flow ตัว c n จนกระทั่ง c n มันน้อยกว่า d n อันเนี้ย ก็จะ gold to step 4 ในส่วนตรงนี้ คุณคุณนิคสงสัยตรงไหนมั้ยคะ กรุ๊ป กรุ๊ปดี
+11:41 Chamnong,Nick,TH-Bangkok,Information Technology: ติดตามไปยังนะฮะ
+11:44 Changsalak,Alisara,TH-Bangkok,Accounts Receivable: ค่ะ คือสเต็ปแรกอะค่ะ บายคอัสเมอร์คนนั้นอะให้มันจับให้มันให้มันดูก่อนว่า by customer code นั้นมีดีเอ็นมั้ยอะ ถ้าตรวจเจอแล้วปึ๊บ ไม่มีดีเอ็นไม่ต้องส่งจังย้อน แต่ถ้ามีดีเอ็นปึ๊บให้เช็คเลยค่ะว่า by customer code นั้นน่ะ absolute c n มันน้อยกว่า absolute d n หรือไม่ ถ้าใช่ให้ไปสเต็ป 4 แต่ถ้าไม่ใช่ให้กรุ๊ปตัวดีเอ็นแล้วก็มา fifl ตัวซีเอ็นน่ะค่ะ ให้ยอดอะค่ะ
+12:19 Changsalak,Alisara,TH-Bangkok,Accounts Receivable: ให้ยอดมันแบบ unknow จนกระทั่ง c n อะมันน้อยกว่า ซีเอ็นเอ็น แต่เอมี่ตัวอย่างให้ดู
+12:24 Chamnong,Nick,TH-Bangkok,Information Technology: ที่เราเอาทีละออกทีละบรรทัดถูกมั้ยฮะ
+12:27 Changsalak,Alisara,TH-Bangkok,Accounts Receivable: ใช่ค่ะเดี๋ยวค่ะ ใช่ใช่ถูกต้องอ่ะอย่างนี้อะค่ะก็คือระบบมันตรวจเจอและว่า by customer code อะค่ะ ไม่มีดีเอ็นก็ไม่ต้องส่งจะเห็นว่ามันเป็นแบบซีเอ็นก็คือตัว negative of mouth หมดเลย
+12:28 Chamnong,Nick,TH-Bangkok,Information Technology: อ๋อ คือเราครับกว่ามันจะไม่ได้โอเวอร์ การการฟีฟ่านี้ผมทําด้วยวันที่อย่างเดียวได้ไหมฮะ หมายถึงว่าไม่ใช่แบบไม่ต้อง ไม่ต้องเก็บ ไม่ต้องเก็บ running แต่ว่านับเป็นวันที่เลยฮะ ไม่ต้องเก็บ running แต่
+12:54 Changsalak,Alisara,TH-Bangkok,Accounts Receivable: คิดว่าได้ค่ะ คือเราต้องการให้ให้ไฟโฟนดอกเด็ดที่เป็นแบบ ไฟล์ ไฟล์ที่มันออกมาเป็นเดลี่อ่ะค่ะ
+13:01 Nawawitrattana,Siri,TH-Bangkok,Credit Management: If i i four มันต้อง fifflo ที่ที่ dock human number ด้วยอ่ะค่ะ คือ docdeate ปึ๊บ แล้วไป doctorment number มันถึงจะเรียกว่าไฟฟ่จริง ใช่ใช่ครับ If If i
+13:07 Chamnong,Nick,TH-Bangkok,Information Technology: อ๋อ โอเค อ๋อ มีเลขมีเลข โอเค โอเคมีเลขนี้เลยฮะ โอเค ผมขอให้ผมเห็นเลขกลัวว่ากลัวว่าแบบทั้งหมดต้องคิดเอง มันจะมันแอบแต่แบบยังงี้มันมาพร้อมกัน
+13:14 Nawawitrattana,Siri,TH-Bangkok,Credit Management: ค่ะค่ะ จ้ะ เพราะว่าถ้าถ้าวันถ้าวันปุ๊บแล้ววันแล้วไม่ไม่ซอสอะไรอ่ะค่ะ มันอาจจะไม่ได้เรียงตาม document นัมเบอร์จริงๆ
+13:26 Chamnong,Nick,TH-Bangkok,Information Technology: โอเค
+13:28 Changsalak,Alisara,TH-Bangkok,Accounts Receivable: ได้ค่ะค่ะ คุณนิคอ่าอย่างอันเนี้ยค่ะ ที่ตรวจเจอว่าอ่า แล้วถ้ามันมีค่ะ
+13:34 Chamnong,Nick,TH-Bangkok,Information Technology: แต่ขอนิดนึงฮะ นิดนึงฮะ อย่างอย่างอย่างไฟฟิ่ลที่ว่าตอนที่เราจะเอาออกคือเราจะเอาหลังออกเราไม่เอาหน้าออกเลยมั้ยฮะ เราเอาอันเราเอาอันหน้าให้มันให้มันเบิร์นอันที่ก่อนถูกมั้ยฮะ
+13:47 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: ก่อนtraffers infirst out อะค่ะ ก่อนtraffers infirst ก่อนtraffers in คือ ด็อกเบสตัวไหนอะใช่เฟิร์สอินเฟิร์สเอาก็คือล็อกเดทตัวไหนเข้ามาก่อนเราจะเราจะเอาเราจะตัดตัวนั้นก่อนจะเอาจะเอาตัวนั้นไป ส่งให้ลูกค้าก่อน
+14:00 Chamnong,Nick,TH-Bangkok,Information Technology: ว่า คําว่า ปาก คําว่า คําว่าตัก คือใช้ถูกมั้ยฮะ
+14:03 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: ใช่ๆ ใช่ใช่เอาไปใช้ก่อนค่ะ
+14:04 Chamnong,Nick,TH-Bangkok,Information Technology: คําตอบสุดท้ายคือนี้ผม ผมต้องการที่จะใช้เพราะฉะนั้นผมเอาอันหลังออกนะฮะ ไม่ใช่เอาอันแรกออก เพราะผมจะต้อง
+14:10 Changsalak,Alisara,TH-Bangkok,Accounts Receivable: อันหลังออก ใช่ค่ะ
+14:12 Nawawitrattana,Siri,TH-Bangkok,Credit Management: ใช่เหมือนคุณนิคบอกว่า จะตัดทิ้งจะตัดอันที่ไม่ใช้ทิ้ง เออเอาออกของคุณดิ๊กไปว่าเอาออกไปไม่แจ้งยอดมันคนละออกกัน เออ เออ โอเคครับ
+14:18 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: เออ โอเค เอาออกไปโอเค โอเค ใช่ค่ะ
+14:21 Chamnong,Nick,TH-Bangkok,Information Technology: โอเค
+14:23 Changsalak,Alisara,TH-Bangkok,Accounts Receivable: ค่ะ ต่อไปสเต็ปที่เอส เอ่อบอกว่าเฮ้ย ถ้าระบบอ่ะค่ะ มันเจอว่า by customer code นั้นน่ะ มีดีเอ็นให้มันเช็คก่อนว่าตัว absolute c นอะมันน้อยกว่า d n มั้ย ตัวอย่างจะเห็นได้ว่าพอมันกรุ๊ปตัวดีเอ็นออกมาเนาะ แล้วมันก็ซอสไฟโฟร์เรียบร้อยเสร็จปึ๊บ มาเช็คว่า total up mount อะค่ะ ก็คือแอปโซลูทตัวดีเอ็นอันเนี้ย มันมา กกว่าซีเอ็น อืม อันเนี้ยให้ส่งได้ค่ะ
+![Screenshot](undefined)
+14:53 Changsalak,Alisara,TH-Bangkok,Accounts Receivable: ค่ะ แต่ทีนี้ถ้ามันแอบโซลูทซีเอ็นมันมา กกว่าดีเอ็นจะเห็นได้ว่าตัวบาลานซ์มันเป็นเนกาทีฟตัวอย่างนี้สิ่งที่เราต้องการอะค่ะ คือเราต้องการให้มันกรุ๊ปตัวดีเอ็มทั้งหมดแล้วก็ไปไฟโฟลว์ตัวตัวซีเอ็นนะคะ จนกระทั่งซีเอ็นน่ะมันน้อยกว่าดีเอ็น
+15:15 Changsalak,Alisara,TH-Bangkok,Accounts Receivable: หน้าตาจะประมาณนี้ค่ะ ก็คือจะเห็นได้ว่าแอบโซลูทดีเอ็นมันจะอยู่ที่ 500,000 ทีนี้ให้มันไฟฟิลลงมาตามนี้เลยมันจะได้เป็นตัวกรุ๊ปที่เอ๋ไฮไลท์สีฟ้าไว้ ดังนั้นยอดที่ต้องแจ้งอะค่ะจะอยู่ที่161,000 จะเห็นได้ว่า พอ ถ้ามันมาเจอไอลบแสน7อันเนี้ย มันจะทําให้แอปโซลูทซีเอ็นมากกว่าดีเอ็นไม่เอาค่ะให้มันสต็อปให้มันใช้แค่แค่ถึงตัวที่เราไฮไลท์สีฟ้า พอแล
+15:45 Changsalak,Alisara,TH-Bangkok,Accounts Receivable: ซีเอ็นที่เหลือที่มันไม่ได้ถูกไปแจ้งยอดอะค่ะ ให้อิกนอไปแล้วเดี๋ยวในวันถัดไปเดี๋ยวมันจะถูกใช้เอง ค่ะ มันก็จะรันประมาณนี้โอเค
+![Screenshot](undefined)
+16:01 Changsalak,Alisara,TH-Bangkok,Accounts Receivable: ค่ะ ทีนี้มันจะมีเงื่อนไขนิดนึงตรงที่ว่าลูกค้าประเภทที่เราแจ้งยอดอะค่ะ ถ้ามันมีการแจ้งยอด ครบ 3 ครั้งอะค่ะ คือเอาง่ายง่ายนับตอนเนี้ยที่เราทํางานกันอะค่ะ คือเราจะดูว่าบิลนั้นน่ะ มันถูกแจ้งยอดไปกี่ครั้งแล้วครั้งที่หนึ่งครั้งที่ 2 ครั้งที่3 ถ้าบิลเนี้ยยังถูกแจ้งยอดครั้งที่3 เราจะมี warning message ไปหาลูกค้าว่าถ้าลูกค้ามีการชําระในวันนี้จะไม่ถูกชาร์จ เอ่อ จะไม่ถูกคิดตัว ส่วนลดเงินสดกลับคืนก็คือ m i อะค่ะ ดังนั้นน่ะ
+![Screenshot](undefined)
+16:40 Changsalak,Alisara,TH-Bangkok,Accounts Receivable: เราจะให้ระบบอะมันรู้ได้อย่างไรว่าบิลนั้นน่ะ มันถูกนับไปแล้วกี่ครั้งก็เลย เออ เป็นที่มาว่าใช่ใช่ค่ะ ก็เลยคิดว่าไอ้ตัว excel file 2 อะค่ะ มันเดี๋ยวเราอะจะเพิ่มคอลัมน์ ตัวเดย์เข้าไปเนาะ ก็จะมีตัว file day ลบหนึ่งกับ file day to นะคะ
+17:03 Changsalak,Alisara,TH-Bangkok,Accounts Receivable: ที่เป็น เหมือน เหมือนเอาไว้เค้าอะค่ะว่าคอลัมน์เดย์อะมันถูกคิดไปเป็นครั้งที่เท่าไหร่แล้ว
+17:12 Chamnong,Nick,TH-Bangkok,Information Technology: อันนี้คือสอบถามนะฮะ อันนี้อันนี้คําคําว่า คําว่า document dock dogeceate document umber คือของของของไบโอ แต่ใบนี่มันลายปะฮะ ใบคือใบหรือลายคือลายฮะ
+17:12 Changsalak,Alisara,TH-Bangkok,Accounts Receivable: ถ้าดูอ ย่าง
+17:26 Chamnong,Nick,TH-Bangkok,Information Technology: เหมือนดึกดึกไปคือหนึ่งบรรทัดป้ะหนึ่งบรรทัดในนั้นปะฮะ คือหนึ่งยอดแปลว่าเราต้องคิดเราต้องคิดเรื่องนี้ในลายบรรทัดเลยถูกมั้ยฮะ
+17:29 Changsalak,Alisara,TH-Bangkok,Accounts Receivable: ใช่ ใช่ค่ะ ใช่ค่ะ ใช่ค่ะ ต้องค่ะ
+17:37 Chamnong,Nick,TH-Bangkok,Information Technology: อันนี้จะ อันนี้จะทํามาให้หรอฮะ หมายถึงว่า
+17:39 Changsalak,Alisara,TH-Bangkok,Accounts Receivable: คืออย่างงี้ค่ะ ที่ ที่เดี๋ยวนะ ที่เดี๋ยวนะเดี๋ยวให้ดูครับ เดี๋ยวอันนี้อะค่ะ ก็ ก็เห็นได้ว่าตัว buy customer code เนี่ย ลูกค้าชื่อ 3ัคคีเนาะ สมมุติเราอะนั่งทํางานมันจะเป็น file day ศูนย์ถูกต้องมั้ยคะทีนี้ เมื่อ เมื่อวานเนี้ย ปัทม์จะเป็น friday ลบหนึ่งจะเห็นได้ว่าในก รอบสีฟ้าอะค่ะ ณ วันที่เราทํางานฟรายเดสศูนย์ ถ้ามันระบบไปไปไปตรวจที่ไฟเดย์ลบหนึ่งก็คือ ไฟล์เมื่อวานมันพบว่าฮึ้ย มันมีดูพิเศษเกิดขึ้นให้เขาตัวเดย์อ่ะค่ะ เป็นแอดแอดยูสซิ่งฟอร์มูล่าวเป็นบวกหนึ่งเข้าไปนั่นหมายถึงว่าในวันเนี้ยเดย์อ่ะ มันจะถูกเค้าเป็นครั้งที่2 แล้วในในในบินกรอบสีฟ้าอ่ะ แต่ถ้าเป็นกรอบสีแดงจะเห็นได้ว่า
+![Screenshot](undefined)
+18:32 Changsalak,Alisara,TH-Bangkok,Accounts Receivable: ฟรายเดย์ สูทที่เรา ฟรายเดย์ สูท ที่เราดาวน์โหลดออกมาเป็นเดลี่นะลองไปตรวจของฟรายเดย์ลบหนึ่งเมื่อวานซิมีมั้ยอะไม่มีก็คือนั่นหมายถึงว่ามันถูกเป็นนิวล็อกฮิเมนต์ในไหนในฟายเดย์สุดและให้มันน่ะแอดแอดดิสซิ่งโฟมล่าบวกหนึ่งเข้าไปก็หมายถึงว่าไอ้บิลที่เป็นกรอบสีแดงอะค่ะจะถูกนับเป็นครั้งที่หนึ่ง
+18:52 Chamnong,Nick,TH-Bangkok,Information Technology: อันนี้อันนี้อัน อันนี้อันนี้อันนี้คือออโตเมติกใช่ป่ะ
+18:56 Changsalak,Alisara,TH-Bangkok,Accounts Receivable: เป็นใช่ค่ะ automatic ให้มัน countday เป็น automatic ไป
+18:59 Chamnong,Nick,TH-Bangkok,Information Technology: อ๋อ ซึ่งผมไม่ต้องทํา
+19:00 Nawawitrattana,Siri,TH-Bangkok,Credit Management: มันมันมันมันจะมาได้ยังไงอะคะ ไอ้คอลัมน์ เดย์ คอลัมน์ สุดท้ายเนี่ย
+19:08 Changsalak,Alisara,TH-Bangkok,Accounts Receivable: นี้คือคือเราอันนี้เหมือนเป็นการเสนอคนนิคอะค่ะ เพราะว่าครั้งที่แล้วเหมือนคุณนิกเค้าจะเมนเทนข้อมูลเข้าไปเรื่อยเรื่อย อืม แต่ว่าถ้าถ้าแบบณจุดหนึ่งอะค่ะ มันมันข้อมูลมันเยอะเกินมันอาจจะแบบ
+19:24 Nawawitrattana,Siri,TH-Bangkok,Credit Management: ใช่เพราะว่าตะกี้คุณนิคถามว่าไฟล์ได้มาแบบ automatic เลยใช่มั้ย คุณนิคไม่ต้องทําอะไรใช่มั้ย คือคําตอบคือไม่ใช่คุณอิกต้องทําอะไรสักอย่างใช่มั้ยถึงจะได้รายนี้
+19:34 Changsalak,Alisara,TH-Bangkok,Accounts Receivable: อ๋อ ใช่ใช่ค่ะ คือคุณนิกต้องทําอะไรสักอย่าง แต่เอ๊ะที่เอฟหมายถึงว่าออโตเมติกอะ คือเอ๊ะ อยากให้เดย์มันเค้าเป็นออโตเมติกไป
+19:42 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: คือคุณนิกจะได้ไฟล์มาจนถึง reference ต้อง reference น่ะค่ะ แต่ว่ามันจะมีคอลัมน์เดย์ที่อาจจะต้องเป็น
+19:42 Chamnong,Nick,TH-Bangkok,Information Technology: ซึ่งผมเป็นผมความรู้
+19:50 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: เป็น เป็นเป็นแอปที่มาแคล่วออโตเมทตัวเนี้ยค่ะ ที่ที่มา นับให้
+19:54 Chamnong,Nick,TH-Bangkok,Information Technology: ซึ่งแปลว่าอยู่อยู่ที่ฝั่งผมถูกมั้ยฮะ
+19:56 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: ใช่ใช่ตรงคอลัมน์ สุดท้ายค่ะ ไอสิ่งที่ที่ออโตเมทได้จะถึงคอลัมน์ เรฟเฟอร์เรนส์
+19:56 Chamnong,Nick,TH-Bangkok,Information Technology: โอเค แต่ทีนี้ผมไม่ผม เขต แต่ทีนี้ผมไม่ได้ทําในเอ็กเซลโอเคใช่มั้ยฮะ
+20:05 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: คิดว่าได้ไม่จําเป็น ต้องไม่จําเป็น ต้องเป็นยังไงก็ให้มันเค้าได้อะค่ะ
+20:11 Chamnong,Nick,TH-Bangkok,Information Technology: โอเคครับ คือมันจะอยู่ในหลังปีนู้น แต่ถ้าเวิร์ดแล้วอ่ะ
+20:11 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: ค่ะ ใช่เพราะว่าครั้งแล้วคนนี้ที่เราเคยคุยกันคนนี้บอกว่าคนนี้อยากจะเก็บเดต้าเก่าเป็น head origal ไว้เรื่อยเรื่อยใช่มั้ยคะ เออคราวนี้นะ ก็เลยกังวลว่าถ้าแบบเรารัน true นี้ไป10 ปีอะไรอย่างเงี้ยมันจะใหญ่ขึ้นเรื่อยเรื่อยหรือเปล่า อะไรอย่างเงี้ยค่ะ เออ แนท ก็เลยแค่
+20:28 Chamnong,Nick,TH-Bangkok,Information Technology: มันมันมัน มันมันมันมีวันละกี่โลอะฮะ
+20:32 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: วัน วันละกี่โล วันหนึ่งกี่โลอะน้องเอ๊ะ ประมาณได้ไหม
+20:35 Chamnong,Nick,TH-Bangkok,Information Technology: ทุกทุกทุก customer นะฮะ
+20:39 Changsalak,Alisara,TH-Bangkok,Accounts Receivable: พวก customer
+20:40 Nawawitrattana,Siri,TH-Bangkok,Credit Management: ต้องเก็บก่อนต้องเก็บก่อนมันมันต้องเก็บก่อนไม่ไม่ไม่หล่อไม่ได้ โอ้ยเลย
+20:45 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: ใช่ แต่เป็นร้อยหลักน่าจะเยอะเลย เออใช่มันแล้วมันเป็น daily คุณนิค
+20:49 Nawawitrattana,Siri,TH-Bangkok,Credit Management: เออ เออ เพราะว่าลูกค้าก็เป็นร้อยแล้วอะลูกค้า แต่ละคนก็อืม
+20:53 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: ใช่ก็หลายหลายบรรทัด credit note
+20:55 Chamnong,Nick,TH-Bangkok,Information Technology: ประมาณวันละพันนี้ป้ะ
+20:57 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: เดี๋ยวเดี๋ยวเดี๋ยวให้น้องเก็บให้เป๊ะเป๊ะใช่แต่ว่าเออ แต่ว่าจํานวนมันมันก็จํานวนนึง เราก็เลยกลัวว่าถ้าคุณนิ๊กจะเก็บเป็นแบบเป็นแบบเป็น data holdical ไปเรื่อยเรื่อยอะไรอย่างเงี้ย มันไม่ได้ใจว่ามันจะต้องถึงเมื่อไหร่ที่มันจะต้อง arcip หรืออะไรอย่างเงี้ยค่ะ อืม
+20:59 Nawawitrattana,Siri,TH-Bangkok,Credit Management: น้องเก็บดีกว่า
+21:13 Chamnong,Nick,TH-Bangkok,Information Technology: ครับ ขอบคุณนะก็ได้เป็น
+21:14 Nawawitrattana,Siri,TH-Bangkok,Credit Management: ไม่ไม่น่าถึง ไม่น่าถึงพันค่ะ แต่ไม่ต่ํากว่าร้อย โห ลิ้นกว้างมาก เดี๋ยวให้น้องเก็บดีกว่า
+21:17 Chamnong,Nick,TH-Bangkok,Information Technology: น่าผิดพลาดก็ไม่ไม่แย่ ไม่แย่มาก ก็ก็ก็ปีละหลักแสนอะฮะ
+21:20 Nawawitrattana,Siri,TH-Bangkok,Credit Management: จ้ะ เออ เออ
+21:24 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: แต่แต่มันก็มีจุดที่สุดปะคุณนิคเช่ นแบบปีละหลักแสนก็จริง แต่ว่าแบบเราเราจะใน 5ปี 10ปีไปเรื่องของอนาคตค่อยคิดอย่างงี้วะ เออ ใช่มั้ย ใช่มั้ย
+21:42 Changsalak,Alisara,TH-Bangkok,Accounts Receivable: ค่ะ มิ้งค์ในส่วนของการเคาท์เดย์ตัวนี้ คุณนิค พอ พอ เข้าใจไอเดียใช่ไหมคะ
+21:49 Chamnong,Nick,TH-Bangkok,Information Technology: เข ใช่ เข้าใจ
+21:50 Changsalak,Alisara,TH-Bangkok,Accounts Receivable: ค่ะ อะอย่างอันนี้อะค่ะ สมมุติในในไฟเดย์ศูนย์เนาะ ถ้ามันเป็น tomorrow วันพรุ่งเนี้ยไอ้อันเดรสเนี้ยมันจะกลายเป็นถูกเป็น day ลบหนึ่งไปก็ฟรายเดย์สุดก็คือวันที่เราทําโหลดเข้ามาใหม่อะค่ะ จะเห็นได้ว่าในกรอบสีฟ้าเนี้ยมันก็จะถูกไปดูสิว่ามันมีการดู pick กับ fine day ลบหนึ่งมั้ย ถ้าใช่ก็บวกหนึ่งเข้าไปรันแบบเนี้ยไปเรื่อยเรื่อยอะค่ะ
+22:16 Changsalak,Alisara,TH-Bangkok,Accounts Receivable: ค่ะ ตอนนี้เอค่ะ
+22:17 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: ซึ่งซึ่งตรงซ้ําจะซ้ํามาจากตัวดอกเคเมนต์นัมเบอร์เนอะ น้องเอ๋ เพราะด็อกคิวเมนต์นัมเบอร์จะเป็นยูนีคแวลูอะค่ะ ก็คือไม่ต้องคอมบิเนชั่นกับอะไรค่ะ
+22:24 Changsalak,Alisara,TH-Bangkok,Accounts Receivable: ใช่ ค่ะ ค่ะ ประมาณนี้โอเค เสร็จปึ๊บ พอ ผ่านโลจิกครบทุกอย่างแล้วอะค่ะ ต่อไปก็จะเป็นการส่งอีซึ่ง เสร็จป เสร็จปึ๊บ เอ เอ ก็คิดไว้ว่ามันเทมเพลตแต่ละอันน่ะ หน้าตามันจะไม่เหมือนกันเนาะ เพราะว่าโดยตอนเนี้ยที่เราทํางานกันอยู่อะเราก็เหมือนเหมือนแมนนวลเข้าไปก็เลยคิดว่าเออ ถ้ามันเป็นออโตเมจอะอยากจะให้ระบบอะมันจับว่า by customer คนเนี้ย ถ้าเจอแค่บิลที่มีแค่คําว่า day หนึ่ง และเดย์2 อะค่ะ ให้ใช้เป็นตัว template a แต่อันนี้อาจจะมีโชว์ให้ดูเนาะ แล้วก็ถ้าระบบมันตรวจเจอว่า by customer code นั้นน่ะ มี
+![Screenshot](undefined)
+23:10 Changsalak,Alisara,TH-Bangkok,Accounts Receivable: โผล่เข้ามาค่ะ ให้ไปใช้ตัว template be และก็ระบบ ถ้ามันตรวจเจอ by customer code นั้นว่ามีเดย์ 4 เป็นต้นไปให้ไปใช้คําว่า ให้ไปใช้ตัว template c ซึ่งไอ้ตัว template 4 อันเนี้ย มันก็จะมีหมายเหตุเพิ่มเข้ามาค่ะว่าท่านจะมียอดค่าใช้จ่ายชําระเอ็มไอที่ต้องชําระเพิ่มเติมประมาณนี้ค่ะ แล้วก็ถ้า
+23:35 Changsalak,Alisara,TH-Bangkok,Accounts Receivable: ระบบมันตรวจเจอว่า by customer code นั้นน่ะ มี documenttive ที่เป็นเอ็มไออะค่ะ ให้แอดข้อความเข้าไปว่ายอด m i ที่ปรากฏ อะเป็นใบเพิ่มหนี้ที่ท่านชําระบิลล่าช้าค่ะ เดี๋ยว อันนี้ตัวอย่างอ่ะค่ะ จะเป็น นี้ค่ะ
+23:51 Chamnong,Nick,TH-Bangkok,Information Technology: แต่ผมไม่ต้อง tandle ยอด m i a ถูกมั้ยฮะ
+23:54 Changsalak,Alisara,TH-Bangkok,Accounts Receivable: ไม่ต้องค่ะ m i อันเนี้ยคือเดี๋ยวรอให้มันมีการโพสต์เข้าไปในระบบเอง m i อันเนี้ยใช่
+24:00 Chamnong,Nick,TH-Bangkok,Information Technology: ก็คือผมไม่ต้องยุ่งกับยอดเงินเลย ผมแค่ว่ามี day เกินหรือเปล่า ถ้ามี day เกินผมก็แค่สลับเทมเพลต
+24:04 Changsalak,Alisara,TH-Bangkok,Accounts Receivable: ใช่ ต้องค่ะ ค่ะ ค่ะ อันนี้เป็นตัวอย่างเทมเพลตเอค่ะ ที่ระบบตรวจเจอว่ามีแค่ day หนึ่งกับ day 2 เท่านั้นก็จะให้ใช้ template หน้าตาประมาณนี้ค่ะ ที่ fix format ไปเลยว่าแบบใช้ wording ประมาณนี้แล้วก็มีแปะตัวรูปภาพคิวอาร์พร้อมเพย์ของ customer code นั้นนั้น ค่ะ ค่ะ แล้วก็สมมุติถ้าระบบตรวจเจอว่า เป็น by customer code นั้นมี day 3 อะค่ะ ก็ให้ใช้ template b เนาะ ซึ่งมันจะมีเพิ่มเข้ามาเป็น warning message อะค่ะ ว่า format ก็คือ มีคําว่าหมายเหตุ ถ้าลูกค้าชนะ วันนี้ก็จะไม่มี การชาร์ตเอ็มไอค่ะ ส่วนถ้าเจอว่า by customer code นั้นมี day 4 เป็นต้นไปให้ใช้ format เป็นแบบนี้ค่ะ ก็จะมีเพิ่ม tech เข้ามาว่า
+25:02 Changsalak,Alisara,TH-Bangkok,Accounts Receivable: ท่านจะมียอดค่าใช้จ่าย m i ที่จะต้องชําระเพิ่มเติมค่ะ ส่วนอันนี้เห็นมั้ยคะว่ามันมี m i p เข้ามาแล้วก็จะให้ไปใช้ใน template ดีเพราะว่าเราอยากจะให้มี text ให้ลูกค้าเห็นน่ะค่ะว่ายอด m i ที่ปรากฏอะค่ะ เป็นใบเพิ่มหนี้ที่ท่านชําระบิลล่าช้าค่ะ
+25:24 Chamnong,Nick,TH-Bangkok,Information Technology: ชอบถามเลยฮะ ก็ document นัมเบอร์กับเอสไซน์ มิ้นท์ ต่างกันไงฮะ
+25:29 Changsalak,Alisara,TH-Bangkok,Accounts Receivable: ถ้าในอันนี้เหมือนกันค่ะ แต่ว่า เออ คนหนึ่งนะ มันเหมือนกันค่ะ เป็นเลขเดียวกัน มันเหม
+25:40 Nawawitrattana,Siri,TH-Bangkok,Credit Management: เอาเอาเอาท์ด็อกเอาท์ด็อกนัมเบอร์ค่ะ เพราะว่าด็อกนัมเบอร์จะมีทุกอันอย่างตะกี้ที่เห็นไอ้ตัวเอ็มไออะค่ะเอ็มไอไม่มีแอดซายเม้นท์เนาะ แล้วก็อย่างอย่างซีเอ็นที่เป็นแบบแวเลบัลลีเบตก็จะไม่มีแอสไซน์เมนท์ เพราะฉะนั้นให้ใช้ด็อกคิวเมนต์นัมเบอร์เป็นตัวเป็นตัวหลักค่ะ
+25:42 Changsalak,Alisara,TH-Bangkok,Accounts Receivable: ใช้แต่ใช้เป็น dock number ใช่ค่ะ
+25:49 Chamnong,Nick,TH-Bangkok,Information Technology: มีอันนี้บางอันก็ไม่มี โอเคครับ แต่พอผมก็โชว์โชว์โชว์ไปตามนี้นะฮะ ไม่ไม่ต้องสนใจ
+26:01 Nawawitrattana,Siri,TH-Bangkok,Credit Management: ซึ่งจริงจริงแล้ว น้องเอ๊ะ เราไม่ได้จําเป็น ต้องต้องโชว์ assignment ก็ได้นะ
+26:08 Nawawitrattana,Siri,TH-Bangkok,Credit Management: เพราะ
+26:08 Changsalak,Alisara,TH-Bangkok,Accounts Receivable: จํา จําเป็นค่ะ ให้ ให้เห็นตัว document นัมเบอร์ เพราะว่าว่ามันคือมันมันมีทุก line ไอเทมเลยอะค่ะ ทุกทุกทุกปัญหาค่ะ
+26:19 Chamnong,Nick,TH-Bangkok,Information Technology: กับ documentate อันนี้อันนี้อันนี้ไม่ไม่เกี่ยวกับวันแรกที่ที่ที่มันไม่ใช่วันที่บินมา แต่มันเป็นวันที่อะไรสักอย่าง ใบเสร็จผมไม่ต้องสนใจเหมือนกันใช่ไหม พี่ไม่ต้องเอามาใช้คํานวณอะไรทั้งสิ้น
+26:19 Changsalak,Alisara,TH-Bangkok,Accounts Receivable: เห็นว่าค่ะ ถ้าเป็นเอ็มไอไม่ต้องใช้คํานวณค่ะ เราจะ
+26:34 Chamnong,Nick,TH-Bangkok,Information Technology: เป็น documentate สิ่ง สิ่งอันอื่นด้วยหมายถึงว่ามันไม่เกี่ยว กับวันหนึ่งวัน 2 วัน 3 ผมไม่ต้องนับอะไรตรงนี้เลยถูกมั้ยฮะ ไม่ผมนับแค่ว่าบินมา กี่ครั้งผมไม่ต้องใช้วันที่ถูกมั้ยฮะ
+26:46 Nawawitrattana,Siri,TH-Bangkok,Credit Management: ตรงด็อกิเมนเดจ เป็นตัวที่เราเอาไว้ซอสไฟเฟอร์ตั้งแต่ทีแรกที่ที่น้องแจ้งอะค่ะว่าให้นับเป็นแบบไฟฟ้แจ้งยอดไฟฟิลตัดหนี้ไฟฟิลก็คือจะจากด็อกฮิเมนต์เดทก่อน เพราะด็อกฮีเมนต์เดทปึ๊บ เราก็จะไปซอสต่อที่ dock hement number
+26:56 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: ลบ
+27:05 Chamnong,Nick,TH-Bangkok,Information Technology: แต่ผมจําเป็นต้องใช้น็อคเคมีเดทอ่ะ ผมเชิญดราก้อนนัมเบอร์เป็นไฟฟ้อวอย่างเดียวได้ไหมฮะ
+27:10 Nawawitrattana,Siri,TH-Bangkok,Credit Management: ถ้า
+27:18 Chamnong,Nick,TH-Bangkok,Information Technology: เพราะ เพราะว่ามันเป็น runing umber อยู่แล้วถูกมั้ย ก็ใช้เลขเดียวเป็นเป็นโต้ได้เลย ใช้ documentate ถูกมั้ยฮะ
+27:22 Nawawitrattana,Siri,TH-Bangkok,Credit Management: ใช่ใช่ใช่
+27:31 Chamnong,Nick,TH-Bangkok,Information Technology: แล้วดอกเตอร์ ณัฐเดช ผมไม่ใช้ธรรมะอะไรเลยถูกมั้ยฮะ
+27:39 Changsalak,Alisara,TH-Bangkok,Accounts Receivable: ถ้าในในในรูที่เอ๋ present ไปอะค่ะ เออ dock จะอยากไปใช้ตัว document นัมเบอร์มากกว่าค่ะ ตัว documentate จะไม่ใช้เลย
+27:48 Chamnong,Nick,TH-Bangkok,Information Technology: คือเฉินเผื่อผมลืมลืมอะไรไป แต่แบบกําลังกําลังคิดลอจิกระบบอยู่อะฮะ งั้นน่าจะไม่ต้องใช้เลยถูกมั้ยฮะ จริงจริงนะ จริงจริงแล้วคือผมใช้แค่เค้า
+28:01 Nawawitrattana,Siri,TH-Bangkok,Credit Management: คือถ้าตอนนี้นึกไม่ออก เออใช่ ใช้ด็อกคิวเม้นนัมเบอร์อย่างเดียวได้เพราะว่ามันมัน running อยู่แล้วมันจะแบบว่าปริ้นมันจะนับไปข้างหน้าเรื่อยๆอ่ะค่ะ มันไม่มีแบบว่า เอ่อ เอ่อ เอกสารวันนี้แล้ว document นัมเบอร์มันจะไปน้อยกว่าของเมื่อวาน
+28:19 Chamnong,Nick,TH-Bangkok,Information Technology: ครับ ครับ ได้ครับ ต่อเลยครับ
+28:27 Changsalak,Alisara,TH-Bangkok,Accounts Receivable: ค่ะก็อันนี้มีเสริมเข้าไปค่ะ เป็นอันสุดท้ายแล้วก็คือตัวฟอร์แมตอีเมลอ่ะค่ะ อยากที่จะให้ตัวซับเจ็กอะค่ะ มันเป็นแบบนี้ก็คือมี customer coach comma แล้วก็ชื่อแล้วก็ comma เป็น Text ที่ที่เอ่อ fix ไปเลยว่ารายละเอียดบินวันที่แล้วก็ comma เป็น
+28:49 Chamnong,Nick,TH-Bangkok,Information Technology: คือวันปัจจุบัน
+28:51 Changsalak,Alisara,TH-Bangkok,Accounts Receivable: นะคะ
+28:52 Chamnong,Nick,TH-Bangkok,Information Technology: สวัสดีครับ สวัสดีครับ อันนี้อันนี้ใช้วันที่อะไรนะฮะ คือ คือใช้วัน คือใช้วันที่ในไอ้ไอ้ไอ้คอลัมน์เมื่อกี้ป่ะฮะ
+28:57 Changsalak,Alisara,TH-Bangkok,Accounts Receivable: ใช้ใช้ให้ระบบอะค่ะ มันไปไปดิสเพลย์ตัวเออละเอียดตัวดีเอ็นแล้วก็ขีด แล้วก็ตัวเป็นร้านเทสของดีเอ็นที่รีเฟอร์ฟอร์มจากเอ็กเซลฟาย 2 อะค่ะ
+29:09 Chamnong,Nick,TH-Bangkok,Information Technology: คือ คอลัมน์ เมื่อกี้ใช่ไหมฮะ
+29:13 Nawawitrattana,Siri,TH-Bangkok,Credit Management: ธรรมดา เราแจ้งยอดเราเราเขียนระบุวันที่เยอะขนาดนี้เลยหรอ
+29:18 Changsalak,Alisara,TH-Bangkok,Accounts Receivable: ใช่ค่ะ
+29:19 Panich,Jarukit,TH-Bangkok,Accounts Receivable: ใช่ครับ พี่อ้อ ใช่ครับพี่
+29:20 Changsalak,Alisara,TH-Bangkok,Accounts Receivable: เห็นแล้วว่าตัวนี้บินวันที่
+29:22 Nawawitrattana,Siri,TH-Bangkok,Credit Management: แล้วมีของที่ส้มมั้ย
+29:24 Chamnong,Nick,TH-Bangkok,Information Technology: ผมต้องเขียน29ขีดเลยนะฮะ 28 20
+29:27 Nawawitrattana,Siri,TH-Bangkok,Credit Management: ไม่ไม่อันเนี้ย อันเนี้ยสงสัยว่าถ้าไม่ได้ต้องถ้าไม่ได้เขียนถ้าไม่ได้เขียนอย่างงี้ เป็นการแจ้งยอดที่เป็นวันที่อันนี้เลยได้มั้ย แต่อันนี้มัน อัน
+29:43 Chamnong,Nick,TH-Bangkok,Information Technology: ทําไมถึงเป็น 29
+29:43 Nawawitrattana,Siri,TH-Bangkok,Credit Management: มันเป็นหลักสูตรที่สอนกันต่อมาแล้วคือ คืองง อืม รายละเอียดบิลวันที่ รายละเอ
+29:58 Changsalak,Alisara,TH-Bangkok,Accounts Receivable: คือจริงจริงที่ที่คิดไว้อะค่ะ เพราะว่าอย่างอย่างอย่างอะตัวอย่างอันเนี้ย มันมีบิลแค่ของวันที่ 17 แต่อย่างเดียวเนาะก็ก็ให้ให้ระบบอะค่ะ มันไปจับว่ามีบิลที่เป็นวันที่ 17 อืม เพราะว่า early ad กับกับ early ad กับรัฐเทสอะมันคือวันเดียวกัน อืม แต่อย่างอันถัดไปอะค่ะ คุณนิค เออ ตัวเนี้ย
+30:21 Chamnong,Nick,TH-Bangkok,Information Technology: ไม่อันนี้ถึงเป็น อันนี้เป็น 29 ด้วย อันนี้ทําไมถึงไม่เป็น 28
+30:27 Changsalak,Alisara,TH-Bangkok,Accounts Receivable: เพราะว่ามันคือ28 มันคือมันคือ negative number ค่ะ
+30:27 Nawawitrattana,Siri,TH-Bangkok,Credit Management: 28 มันคือซีเอ็น
+30:31 Chamnong,Nick,TH-Bangkok,Information Technology: อ๋อ นับเฉพาะนับอันนั้นด้วย โอเคฮะ
+30:33 Changsalak,Alisara,TH-Bangkok,Accounts Receivable: ไปค่ะ นับแค่ตัวเฉพาะที่เป็นดีเอ็นเป็น positive นัมเบอร์ อันนี้ค่ะ
+30:41 Chamnong,Nick,TH-Bangkok,Information Technology: แต่ดีเอ็นเอซีเอ็นนี้ไม่ได้ไม่อยู่ในคอลัมน์ อันนี้ถูกมั้ยฮะ อันนี้จะเป็น dright แทนคนละเรื่องกันถูกมั้ยฮะ
+30:48 Nawawitrattana,Siri,TH-Bangkok,Credit Management: ซึ่งดีจีแปลว่า ซีเอ็นดี อาร์แปลว่าดีเอ็น คือ bill กับ อืม
+30:53 Chamnong,Nick,TH-Bangkok,Information Technology: โอเค
+30:57 Nawawitrattana,Siri,TH-Bangkok,Credit Management: เมื่อกี้ที่น้องพูดว่าดีเอ็นกับซีเอ็นนะคะ ไม่ได้มี document ties คือดีกรีกับดี อาร์เอ็มไออาร์วี คือหลากหลายเลย
+31:06 Chamnong,Nick,TH-Bangkok,Information Technology: เขต แต่ว่าแต่ว่าแต่ว่ามีคอลัมน์ที่เป็นที่เป็นที่เป็นซีเอ็มดีเอ็มมั้ยฮะ หรือว่าผมต้องอิมพลายเอาเองก็คือผมจะมีลิสต์ว่าซีเอ็นประกอบด้วยอะไรบ้าง หรือว่าให้ดูกด หรือว่าให้ผมดูตัวเลขว่าติดลบหรือเปล่าฮะ
+31:11 Nawawitrattana,Siri,TH-Bangkok,Credit Management: ไม่มี ไม่มี ด็อกอะไรบ้าง
+31:21 Changsalak,Alisara,TH-Bangkok,Accounts Receivable: จริงจริงให้ที่ให้ดูอะค่ะ โพรวายให้ได้ค่ะว่าซีเอ็นน่ะ มันประกอบไปด้วย documenttive อะไรบ้าง แต่ว่ามันจะเป็น negative number หมดเลยค่ะ ส่วน d n นะคะ the s d n อะก็จะ provide ให้ได้ว่า document t มันประกอบไปด้วยอะไรบ้าง แล้วคุณนี้ก็จะเห็นว่ามันเป็น positive number หมดเลย
+31:41 Chamnong,Nick,TH-Bangkok,Information Technology: แต่ แต่ว่าจริงจริงผมไม่ต้องสนอกคิวเม้นท์ไทยก็ได้ ผมสนเลกกะทีฟโพซิทีฟอย่างเดียว แต่อันนี้ได้ไหมฮะ ถ้าผมใช้วิธีนี้
+31:48 Changsalak,Alisara,TH-Bangkok,Accounts Receivable: จริงจริงจริง ใช่ค่ะที่เอต้องการให้แบบมันไปดูว่ามันเป็นโพสิทีฟอินเนี่ยมันสนใจแค่ตัว amount ค่ะ
+31:56 Chamnong,Nick,TH-Bangkok,Information Technology: แปลว่าผมอิมผ่านจาก amouth ก็ติดลบหรือบวก ผมจะไม่สนดอกคือวินไทยมั้ยฮะ
+32:02 Changsalak,Alisara,TH-Bangkok,Accounts Receivable: ค่ะ
+32:02 Chamnong,Nick,TH-Bangkok,Information Technology: โอเค ได้ครับผม
+32:07 Changsalak,Alisara,TH-Bangkok,Accounts Receivable: ค่ะก็คร่าวคร่าวประมาณนี้ค่ะ คุณขนนิก
+32:12 Chamnong,Nick,TH-Bangkok,Information Technology: นี้ทีนี้ถ้าอ ย่างหัวเมลล์ ถ้าอ ย่างเมื่อกี้อ่ะฮะ มันจะเป็น 29 ขีด 30 เอ็มเอ็มไวไวในกรณีที่เดือนเหมือนกันถูกมั้ยฮะ เพราะว่าในฟอร์มที่เขียนคือเอาเดทมอนเยียร์มาทั้ง3อัน แต่ว่าอันนี้เอาแค่วันแปลว่าผมต้องเช็คด้วยใช่มั้ยฮะว่าเดือนเหมือนกันหรือเปล่า
+32:32 Changsalak,Alisara,TH-Bangkok,Accounts Receivable: ใช่ค่ะ บางทีมันเป็นสมมุติบินปลายเดือน ข้ามกันอย่างเงี้ย ก็เดือนมันก็จะเปลี่ยนไปและ
+32:39 Chamnong,Nick,TH-Bangkok,Information Technology: ก็ต้องออกมาทั้งยวง แต่ว่าถ้าเดือนเดียวกันจะเอาแค่วันที่ที่ไปขี่นะฮะ
+32:50 Changsalak,Alisara,TH-Bangkok,Accounts Receivable: คุณนิค ประมาณนี้ค่ะค่ะ
+32:50 Chamnong,Nick,TH-Bangkok,Information Technology: แล แล้วก็เรื่องเรื่องเรื่องคิวอาร์ อันนี้จะเป็นอัพโหลด
+32:54 Changsalak,Alisara,TH-Bangkok,Accounts Receivable: อ๋อใช่ โอเค โอเค อันนี้มีคําถามนิดนึงว่าตัวออโตเมทอะมันสามารถที่จะเหมือนเอาท่าทีเอคิดคร่าวคร่าวมัน3 ารถไปเหมือนเป็นลูกอัปไฟล์ภาพที่เป็นเจเป็กได้รึเปล่าคะ เราให้จะเห็นได้ว่าตัวคิวอาร์พร้อมเพย์อะค่ะ มันแปรผันไปกับโค้ดลูกค้าค่ะ
+33:15 Chamnong,Nick,TH-Bangkok,Information Technology: ถ้ามีถ้ามี ถ้ามีไฟล์ถูกที่
+33:15 Changsalak,Alisara,TH-Bangkok,Accounts Receivable: ใช่
+33:19 Chamnong,Nick,TH-Bangkok,Information Technology: ที่ ที่ที่แบบ ถือว่า เป็นไฟล์ชื่อ 6875657 คิวอาร์ดอทเจแปคอยู่ที่โฟลว์เดอร์นึงสักที่นึงถูกมั้ยฮะ
+33:28 Changsalak,Alisara,TH-Bangkok,Accounts Receivable: อันเนี่ยไอขอจากทางซิตี้แบงก์ได้ค่ะ
+33:32 Chamnong,Nick,TH-Bangkok,Information Technology: โอ้แต่ผมผมทํายังไง
+33:33 Nawawitrattana,Siri,TH-Bangkok,Credit Management: เราเรามีเราเรามีแล้วเอ๊ะ เราเหมือนเรามีแล้วตอนแรกคิดว่าเตรียมมาให้ครูนิคดูไปแล้วเรามีทุกคดอยู่ในโฟลเดอร์เท่าที่จําได้มีหนึ่งโฟลเดอร์ แต่ไม่แน่ใจว่ามีใครเข้าไปอัพเดทหรือเปล่า ถ้ามันเป็นแบบภาพแล้วก็เป็นชื่อไฟล์ที่เป็นโค้ชอย่างเงี้ยเลยค่ะ
+33:58 Chamnong,Nick,TH-Bangkok,Information Technology: ยังไงนะครับ
+33:59 Nawawitrattana,Siri,TH-Bangkok,Credit Management: ลูกอับมาแปะได้มั้ย
+34:02 Chamnong,Nick,TH-Bangkok,Information Technology: ได้ฮะลูกเอาม็อบได้
+34:02 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: พี่ฟาย สมมุติว่าก็นั่นก็อย่างเงี้ยค่ะ 6 แอคเคาท์
+34:03 Nawawitrattana,Siri,TH-Bangkok,Credit Management: อือ
+34:05 Chamnong,Nick,TH-Bangkok,Information Technology: จริงจริง จริงจริงมันมี 2 ท่าคือหนึ่ง ผมลุคอัพมาแปะกับ 2 คือคนคนมีคนมา attack เข้าไปในเข้าไปในเพจ customer ของผมอะฮะ เก็บใน data และ bate เลยทําได้ 2 แบบ
+34:17 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: ก็คือทําเป็นครั้งเดียวใช่ไหมคะ
+34:19 Nawawitrattana,Siri,TH-Bangkok,Credit Management: ได้
+34:19 Chamnong,Nick,TH-Bangkok,Information Technology: ได้ทําครั้งเดียวได้แต่ต้องทํา
+34:22 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: ก็คือก็คือเทรดไปใน customer หนึ่งครั้งก็เก็บเป็นเหมือนdatabase ตรงนั้นไว้ถูกมั้ยคะ ได้แล้วแล้วมัน
+34:23 Chamnong,Nick,TH-Bangkok,Information Technology: อันนี้
+34:26 Nawawitrattana,Siri,TH-Bangkok,Credit Management: ครับ
+34:27 Chamnong,Nick,TH-Bangkok,Information Technology: ใช่ แต่ทีนี้มาถามคือถ้ามันเปลี่ยน
+34:29 Nawawitrattana,Siri,TH-Bangkok,Credit Management: แล้วถ้ามีถ้ามีลูกค้าใหม่ถ้ามีลูกค้าใหม่ เค้าก็เพิ่มเข้าไปได้ถูกป่ะ
+34:35 Chamnong,Nick,TH-Bangkok,Information Technology: ถ้ามีลูกค้าเพิ่มเข้าไปได้ แต่ต้องไม่ลืมเพิ่ม คือมันต้องทําเลย
+34:44 Nawawitrattana,Siri,TH-Bangkok,Credit Management: ซึ่งไปเพิ่มในดาต้าเวทคุณคุณนิค
+34:44 Changsalak,Alisara,TH-Bangkok,Accounts Receivable: แล้วสมมุติถ้า นิค แล้วระหว่างที่รอคิวอาร์ที่ gen มาจาก bank อะค่ะ ในระหว่างนั้นน่ะ มันมันจะไม่ error ใช่มั้ยคะ ถ้ามันไป look up แล้วจับว่า customer code เนี่ย มันไม่มีภาพภาพพร้อมเพย์อะค่ะ
+34:57 Chamnong,Nick,TH-Bangkok,Information Technology: แล้วแล้วแล้วแต่อยากให้เป็นฮะ อยากให้ error มาก
+35:02 Changsalak,Alisara,TH-Bangkok,Accounts Receivable: จริงจริง มันจําเป็นที่จะต้องแจ้งยอด แต่ว่าเพียงแค่ว่าเราอะรอตัว qr พร้อมเพลงกับกับทางธนาคารอยู่อย่างเงี้ย
+35:08 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: น้องน้องน น้องน้องน้องเอ แล้วเราอยากให้มันโชว์ไง สมมุติว่าระหว่างที่เรารออย่างเงี้ยค่ะ เรายังไม่มีตัวคิวอาร์แต่เราจะแจ้งยอดแล้วเราจะแจ้งให้เค้าจ่ายข้อมูลอะไรมาแทน
+35:17 Chamnong,Nick,TH-Bangkok,Information Technology: จะทํายังไงฮะ
+35:22 Changsalak,Alisara,TH-Bangkok,Accounts Receivable: อือจริงจริงให้มัน blank ไปได้ไหมคะ แต่แบบไม่อยากให้ว่าไม่อยากให้ meeting ไม่อยากให้มัน messing ตัวตัว customer code เนี่ยที่จะไม่ถูกแจ้งยอดอะ คือจริงจริงอะ อาจจะ blank ตัวตัวปะรูปภาพนี้ออกไป แต่พอ once ที่มันมีพร้อมเพย์เข้าไปลูกภาพอะค่ะ เข้าไปแอดในข้อมูลอะ ก็ให้มันปรากฏ
+35:39 Chamnong,Nick,TH-Bangkok,Information Technology: ก็ ก็คือถ้าไม่มีก็ไม่ต้องส่งประมาณไม่มีก็ไม่ต้องมีแต่ว่าส่งอยู่ดี ประมาณนั้นใช่มั้ยฮะ
+35:42 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: ใช่อย่างไปดู อยู่ดี ใช่ลองไปดูรูปลูกหน้าแปดได้มั้ย น้องเอกหน้าแปดคือคือเข้าใจว่าถ้าไม่มีอะค่ะ มันจะมีวิธีการจ่ายเงินทางขวามือในทุกทุกลูกค้าป้ะ หรือว่าไม่ไม่ทุกข์ลูกค้า
+35:46 Changsalak,Alisara,TH-Bangkok,Accounts Receivable: ใช่
+35:56 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: ข้อมูลตรง บิลเพย์เมนต์อันเนี้ย มันมันมาด้วยมะ
+35:56 Changsalak,Alisara,TH-Bangkok,Accounts Receivable: จริงจริงมัน
+35:59 Nawawitrattana,Siri,TH-Bangkok,Credit Management: ตรงเนี้ยจริงจริงต้องปรากฏทั้ง 2 อันด้วยซ้ํา
+36:01 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: เออ
+36:04 Nawawitrattana,Siri,TH-Bangkok,Credit Management: คือถ้าฝั่งพร้อมเปย์ไม่มีฝั่งบิลบิลเพลย์เมนต์ คือจริงจริง เวลาลูกค้าจะจ่ายเงินอะค่ะ เค้าสามารถเลือกได้ทั้งพร้อมเพย์ทั้ง bill payment ถ้าเค้าไม่สะดวกพร้อมเปย์เค้าก็จะใช้ข้อมูลในการจ่ายเงินฝากที่เป็นบิลเปย์ment ในการจ่าย เพราะฉะนั้นทุกคนที่ที่ attached ส่งให้ลูกค้าก็คือต้อง attached ทั้งทั้งพร้อมเพย์ แล้วก็ bill payment อือ คือถ้า
+36:05 Chamnong,Nick,TH-Bangkok,Information Technology: แต่ แต่ว่าเลขเลข2อันนี้
+36:26 Chamnong,Nick,TH-Bangkok,Information Technology: แต่ทีนี้บิลเพย์เมนต์เลขเลขบนนี้ผมจะให้เป็นคอนสแตนต์ของทั้งบริษัท แต่ว่าเลขล่างนี่เป็นยูนิคเพอร์คัสตอมเมอร์ปะฮะ
+36:33 Nawawitrattana,Siri,TH-Bangkok,Credit Management: ใช่ค่ะ ใช่ค่ะ
+36:36 Chamnong,Nick,TH-Bangkok,Information Technology: ซึ่ง ซึ่งซึ่งมันคือ 999 a แล้วต่อด้วย customer เสมอถูกมั้ยฮะ แปลว่าผม imply ได้เลย ถ้ามี customer code
+36:39 Nawawitrattana,Siri,TH-Bangkok,Credit Management: ต่อด้วย customer coach ใช่
+36:51 Chamnong,Nick,TH-Bangkok,Information Technology: เป็นกรอบแล้วก็เป็น 2 ฝั่งอย่างนี้ หรือว่าหรือว่ายังไงก็ได้
+36:58 Changsalak,Alisara,TH-Bangkok,Accounts Receivable: ยังไงก็ ยังไงก็ได้ค่ะ
+36:59 Nawawitrattana,Siri,TH-Bangkok,Credit Management: ท่านให้ฟัง แต่ถ้าได้ฟอร์มแมทช์เดิมกันอย่างงี้ เค้าก็ไม่ได้แบบอะไรต่างกัน อืม
+37:03 Changsalak,Alisara,TH-Bangkok,Accounts Receivable: ดีก็ไม่ได้ ใช่ค่ะ
+37:06 Chamnong,Nick,TH-Bangkok,Information Technology: เดินออก
+37:10 Nawawitrattana,Siri,TH-Bangkok,Credit Management: ซึ่งไอ999เองเนี่ยค่ะ อันเนี้ยยังยัง ยังคงอย่างงี้อยู่ แต่ถ้าอินเดอะฟิวเจอร์เรามีการเปลี่ยนแปลงอะไร เราสามารถแก้ไขได้ เราสาม
+37:22 Chamnong,Nick,TH-Bangkok,Information Technology: ครับ แต่ต้องให้ผมแก้นะฮะ
+37:24 Nawawitrattana,Siri,TH-Bangkok,Credit Management: ได้ได้ได้ อันเนี้ยเป็น quote ที่ที่คุยกับทางธนาคารไว้อะคะ คือถ้าเราเปลี่ยนธนาคารเราอาจจะต้องเปลี่ยนวิธีการทํางาน ซึ่งเดี๋ยวน่าจะต้องบอกอีกทีจ่ะ
+37:39 Chamnong,Nick,TH-Bangkok,Information Technology: ครับผม แล แล้วตัวส่งซีซีฮะส่งทุกเมล์ในชีวิตมันจะมี 12345 อะไรอย่างเงี้ยฮะ
+37:50 Changsalak,Alisara,TH-Bangkok,Accounts Receivable: ใช่ค่ะ คือถ้าถ้าปลายคัสตอมเมอร์โค้ดไหนปรากฏปรากฏ มีอีเมล์ไหนบ้างอะคะ ให้ให้ส่งทั้งหมดเลย
+37:59 Chamnong,Nick,TH-Bangkok,Information Technology: เลยนะฮะ 12345 แล้วก็แล้วก็ข้างหลังด้วยมั้ย เซลล์ 12345 แล้วก็ส่งหมดทุกเมล์เลยปะฮะ
+38:09 Changsalak,Alisara,TH-Bangkok,Accounts Receivable: ใช่ค่ะ
+38:13 Chamnong,Nick,TH-Bangkok,Information Technology: โอ โอเคได้ครับ ซึ่งซึ่งจํานวนเมลจะเป็นเท่านี้เสมอ โดยจะเป็น 554 มิน มิน่ามีมากกว่านี้แล้วใช่ไหมครับ มิน่ามีมากกว่านี้แล้วใช่ไหม
+38:21 Changsalak,Alisara,TH-Bangkok,Accounts Receivable: เท่า เท่าที่เก็บข้อมูลมาค่ะ แม็กซิมั่มสุดอะมัน ตอนนี้มันมีอยู่เท่านี้ค่ะ
+38:26 Chamnong,Nick,TH-Bangkok,Information Technology: เขตได้ครับ เที่ยงนี่ยังไงฮะ ริเทียน
+38:35 Changsalak,Alisara,TH-Bangkok,Accounts Receivable: อ๋อ ตอนนี้จริงจริงมันคือหลักหลักที่ใช้อ่ะคือจะคือดูแค่ตัวคัสโตเมอร์โค้ชคัสโตเมอร์เนมอ่ะค่ะ แต่อันนี้มันเหมือนเหมือนแค่แยกเฉยเฉยอะค่ะว่าลูกค้าแต่ละเจ้าอะมันอยู่ภาคอะไรบ้างแต่ว่าเรา
+38:47 Chamnong,Nick,TH-Bangkok,Information Technology: ให้ ให้ผมเก็บไว้ด้วย ติวเตอร์ไหมฮะ
+38:52 Changsalak,Alisara,TH-Bangkok,Accounts Receivable: ก็เก็บไว้ด้วยมันเอเอคิดว่าจริงจริงก็เก็บได้อะค่ะ แต่แต่คิดว่ามันไม่ได้มีผลต่อการส่งอีเมลอ่ะค่ะ เพราะว่าเราส่งเราดูแค่ตัวตัวเมลปลายทาง
+39:02 Chamnong,Nick,TH-Bangkok,Information Technology: เผื่อเผื่ออยากดูเผื่ออยากฟิลเตอร์อยากทํากี่ติอะไรซักอย่าง
+39:04 Changsalak,Alisara,TH-Bangkok,Accounts Receivable: ใช่ ใช่ใช่ค่ะ
+39:10 Chamnong,Nick,TH-Bangkok,Information Technology: ครับ ก็น่าจะมีปัญหาอะไร
+39:21 Changsalak,Alisara,TH-Bangkok,Accounts Receivable: พี่นัทมีอะไรเสริมมั้ยคะ
+39:22 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: เอ๊ะ เราอยากให้มันให้มันมี valiation อะไรมั้ย เช่น สมมติว่า master data ไม่ครบตรงไหนมันจะ trigger ให้เรารู้อะไรอย่างเงี้ย
+39:32 Changsalak,Alisara,TH-Bangkok,Accounts Receivable: หม หมายถึงว่ามันถ้ามัน missing อ่าซักข้อมูลในคอลัมน์ใด คอลัมน์หนึ่งไป
+39:35 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: เออ ใช่ใช่ เอ่อ มันมีอะไรที่มันต้องทริกเกอร์มั้ย ซึ่งสมมุติว่ามัน supply ที่จะมีอีเมล เออ requires feel อะไรอย่างเงี้ย เพื่อให้ให้ให้ทาง process ทางเรา เออาร์ ก็มั่นใจได้ว่าแบบเราข้อมูลเราครบเงี้ย เช่น สมมุติว่า customer นัมเบอร์มันแบบจะให้เราดาวน์โหลด outstanding มา มันต้องมา look up ที่ไฟล์นี้ถูกมั้ยว่ามาสเตอร์เดต้าต้องส่งหาอีเมลใครถ้ามันไม่มีมันจะต้อง volid
+39:42 Chamnong,Nick,TH-Bangkok,Information Technology: ควาย
+40:04 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: ตอน ตอนไหนมันจะต้องขึ้น error ยังไงอะไรอย่างเงี้ย ตอนไหนมัน
+40:07 Chamnong,Nick,TH-Bangkok,Information Technology: ซัมเมอร์นี้มีแค่ร้อยร้อยร้อยเจ้านึง
+40:10 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: อันนี้ อันนี้น่าจะเป็น customer case อย่างเดียวอะค่ะ ที่คุณนิคเป็นแบบเงินสดอะค่ะ ที่จ่ายแบบเป็นเงินสด
+40:15 Chamnong,Nick,TH-Bangkok,Information Technology: มีมีมีมินไม่ได้เยอะมากใช่มั้ยฮะ
+40:17 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: ได้เยอะมาก ประมาณร้อยนึง ใช่ค่ะ
+40:19 Chamnong,Nick,TH-Bangkok,Information Technology: ระบบแบบนี้ น่าจะมีคนน่าจะมีคนแบบเยอะน้อยกว่าที่สุดครับ
+40:20 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: ณณ วันนี้เออ เออ เออค่ะ
+40:27 Nawawitrattana,Siri,TH-Bangkok,Credit Management: ไม่เพราะ
+40:27 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: ใช่ใช่ แต่ว่าเป็นเป็นเป็นลูกค้าเงินสด
+40:27 Nawawitrattana,Siri,TH-Bangkok,Credit Management: ไม่เพราะ บางทีมันมีวิธีมันมีวิธีการแบบจ่ายเงินแบบอื่นอื่น
+40:30 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: จ่ายเงินแบบอื่นใช่เลยไม่ได้อยู่ในสโคปนี้
+40:33 Nawawitrattana,Siri,TH-Bangkok,Credit Management: ใช่เออ อันนี้มันเป็นอันที่แบบว่า เป็นรูททีแล้วก็แบบเสียเวลาในการส่งอีเมล์แมนนวลก็เลยเดี๋ยว develop อันนี้ก่อน อย่างอื่นก็ก็เป็นวิธีแบบอื่นอื่นค่ะ
+40:44 Chamnong,Nick,TH-Bangkok,Information Technology: แล้วแล้วแล้วเทรนด์มันจะเพิ่มหรือจะลดหรือจะคงที่ไปเรื่อยเรื่อยฮะ ดวงซ่าทันแล้วแบบในระยะยาวอะ
+40:52 Nawawitrattana,Siri,TH-Bangkok,Credit Management: ไม่ไม่อือ ตอบยาก ก็ประมาณนี้ค่ะ อืม
+40:59 Chamnong,Nick,TH-Bangkok,Information Technology: โอเค ไม่น่าไม่น่าไม่น่าเปลี่ยนมาไม่ใช่แบบปีหน้าเพิ่มเป็นพันอะไรไม่น่าเป็นใช่มั้ย
+41:02 Nawawitrattana,Siri,TH-Bangkok,Credit Management: โอ๊ ไม่ไม่ใช่ไม่ใช่ไม่ใช่ไม่
+41:04 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: ไม่ ไม่น่าไม่น่ากระโดด เพราะถึงลูกค้าเราเพิ่มอาจจะไปจ่ายเงิน ve ที่อื่นอันนี้นะ
+41:08 Nawawitrattana,Siri,TH-Bangkok,Credit Management: เราเราจะให้ไปใช้วิธีอื่น แต่ลูกค้าที่ที่มาแรกแรกเลยอะค่ะก็คือเค้ายังไม่สามารถแอพพลายวิธีอื่นได้ก็ยังเป็นวิธีนี้ไป
+41:16 Chamnong,Nick,TH-Bangkok,Information Technology: อันที่จริงเพ อันที่จริงเพนน่าจะลด ไม่ใช่เพิ่มถูกมั้ยฮะ
+41:18 Nawawitrattana,Siri,TH-Bangkok,Credit Management: ไม่ลด เพราะเราก็มีลูกค้าเข้ามาเรื่อยเรื่อย
+41:22 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: สัก สักประมาณเนี้ยค่ะ ประมาณนี้ตีไว้100 บวกลบประมาณเนี้ยค่ะ
+41:23 Nawawitrattana,Siri,TH-Bangkok,Credit Management: ค่ะ maintain ประมาณเนี้ย
+41:31 Chamnong,Nick,TH-Bangkok,Information Technology: น่าจะ
+41:32 Changsalak,Alisara,TH-Bangkok,Accounts Receivable: อ๋อพี่นัท เมื่อกี้ที่พี่นัทถามว่าแบบมันมันควรจะมีทริกเกอร์อะไรอ่ะค่ะ คือเอคิดว่าแต่แต่ละเอ่อ สมมุติ ถ้าเออาร์เข้ามา maintain เข้าไปใน table เนี่ยอาร์แล้วลืมกรอกสักสัก คือต้องมีฟิคอะคะว่าอีเมลต้องมีอย่างน้อยหนึ่งแล้วก็เซลล์เซลอีต้องมีอย่างน้อยหนึ่งแล้วก็เออาร์แบ็กอัพต้องมีอย่างน้อยหนึ่งถ้าขาดอันใดอันหนึ่งไปให้มันแบบ
+41:46 Chamnong,Nick,TH-Bangkok,Information Technology: เพราะว่าแบบ
+41:56 Changsalak,Alisara,TH-Bangkok,Accounts Receivable: เมสเสจมาหาเราว่า ข้อมูลมันมัน income press อ่ะค่ะ
+42:00 Chamnong,Nick,TH-Bangkok,Information Technology: ขอดูนิดนึงได้มั้ยฮะ จริงจริงมีปัญหาเรื่องนี้อะฮะ ถ้าถ้าถ้าขอให้ไม่เป็นอย่างนี้ด้วยมั้ยฮะ ไม่มีแบบไอ้ชื่ออะฮะ ขอแบบอีเมล์อีเมล์เลยฮะ
+42:08 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: เมล์เลยให้มันแบบหยิบไปวางได้เลยอะ เป็นอีเมลแอดเดรสเพียวเพียวค่ะ อืม
+42:08 Changsalak,Alisara,TH-Bangkok,Accounts Receivable: อ๋อ โอเค ทา ได้ ได้ได้ค่ะ ได้ได้ค่ะ คุณนิค
+42:14 Chamnong,Nick,TH-Bangkok,Information Technology: เมื่อกลาง เมื่อกลางเมื่อกี้ผมเห็นเหมือนมีรีมาร์คอะไร แปลกแปลก ข้างทางขวา เรื่องหลอกได้ไหมฮะ เรื่องหลอกได้ไหม เนี่ยฮะ ลูกค้าขายมั้ยลําธาร
+42:23 Changsalak,Alisara,TH-Bangkok,Accounts Receivable: อ๋อ อ๋อ อัน โอเคเดี๋ยวเดี๋ยว เอ๊ะ ไป talify ตัวตัวตั๋วอีเมล์ให้ค่ะ
+42:32 Chamnong,Nick,TH-Bangkok,Information Technology: หรือหรือไม่ก็เพิ่ม คอลัมน์ รีมาร์คอะไรสักอย่าง เพื่อไว้ใช้ก็ได้
+42:36 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: พจน์ของตัวเองไป ใช่ค่ะ
+42:38 Changsalak,Alisara,TH-Bangkok,Accounts Receivable: ได้ได้ค่ะ
+42:42 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: ไม่แต่แบบพี่หมายถึงอันนี้สมมุติว่ามันมี customer รายใหม่อะเอ๊ะ แล้วเออาร์ไม่ได้เมนเทนอันนี้เลย เช่นแบบแบบ
+42:42 Changsalak,Alisara,TH-Bangkok,Accounts Receivable: นี้ค่ะ
+42:51 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: ชั่วโมงเก่าๆ 99 เงี้ย เออแล้วแบบเอ้ย ยังไม่ได้มา maintain ใหม่มากหรืออะไรอย่างเงี้ย อือ
+42:57 Chamnong,Nick,TH-Bangkok,Information Technology: อธิบายก็คือเหมือนกับว่าแซบมันมามีมีมีมีมีโผล่มาแต่ว่าไม่มีไม่มี ไม่มีอันนั้นอยู่ในเทเบิ้ลนี้เดี๋ยวผมโวยวายให้ได้
+43:01 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: ใช่แซบมีข้อมูลและมี ใช่ได้เดี๋ยว กดได้อะค่ะ แล้วก็อีกอีกนิดนึงน้องเอ๊ะไอ้ตัวที่เป็นบิลเพย์เมนต์นะคะ ถ้ามันมีข้อมูลน่ะอันนั้นมันแตกต่างตามตามลูกค้าป้ะ จําได้ว่าไอ้พาวเวอร์พอยต์ที่มันจะมีอันนึงเป็นคิวอาร์ทางซ้ายใช่มั้ย เออ ไอ้ทางขวาอันเนี้ย มันแตกต่างตามลูกค้าป้ะคะ
+43:19 Changsalak,Alisara,TH-Bangkok,Accounts Receivable: นะอัน นะ อันนี้ ใช่ค่ะก็
+43:24 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: 23870 อ่ะ ถ้าอ๋อโอเคอ๋อ ถ้าไงก็ต้องแปะไว้ในมาสเตอร์คอสตูมเมอร์มาสเตอร์เดต้าเหมือนกันปะอ๋อ
+43:24 Changsalak,Alisara,TH-Bangkok,Accounts Receivable: ใช่ค่ะ ก็คือตัวเล็บเล็บ2
+43:25 Nawawitrattana,Siri,TH-Bangkok,Credit Management: แตก แตกต่างจากต่างตะกี้ คุณคุณนิค แจ้ง แล้วบอกเออมันต่าง
+43:31 Chamnong,Nick,TH-Bangkok,Information Technology: ไม่เป็นไรเพราะมันเป็น999 เอบวกบวกบวก บวก บวกอะฮะ มันมันคํานวณได้
+43:34 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: อ๋อ โอเค อ๋อ ได้และไอ้ตรงเล็บหนึ่งล่ะคะ เล็บหนึ่งเป็นเบอร์นี้เสมอใช่ไหม
+43:39 Chamnong,Nick,TH-Bangkok,Information Technology: ถ้าเจ้าของบริษัท
+43:40 Nawawitrattana,Siri,TH-Bangkok,Credit Management: และหนึ่งเป็นบัญชีธนาคารค่ะ เล็บ 2 เป็นตัวน้องอ่า น้องน้องโมน้องโมกับน้อง
+43:40 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: โอเค โอ โอเค โค้ดดิ้งของของคอสตูมเมอร์ โอเค
+43:48 Nawawitrattana,Siri,TH-Bangkok,Credit Management: เออ เออ คือแบบว่า 99 เอเนี่ยเป็นตัวไพออริตี้ที่ซิตี้ แบงก์จะต้องคีย์แมทช์เงินเพื่อจะไปลาในล็อกบ็อกซ์อันนี้นะเออจ่ะ
+43:56 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: ไปแกะมาแล้วได้โอเคค่ะ
+44:00 Nawawitrattana,Siri,TH-Bangkok,Credit Management: มี มีความเชื่อมโยงกันจ้ะ
+44:02 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: ได้ได้ นึกว่านึกว่าต้องไป maintain อีกหนึ่งคอลัมน์ใน customer master ถ้างั้นก็ไม่ต้องได้เลย โอเค
+44:06 Nawawitrattana,Siri,TH-Bangkok,Credit Management: เปล่าเปล่า เปล่าเปล่าเปล่านั่น
+44:13 Chamnong,Nick,TH-Bangkok,Information Technology: ก็ค่อนข้างเครียด
+44:18 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: น้องโมถามอะไรป้ะ ต้องถามเลยโม
+44:20 Chamnong,Nick,TH-Bangkok,Information Technology: เพราะทีนี้ทีนี้ process ตอนเริ่มต้นอะ ตอนช่วงแรกผมเข้าใจว่าผมจะทําเป็น คล้ายคล้าย คล้ายคล้ายกับเป็นอะแอปแล้วก็กดดูแล้วอีเมลล์ที่ส่งเป็นอย่างงี้ แล้วก็อาจจะฝากเช็คเป็นช่วงแรกฮะ เหมือนกดส่งด้วยมืออาจจะช่วงแรกดูก่อนว่าถูกมั้ยเค้าเคลียร์จนถูกอาจจะแบบมากดส่งด้วยมือทีละไฟล์ก่อนอะไรอย่างเงี้ยสักอาทิตย์ 2 อาทิตย์ หรืออะไรยังไงก็แล้วแต่แล้วแล้วพอหลังท่านมั่นใจแล้วค่อยเป็นออโตเมติก
+44:38 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: อือ อือ อือ
+44:45 Chamnong,Nick,TH-Bangkok,Information Technology: อย่างงี้ดีมั้ยฮะ อย่างงี้ดีมั้ยฮะ
+44:46 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: ได้ค่ะ ช่วงช่วงช่วงที่มันเหมือนมันเทสติ้งอย่างเงี้ยค่ะ จากวีค 2 วีคแรก หรือ 2 วีคแรก อาจจะเหมือนแบบว่า ส่งส่งมาให้ให้เออาร์ กันเองก็ได้ก็ลองเทียบเนาะก่อนก่อนที่เราจะไลฟ์ไปให้ลูกค้า จริงอย่างงี้ก็ได้อะค่ะ หรือยังไงคะ แต่ว่าเรา อ๋อ มันจะเยอะใช่ไหมคะ อ่อ มันจะเยอะใช่ไหม
+44:59 Chamnong,Nick,TH-Bangkok,Information Technology: หูว แต่ว่าแต่ว่าแต่ว่าคุณจะมันจะวันละร้อยเมตร อันนี้แล้วแต่ฮะ
+45:07 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: เดี๋ยวเดี๋ยวได้เดี๋ยวรอดีดีไซน์ตัวเทสติ้งอีกทีก็ได้ว่าเราอยากให้มันแบบแบบเทสติ้งจะให้อีเมล์มัน แต่แต่มันน่าจะเลือกดูได้ไหมนะ
+45:19 Chamnong,Nick,TH-Bangkok,Information Technology: ถ้าถ้าผมถ้าผมเขียนให้มันเหมือนกับว่าแทนที่จะส่งลูกค้าจริงส่งเข้าอีเมลนี้แทนทําได้ครับ
+45:23 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: ใช่ส่งเข้าอีหนึ่งอีแทนแล้วก็ทางเออาร์เออ ก็แม่ก็ส่งร้อยร้อยอันแล้ว เออาร์อาจจะเลือกว่าเพราะมันมีตรงซับได้อีเมล์อยู่แล้วค่ะว่าเราอยากจะเทสแบบลูกค้าเบอร์ไหนก็ลองเปิดเปิดมาดูลูกค้านั้นว่า เอ้ย มันมันแบบ
+45:26 Chamnong,Nick,TH-Bangkok,Information Technology: มันจะเยอะมาก
+45:40 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: มาแปะในในอีเมล์ถูกมั้ย
+45:42 Changsalak,Alisara,TH-Bangkok,Accounts Receivable: เพิ่มเพิ่มตัวแบบไอเมล์บอกให้มันรู้ให้มันเข้าไปในไอ้พวกนี้ก็ได้จะได้ไม่ต้องแบบเข้ามาโชว์ในอินบ็อกซ์แทนไม่เป็นไรค่ะ เทรดได้ค่ะ คุณนิค
+45:51 Chamnong,Nick,TH-Bangkok,Information Technology: นะครับ ก็คือแปลว่าแปลว่าผมฟูออโต้ไปเลย แต่ว่าส่งไปที่เมลอื่นแทน นะครับก็
+45:56 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: ใช่ใช่ใช่ ตอนแรกอะ ตอนแรกเราอาจจะ maintain ตัว customer master อันนั้นอะเป็นเป็น mile กลางทั้งหมดอะไรอย่างเงี้ยค่ะ ให้มันเด้งมาที่นี่หมดก็ได้อะค่ะ หรือว่าเราเป็นตอนนี้มันมีน้องน้องที่ทําอยู่34คนใช่มั้ย พี่ส้มมีน้องกั้งอะไรเงี้ย อาจจะเป็นแบบเป็นเป็นเจ้าตัวดูเป็นคนดูเป็นคนvalid ก็ได้อะค่ะ เช่นแบบเออ ถ้าลูกค้าอยู่โซนนี้ก็เป็นเป็นอีก้างทางเซต อันนั้นตอนช่วง testing อย่างเงี้ยก็ได้
+46:22 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: เออแต่แต่ เออ แต่แต่ลองเดี๋ยวเรา design ตัว testing อีกทีก็ได้ค่ะ
+46:25 Chamnong,Nick,TH-Bangkok,Information Technology: แล้วก็ผมอาจจะต้องขอไม่รู้ได้รึเปล่า อาจจะต้องขอสิทธิ์ 10 สิทธิ์ส่งอีเอสอะไรอย่างเงี้ยฮะ
+46:31 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: นัดเหมือนได้มันน่าจะเหมือนตอน จิตส่งอีเมลใช่มั้ยคะ เหมือนอันนี้ไปอันนี้มันมันพี่อ้อเราจะให้เมลมันออกจากเออาร์เหมือนกันปะคะ อ๋อ จิตส่งอี อาร์แชร์ อีเมล์ อันนั้นเหมือนกันว่าใช่มะ
+46:46 Nawawitrattana,Siri,TH-Bangkok,Credit Management: ใช่ ก็ก็ก็ดีเดี๋ยวมันน่า
+46:48 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: ตัว ตัวเดียวกันนะ น่า น่า น่าจะเหมือนกับตัว customer master data อันนั้นอะค่ะน่า
+46:52 Nawawitrattana,Siri,TH-Bangkok,Credit Management: น่าจะมีเรื่องตอนตอน อันนี้ขออนุญาตถาม เดี๋ยวเดี๋ยวตอบได้มั้ยเพราะว่าถ้ามันออกจากเออาร์เลยปึ๊บ ช่วงแรกเนี่ย
+47:01 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: ได้ได้ อืออ๋อ เดี๋ยวเดี๋ยวลูกค้าจะงง อาจจะงงว่าอ๋ออ่ะ อาจจะเป็นคอมมูนิเคชั่น
+47:06 Nawawitrattana,Siri,TH-Bangkok,Credit Management: ลูกค้าเราอาจจะเออ อาจจะงง อาจจะต้องมีอะไรกลับไปบอกเขาก่อน เออ แล้วเดี๋ยวไม่รู้จะติดต่อใครอะไรยังไงเนี่ย เออ เออ เดี๋ยวเราขออนุญาต
+47:15 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: อ๋อเดี๋ยวขอเดี๋ยวเดี๋ยว ขอ final ตรงนี้นิดนึงว่าจะทํายังไงคงเสร็จละกันนะคะคุณนิค
+47:19 Nawawitrattana,Siri,TH-Bangkok,Credit Management: แต่สุดท้ายอยากให้ออกจากอันกลางก็ดีค่ะ เดี๋ยว ขออนุญาตไปคิดก่อนว่าแล้วเราจะ communicate ยังไงว่า เอ้ย ถ้าเราถ้ามันมีปัญหาคนที่ได้อีเมล์ฉบับนั้นไป จะต้องติดต่อ เออาร์ คนไหน ติดต่อยังไง อันนี้อันนี้ปาไว้ก่อนครับ
+47:35 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: เป็น signature ได้มั้ยคะ คุณนิคว่าสมมุติว่ามีปัญหาคือคือคือ signature ของตัว mall template ทั้งหมดเลยว่าถ้ามีปัญหาลูกค้าโซนนี้ติดต่อแบบให้ให้ชื่อ contact ของ a r ไปเลย 4 คน แล้วก็เป็น fixed fix signature แบบนี้เสมออะไร อย่างเงี้ยค่ะ มี
+47:40 Chamnong,Nick,TH-Bangkok,Information Technology: ได้ใช่ได้ ได้ได้ได้ครับ
+47:47 Nawawitrattana,Siri,TH-Bangkok,Credit Management: เออ ได้
+47:51 Chamnong,Nick,TH-Bangkok,Information Technology: อืม ได้ ได้ครับ แต่ต้องเป็นไดนามิก เพราะว่าแต่ละคนไม่เหมือนกันถูกมั้ย
+47:54 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: ไดนา มิก ก็ก็เดอะ
+47:56 Chamnong,Nick,TH-Bangkok,Information Technology: แต่ละคนมีเออาร์ คนละคนกัน
+47:59 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: ใช่หรือว่าใส่เป็นโซนไปเลยก็ได้ใส่ทั้ง 4 ชื่อไปเลยก็ได้ แต่ว่าเขตนี้เป็นคนนี้อะไรอย่างเงี้ยค่ะ อืม
+48:01 Nawawitrattana,Siri,TH-Bangkok,Credit Management: งั้นตะเกี้ยตะเกี้ยไอรีเจียนน่ะได้ใช้และตะกี้ที่คุณนิคบอกอะไอคอลัมน์ ลิเจียนอะ เพราะว่าลีเจียนจะจะสัมพันธ์กับคนที่รับผิดชอบแต่ละลีเจียม
+48:08 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: อือ
+48:15 Chamnong,Nick,TH-Bangkok,Information Technology: แต่ว่าไม่ใช่ว่ามีอีเมล์อยู่ในโลว์ของ customer แล้วอ่ะครับ
+48:18 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: อ๋อ มีป่ะไหนน้องเอน้องเอ แชร์ แชร์ตัว customer อีกรอบนึงพี่จําได้ทางขวา มันจะมีชื่อ a r contact อยู่เออค่ะ ก็เอาตรงนั้นก็ได้เนี่ยทางทางขวาอะค่ะ อืม อืม ได้เราเราก็สามารถเออ
+48:19 Chamnong,Nick,TH-Bangkok,Information Technology: ใช่ใช่ข้างหลัง
+48:21 Nawawitrattana,Siri,TH-Bangkok,Credit Management: มีปะ
+48:23 Chamnong,Nick,TH-Bangkok,Information Technology: คือ คือผมพูดคุยว่ามี
+48:25 Nawawitrattana,Siri,TH-Bangkok,Credit Management: อ๋อ ถ้าใช้คอลัมน์นั้นก็ได้ เพราะว่าเพราะว่า specific เลยว่า เป็นใคร
+48:25 Changsalak,Alisara,TH-Bangkok,Accounts Receivable: ใช่ มีอยู่ค่ะ เนี้ย
+48:31 Nawawitrattana,Siri,TH-Bangkok,Credit Management: คือ คือคืออันไหนเอ่ย
+48:31 Chamnong,Nick,TH-Bangkok,Information Technology: แต่มันจะมันจะมีประเด็นเรื่องว่า ถ้าอยากให้เป็นซิกเนเจอร์มันจะไม่ใช่แค่อีเมลไง มันจะมีแบบชื่อตําแหน่งอะไรรึเปล่าฮะ
+48:40 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: ก็แอดแอดเพิ่มคอลัมน์ได้ไหม คุณนิคแล้วใส่เป็นก็คืออีแล้วก็มีเป็นเป็นชื่อมันจะเยอะไปอะ
+48:46 Chamnong,Nick,TH-Bangkok,Information Technology: มันจะมันอาจจะต้องมีเคเบิลเลยอะฮะ คือถ้าถ้าเป็นแบบนี้ใช่มั้ย สมมุติว่าชื่อใช่มั้ย ก็ต้องมีชื่อชื่อเท่าจํานวนโลว์เลยอะ ทุกทุกสมมติจะมาแก้ชื่อก็ต้องแก้ทุกโรงก็ก็ได้เหมือนกัน ถ้าถ้าถ้าmen train แบบอีกอันนึงก็คืออาจจะต้องทําเป็นอีกอีกอีก cable นึงเลยฮะว่าเคเบิลว่าอีเมลเนี่ย รายละเอียดของคนนี้คืออะไร แล้วก็เหมือนผมก็ไป get intable หนึ่งมาเหมือนกับชื่อ นามสกุล ตําแหน่งอะไรสักอย่างที่อยากให้เป็นโชว์อะฮะ เบอร์โทรศัพท์อะไรอย่างเงี้ยฮะ
+49:17 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: ก็ ก็คิดว่าต้องเราอยากใส่ไป
+49:19 Nawawitrattana,Siri,TH-Bangkok,Credit Management: อย อย่างน้อยต้องมีอ้าว อันนี้ก็ได้เอาอีเมล์อันนี้ก็ได้ เออ เบอร์โทรศัพท์ควรจะต้องมีแค่นั้นแหละ ไม่ต้องตระหนกตําแหน่งอะไรไม่ต้องไม่ต้องบอกใครก็ได้ เออเอาแค่อีกับโทรศัพท์
+49:21 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: มีชื่อกับโทรศัพท์หรอ อีเมล์
+49:24 Chamnong,Nick,TH-Bangkok,Information Technology: มันก็ต้องมีตลาดอีกอีกอีกเลย
+49:28 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: ต้อง อืม ค่ะ ก็ โทร โทรศัพท์มีปัญหา ติดต่อติดต่อชื่อนี้บ้าน รายชื่อมันมาอยู่ในอีเมล์ก็ได้ ติดต่ออีเมลนี้เลยอะไรอย่างเงี้ยก็ได้ค่ะ
+49:32 Chamnong,Nick,TH-Bangkok,Information Technology: ที่ ที่เอาชื่อเหรอฮะ อ๋อจริงจริงจริงจริงจริงจริงจริงจริงจนได้ ผมนึกออกละผมเก็ทอันนี้35 ได้ถูกมั้ยฮะ อีเมล์ที่อยากชื่อชื่อชื่อชื่อผมดึงจาก365 ได้
+49:45 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: ใช่ใช่ น่าจะได้ค่ะ อืม
+49:47 Chamnong,Nick,TH-Bangkok,Information Technology: แล้วแล้วแล้วแต่เบอร์โทรอันนี้ไม่แน่
+49:51 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: เบอร์โทร ขอโทษเดี๋ยว นัท เอ๊ะ ปกติเบอร์โทรของพี่อ้อมันเป็นเบอร์โทรของออฟฟิศ แล้วมันก็รีจิสเตอร์อยู่ในของของแบบของไดเรกทอรี่บริษัทใช่มั้ย พี่น่าจะดึงได้นะคะ คนกลุ่มนี้น่าจะมีเบอร์โทร
+50:01 Nawawitrattana,Siri,TH-Bangkok,Credit Management: ใช่ ใช่ใช่ใช่
+50:03 Chamnong,Nick,TH-Bangkok,Information Technology: เพราะผมดึงดึงดึงเบอร์โทรจาก365ได้เลยนะฮะ
+50:07 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: เสียดายลองลองเอาอ่ะ ตัวนึงไปไปดูว่ามีไหม เพราะว่าจริงจริงแบ็คอัพน่าจะมี3 มี45คนแค่เนี้ยอะค่ะ อือ น่าจะดึงได้ค่ะ
+50:13 Chamnong,Nick,TH-Bangkok,Information Technology: ถ้าอย่างงั้นผมต้องก็ไม่ต้อง ไม่ต้องมีราคาเพิ่ม หรือผมไปดึงเนื้อ 365
+50:17 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: อือ ได้ค่ะ เมื่อกี้โมถามจะถามอะไรนะ จิ๊บ พิมพ์แว๊บแว๊บ
+50:32 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: เอ่อ ตอนนั้นโมจะถามนิดนึงค่ะว่าเราจะ maintain รายชื่อลูกค้าด้วยด้วยฝ่ายนี้อย่างเดียวเลยใช่ไหมคะ
+50:41 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: สิงห์ เป็น format excel หรือว่าคําถามคือยังไงนะคะ
+50:45 Chamnong,Nick,TH-Bangkok,Information Technology: คือคือคืออย่าอธิบายถ้าได้ตอนแรกแน่แน่คือผมดึงเอ็กเซลเนี่ยเข้าดาต้าเบสผมใช่มั้ยฮะ ทีนี้มันก็มี2 ท่าว่าจะมีเห็นต่อในเอ็กเซล ผมก็จะดึงทุกวันหรือดึงทุกอะไรสักอย่างอันที่2 ท่าที่2ก็คือ maintenance ในระบบผมก็ไม่ต้องยุ่งกับฝ่ายนี้อีกเลย แต่มันจะผสมกันยาก เพราะว่าเพราะว่าเวลาผมทําในของผมผมจะได้มาแก้ฝ่ายเดียวฮะ นึกนึกออกใช่ไหมฮะ คือคือคือ
+51:13 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: เข้าใจค่ะ ก็คือเหมือนแค่ไฟล์เนี้ยเป็นไฟล์ตั้งต้นที่เอาเพื่อเอาเข้าไปในเดต้าเบสของคุณนิค หลังจากนั้นก็เหมือนอิ๊กนอร์ไฟนี้ไปเลย เพราะว่ามันจะไม่อัพเดทแล้ว
+51:21 Chamnong,Nick,TH-Bangkok,Information Technology: อันนั้นคือท่าหนึ่งอีกท่านึงก็คือว่าอีกท่าที่2ก็คือผมจะไม่ไม่มี ไม่มีไม่มีปุ่มให้มาแก้ที่ของผมผมจะคอยลิฟท์ไฟต์นี้ตลอดเวลาแทน ถ้าอันนั้นก็มาแก้ในฝ่ายนี้อยากได้แบบไหนฮะ
+51:23 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: อันนี้คือท่าแรก
+51:36 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: คือโมรู้สึกว่าถ้าถ้าแบบนี้แบบไม่มีปุ่มให้แก้ได้ มันก็น่าจะ validate ประเด็นที่เราเคยคุยกันก่อนหน้านี้ได้มั้ยคะว่าแบบเรื่องอีเมลต้องมี format แบบไหนอีเมล์ห้ามต้องมีอย่างน้อยหนึ่งอันหรืออะไรอย่างเงี้ย
+51:37 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: ไหน
+51:54 Chamnong,Nick,TH-Bangkok,Information Technology: ได้ก็ก็ก็แต่ถ้าแบบนั้นก็คือว่าก็จะไม่มีไฟล์นี้และในอนาคตอันนี้โอเคป่ะฮะ ถ้าโอเคแล้วแล้วพร้อมที่จะมาแก้ที่ผมทั้งหมดทั้งหมดก็ก็ได้ไม่มีปัญหา ถ้าเป็นผมผมพรีเซอร์ให้แก้ที่ผมอยู่แล้วปะวะ เพราะว่าเพราะว่าเพราะว่าถ้าแก้ที่ไฟล์มันมีปัญหาเรื่องประเภทแบบว่า
+52:11 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: Dm ar ok Dma ok มั้ยคะ
+52:18 Chamnong,Nick,TH-Bangkok,Information Technology: ว่าแก้ตอนก่อนส่งแต่ผมลิฟต์ไปแล้วต้องรอวันถัดไป ผมถึงมาอ่านไฟล์นี่อีกทีอะไรอย่างเงี้ยมันจะมีเรื่องเวลาที่ผมสิงอะฮะ ผมไม่ได้ sin ตลอดเวลา และ และแก้ที่ผมมัน effective หรือ middley เลยฮะ แต่ แต่ก็ต้องมาแก้ที่ผมก็ต้องสอนแต่ว่าถ้าถ้าเป็นเอ็กเซลอาจจะแบบว่าแชร์ริ่ง เอ็กเซลให้คนอื่นที่ไม่ต้องมาเข้าในแอปเลยแล้วเค้าแก้ได้เลย อันนี้ผมก็ไม่ทราบเหมือนกันว่าในโป้งเสร็จแล้วท่าไหนจะพรีเฟอร์มากกว่า
+52:50 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: แม่ที่คุณอีก นี่คือหมายถึงว่าต้องติดต่อมาหาคุณนิคเหรอคะ
+52:52 Chamnong,Nick,TH-Bangkok,Information Technology: ครับอ่ะฮะ วินไม่ไม่ไม่
+52:55 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: มันเป็นเทรนด์ในแอป มันเป็นเทรนด์ในแอป เหมือนคุณเองจะต้อง maintain เหมือนเป็นเป็นให้เข้า
+53:00 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: แม็คออฟตัวนึงใช่ไหม
+53:02 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: อืม
+53:02 Chamnong,Nick,TH-Bangkok,Information Technology: ใช่ใช่
+53:02 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: อืม ใช่ ใช่
+53:03 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: อือ
+53:04 Chamnong,Nick,TH-Bangkok,Information Technology: ผมไม่ได้ maintain นะฮะ maintain ซึ่งซึ่งก็จะรวมถึงอัพโหลดอัพโหลดไอรูปรูปไอ้ นั่นด้วยนะฮะ รูปรูปถ่ายฮะ ซึ่งจริงจริงก็มันก็อาจจะดี เพราะว่ามันอยู่ที่เดียวเพราะว่าถ้าถ้าเป็นเอกเซลมันก็ต้องมี การไปมี 2 เรื่องก็ต้องเอกซ์เซล แล้วก็ต้องมีคิวอาร์ด้วย
+53:16 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: รูปคิวอาร์โค้ด อืม แต่ อืม แต่ถ้าเกิดว่าเอาไปไว้ในของคุณนิคหมดก็คล้ายว่าต้อง maintain อันข้อมูล อันนี้พร้อมที่จะ add attack ตัวคิวอาร์เข้าไปพร้อมพร้อมกันเลย
+53:36 Chamnong,Nick,TH-Bangkok,Information Technology: แต่แต่ไม่ว่ายังไงก็ตาม ผมมีหน้าให้กดดูอยู่แล้วฮะ คนนี้ชื่ออะไร มีคิวอาร์อะไรมีหน้าดูอีกแล้ว เพียงแค่ว่ามีปุ่มให้แก้เลยของผมหรือเปล่า แค่นั้นเอง
+53:49 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: ค่ะ ค่ะ เน้นเป็นคนนิสมม ค่ะ เน้นเป็นคนนิสมมุติว่าถ้าเรารีเมนท์ว่าเราจะเมนเทนด้วยเอ็กเซลอย่างเงี้ยค่ะ คุณนิคจะอ่านแค่รายใหม่แบบเนี้ยหรอคะ หรือว่าสมมุติว่าสมมุติว่าโอเค อ๋อแก้รายเก่าด้วยก็คือเหมือนเอาอันเนี้ย รีเพรสรีเพลส เดต้าเบสทุกวัน
+53:56 Chamnong,Nick,TH-Bangkok,Information Technology: ไม่เอื้ออะไรเก่าด้วยนะฮะ คือผมจะเอาอันนี้เป็นเป็นเป็นเป็นเป็นหลักใช่ใช่
+54:04 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: อา ดังนั้นสมมุติว่าถ้าเกิดมีมีใครไม่รู้แบบแบบลากผิด แล้วก็กลายกลายเป็นว่าอีเมล์คัสโตเมอร์ บรรทัดแรกลากมาเป็นแบบประมาณ 5 บรรทัดวันต่อมามันก็อาจจะผิดทั้งหมดด้วย เพราะว่าเราจะใช้อันเนี้ย โอเวอร์ไลท์อันเดิมทุกวันถูกมั้ย
+54:16 Chamnong,Nick,TH-Bangkok,Information Technology: มัน ผิด โดยที่ไม่พังใช่ฮะ แต่ว่าถ้าพังมันจะแบบมันจะมันจะพังเลยอะมันจะerror อีกแบบนึง ถ้า error มันก็ database ก็จะไม่พัง
+54:24 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: เออ แล้วอีกแบบนึง เค แต่ถ้าแต่ถ้าdatabaseไม่พัง แต่ว่าข้อมูลพังก็อาจจะส่งเมลไปผิดคน ถ้าเราดันดันดัน maintain maintain ไอ้ excel เนี่ยผิดผิดแค่วันนึงอะไรอย่างงี้ใช่มั้ย ได้ค่ะ พี่พี่อ้อ น้องเอ๊ะ ฟังแล้วชอบ option ไหนค่ะ
+54:37 Chamnong,Nick,TH-Bangkok,Information Technology: ใช่ใช่ใช่
+54:47 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: เขาค่อยลองค่อยค่อยคิดก่อนก็ได้ดีไหม เออ
+54:49 Nawawitrattana,Siri,TH-Bangkok,Credit Management: พี่อ้อฟังแล้วไม่ค่อยไม่ค่อยเข้าใจ
+54:51 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: ไม่ ไม่เข้าใจ
+54:52 Nawawitrattana,Siri,TH-Bangkok,Credit Management: แล้วแต่แล้วแต่เลยพี่ อันนี้เด็กเด็กแบบสะดวกทําแบบไหนยังไงคือทุกวันนี้ก็ไม่ได้ทําอะ เราไม่รู้ว่าแบบว่าเออ เค้า concern ตรงพาร์ทไหนยังไงเป็นพิเศษบ้างอะอืม แล้วแต่
+54:54 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: เออ เออ เออ เออ อือ อือ อือ
+55:07 Changsalak,Alisara,TH-Bangkok,Accounts Receivable: พี่นัท แอบแอบคิดว่าถ้าเป็นออปชั่นที่ที่น้องโมเสนออะก็คือเข้าไปอีดิทในในตัวดาตาเบตที่ที่คุณนิค อือ ก็ก็อาจจะดีกว่า เพราะว่าจริงจริงอิงฟร์เอ็กเซลอันเนี้ยมันอาจจะทําพังคนใดคนนึงที่เราจับจับไม่ได้ค่ะ อืม แล้วก็อีกอย่างใช่มันไม่ไม่มีเรื่องเวลาคัดด้วยก็คือให้มัน value ไปเลยค่ะ อันนี้อันนี้
+55:14 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: คุณนิคเลย เออ พี่ก็ชอบอันนั้น ใช่ จํามันไม่ได้ใช่พี่ก็ชอบพี่ก็ชอบ ได้ค่ะ
+55:32 Changsalak,Alisara,TH-Bangkok,Accounts Receivable: อันนี้ในมุมเออาร์ที่เสนอ นะคะ ใช่
+55:36 Chamnong,Nick,TH-Bangkok,Information Technology: ใช่
+55:39 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: คนนี้ค่ะ มิ้นท์ ถ้าถ้าเรา คนนี้ค่ะ มิ้นท์ ถ้าถ้าเราใช้เป็นออปชั่นนั้นอะค่ะ ถ้าเรามี customer ใหม่หนึ่งคน แล้วก็เข้าไปครีเอทในครีเอทคัสติวและมาสเตอร์เอต้าหนึ่งคน แล้วก็ใส่ข้อมูลตึ้ง ตึ้งงี้ใช่ปะคะ ถ้าสมมุติว่าเราเราวันนั้นเดือนนั้น ดันมี customer ใหม่เยอะแบบ 10 คนทีเดียว อย่างเงี้ยค่ะ มันมี mass upload นะคะ ตอนที่ละคนอยู่ดีใช่มั้ยคะ ไม่มี mask upload ค่ะ คนนี้ค่ะ มิ้นท์ ถ้าถ้าเราใช้เป็นออปชั่นนั้นอะค่ะ
+55:56 Chamnong,Nick,TH-Bangkok,Information Technology: ก็ต้องมีคนอะไม่มี ไม่มี อันนี้จะเป็นข้อ อันนี้จะเป็นข้อเสียของข้าว 6 ท่านั้นนะฮะ ถ้าทําเยอะเยอะอ่ะถ้าทําเยอะเยอะมันจะแบบเหนื่อย
+56:03 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: โอเค ใช่หรือถ้าสักวันนึงต้องแบบแก้ เออาร์ สมมุติว่าแบบต่อไปจานรุกิจไม่ไม่ทําละเปลี่ยนเป็นคนอื่นเงี้ยก็ต้องเข้าที่ customer ทีละคน แล้วก็แก้ชื่อ a r ทีละคนทีละคนทีละ customer ถูกมั้ยคะ
+56:20 Chamnong,Nick,TH-Bangkok,Information Technology: ได้ ได้ครับ แต่ ถ้ามัน ถ้ามัน จะเกิด เหตุการ ณ ์ นี้ บ่อย จริงจริง อะ ผมก็ จะถาม หา วิธี แบบ ทําให้ อะ ฮะ
+56:21 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: โอเค พอได้เดี๋ยวอันอันอันนี้แค่แค่บอกเป็นเป็นอืม ไม่คุ้มที่จะต้องทําใช่อันเนี้ยก็ก็อันเนี้ยจะเป็นจะเป็นอันนี้เนอะน้องเอ๋มันจะเป็นคอนของการไปไว้นี่คุณนิคเพราะว่ามันจะแก้ได้ที่ละหนึ่งเอ็นทรี่หรือเพิ่มได้ทีละหนึ่งเอ็นทรี่เนอะ
+56:29 Chamnong,Nick,TH-Bangkok,Information Technology: ว่า ถ้ามันนานนานทีก็ไม่ไม่ไม่ไม่ที่จะทํา
+56:43 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: ไหนแต่มันก็จะชอบกว่านะ ไม่รู้เหมือนกันเดี๋ยวน้องเอลองอาจจะปลอดภัยกว่า
+56:47 Chamnong,Nick,TH-Bangkok,Information Technology: ให้ เห็นเห็นข้อมูลขึ้นบ้าน จริงจริง ข้อมูลนี้ทันจริงจริงครับ
+56:50 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: ใช่ใช่ ลอง ลองลองลองเทรดดู ได้ค่ะ ตัวนี้เดี๋ยวเดี๋ยวอีก ขอขอเค้าขอทางทีมไปไปลองลองคอลีดเดอร์ก่อนแล้วเดี๋ยวจะได้มาบอกเนอะ ประมาณนี้ออฟชั่นมี 2 อันสําหรับเมนเทนสิ่งนี้
+57:02 Chamnong,Nick,TH-Bangkok,Information Technology: ได้ครับ ถ้า ถ้าถ้าถ้ากลัวถ้ากลัวเรื่องยูสเซอร์เปลี่ยนมากมาก มันก็มีอีกท่านึงก็คือว่าแทนที่ผมจะแบบแทนที่ผมจะบอกว่าอ่าเรียกว่าไงดี เรียกว่าใส่อีของคนที่เป็นเออาร์ ผมก็จะใส่เป็นอะไรดีอ่ะ ตั้งชื่อเป็นพิเศษขึ้นมาเหมือนกับว่า เออ กลุ่มกรุงเทพฯ อะไรอย่างเงี้ยฮะ แพนแล้วก็
+57:28 Chamnong,Nick,TH-Bangkok,Information Technology: จะ จะมี patient หนึ่ง arch ของกรุงเทพ ตอนนี้ email online และเพราะถ้าเปลี่ยนก็ปิดแค่อีตรงนั้นมันก็เปลี่ยนทุกคนเลยอะเหมือนถ้าถ้าเรารู้อะไรจะเปลี่ยนบ่อยบ่อยเราก็
+57:34 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: อ๋อ ก็ก็
+57:38 Chamnong,Nick,TH-Bangkok,Information Technology: วางแผนล่วงหน้าไม่ได้เนี่ยฮะ
+57:41 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: มันก็อาจจะเป็นอ็อปชันที่ดี เพราะว่าส่วนใหญ่ตัวที่จะต้องเปลี่ยนแบบ match match เชนจ์เยอะเยอะของ customer group เดิมก็น่าจะเป็นไอ้พวกเออาร์คอนแทคพวกเนี้ยค่ะ มันก็อาจจะเป็นอ็อปชันที่ดี โอเค งั้นวันนี้ประมาณนี้เดี๋ยวนัดเป็น เป็นไบวีกลี่ได้มั้ยคะ คุณนิควี่อาจจะกระชั้นไว้นิดนึงเนอะ สักใบวีกลี่ละกันเนอะ อันนี้คุณนิคประเมินประเมินแล้วว่าเราเราน่าจะไปได้
+58:02 Chamnong,Nick,TH-Bangkok,Information Technology: ได้ครับ ได้ครับ
+58:08 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: เท่าไหร่แล้วก็ต้องการตอนนี้ต้องการข้อมูลอะไรจากทางทีมให้เค้า provide ข้อมูลให้คุณนิคไปลองเล่นมั้ยคะ
+58:15 Chamnong,Nick,TH-Bangkok,Information Technology: ผมอยากได้ floorder ที่ excel มันมาทุกวันอะฮะ ตอนนี้มี you ถูกมั้ยฮะ
+58:17 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: อือ
+58:22 Changsalak,Alisara,TH-Bangkok,Accounts Receivable: ที่เอ๋ดาวน์โหลดออกมาใช่ไหมคะ
+58:24 Chamnong,Nick,TH-Bangkok,Information Technology: ใช่ครับ
+58:27 Changsalak,Alisara,TH-Bangkok,Accounts Receivable: ก็ ถ้าตายค่ะ
+58:27 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: เพราะทุกวันนี้มันแมนนวลมากมันมันมันนวลมาก ต่างคนต่างดาวน์โหลดแล้วไปทําว่าน้องเอก
+58:28 Chamnong,Nick,TH-Bangkok,Information Technology: เสร็จ
+58:34 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: เออใช่ ทุกวันนี้แมนนวลอะค่ะ เป็นแบบงานมือมากก็
+58:36 Chamnong,Nick,TH-Bangkok,Information Technology: งั้นฝากฝากสร้างสร้างโฟลเดอร์นึงไว้สัก share point นึงแล้ว แล้วแต่ใจ share point นี่ผมมีปัญหามากเลยฮะ คือคือเหมือนกับถ้าแชร์แค่ไฟล์หรือแชร์แค่โฟลว์เดอร์ ผมสุดท้ายผมก็ไม่ได้อยู่ดี หมายถึง แต่ถ้าโฟลว์มันดึงไม่ได้
+58:41 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: เรา share share point หนัง เข้าไม่ เข้าไม่ได้ใช่ไหมคะ
+58:50 Chamnong,Nick,TH-Bangkok,Information Technology: อาจจะต้องเป็นแชร์พอยต์ที่ผมแบบได้แชร์พอยต์นั้นเลยฮะ ทั้ง sharepoint นะฮะ
+58:51 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: อ๋อ Share point ปกติมันจะเป็น share point หน่อยนะที่คุณนิคเข้าได้อะ
+59:00 Chamnong,Nick,TH-Bangkok,Information Technology: ปก ปกติผมสร้างเอง
+59:02 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: อ๋อจริงจริง ถ้างั้นคุณนิคคุณนิคอ่าได้ถ้าคุณนิกอยู่แล้ว คุณนิคสร้างไว้ก็ได้นะ แล้วแล้วแล้วแชร์แชร์ผ่านมาแล้ว น้องก็เข้าไปแตะในนั้นให้แบบเออให้ daily daily file ไปแปะเอาไว้ตรงนั้นให้ทุกวันอะไรอย่างเงี้ยค่ะ อืม
+59:02 Chamnong,Nick,TH-Bangkok,Information Technology: คือ ต้องให้ผมเป็นโอนเนอร์ต้องเป็น share hose ที่ผมเป็นโอนอะฮะ ถ้าถ้าถ้าถ้า ได้อะให้ผมสร้างเลยนะได้ ได้ได้ครับ ได้ได้ได้เดี๋ยวผมสร้างไว้ให้
+59:18 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: เออ ได้ เออ ได้โอเคค่ะ
+59:21 Chamnong,Nick,TH-Bangkok,Information Technology: ครับ แบรนด์นี้แล้วก็ไฟล์นี้ด้วยฮะ แต่ผมทําเป็นแปะไว้แล้วผมบอกบอกง่ายให้แปะยังไงครับ
+59:28 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: Fine detabase เนอะได้ ใช่ แต่อันนี้อ่ะ อันนี้อาจจะเป็นเหมือนแบบเป็นพรีลิมไว้สําหรับเอาไปสร้างก่อนเดี๋ยวเดี๋ยวตอนที่โกไลฟ์จริงเดี๋ยวดูว่าให้เค้าคลินอัพอะไรอีกทีหนึ่ง หรือว่ายังไงหรือคนนี้อยากได้เวอร์ชันน้องเอาเวอร์ชันนี้ไปก่อนละกัน เดี๋ยวให้น้องเค้าเค้าดูพวกรีมาร์คเอาอะไรพวกนั้นออกแล้วก็ให้น้องเอาไอ้ตัวอีให้มันเป็นอีงอะประมาณเนี้ยนะคะ แต่ว่าตัวเดี๋ยวตอนเอาขึ้นจริงเดี๋ยวอาจจะมีเวลาคลินท์อัพอีกนิดนึงให้มันสวยสวยเนาะ โอเค
+59:57 Chamnong,Nick,TH-Bangkok,Information Technology: ครับ แล้วก็ขอขอไฟล์เสร็จเมื่อกี้ฮะ
+01:00:01 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: ไลน์ พาวเวอร์ พอยต์โอเคค่ะเนาะน้องเอ็ด
+01:00:03 Changsalak,Alisara,TH-Bangkok,Accounts Receivable: เดี๋ยวเอ๋ส่งแปะให้หมดเลยค่ะ โอเค
+01:00:05 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: สายไฟ ทั้งไฟลายเวิร์ด แล้วก็ไฟล์ท โอเค
+01:00:12 Nawawitrattana,Siri,TH-Bangkok,Credit Management: พี่เอ้ หลังจากนี้ เอ๊ะ มาหาให้ไฟโฟลเดอร์ที่เก็บรูปคิวอาร์กับพี่หน่อย
+01:00:12 Chamnong,Nick,TH-Bangkok,Information Technology: ครับ อ่อ อ่อใช่ อันนั้นด้วย
+01:00:20 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: คิวอาร์เออ ได้
+01:00:20 Nawawitrattana,Siri,TH-Bangkok,Credit Management: เออพี่ไม่รู้อยู่ตรงไหนจ้ะได้ เออพี่
+01:00:24 Changsalak,Alisara,TH-Bangkok,Accounts Receivable: Ok ได้ค่ะ
+01:00:24 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: เค
+01:00:25 Nawawitrattana,Siri,TH-Bangkok,Credit Management: โอเคฮะ
+01:00:27 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: ค่ะ ได้สวัสดีค่ะ
+01:00:27 Nawawitrattana,Siri,TH-Bangkok,Credit Management: ขอบคุณครับ หวัดดีครับ
+01:00:27 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: ค่าได้
+  

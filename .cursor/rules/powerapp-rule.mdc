@@ -1,0 +1,474 @@
+---
+description: "Power Apps Canvas App development rules for project"
+globs: ["**/*.yaml", "**/*.yml", "**/*.msapp", "**/*.txt"]
+alwaysApply: true
+---
+
+## ⚠️ CRITICAL FILE EDITING POLICY
+
+**NEVER edit Power Apps files directly in this repository!** These are copies of the original files that only the user has access to. Always provide code snippets for manual implementation instead of direct file edits.
+
+---
+
+## Power Apps Canvas App Development Rules
+
+### Project Configuration
+- **Solution Name**: 
+- **Solution Version**: 
+- **Dataverse Organization Version**: 
+- **Customization Prefix**: 
+- **Legacy Prefix**: 
+- **Power Apps Authoring Version**: 3.25093.12
+
+### Control Properties & Syntax
+- **TextInput Controls**: Use `.Value` property instead of `.Text` (e.g., `TextInputName.Value`); this applies to all text input controls including CommentTextBox.Value
+- **Text@0.0.51 Weight Property**: Use `Weight: ='TextCanvas.Weight'.Bold` or `Weight: ='TextCanvas.Weight'.Semibold` or `Weight: ='TextCanvas.Weight'.Medium` or `Weight: ='TextCanvas.Weight'.Regular` - NOT FontWeight property. Available values: Regular, Medium, Semibold, Bold
+- **cmpEditableText Component**: Uses `EditMode` property for view/edit switching (true = edit, false = view) - does not support `DisplayMode`
+- **cmpEditableText Properties**: Requires ALL properties: EditMode, ErrorFlag (=false), Height (=Parent.Height), LayoutMinHeight (=65), LayoutMinWidth (appropriate width), MaxLength (=100), TitleText, Value (input), Width, isRequired (=false); FillPortions can be added for flexible layout
+- **cmpEditableText Property Names**: Use "UpdatedValue" property for patching - UpdatedValue is the output property containing txtInput.Value; "Value" is the input property
+- **EditMode Boolean Values**: Use simple boolean expressions like =editSalesView, =editAddress, etc.; do NOT use string comparisons like =editSalesView <> "View"
+- **ComboBox Fields**: Use DisplayMode property for view/edit switching instead of Visible property; require ComboBoxDataField children when using AddColumns; use correct global choice set names
+- **OnChange Property Syntax**: Use block scalar syntax: `OnChange: |-` followed by indented formula (e.g., `=UpdateContext({variable: Self.Selected})`); do not use inline syntax `OnChange: =...`
+- **Table Controls**: Cannot be reset using `Reset()` function - use `Refresh()` on the data source instead; sort by primary key using `Sort('[DataSource]', ColumnName, SortOrder.Ascending)`
+
+### Source Code schema constraints (Power Apps YAML)
+- **Colon in formulas**: If a property value contains a literal colon inside a string (e.g., "Question :"), wrap the entire Power Fx formula in single quotes with the `=` inside: `Text: '= "Question : " & value'`. Double any single quotes around field names inside, e.g., `ThisItem.''cr76f_displayorder''`.
+- **Checkbox@0.0.30**:
+  - Does NOT support `Text` property. Use a separate `Text@0.0.51` label next to the checkbox for captions.
+  - Supported typical properties include `Checked`, `Height`, `Width`, `X`, `Y`, `Visible`. Keep labels separate.
+- **Media picker**:
+  - Do NOT use `AddMediaWithImage`. Use `AddMedia@2.2.1` paired with an `Image@2.2.3` in the same `Group:` to preview media.
+  - Access the uploaded file URL via `First(AddMediaButton1.Media).Url`.
+
+### Layout & Styling
+- **Component Order**: Content must come before NavigationMenu in MainContainer, Header must come after MainContainer at screen level
+- **Multi-Screen Header Consistency**: Related screens should use the same `currentScreen` value to create seamless user experience (e.g., all evaluation form screens use "Evaluation Form")
+- **Content Width**: Management screens use `Width: =Parent.Width-20` and `X: =10` for full-width content
+- **Form Styling**: Form sections use `Fill: =RGBA(174, 208, 221, 1)`, rounded corners, and titles with `FontColor: =RGBA(15, 84, 140, 1)`; form containers use `Height: =Parent.Height-50`; form controls positioned at bottom with `Y: =Parent.Height-Self.Height-3`
+- **Form Field Layout**: Fields with labels use vertical containers (`LayoutDirection.Vertical`) inside horizontal rows, with label on top and input control below
+- **TableControl Structure**: Use separate title element above horizontal TableControl with `Height: =40`, `LayoutDirection.Horizontal`, `LayoutJustifyContent.End`
+- **Delete Confirmation**: Use popup overlay with `Fill: =RGBA(0, 0, 0, 0.5)` and centered white rectangle for confirmations
+
+### Professional Layout & Responsive Design Patterns
+- **Responsive Control Positioning**: Position controls at bottom with proper margin `Y: =Parent.Height-Self.Height-10` to prevent UI cramping
+- **Dynamic Content Heights**: Use dynamic height calculations `Height: =ControlContainer.Y-Self.Y` to let content adapt to available space above controls
+- **Consistent Margins**: Apply 10px standard margin unit throughout - use `Width: =Parent.Width-20` with `X: =10` for containers
+- **Visual Depth**: Add `DropShadow: =DropShadow.Regular` to control containers for professional appearance and visual hierarchy
+- **Proper Padding**: Include `PaddingRight: =10` along with `PaddingLeft: =10` to prevent edge cramping and ensure balanced spacing
+- **Container Spacing**: Use `Y: =75` for main content positioning below header, maintain consistent spacing between UI elements
+
+### Header Component Implementation
+- **Header Structure**: Use GroupContainer@1.3.0 with AutoLayout variant containing hamburger menu icon and title text
+- **Header Positioning**: Always positioned at screen level (not inside MainContainer) with `X: =10`, `Y: =10`, `Width: =Parent.Width-20`
+- **Header Styling**: `Fill: =LookUp(Navigation, name = currentScreen, color)` for dynamic color based on screen, `Height: =55`
+- **Header Layout**: `LayoutDirection: =LayoutDirection.Horizontal`, `LayoutAlignItems: =LayoutAlignItems.Center`, `PaddingLeft: =15`
+- **Hamburger Menu**: Use Classic/Icon@2.5.0 with `Icon: =Icon.Hamburger`, `OnSelect: =Set(_showMenu,!_showMenu)`, white color with padding
+- **Title Text**: Use Text@0.0.51 with `Text: =currentScreen`, `Font: =Font.Lato`, `FontColor: =Color.White`, `Size: =25`
+
+### NavigationMenu Component Implementation  
+- **Navigation Positioning**: Always positioned at screen level (after Header) with unique screen-specific naming
+- **Navigation Properties**: `Fill: =RGBA(255, 255, 255, 0.5)`, `Height: =Parent.Height-70`, `Width: =260`, `Y: =70`
+- **Navigation Visibility**: `Visible: =If(_showMenu,true,false)` - controlled by hamburger menu toggle
+- **Navigation Data**: `navItems: =Navigation` (uses global navigation collection), `navSelected: =currentScreen`
+- **Component Structure**: Use CanvasComponent with ComponentName: NavigationMenu (shared component across screens)
+
+### Data Binding & Schema
+- **Field Reference Naming**: Power Apps field references may differ from schema logical names; schema shows logical names (e.g., `nc_CustomerClass`) but Power Apps references use display names without prefixes (e.g., `CustomerClass`); always verify the correct field reference syntax
+- **Lookup Field Selection**: For lookup fields in ComboBox DefaultSelectedItems, use `LookUp('[TableName]', '[EntityName]' = currentRecord.LookupField.'[EntityName]')` to match on the relationship; or `LookUp('[TableName]', Id = currentRecord.LookupField)` for ID-based matching
+- **Entity Naming Convention**: Data sources/collections use plural names ('L6Segmentations'), entity references in lookups use singular names ('L6Segmentation'), field names match schema definitions
+- **Display Field Linking**: Display text controls can reference selected values from ComboBoxes using `ComboBoxName.Selected.FieldName`
+- **STATIC FIELDS**: Static/hardcoded fields (like CustStatsGrp: 1) only need to be included in New record Patch operations, not Edit operations since they never change
+- **AddColumns Function**: Use unquoted column names (e.g., `AddColumns(Table, DisplayName, expression)`) not quoted strings
+
+### Validation & Workflow
+- **VALIDATION APPROACH**: No validation on Save (draft functionality), validation at Submit and role-based approval stages
+- **WORKFLOW APPROVAL ROLES**: SalesManagerEmail = RM role, BUControllerEmail = Controller role, SalesSupportEmail = Sales Support role. Additional roles: CS, AR, NBS
+- **Comment System**: Use display names for comment fields (`RequestComment`, `RequestCommenterEmail`, `'RM Status'`); format: "[ROLE] ACTION: [comment] (by [email] at [timestamp])"; required for denials, optional for approvals
+
+### YAML Syntax Rules
+- **YAML Block Scalar Syntax**: Use `|` block scalar for DefaultSelectedItems and `|+` block scalar for Items properties in ComboBoxes with complex formulas; place the `=` on the next line after the block scalar indicator with proper indentation
+- **YAML String Quoting**: Use single quotes `'` around YAML strings containing Power Apps formulas with double quotes, e.g., `'currentMode = "New"'` instead of `"currentMode = \"New\""` to avoid unnecessary escaping
+- **YAML OnSelect Formula Format**: Use `OnSelect: '=formula'` where the single quote contains the Power Apps formula starting with `=` (e.g., `OnSelect: '=UpdateContext({variable: "value"})'`); this prevents YAML from interpreting colons as key-value separators
+- **YAML Visible Formula Format**: Use `Visible: '=formula'` (single quote directly before =, no space) for complex visibility conditions with quotes and operators (e.g., `Visible: '=currentMode = "Edit" && field = "value"'`); avoids YAML parsing errors with operators
+- **YAML Field Name Escaping**: Use double single quotes for field names with spaces (e.g., `''RM Status''`) when inside YAML single-quoted strings
+- **YAML Multi-line Formulas**: Use `|-` block scalar for complex multi-line OnSelect formulas with If statements, Patches, and notifications
+- **YAML Block Scalar Indicators**: 
+  - Use `|` to preserve line breaks (multiline text)
+  - Use `|-` to strip final line breaks (most formulas)
+  - Use `|+` to preserve final line breaks (rare cases)
+- **Special Characters in Single-Line Formulas**: NEVER use pound sign `#` or colon `:` in single-line formulas - YAML treats `#` as comments and `:` as key-value separators. Use multi-line block scalar `|-` for formulas containing these characters
+- **YAML formatting mistakes to avoid**: Text properties use double quotes `"Text"` not single quotes `'Text'`; OnSelect properties use `OnSelect: =` (no quotes around formula); Control properties match exact property names from your Power Apps version; Quotes in formulas don't need escaping `\"` - use proper Power Apps syntax
+- **No Comments in Snippets**: Do not include comments (# or //) in YAML snippets to avoid YAML parsing errors, as # starts comments and breaks property values. Place explanations outside the code block.
+- **Power Fx Expression Requirements**: ALL Power Fx expressions in YAML MUST start with `=` symbol. This includes:
+  - Numeric values: `MaxLength: =100` (not `MaxLength: 100`)
+  - Text values: `Text: ="Form Name"` (not `Text: "Form Name"`)
+  - Boolean values: `Visible: =true` (not `Visible: true`)
+  - Property references: `Height: =Parent.Height` (not `Height: Parent.Height`)
+  - Complex expressions: Use `|-` block scalar for multi-line formulas starting with `=`
+- **YAML Property Value Format**: Every property value in Power Apps YAML must be a valid Power Fx expression starting with `=`, even for simple literals like numbers, strings, and booleans
+
+### Standard Form Layout Template Pattern
+- **Control Selection for Bilingual Forms**:
+  - **TextInput@0.0.54 with Mode=Multiline**: Long text fields (questions, descriptions, 250+ chars)
+  - **cmpEditableText**: Single-line fields (names, categories, choices, <100 chars)
+  - **NumberInput@2.9.12**: Numeric values (order, score)
+  - **DropDown@0.0.45**: Selection lists (question type, categories)
+- **Layout Structure Standards**:
+  - **Container**: GroupContainer@1.3.0 with AutoLayout, FillPortions=0
+  - **Heights**: 80px for single-line containers, 120px for multiline containers
+  - **Direction**: LayoutDirection=Vertical for form sections
+  - **Padding**: PaddingLeft=10, PaddingTop=10 for consistent spacing
+  - **Widths**: Use block scalar format `|+ =Parent.Width-35` for inputs, `=Parent.Width-20` for cmpEditableText
+- **Form Styling Standards**:
+  - **Section Fill**: Fill=RGBA(174,208,221,1) for form sections
+  - **Corners**: RadiusBottomLeft/Right=6, RadiusTopLeft/Right=6
+  - **Titles**: Font='Lato Black', FontColor=RGBA(15,84,140,1), Height=45
+  - **Labels**: Weight='TextCanvas.Weight'.Semibold, Height=20
+- **Bilingual Field Implementation**:
+  - Always pair English and Thai fields together
+  - Use consistent naming: FieldNameEN/FieldNameTH
+  - Apply same validation rules to both language versions
+  - Maintain proper character limits (250 for questions, 100 for choices)
+
+### Navigation & Management
+- **Navigation Management**: Add new screens to role-specific navigation collections in loadingScreen (AdminNavigation for admin screens, RMNavigation for RM screens, RequesterNavigation for user screens)
+- **cmpEditableText Usage**: Components should be used directly as CanvasComponent without wrapping in GroupContainer; they include their own TitleText property
+
+### Naming Conventions
+- Use consistent naming conventions (RequestForm*, FormCVRow*, etc.)
+- **CRITICAL: Unique Component Names Across ALL Screens** - Component names must be globally unique across the entire application. NO EXCEPTIONS - this includes MainContainer, Content, NavigationMenu, and ALL other components. Use screen-specific prefixes for EVERY component (e.g., `FormLib_MainContainer`, `QuestionMgr_Content`, `FormBuilder_NavigationMenu`)
+- Implement proper view/edit mode switching for form controls
+- Ensure all controls have appropriate DisplayMode bindings
+- Use cmpEditableText for text inputs where appropriate
+- Use proper ComboBox implementations with Items, Selected, and OnChange
+
+### Error Prevention
+- Check for common Power Apps errors (missing controls, wrong field types, etc.)
+- Verify MaxLength constraints match schema
+- Ensure proper null/blank handling in formulas
+- Test all implementations before considering complete
+- Always verify Dataverse field names match the actual schema
+- Use correct field prefixes (cr7bb_*, nc_*, etc.)
+- Ensure patch functions include all form fields
+- Test data binding thoroughly
+
+### Critical Implementation Mistakes to Avoid
+- **Workflow Logic Errors**:
+  - Submit button validation should check form field .UpdatedValue properties, not record properties
+  - Comment appending should use currentSelectedRequest.RequestComment, not database lookups to prevent stale data
+  - All workflow buttons that allow editing must trigger Save first using Select(SaveButton) to prevent data loss
+- **Role System Errors**:
+  - Global roles (CS/AR/NBS/Admin) determined at startup from RoleAssignments table
+  - Record-specific roles (Requester/Sales/RM/Controller) determined per request from email fields
+  - Admin visibility patterns: ((_isAdmin && email <> MyProfile) || email = MyProfile) for record-specific roles
+  - Admin visibility patterns: (_recordIsRole || (_isAdmin && !_recordIsRole)) for global roles
+- **Dashboard Implementation Errors**:
+  - Use Concurrent() for loading multiple metrics simultaneously
+  - Role-based work sections should only be visible when user has pending tasks
+- **Dashboard Design Preferences**:
+  - Stats card numbers: Height =45, Width =Parent.Width-30 for better text containment
+  - Workflow stage buttons: Use unified blue theme (BasePaletteColor =RGBA(5, 102, 178, 1)) with white text for consistency
+  - Work item buttons: Maintain role-specific colors for clear visual distinction
+  - Recent activity metrics: Height =35 for number displays to match stats cards
+  - WorkflowStagesSection: Use clean styling without BorderStyle/DropShadow for modern appearance
+
+### Reset Functionality
+- Include all resettable controls in RequestFormResetComponent
+- Handle cmpEditableText components appropriately (they don't support Reset())
+- Reset ComboBoxes and Toggles explicitly
+- Use data binding reset for TextInput components
+
+### Gallery and Filter Error Prevention
+- **Gallery Items formula may fail on first load** if ComboBox controls are not properly initialized
+- Use comprehensive filter checks: `(IsBlank(ComboBox.SelectedItems) || CountRows(ComboBox.SelectedItems) = 0 || field in ComboBox.SelectedItems.Value)`
+- **CRITICAL**: Cannot directly set ComboBox.SelectedItems using Set() function - use global variables with filtering logic instead
+
+### ComboBox Control Limitations
+- **NEVER use**: `Set(RequestStatusCombo, {SelectedItems: [...]})` - this syntax is invalid
+- **Correct approach**: Use global variables + enhanced Gallery filtering, or Reset() + DefaultSelectedItems
+- ComboBox SelectedItems property is read-only and cannot be set programmatically via Set() function
+- Use `Reset(ComboBoxControl)` to clear selections, not `Set(ComboBoxControl.SelectedItems, Blank())`
+
+### Canvas Component Syntax Rules
+- **Modern Component Syntax**: Use `Control: CanvasComponent` + `ComponentName: [component_name]` syntax (current Power Apps)
+  - ❌ NEVER use: `Control: cmpEditableText` or `Control: NavigationMenu`
+  - ✅ CORRECT: `Control: CanvasComponent` + `ComponentName: cmpEditableText`
+  - ✅ CORRECT: `Control: CanvasComponent` + `ComponentName: NavigationMenu`
+- **Legacy Component Syntax**: Official docs show `ComponentName As ComponentType:` format (older/alternative syntax)
+  - Example: `Gallery1 As Gallery.horizontalGallery:` - this may work in some contexts but prefer modern syntax
+- **Component Examples**:
+  ```yaml
+  - TestFormNameEN:
+      Control: CanvasComponent
+      ComponentName: cmpEditableText
+      Properties:
+        EditMode: =true
+        ErrorFlag: =false
+        # ... other properties
+  
+  - NavigationMenu:
+      Control: CanvasComponent
+      ComponentName: NavigationMenu
+      Properties:
+        Visible: =_showMenu
+        # ... other properties
+  ```
+
+### DropDown Control Properties
+- **DropDown@0.0.45 Properties**: Use correct property names for selection
+  - ❌ NEVER use: `Selected` or `SelectedItem` properties
+  - ✅ CORRECT: `DefaultSelectedItems` property for setting default selection
+  - ✅ CORRECT: `Items` property for dropdown options
+- **DropDown Selection Examples**:
+  ```yaml
+  - QuestionTypeDropdown:
+      Control: DropDown@0.0.45
+      Properties:
+        Items: =["Multiple Choice", "Scale", "Text"]
+        DefaultSelectedItems: =[currentSelectedTestQuestion.QuestionType]
+        Width: =Parent.Width-35
+  ```
+
+### Height Property Rules
+- **Height Property**: NEVER use `Height: =Auto` - it is invalid in Power Apps
+  - ❌ NEVER use: `Height: =Auto` (causes parse errors)
+  - ✅ CORRECT: Use specific pixel values like `Height: =150`
+  - ✅ CORRECT: Use calculated values like `Height: =Parent.Height-50`
+  - ✅ CORRECT: Use `AutoHeight: =true` property for Labels to expand text vertically within the defined Height
+- **AutoHeight vs Height**:
+  ```yaml
+  # CORRECT: Label with AutoHeight property
+  - QuestionText:
+      Control: Label@2.5.1
+      Properties:
+        Height: =75                    # Must have numeric height
+        AutoHeight: =true              # This makes text expand within the height
+        Wrap: =true
+        Text: =ThisItem.LongText
+  
+  # WRONG: Cannot use Auto as height value
+  - QuestionText:
+      Control: Label@2.5.1
+      Properties:
+        Height: =Auto                  # ❌ INVALID - will cause parse error
+  ```
+
+### YAML Block Scalar Syntax for Complex Formulas
+- **OnSelect with Complex Logic**: Use `|-` block scalar for multi-line Power Fx formulas
+  ```yaml
+  OnSelect: |-
+    =UpdateContext({showConfirmationPopup: false})
+  ```
+- **Multi-line Formulas**: Use proper indentation and block scalar syntax
+  ```yaml
+  OnSelect: |-
+    =If(
+        currentMode = "NewChoice",
+        Patch('[TableName]', Defaults('[TableName]'), {field: value}),
+        If(currentMode = "EditChoice", 
+            Patch('[TableName]', selectedRecord, {field: value}),
+            Notify("Error")
+        )
+    );
+    Notify("Success", NotificationType.Success)
+  ```
+
+---
+
+## Database Schema (Version: 1.0.0.2)
+
+The system uses **11 custom Dataverse entities** with the prefix `cr76f_` or `nc_`.
+
+### Key Entities & Relationships:
+-   **[THInterviewEval]Role** → **RoleAssignment** (1:N)
+-   **[THInterviewEval]PositionInterview** → **InterviewRound** (1:N)
+-   **[THInterviewEval]InterviewRound** → **InterviewEvaluation** (1:N)
+-   **[THInterviewEval]Candidate** ← **InterviewEvaluation** (1:N)
+-   **[THInterviewEval]EvalForm** ← **InterviewEvaluation** (1:N)
+-   **[THInterviewEval]EvalForm** → **FormQuestion** (1:N)
+-   **[THInterviewEval]FormQuestion** → **FormChoice** (1:N)
+-   **[THInterviewEval]EvalFormScore** is the junction table for scores, linking back to `FormQuestion` and `InterviewEvaluation`.
+
+### Bilingual Fields (English/Thai):
+-   **EvalForm**: `FormName` (cr76f_formname) / `FormName_TH` (nc_formname_th)
+-   **FormQuestion**: `QuestionText` (cr76f_questiontext) / `QuestionText_TH` (cr76f_questiontext_th)
+-   **FormChoice**: `ChoiceText` (cr76f_choicetext) / `ChoiceText_TH` (cr76f_choicetext_th)
+
+### Primary Unique Identifiers:
+-   **Candidate**: `Email` (cr76f_email)
+-   All other tables use the system-generated primary key (e.g., `cr76f_thinterviewevalevalformid`).
+
+---
+
+## Dynamic Form Authoring System
+
+### Core Principles:
+-   **Admin-Managed Content**: The primary goal is to allow HR Admins to create and manage evaluation forms and questions without developer intervention.
+-   **Bilingual Entry is Mandatory**: The authoring interface must enforce that all questions and choices are entered in both English and Thai.
+-   **Three Supported Form Types**: The system is specifically designed to handle "Default", "Medical Delegate", and "Nutrition Sales" forms, each with potentially different scoring scales (1-3 or 1-4).
+
+### Structure:
+-   **Dynamic Content**: Form questions and their multiple-choice answers are fully configurable by HR admins.
+-   **Hard-Coded Content**: The final "Evaluation Outcome" section (`Passed`, `Not passed`, `Keep in view`) is a non-editable, system-enforced component of every form to ensure a consistent business process.
+    -   A **mandatory reason** is required if "Not passed" is selected.
+
+### Form Selection Logic:
+-   The system associates question sets with a `TargetPosition` (Job Function).
+-   The TA team selects the correct form from a dropdown when initiating an interview.
+-   The application dynamically renders the correct questions based on this selection.
+
+### Gallery Control Structure (YAML Example):
+-   **Variable Height Galleries**: Use `Variant: VariableHeight` for dynamic content that needs to adapt to different text lengths
+-   **Fixed Template Galleries**: Use specific variants like `BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0` for consistent layouts
+-   The `Children` of a gallery (like `Image`, `Label`, `Icon`) are nested directly under it, not within another container.
+
+```yaml
+# Variable Height Gallery (Recommended for dynamic content)
+- QuestionGallery:
+    Control: Gallery@2.15.0
+    Variant: VariableHeight
+    Properties:
+      BorderColor: =RGBA(0, 0, 0, 0)
+      Items: =Sort(Filter('[THInterviewEval]FormQuestions',EvalForm.FormName=currentSelectedTest.FormName),DisplayOrder)
+      TemplatePadding: =10
+      Width: =Parent.Width-30
+    Children:
+      - QuestionCard:
+          Control: GroupContainer@1.3.0
+          # ... card content adapts to content height
+
+# Fixed Template Gallery (Use for consistent layouts)
+- GalleryExample:
+    Control: Gallery@2.15.0
+    Variant: BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0
+    Properties:
+      Items: =SampleData
+      TemplateSize: =100
+      Y: =100
+    Children:
+      - ImageControl:
+          Control: Image@2.2.3
+          Properties:
+            Image: =ThisItem.Image
+```
+
+### YAML Schema & Control-Specific Rules
+- **Required `Variant` Property**: `GroupContainer` and `Gallery` controls **require** a `Variant` property to be explicitly defined. Omitting this will cause a `PA1011` parsing error.
+  - For `GroupContainer`, use `Variant: AutoLayout` or `Variant: ManualLayout`.
+  - For `Gallery`, use a specific layout variant like `Variant: BrowseLayout_Vertical_OneTextVariant_ver5.0`.
+- **Invalid `OnSelect` on Labels**: `Text` controls (`Text@0.0.51`) and other non-interactive elements do not support the `OnSelect` property. To make a gallery item clickable, apply the `OnSelect` property to the **`Gallery`** control itself, not to a `Text` control within its template.
+---
+
+## Common Power Apps YAML Error Causes & Solutions
+
+### ⚠️ **PA2108: Unknown Property Errors**
+**Cause**: Using incorrect or unsupported property names for specific control versions
+**Solution**: Always reference original working code for exact property names
+
+**Examples:**
+- **TextInput@0.0.54**: Use `Value` (not `Default`/`DefaultValue`), `Mode: ='TextInputCanvas.Mode'.Multiline`
+- **TextInput@0.0.54**: Avoid unsupported properties: `HintText`, `PlaceholderText`, `Size`, `FontSize`, `BorderColor`
+- **Button@0.0.45**: Doesn't support `Fill`, `Size`, `RadiusBottomLeft/Right`, `RadiusTopLeft/Right`
+- Use only supported Button properties: Align, BorderColor, BorderStyle, BorderThickness, Font, FontColor, Height, OnSelect, Padding*, Text, VerticalAlign, Visible, Width
+
+### ⚠️ **PA1001: YAML Invalid Mapping with Curly Braces**
+**Cause**: Using inline syntax for Power Fx formulas containing `{}` (UpdateContext, etc.) or special characters `#` `:` 
+**Solution**: MUST use multiline block scalar `|-` syntax for ANY formula with curly braces or special characters
+
+```yaml
+# ✅ CORRECT - Curly braces
+OnSelect: |-
+  =UpdateContext({showPopup: true})
+
+# ✅ CORRECT - Special characters (# or :)
+Text: |-
+  ="Status: " & If(error, "Error #123", "Success")
+
+# ❌ WRONG - Causes PA1001 error
+OnSelect: =UpdateContext({showPopup: true})
+Text: ="Status: " & If(error, "Error #123", "Success")
+```
+
+**Block Scalar Indicator Guide:**
+- `|-` Strip final line breaks (use for most Power Fx formulas)
+- `|` Preserve line breaks (use for multiline display text)
+- `|+` Keep final line breaks (rarely needed)
+
+### ⚠️ **Cross-Screen Variable Persistence Issues**
+**Cause**: Using context variables (`UpdateContext`) for data that needs to survive screen navigation
+**Solution**: Use global variables (`Set`) with `gbl` prefix for cross-screen data persistence
+
+```powerapps
+// ❌ WRONG - Context variables don't persist between screens
+UpdateContext({selectedItem: record})
+Navigate(NextScreen)
+
+// ✅ CORRECT - Global variables persist between screens  
+Set(gblSelectedItem, record)
+Navigate(NextScreen)
+```
+
+### ⚠️ **Control Property Compatibility Issues**
+**Cause**: Using properties not supported by specific control versions
+**Solution**: Each control version has specific supported properties - always reference working original code
+
+**Common Control Limitations:**
+- `GroupContainer`: Does NOT support `OnSelect` - use `Button` controls for clickable elements
+- `Text@0.0.51`: Does NOT support `OnSelect` - apply to parent `Gallery` instead
+- `Button@0.0.45`: Limited styling properties compared to other controls
+
+### ⚠️ **Component Name Conflicts Across Screens**
+**Cause**: Using the same component name in multiple screens (Power Apps requires globally unique names)
+**Solution**: Use screen-specific prefixes for ALL component names - NO EXCEPTIONS
+
+```yaml
+# ❌ WRONG - Same names across screens will cause conflicts
+# scnFormLibrary.yaml:
+- MainContainer:    # CONFLICT!
+- Content:          # CONFLICT!
+- AddBtn:           # CONFLICT!
+- NavigationMenu:   # CONFLICT!
+
+# scnQuestionManager.yaml: 
+- MainContainer:    # CONFLICT!
+- Content:          # CONFLICT!
+- AddBtn:           # CONFLICT!
+- NavigationMenu:   # CONFLICT!
+
+# ✅ CORRECT - Unique names with screen prefixes for EVERYTHING
+# scnFormLibrary.yaml:
+- FormLib_MainContainer:
+- FormLib_Content:
+- FormLib_AddBtn:
+- FormLib_NavigationMenu:
+
+# scnQuestionManager.yaml:
+- QuestionMgr_MainContainer:
+- QuestionMgr_Content:
+- QuestionMgr_AddBtn:
+- QuestionMgr_NavigationMenu:
+```
+
+**Recommended Prefixes:**
+- `FormLib_` for scnEvalFormLibrary components
+- `FormBuilder_` for scnEvalFormBuilder components  
+- `QuestionMgr_` for scnQuestionManager components
+- `QuestionBuilder_` for scnQuestionBuilder components
+- `ChoiceBuilder_` for scnChoiceBuilder components
+
+### ⚠️ **YAML Syntax Errors**
+**Cause**: Inconsistent indentation, duplicate keys, missing indicators
+**Solution**: Maintain proper YAML structure
+
+- Always maintain consistent indentation (use spaces, not tabs)
+- Never have duplicate "Properties:" keys at same indentation level
+- Ensure proper `-` indicators for YAML block collections
+- Properties must be consistently indented under their parent control
+- Misaligned properties cause "did not find expected '-' indicator" errors
+
+### 📋 **Error Prevention Checklist**
+- [ ] Check control version and supported properties against working examples
+- [ ] Use `|-` block scalar syntax for ALL formulas containing `{}`
+- [ ] Use global variables (`Set`) instead of context variables (`UpdateContext`) for cross-screen data
+- [ ] Verify YAML indentation is consistent (spaces, not tabs)
+- [ ] Test all control property combinations before considering implementation complete
