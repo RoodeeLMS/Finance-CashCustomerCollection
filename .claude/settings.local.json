@@ -2,7 +2,9 @@
   "permissions": {
     "allow": [
       "mcp__ide__getDiagnostics",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(git commit -m \"$(cat <<''EOF''\nFix Grok-identified issues and add comprehensive setup documentation\n\nMajor Fixes:\n- Updated CLAUDE.md for Windows PowerShell environment (Get-Content vs cat)\n- Clarified Model-Driven app focus over Canvas app conventions\n- Replaced JavaScript validation syntax with Power Fx/Business Rules\n- Removed SQL index references, added Dataverse performance guidance\n- Updated architecture decisions to reflect database-driven approach\n\nNew Setup Documentation:\n- dataverse_setup_guide.md: Complete environment setup (8 detailed steps)\n- table_creation_scripts.md: Detailed table creation with relationships\n- security_configuration.md: 3 security roles with permissions framework\n- data_import_templates.md: Customer data migration templates\n- excel_parsing_requirements.md: Updated for .xlsx format (vs CSV)\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")",
+      "Bash(git push:*)"
     ],
     "deny": [],
     "ask": []
