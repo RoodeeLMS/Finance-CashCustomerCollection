@@ -59,40 +59,51 @@ Skip customers with text fields containing: "Paid", "Partial Payment", "รั�
 
 ## Power Apps Development Rules
 
-This project follows strict Power Apps Canvas App development conventions. Key rules from `.cursor/rules/powerapp-rule.mdc`:
+This project primarily uses a **Model-Driven Power App** (AR Control Center) with supplementary Canvas App components. Key development guidelines:
+
+### Application Architecture Priority
+1. **Primary**: Model-Driven App with Dataverse tables, forms, and views
+2. **Secondary**: Canvas App components for custom business logic where needed
+3. **Integration**: Power Automate flows for automation and data processing
 
 ### Critical File Policy
 **NEVER edit Power Apps YAML files directly!** Files in `Powerapp components-DO-NOT-EDIT/` and `Powerapp screens-DO-NOT-EDIT/` are read-only exports. Always provide code snippets for manual implementation in Power Apps Studio.
 
-### Component Naming
-All component names must be globally unique across the entire application using screen-specific prefixes:
+### Model-Driven Development Focus
+- **Tables**: Use Dataverse native tables (nc_customers, nc_transactions, etc.)
+- **Forms**: Configure main/quick create forms for data entry
+- **Views**: Create system/personal views for data analysis
+- **Sitemaps**: Organize navigation around AR workflow
+- **Business Rules**: Implement validation at the table level
+
+### Canvas Component Guidelines (When Used)
+- Component names must be globally unique using functional prefixes:
 ```yaml
-# CORRECT
-- FormLib_MainContainer:
-- QuestionMgr_Content:
-- FormBuilder_NavigationMenu:
+# Model-Driven friendly naming
+- ARDashboard_MainContainer
+- CustomerMgmt_EmailForm
+- TransactionList_FilterPanel
 ```
 
-### Control Properties
+### Control Properties (Canvas Components)
 - **TextInput Controls**: Use `.Value` property, not `.Text`
-- **cmpEditableText Component**: Uses `EditMode` property for view/edit switching
-- **YAML Formulas**: ALL Power Fx expressions must start with `=` symbol
-- **Block Scalars**: Use `|-` for complex formulas containing `{}` or special characters
+- **Power Fx Formulas**: ALL expressions must start with `=` symbol
+- **Dataverse Integration**: Use Dataverse connector, not SharePoint lists
 
 ## Development Commands
 
 Since this is a Power Platform project, traditional CLI commands don't apply. However, for project management:
 
 ### Documentation Commands
-```bash
+```powershell
 # View project overview
-cat project_summary.md
+Get-Content project_summary.md
 
 # View development timeline
-cat development_plan.md
+Get-Content development_plan.md
 
 # Check database schema
-cat database_schema.md
+Get-Content database_schema.md
 ```
 
 ### Power Platform Development Workflow
@@ -126,9 +137,11 @@ REQUIRED FIELDS per customer:
 ## Architecture Decisions
 
 ### Data Maintenance Strategy
-**Decision Required**: Excel vs Database maintenance for customer data
-- **Option 1**: Excel-based (familiar to AR team, risk of corruption)
-- **Option 2**: Database-driven (real-time updates, requires training)
+**Status**: ✅ **RESOLVED** - Database-driven approach selected
+- **Selected Option**: Database-driven using Dataverse tables (see `database_schema.md`)
+- **Rationale**: Real-time updates, better audit trail, eliminates file corruption risks
+- **Implementation**: Customer master data stored in `nc_customers` table with role-based access
+- **Training Plan**: AR team will use Model-Driven app forms instead of Excel editing
 
 ### Error Handling
 - Missing QR codes: Log warning, continue processing

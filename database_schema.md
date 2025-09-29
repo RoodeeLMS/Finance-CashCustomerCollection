@@ -55,27 +55,41 @@ This schema implements **Option 2: Database-driven** approach for customer data 
 |------------|-----------|----------|-------------|
 | `nc_transactionid` | Primary Key | Yes | Auto-generated unique identifier |
 | `nc_customer` | Lookup(nc_customers) | Yes | Reference to customer record |
-| `nc_documentnumber` | Text(50) | Yes | SAP document number (unique per day) |
+| `nc_recordtype` | Choice | Yes | Transaction, Summary, Header |
+| `nc_documentnumber` | Text(50) | No* | SAP document number (required for Transaction type) |
 | `nc_assignment` | Text(100) | No | SAP assignment field |
-| `nc_documentdate` | Date | Yes | Document creation date |
-| `nc_netduedate` | Date | Yes | Payment due date |
-| `nc_amountlocalcurrency` | Currency | Yes | Transaction amount (+ or -) |
+| `nc_documenttype` | Text(10) | No | Original SAP document type (DG, DR, DZ, etc.) |
+| `nc_documentdate` | Date | No* | Document creation date (required for Transaction type) |
+| `nc_netduedate` | Date | No* | Payment due date (required for Transaction type) |
+| `nc_arrearsdays` | Whole Number | No | Original SAP arrears calculation |
+| `nc_amountlocalcurrency` | Currency | Yes | Transaction/summary amount (+ or -) |
 | `nc_textfield` | Text(500) | No | SAP text field (for exclusion keywords) |
 | `nc_reference` | Text(100) | No | Reference information |
-| `nc_transactiontype` | Choice | Yes | CN (Credit Note) or DN (Debit Note) |
+| `nc_transactiontype` | Choice | No* | CN (Credit Note) or DN (Debit Note) - calculated for transactions |
 | `nc_isexcluded` | Yes/No | Yes | Marked for exclusion |
 | `nc_excludereason` | Text(100) | No | Exclusion keyword found |
-| `nc_daycount` | Whole Number | Yes | Notification day count |
+| `nc_daycount` | Whole Number | No* | Notification day count (required for transactions) |
 | `nc_processdate` | Date | Yes | Date of SAP extract |
+| `nc_processbatch` | Text(50) | Yes | Unique batch identifier for each file import |
+| `nc_rownumber` | Whole Number | Yes | Original CSV row number for debugging |
 | `nc_isprocessed` | Yes/No | Yes | Included in email processing |
 | `nc_emailsent` | Yes/No | Yes | Email sent for this transaction |
+| `nc_parentcustomeramount` | Currency | No | Customer total from summary row (for validation) |
+
+**Record Type Choices:**
+- **Transaction**: Individual SAP transaction line items
+- **Summary**: Customer total rows (empty document fields)
+- **Header**: CSV header row (for audit trail)
 
 **Business Rules:**
-- `nc_transactiontype` calculated from `nc_amountlocalcurrency` (negative = CN, positive = DN)
-- `nc_isexcluded` = true if text field contains exclusion keywords
-- `nc_daycount` calculated based on previous day's file comparison
+- `nc_recordtype` determines field requirements (* = required for Transaction type only)
+- `nc_transactiontype` calculated from `nc_amountlocalcurrency` for transactions (negative = CN, positive = DN)
+- `nc_isexcluded` = true if text field contains exclusion keywords (Transaction type only)
+- `nc_daycount` uses `nc_arrearsdays` for new transactions, historical tracking for existing
+- `nc_processbatch` format: "YYYYMMDD_HHMMSS_filename" for unique identification
 - Default `nc_isprocessed` = false
 - Default `nc_emailsent` = false
+- Summary records used for data validation but not email processing
 
 **Exclusion Keywords:**
 - "Paid"
@@ -170,46 +184,106 @@ nc_processlog (1) ←→ (N) nc_emaillog
 
 ### Customer Master Validation
 
-```javascript
-// At least one customer email required
-nc_customeremail1 != null
+**Implementation**: Configure via Dataverse Business Rules or Power Fx formulas
 
-// At least one sales email required
-nc_salesemail1 != null
+```powershell
+# Business Rule: Customer Email Required
+# Navigate to: Tables > nc_customers > Business rules > + Add business rule
+Condition: IsBlank(nc_customeremail1)
+Action: Show error message "At least one customer email is required"
 
-// At least one AR backup email required
-nc_arbackupemail1 != null
+# Business Rule: Sales Email Required
+Condition: IsBlank(nc_salesemail1)
+Action: Show error message "At least one sales email is required"
 
-// Customer code format validation
-nc_customercode matches "^[0-9]{6,7}$"
+# Business Rule: AR Backup Email Required
+Condition: IsBlank(nc_arbackupemail1)
+Action: Show error message "At least one AR backup email is required"
+
+# Column Validation: Customer Code Format
+# Navigate to: Tables > nc_customers > Columns > nc_customercode > Advanced options
+Format Validation: IsMatch(Self.Value, "^[0-9]{6,7}$")
+Error Message: "Customer code must be 6-7 digits"
 ```
 
 ### Transaction Processing Validation
 
-```javascript
-// Document number required
-nc_documentnumber != null && nc_documentnumber != ""
+**Implementation**: Configure via Dataverse Business Rules and Power Fx formulas
 
-// Amount cannot be zero
-nc_amountlocalcurrency != 0
+```powershell
+# Business Rule: Transaction Fields Required
+# Navigate to: Tables > nc_transactions > Business rules > + Add business rule
+Condition: nc_recordtype = "Transaction"
+Actions:
+  - Set nc_documentnumber as required
+  - Set nc_documentdate as required
+  - Set nc_netduedate as required
+  - Set nc_daycount as required
 
-// Process date cannot be future
-nc_processdate <= Today()
+# Column Validation: Amount Not Zero
+# Navigate to: Tables > nc_transactions > Columns > nc_amountlocalcurrency
+Validation: Self.Value <> 0
+Error Message: "Amount cannot be zero"
+
+# Column Validation: Process Date Not Future
+# Navigate to: Tables > nc_transactions > Columns > nc_processdate
+Validation: Self.Value <= Today()
+Error Message: "Process date cannot be in the future"
+
+# Business Rule: Process Batch Required
+Condition: IsBlank(nc_processbatch)
+Action: Show error message "Process batch identifier is required for audit trail"
 ```
 
-## Indexes for Performance
+## Performance Optimization
 
-```sql
--- Customer lookup optimization
-CREATE INDEX IX_nc_customers_customercode ON nc_customers(nc_customercode)
+**Dataverse Auto-Indexing**: Dataverse automatically creates indexes on lookup fields and primary keys. Manual SQL index creation is not supported.
 
--- Transaction processing optimization
-CREATE INDEX IX_nc_transactions_processdate ON nc_transactions(nc_processdate)
-CREATE INDEX IX_nc_transactions_customer_date ON nc_transactions(nc_customer, nc_documentdate)
+### Dataverse Performance Best Practices
 
--- Email audit optimization
-CREATE INDEX IX_nc_emaillog_processdate ON nc_emaillog(nc_processdate)
-CREATE INDEX IX_nc_emaillog_customer ON nc_emaillog(nc_customer)
+```powershell
+# Lookup Field Optimization (Auto-indexed)
+- nc_customer (lookup fields are automatically indexed)
+- nc_processdate (date fields used in filtering)
+- nc_customercode (marked as alternate key for fast lookups)
+
+# Power Automate Query Optimization
+- Use FetchXML for complex queries instead of OData
+- Filter early in flows to reduce data transfer
+- Use pagination for large result sets
+
+# Alternate Key Configuration
+# Navigate to: Tables > nc_customers > Keys > + Add key
+Alternate Key: nc_customercode (for fast customer lookups)
+
+# View Optimization
+- Create indexed views for frequently accessed data combinations
+- Use column filtering in Model-Driven app views
+- Limit view columns to essential data only
+```
+
+### FetchXML Query Examples
+
+```xml
+<!-- Optimized customer transaction lookup -->
+<fetch>
+  <entity name="nc_transaction">
+    <filter>
+      <condition attribute="nc_customer" operator="eq" value="{customer_guid}" />
+      <condition attribute="nc_processdate" operator="eq" value="2025-09-29" />
+    </filter>
+  </entity>
+</fetch>
+
+<!-- Optimized email log queries -->
+<fetch>
+  <entity name="nc_emaillog">
+    <filter>
+      <condition attribute="nc_processdate" operator="on-or-after" value="2025-09-01" />
+    </filter>
+    <order attribute="nc_sentdatetime" descending="true" />
+  </entity>
+</fetch>
 ```
 
 ## Data Migration Strategy
@@ -248,6 +322,159 @@ CREATE INDEX IX_nc_emaillog_customer ON nc_emaillog(nc_customer)
 
 ---
 
+## Power Automate Excel Ingestion Flow
+
+### Flow Architecture: "Daily SAP Data Import"
+
+**Trigger:** Scheduled (Daily at 8:00 AM) or Manual
+
+**Flow Steps:**
+
+#### 1. File Detection & Validation
+```
+├── Get files from SharePoint/OneDrive folder
+├── Filter: *.xlsx files modified in last 24 hours
+├── Validate: File name pattern "Cash_Line_items_as of DD.MM.YYYY.xlsx"
+└── Log: File found/not found status
+```
+
+#### 2. Pre-Processing Setup
+```
+├── Generate batch ID: format("YYYYMMDD_HHMMSS_{0}", filename)
+├── Create process log entry (nc_processlog)
+├── Set variables:
+│   ├── ProcessDate = utcNow()
+│   ├── RowCounter = 0
+│   └── ErrorCount = 0
+```
+
+#### 3. Excel Parsing & Row Processing
+```
+├── List rows present in Excel table (range A:J)
+├── For each row in Excel worksheet:
+│   ├── Increment RowCounter
+│   ├── Determine record type:
+│   │   ├── If row = 1: recordtype = "Header"
+│   │   ├── If "Document Number" cell empty: recordtype = "Summary"
+│   │   └── Else: recordtype = "Transaction"
+│   │
+│   ├── Customer Lookup:
+│   │   ├── Query nc_customers by nc_customercode = Account
+│   │   ├── If not found: Log error, skip row
+│   │   └── Get customer GUID
+│   │
+│   ├── Data Transformation:
+│   │   ├── Parse amount: handle Excel number formatting
+│   │   ├── Convert dates: Excel date serial to standard format
+│   │   ├── Map DocumentType → TransactionType (DG=CN, DR=DN)
+│   │   ├── Calculate daycount from ArrearsbyNetDueDate
+│   │   └── Check exclusion keywords in Text field
+│   │
+│   └── Create nc_transactions record
+```
+
+#### 4. Data Validation & Cross-Checks
+```
+├── For each customer processed:
+│   ├── Sum transaction amounts by customer
+│   ├── Compare with summary row amount
+│   ├── If mismatch: Log validation error
+│   └── Update nc_transactions.nc_parentcustomeramount
+│
+├── Check for duplicate document numbers in batch
+├── Validate required email addresses exist
+└── Mark invalid records as excluded
+```
+
+#### 5. Historical Day Count Processing
+```
+├── Query yesterday's transactions for same customers
+├── For each customer:
+│   ├── Compare document numbers
+│   ├── If document exists in previous day:
+│   │   └── Increment daycount = previous_daycount + 1
+│   ├── If new document:
+│   │   └── Use arrears days from CSV
+│   └── Update nc_daycount field
+```
+
+#### 6. Error Handling & Logging
+```
+├── Catch parsing errors:
+│   ├── Log to nc_processlog.nc_errormessages
+│   ├── Continue processing remaining rows
+│   └── Set overall status = "Completed with errors"
+│
+├── Update process log:
+│   ├── nc_endtime = utcNow()
+│   ├── nc_totalcustomers = distinct customer count
+│   ├── nc_transactionsprocessed = transaction records created
+│   ├── nc_transactionsexcluded = excluded records
+│   └── nc_status = "Completed"/"Failed"
+│
+└── Send notification email if errors > 0
+```
+
+### Flow Variables & Expressions
+
+**Key Power Automate Expressions:**
+
+```javascript
+// Generate batch ID
+formatDateTime(utcNow(), 'yyyyMMdd_HHmmss')
+
+// Parse Excel number values (handles negative numbers automatically)
+float(item()?['Amount in Local Currency'])
+
+// Excel date conversion (from Excel serial number)
+formatDateTime(addDays('1900-01-01', sub(int(item()?['Document Date']), 2)), 'yyyy-MM-dd')
+
+// Record type determination for Excel
+if(empty(item()?['Document Number']), 'Summary', 'Transaction')
+
+// Transaction type mapping
+switch(item()?['Document Type'], 'DG', 'CN', 'DR', 'DN', 'Other')
+
+// Exclusion keyword check
+or(contains(item()?['Text'], 'Paid'), contains(item()?['Text'], 'Partial Payment'), contains(item()?['Text'], 'รักษาตลาด'), contains(item()?['Text'], 'exclude'))
+
+// Excel worksheet reference
+// Use "List rows present in a table" action with table range A:J
+```
+
+### Error Scenarios & Handling
+
+| Error Type | Handling Strategy |
+|------------|-------------------|
+| File not found | Log warning, skip processing |
+| Invalid Excel format | Log error, stop processing |
+| Excel file locked/in use | Retry 3 times, then log error |
+| Customer not found | Log error, skip row, continue |
+| Duplicate document | Log warning, update existing |
+| Amount parsing error | Log error, set amount = 0, continue |
+| Date format error | Log error, use processdate, continue |
+| Excel table not found | Log error, try range-based parsing |
+| Validation mismatch | Log warning, continue processing |
+
+### Performance Considerations
+
+- **Batch Processing**: Process 100 rows at a time
+- **Parallel Processing**: Customer lookups in parallel where possible
+- **Indexing**: Ensure indexes on customercode and documentnumber
+- **Memory Management**: Clear variables after each customer group
+
+### Integration Points
+
+```
+SharePoint Folder → Power Automate → Dataverse
+     ↓                    ↓              ↓
+SAP Excel File  →    Excel Parsing →  nc_transactions
+QR Code Folder  →    Validation    →  nc_processlog
+Email Templates →    Error Handling →  nc_emaillog
+```
+
+---
+
 **Schema Status:** Ready for Implementation
-**Next Step:** Dataverse environment configuration
-**Dependencies:** Customer data migration, QR code folder access
+**Next Step:** Power Automate flow development, Dataverse environment configuration
+**Dependencies:** Customer data migration, SharePoint folder access, QR code folder access
