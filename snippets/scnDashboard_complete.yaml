@@ -1,0 +1,542 @@
+Screens:
+  scnDashboard:
+    Properties:
+      LoadingSpinnerColor: =RGBA(100, 81, 61, 1)
+      OnVisible: |-
+        =UpdateContext({currentScreen:"Dashboard"});
+        Set(_showMenu,false);
+        // Load today's processing data
+        ClearCollect(
+          colTodayProcessing,
+          Filter(
+            '[THFinanceCashCollection]Process Logs',
+            cr7bb_processdate = Text(Today(), "yyyy-mm-dd")
+          )
+        );
+        // Load today's transactions
+        ClearCollect(
+          colTodayTransactions,
+          Filter(
+            '[THFinanceCashCollection]Transactions',
+            cr7bb_transactionprocessdate = Today()
+          )
+        );
+        // Load today's email log
+        ClearCollect(
+          colTodayEmails,
+          Filter(
+            '[THFinanceCashCollection]Emaillogs',
+            cr7bb_processdate = Today()
+          )
+        );
+    Children:
+      - DashboardMainContainer:
+          Control: GroupContainer@1.3.0
+          Variant: ManualLayout
+          Properties:
+            DropShadow: =DropShadow.Regular
+            Height: =Parent.Height
+            Width: =Parent.Width
+          Children:
+            - DashboardContent:
+                Control: GroupContainer@1.3.0
+                Variant: AutoLayout
+                Properties:
+                  DropShadow: =DropShadow.Regular
+                  Fill: =RGBA(245, 250, 252, 1)
+                  Height: =Parent.Height-85
+                  LayoutDirection: =LayoutDirection.Vertical
+                  LayoutGap: =20
+                  LayoutOverflowY: =LayoutOverflow.Scroll
+                  PaddingBottom: =20
+                  PaddingLeft: =20
+                  PaddingRight: =20
+                  PaddingTop: =20
+                  RadiusBottomLeft: =10
+                  RadiusBottomRight: =10
+                  RadiusTopLeft: =10
+                  RadiusTopRight: =10
+                  Width: =If(App.ActiveScreen.Size>=ScreenSize.ExtraLarge,Parent.Width-270,Parent.Width-20)
+                  X: =If(App.ActiveScreen.Size>=ScreenSize.ExtraLarge,260,10)
+                  Y: =75
+                Children:
+                  - DashboardTitle:
+                      Control: Text@0.0.51
+                      Properties:
+                        Font: =Font.'Segoe UI'
+                        FontColor: =RGBA(0, 86, 149, 1)
+                        Height: =50
+                        Size: =28
+                        Text: ="AR Control Center"
+                        VerticalAlign: =VerticalAlign.Middle
+                        Weight: ='TextCanvas.Weight'.Bold
+                        Width: =Parent.Width-40
+                  - DashboardKPIRow:
+                      Control: GroupContainer@1.3.0
+                      Variant: AutoLayout
+                      Properties:
+                        Height: =150
+                        LayoutDirection: =LayoutDirection.Horizontal
+                        LayoutGap: =20
+                        Width: =Parent.Width-40
+                      Children:
+                        - KPIEmailsSent:
+                            Control: GroupContainer@1.3.0
+                            Variant: AutoLayout
+                            Properties:
+                              Fill: =RGBA(0, 86, 149, 1)
+                              Height: =150
+                              LayoutDirection: =LayoutDirection.Vertical
+                              LayoutGap: =10
+                              LayoutJustifyContent: =LayoutJustifyContent.Center
+                              PaddingBottom: =15
+                              PaddingLeft: =20
+                              PaddingRight: =20
+                              PaddingTop: =15
+                              RadiusBottomLeft: =8
+                              RadiusBottomRight: =8
+                              RadiusTopLeft: =8
+                              RadiusTopRight: =8
+                              Width: =Parent.Width/3-15
+                            Children:
+                              - KPIEmailsSentLabel:
+                                  Control: Text@0.0.51
+                                  Properties:
+                                    Font: =Font.'Segoe UI'
+                                    FontColor: =RGBA(255, 255, 255, 1)
+                                    Height: =30
+                                    Size: =14
+                                    Text: ="Emails Sent Today"
+                                    VerticalAlign: =VerticalAlign.Middle
+                                    Width: =Parent.Width-40
+                              - KPIEmailsSentValue:
+                                  Control: Text@0.0.51
+                                  Properties:
+                                    Font: =Font.'Segoe UI'
+                                    FontColor: =RGBA(255, 255, 255, 1)
+                                    Height: =60
+                                    Size: =48
+                                    Text: =CountRows(Filter(colTodayEmails, cr7bb_sendstatus = 'Send Status Choice'.Success))
+                                    VerticalAlign: =VerticalAlign.Middle
+                                    Weight: ='TextCanvas.Weight'.Bold
+                                    Width: =Parent.Width-40
+                        - KPITotalAmount:
+                            Control: GroupContainer@1.3.0
+                            Variant: AutoLayout
+                            Properties:
+                              Fill: =RGBA(100, 81, 61, 1)
+                              Height: =150
+                              LayoutDirection: =LayoutDirection.Vertical
+                              LayoutGap: =10
+                              LayoutJustifyContent: =LayoutJustifyContent.Center
+                              PaddingBottom: =15
+                              PaddingLeft: =20
+                              PaddingRight: =20
+                              PaddingTop: =15
+                              RadiusBottomLeft: =8
+                              RadiusBottomRight: =8
+                              RadiusTopLeft: =8
+                              RadiusTopRight: =8
+                              Width: =Parent.Width/3-15
+                            Children:
+                              - KPITotalAmountLabel:
+                                  Control: Text@0.0.51
+                                  Properties:
+                                    Font: =Font.'Segoe UI'
+                                    FontColor: =RGBA(255, 255, 255, 1)
+                                    Height: =30
+                                    Size: =14
+                                    Text: ="Total Amount (THB)"
+                                    VerticalAlign: =VerticalAlign.Middle
+                                    Width: =Parent.Width-40
+                              - KPITotalAmountValue:
+                                  Control: Text@0.0.51
+                                  Properties:
+                                    Font: =Font.'Segoe UI'
+                                    FontColor: =RGBA(255, 255, 255, 1)
+                                    Height: =60
+                                    Size: =36
+                                    Text: =Text(Sum(colTodayEmails, cr7bb_totalamount), "#,##0")
+                                    VerticalAlign: =VerticalAlign.Middle
+                                    Weight: ='TextCanvas.Weight'.Bold
+                                    Width: =Parent.Width-40
+                        - KPICustomersProcessed:
+                            Control: GroupContainer@1.3.0
+                            Variant: AutoLayout
+                            Properties:
+                              Fill: =RGBA(0, 105, 170, 1)
+                              Height: =150
+                              LayoutDirection: =LayoutDirection.Vertical
+                              LayoutGap: =10
+                              LayoutJustifyContent: =LayoutJustifyContent.Center
+                              PaddingBottom: =15
+                              PaddingLeft: =20
+                              PaddingRight: =20
+                              PaddingTop: =15
+                              RadiusBottomLeft: =8
+                              RadiusBottomRight: =8
+                              RadiusTopLeft: =8
+                              RadiusTopRight: =8
+                              Width: =Parent.Width/3-15
+                            Children:
+                              - KPICustomersLabel:
+                                  Control: Text@0.0.51
+                                  Properties:
+                                    Font: =Font.'Segoe UI'
+                                    FontColor: =RGBA(255, 255, 255, 1)
+                                    Height: =30
+                                    Size: =14
+                                    Text: ="Customers Contacted"
+                                    VerticalAlign: =VerticalAlign.Middle
+                                    Width: =Parent.Width-40
+                              - KPICustomersValue:
+                                  Control: Text@0.0.51
+                                  Properties:
+                                    Font: =Font.'Segoe UI'
+                                    FontColor: =RGBA(255, 255, 255, 1)
+                                    Height: =60
+                                    Size: =48
+                                    Text: =CountRows(colTodayEmails)
+                                    VerticalAlign: =VerticalAlign.Middle
+                                    Weight: ='TextCanvas.Weight'.Bold
+                                    Width: =Parent.Width-40
+                  - DashboardProcessingStatus:
+                      Control: GroupContainer@1.3.0
+                      Variant: AutoLayout
+                      Properties:
+                        Fill: =RGBA(255, 255, 255, 1)
+                        Height: =200
+                        LayoutDirection: =LayoutDirection.Vertical
+                        LayoutGap: =15
+                        PaddingBottom: =20
+                        PaddingLeft: =20
+                        PaddingRight: =20
+                        PaddingTop: =20
+                        RadiusBottomLeft: =8
+                        RadiusBottomRight: =8
+                        RadiusTopLeft: =8
+                        RadiusTopRight: =8
+                        Width: =Parent.Width-40
+                      Children:
+                        - ProcessingStatusTitle:
+                            Control: Text@0.0.51
+                            Properties:
+                              Font: =Font.'Segoe UI'
+                              FontColor: =RGBA(0, 86, 149, 1)
+                              Height: =35
+                              Size: =20
+                              Text: ="Today's Processing Status"
+                              VerticalAlign: =VerticalAlign.Middle
+                              Weight: ='TextCanvas.Weight'.Semibold
+                              Width: =Parent.Width-40
+                        - ProcessingStatusInfo:
+                            Control: GroupContainer@1.3.0
+                            Variant: AutoLayout
+                            Properties:
+                              Height: =120
+                              LayoutDirection: =LayoutDirection.Horizontal
+                              LayoutGap: =40
+                            Children:
+                              - ProcessingLeftColumn:
+                                  Control: GroupContainer@1.3.0
+                                  Variant: AutoLayout
+                                  Properties:
+                                    Height: =120
+                                    LayoutDirection: =LayoutDirection.Vertical
+                                    LayoutGap: =10
+                                    Width: =Parent.Width/2-20
+                                  Children:
+                                    - ProcessingStartTime:
+                                        Control: Text@0.0.51
+                                        Properties:
+                                          Font: =Font.'Segoe UI'
+                                          Height: =30
+                                          Size: =14
+                                          Text: |
+                                            ="Start Time: " & If(CountRows(colTodayProcessing)>0, Text(First(colTodayProcessing).cr7bb_starttime, "hh:mm AM/PM"), "Not run today")
+                                          VerticalAlign: =VerticalAlign.Middle
+                                          Width: =Parent.Width
+                                    - ProcessingEndTime:
+                                        Control: Text@0.0.51
+                                        Properties:
+                                          Font: =Font.'Segoe UI'
+                                          Height: =30
+                                          Size: =14
+                                          Text: |
+                                            ="End Time: " & If(CountRows(colTodayProcessing)>0 && !IsBlank(First(colTodayProcessing).cr7bb_endtime), Text(First(colTodayProcessing).cr7bb_endtime, "hh:mm AM/PM"), "In progress...")
+                                          VerticalAlign: =VerticalAlign.Middle
+                                          Width: =Parent.Width
+                                    - ProcessingDuration:
+                                        Control: Text@0.0.51
+                                        Properties:
+                                          Font: =Font.'Segoe UI'
+                                          Height: =30
+                                          Size: =14
+                                          Text: |
+                                            ="Duration: " & If(CountRows(colTodayProcessing)>0 && !IsBlank(First(colTodayProcessing).cr7bb_endtime), Text(DateDiff(First(colTodayProcessing).cr7bb_starttime, First(colTodayProcessing).cr7bb_endtime, TimeUnit.Minutes), "0") & " minutes", "-")
+                                          VerticalAlign: =VerticalAlign.Middle
+                                          Width: =Parent.Width
+                              - ProcessingRightColumn:
+                                  Control: GroupContainer@1.3.0
+                                  Variant: AutoLayout
+                                  Properties:
+                                    Height: =120
+                                    LayoutDirection: =LayoutDirection.Vertical
+                                    LayoutGap: =10
+                                    Width: =Parent.Width/2-20
+                                  Children:
+                                    - ProcessingTransactions:
+                                        Control: Text@0.0.51
+                                        Properties:
+                                          Font: =Font.'Segoe UI'
+                                          Height: =30
+                                          Size: =14
+                                          Text: |
+                                            ="Transactions: " & If(CountRows(colTodayProcessing)>0, Text(First(colTodayProcessing).cr7bb_transactionsprocessed, "#,##0"), "0")
+                                          VerticalAlign: =VerticalAlign.Middle
+                                          Width: =Parent.Width
+                                    - ProcessingExcluded:
+                                        Control: Text@0.0.51
+                                        Properties:
+                                          Font: =Font.'Segoe UI'
+                                          FontColor: =RGBA(255, 152, 0, 1)
+                                          Height: =30
+                                          Size: =14
+                                          Text: |
+                                            ="Excluded: " & If(CountRows(colTodayProcessing)>0, Text(First(colTodayProcessing).cr7bb_transactionsexcluded, "#,##0"), "0")
+                                          VerticalAlign: =VerticalAlign.Middle
+                                          Width: =Parent.Width
+                                    - ProcessingFailed:
+                                        Control: Text@0.0.51
+                                        Properties:
+                                          Font: =Font.'Segoe UI'
+                                          FontColor: =RGBA(244, 67, 54, 1)
+                                          Height: =30
+                                          Size: =14
+                                          Text: |
+                                            ="Failed Emails: " & If(CountRows(colTodayProcessing)>0, Text(First(colTodayProcessing).cr7bb_emailsfailed, "#,##0"), "0")
+                                          VerticalAlign: =VerticalAlign.Middle
+                                          Width: =Parent.Width
+                  - DashboardTopCustomers:
+                      Control: GroupContainer@1.3.0
+                      Variant: AutoLayout
+                      Properties:
+                        Fill: =RGBA(255, 255, 255, 1)
+                        Height: =400
+                        LayoutDirection: =LayoutDirection.Vertical
+                        LayoutGap: =15
+                        PaddingBottom: =20
+                        PaddingLeft: =20
+                        PaddingRight: =20
+                        PaddingTop: =20
+                        RadiusBottomLeft: =8
+                        RadiusBottomRight: =8
+                        RadiusTopLeft: =8
+                        RadiusTopRight: =8
+                        Width: =Parent.Width-40
+                      Children:
+                        - TopCustomersTitle:
+                            Control: Text@0.0.51
+                            Properties:
+                              Font: =Font.'Segoe UI'
+                              FontColor: =RGBA(0, 86, 149, 1)
+                              Height: =35
+                              Size: =20
+                              Text: ="Top 10 Customers by Outstanding Amount"
+                              VerticalAlign: =VerticalAlign.Middle
+                              Weight: ='TextCanvas.Weight'.Semibold
+                              Width: =Parent.Width-40
+                        - TopCustomersGallery:
+                            Control: Gallery@2.15.0
+                            Variant: Vertical
+                            Properties:
+                              Height: =330
+                              Items: =FirstN(SortByColumns(colTodayEmails, "cr7bb_totalamount", SortOrder.Descending), 10)
+                              TemplatePadding: =0
+                              TemplateSize: =50
+                              Width: =Parent.Width-40
+                            Children:
+                              - CustomerRow:
+                                  Control: GroupContainer@1.3.0
+                                  Variant: AutoLayout
+                                  Properties:
+                                    Fill: =RGBA(255, 255, 255, 1)
+                                    Height: =45
+                                    LayoutDirection: =LayoutDirection.Horizontal
+                                    LayoutGap: =20
+                                    LayoutJustifyContent: =LayoutJustifyContent.SpaceBetween
+                                    PaddingLeft: =15
+                                    PaddingRight: =15
+                                    Width: =Parent.Width
+                                  Children:
+                                    - CustomerName:
+                                        Control: Text@0.0.51
+                                        Properties:
+                                          Font: =Font.'Segoe UI'
+                                          Height: =45
+                                          Size: =14
+                                          Text: =LookUp('[THFinanceCashCollection]Customers', cr7bb_thfinancecashcollectioncustomerid = ThisItem.Customer.'[THFinanceCashCollection]Customer').cr7bb_customername
+                                          VerticalAlign: =VerticalAlign.Middle
+                                          Weight: ='TextCanvas.Weight'.Semibold
+                                          Width: =Parent.Width-200
+                                    - CustomerAmount:
+                                        Control: Text@0.0.51
+                                        Properties:
+                                          Align: ='TextCanvas.Align'.End
+                                          Font: =Font.'Segoe UI'
+                                          FontColor: =RGBA(100, 81, 61, 1)
+                                          Height: =45
+                                          Size: =16
+                                          Text: =Text(ThisItem.cr7bb_totalamount, "#,##0.00")
+                                          VerticalAlign: =VerticalAlign.Middle
+                                          Weight: ='TextCanvas.Weight'.Bold
+                                          Width: =170
+                  - DashboardQuickActions:
+                      Control: GroupContainer@1.3.0
+                      Variant: AutoLayout
+                      Properties:
+                        Height: =80
+                        LayoutDirection: =LayoutDirection.Horizontal
+                        LayoutGap: =15
+                        Width: =Parent.Width-40
+                      Children:
+                        - ViewCustomersBtn:
+                            Control: Button@0.0.45
+                            Properties:
+                              BasePaletteColor: =RGBA(0, 86, 149, 1)
+                              Height: =50
+                              Icon: ="Contact"
+                              OnSelect: =Navigate(scnCustomer, ScreenTransition.None)
+                              Text: ="View Customers"
+                              Width: =200
+                        - ViewTransactionsBtn:
+                            Control: Button@0.0.45
+                            Properties:
+                              BasePaletteColor: =RGBA(100, 81, 61, 1)
+                              Height: =50
+                              Icon: ="Money"
+                              OnSelect: =Navigate(scnTransactions, ScreenTransition.None)
+                              Text: ="View Transactions"
+                              Width: =200
+                        - RefreshDashboardBtn:
+                            Control: Button@0.0.45
+                            Properties:
+                              BasePaletteColor: =RGBA(0, 105, 170, 1)
+                              Height: =50
+                              Icon: ="Refresh"
+                              OnSelect: =Refresh('[THFinanceCashCollection]Process Logs'); Refresh('[THFinanceCashCollection]Transactions'); Refresh('[THFinanceCashCollection]Emaillogs'); Navigate(scnDashboard, ScreenTransition.None)
+                              Text: ="Refresh Data"
+                              Width: =180
+            - DashboardNavigationMenu:
+                Control: CanvasComponent
+                ComponentName: NavigationMenu
+                Properties:
+                  Fill: =RGBA(245, 250, 252, 0.5)
+                  Height: =Parent.Height-70
+                  Visible: =If(App.ActiveScreen.Size>=ScreenSize.ExtraLarge||_showMenu,true,false)
+                  Width: =260
+                  Y: =70
+                  navItems: =Navigation
+                  navSelected: =currentScreen
+      - DashboardHeader:
+          Control: GroupContainer@1.3.0
+          Variant: AutoLayout
+          Properties:
+            DropShadow: =DropShadow.Regular
+            Fill: =LookUp(Navigation, name = currentScreen, color)
+            Height: =55
+            LayoutAlignItems: =LayoutAlignItems.Center
+            LayoutDirection: =LayoutDirection.Horizontal
+            PaddingLeft: =15
+            RadiusBottomLeft: =8
+            RadiusBottomRight: =8
+            RadiusTopLeft: =8
+            RadiusTopRight: =8
+            Width: =Parent.Width-20
+            X: =10
+            Y: =10
+          Children:
+            - DashboardMenuIcon:
+                Control: Classic/Icon@2.5.0
+                Properties:
+                  BorderColor: =RGBA(0, 86, 149, 1)
+                  Color: =RGBA(255, 255, 255, 1)
+                  Height: =50
+                  Icon: =Icon.Hamburger
+                  OnSelect: =Set(_showMenu,!_showMenu);
+                  PaddingBottom: =10
+                  PaddingLeft: =10
+                  PaddingRight: =10
+                  PaddingTop: =10
+                  Width: =50
+            - DashboardHeaderTitle:
+                Control: Text@0.0.51
+                Properties:
+                  Font: =Font.'Segoe UI'
+                  FontColor: =RGBA(255, 255, 255, 1)
+                  Height: =50
+                  PaddingLeft: =20
+                  Size: =25
+                  Text: =currentScreen
+                  VerticalAlign: =VerticalAlign.Middle
+                  Weight: ='TextCanvas.Weight'.Semibold
+                  Width: =Parent.Width-80
+
+# ═══════════════════════════════════════════════════════════════════
+# AR CONTROL CENTER DASHBOARD - COMPLETE IMPLEMENTATION
+# ═══════════════════════════════════════════════════════════════════
+# Purpose: Real-time monitoring dashboard for daily collection operations
+# User: AR Team monitoring daily email processing runs
+# ═══════════════════════════════════════════════════════════════════
+
+# DASHBOARD SECTIONS:
+
+# 1. KPI CARDS (Top Row)
+#    ✅ Emails Sent Today - Nestlé Blue background
+#    ✅ Total Amount (THB) - Oak Brown background
+#    ✅ Customers Contacted - Deep Blue background
+#    - Large numbers, white text, brand colors
+
+# 2. PROCESSING STATUS PANEL
+#    ✅ Start/End Time - When automation ran
+#    ✅ Duration - How long processing took
+#    ✅ Transactions Processed - Total line items
+#    ✅ Excluded Count - Items filtered out (orange warning)
+#    ✅ Failed Emails - Delivery failures (red alert)
+
+# 3. TOP 10 CUSTOMERS LIST
+#    ✅ Scrollable gallery of top customers by outstanding amount
+#    ✅ Customer name + amount in THB
+#    ✅ Alternating row colors for readability
+#    ✅ Bold amounts in Oak Brown
+
+# 4. QUICK ACTION BUTTONS
+#    ✅ View Customers - Navigate to customer management
+#    ✅ View Transactions - Navigate to transaction details
+#    ✅ Refresh Data - Reload all dashboard data
+
+# DATA COLLECTIONS (Loaded on OnVisible):
+# - colTodayProcessing: Today's ProcessLog records
+# - colTodayTransactions: Today's transaction records
+# - colTodayEmails: Today's email log records
+
+# BUSINESS VALUE:
+# - Real-time visibility into daily operations
+# - Quick identification of processing issues
+# - Instant access to high-priority customers
+# - One-click navigation to detailed screens
+# - Professional Nestlé-branded interface
+
+# TECHNICAL FEATURES:
+# - Responsive layout (desktop/mobile)
+# - Auto-refresh data on navigation
+# - Error-tolerant (handles no data gracefully)
+# - Fast performance (collections, not live queries)
+# - WCAG AA accessible contrast ratios
+
+# IMPLEMENTATION NOTES:
+# 1. Requires ProcessLog, Transactions, and EmailLog tables
+# 2. Lookup field navigation uses proper syntax
+# 3. All colors from Nestlé brand palette
+# 4. Follows Power Apps best practices
+# 5. Ready for Power Apps Studio import

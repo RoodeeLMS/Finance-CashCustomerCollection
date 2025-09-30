@@ -1,0 +1,815 @@
+Screens:
+  scnCustomer:
+    Properties:
+      LoadingSpinnerColor: =RGBA(56, 96, 178, 1)
+      OnVisible: |-
+        =UpdateContext({currentScreen:"Customers"});
+        UpdateContext({currentMode:"View"});
+        Set(_showMenu,false);
+        UpdateContext({ showConfirmationPopup: false });
+        UpdateContext({ dataSourceIdentifier: "" });
+        UpdateContext({ recordToDelete: Blank() });
+        UpdateContext({ recordPrimaryProperty: "" });
+        UpdateContext({currentSelectedCustomer:Blank()});
+        UpdateContext({customerSearchText:""});
+    Children:
+      - CustomerMainContainer:
+          Control: GroupContainer@1.3.0
+          Variant: ManualLayout
+          Properties:
+            DropShadow: =DropShadow.Regular
+            Height: =Parent.Height
+            Width: =Parent.Width
+          Children:
+            - CustomerContent:
+                Control: GroupContainer@1.3.0
+                Variant: ManualLayout
+                Properties:
+                  DropShadow: =DropShadow.Regular
+                  Fill: =RGBA(255, 255, 255, 1)
+                  Height: =Parent.Height-85
+                  RadiusBottomLeft: =10
+                  RadiusBottomRight: =10
+                  RadiusTopLeft: =10
+                  RadiusTopRight: =10
+                  Width: =Parent.Width-20
+                  X: =10
+                  Y: =75
+                Children:
+                  - CustomerTable:
+                      Control: GroupContainer@1.3.0
+                      Variant: ManualLayout
+                      Properties:
+                        Height: =Parent.Height
+                        Visible: =currentMode="View"
+                        Width: =Parent.Width
+                      Children:
+                        - CustomerTableControl:
+                            Control: GroupContainer@1.3.0
+                            Variant: AutoLayout
+                            Properties:
+                              Height: =40
+                              LayoutDirection: =LayoutDirection.Horizontal
+                              LayoutGap: =10
+                              LayoutJustifyContent: =LayoutJustifyContent.SpaceBetween
+                              PaddingLeft: =10
+                              PaddingRight: =10
+                              PaddingTop: =5
+                              Width: =Parent.Width
+                              Y: =10
+                            Children:
+                              - CustomerSearchInput:
+                                  Control: TextInput@0.0.54
+                                  Properties:
+                                    Height: =30
+                                    Placeholder: ="Search by customer code or name..."
+                                    Value: =customerSearchText
+                                    OnChange: =UpdateContext({customerSearchText:Self.Value})
+                                    Width: =300
+                              - CustomerButtonGroup:
+                                  Control: GroupContainer@1.3.0
+                                  Variant: AutoLayout
+                                  Properties:
+                                    Height: =30
+                                    LayoutDirection: =LayoutDirection.Horizontal
+                                    LayoutGap: =10
+                                  Children:
+                                    - CustomerAddBtn:
+                                        Control: Button@0.0.45
+                                        Properties:
+                                          Align: =Align.Center
+                                          Appearance: ='ButtonCanvas.Appearance'.Primary
+                                          BasePaletteColor: =RGBA(141, 229, 250, 1)
+                                          Height: =30
+                                          Icon: ="Add"
+                                          OnSelect: |-
+                                            =UpdateContext({currentMode:"New"});
+                                            UpdateContext({currentSelectedCustomer:Blank()});
+                                            Reset(CustomerFormCustomerCode);
+                                            Reset(CustomerFormCustomerName);
+                                            Reset(CustomerFormRegion);
+                                            Reset(CustomerFormCustomerEmail1);
+                                            Reset(CustomerFormCustomerEmail2);
+                                            Reset(CustomerFormCustomerEmail3);
+                                            Reset(CustomerFormCustomerEmail4);
+                                            Reset(CustomerFormSalesEmail1);
+                                            Reset(CustomerFormSalesEmail2);
+                                            Reset(CustomerFormSalesEmail3);
+                                            Reset(CustomerFormSalesEmail4);
+                                            Reset(CustomerFormSalesEmail5);
+                                            Reset(CustomerFormARBackupEmail1);
+                                            Reset(CustomerFormARBackupEmail2);
+                                            Reset(CustomerFormARBackupEmail3);
+                                            Reset(CustomerFormARBackupEmail4);
+                                          Text: ="Add Customer"
+                                          VerticalAlign: =VerticalAlign.Middle
+                                          Width: =160
+                                    - CustomerEditBtn:
+                                        Control: Button@0.0.45
+                                        Properties:
+                                          BasePaletteColor: =RGBA(141, 229, 250, 1)
+                                          DisplayMode: =If(IsBlankOrError(CustomerTableTbl.Selected),DisplayMode.Disabled,DisplayMode.Edit)
+                                          Height: =30
+                                          Icon: ="Edit"
+                                          OnSelect: |-
+                                            =UpdateContext({currentMode:"Edit"});
+                                            UpdateContext({currentSelectedCustomer:CustomerTableTbl.Selected});
+                                          Text: ="Edit"
+                                          VerticalAlign: =VerticalAlign.Middle
+                                          Width: =80
+                                    - CustomerDeleteBtn:
+                                        Control: Button@0.0.45
+                                        Properties:
+                                          BasePaletteColor: =RGBA(255, 59, 48, 1)
+                                          DisplayMode: =If(IsBlankOrError(CustomerTableTbl.Selected),DisplayMode.Disabled,DisplayMode.Edit)
+                                          Height: =30
+                                          Icon: ="Trash"
+                                          OnSelect: |-
+                                            =UpdateContext({ showConfirmationPopup: true });
+                                            UpdateContext({ dataSourceIdentifier: "Customer" });
+                                            UpdateContext({ recordToDelete: CustomerTableTbl.Selected });
+                                            UpdateContext({ recordPrimaryProperty: CustomerTableTbl.Selected.cr7bb_customercode });
+                                          Text: ="Delete"
+                                          VerticalAlign: =VerticalAlign.Middle
+                                          Width: =90
+                        - CustomerTableTbl:
+                            Control: Table@1.0.278
+                            Properties:
+                              DateTimeFormat: ='PowerAppsOneGrid.DateTimeFormat'.ShortDate
+                              EnableRangeSelection: ='PowerAppsOneGrid.EnableRangeSelection'.Enable
+                              Height: =Parent.Height-70
+                              Items: |-
+                                =If(
+                                  IsBlank(customerSearchText) || customerSearchText = "",
+                                  Sort('[THFinanceCashCollection]Customers',cr7bb_customercode,SortOrder.Ascending),
+                                  Filter(
+                                    '[THFinanceCashCollection]Customers',
+                                    Or(
+                                      StartsWith(Upper(cr7bb_customercode), Upper(customerSearchText)),
+                                      StartsWith(Upper(cr7bb_customername), Upper(customerSearchText)),
+                                      cr7bb_customercode = customerSearchText
+                                    )
+                                  )
+                                )
+                              ReflowBehavior: ='PowerAppsOneGrid.ReflowBehavior'.Reflow
+                              Visible: =currentMode="View"
+                              Width: =Parent.Width-20
+                              X: =10
+                              Y: =60
+                            Children:
+                              - CustomerCode:
+                                  Control: TableDataField@1.5.0
+                                  Variant: textualColumn
+                                  IsLocked: true
+                                  Properties:
+                                    FieldDisplayName: ="Customer Code"
+                                    FieldName: ="cr7bb_customercode"
+                                    FieldType: ="s"
+                                    Order: =1
+                              - CustomerName:
+                                  Control: TableDataField@1.5.0
+                                  Variant: textualColumn
+                                  IsLocked: true
+                                  Properties:
+                                    FieldDisplayName: ="Customer Name"
+                                    FieldName: ="cr7bb_customername"
+                                    FieldType: ="s"
+                                    Order: =2
+                              - Region:
+                                  Control: TableDataField@1.5.0
+                                  IsLocked: true
+                                  Properties:
+                                    FieldDisplayName: ="Region"
+                                    FieldName: ="nc_region"
+                                    FieldType: ="E"
+                                    Order: =3
+                              - CustomerEmail:
+                                  Control: TableDataField@1.5.0
+                                  Variant: textualColumn
+                                  IsLocked: true
+                                  Properties:
+                                    FieldDisplayName: ="Customer Email"
+                                    FieldName: ="cr7bb_customeremail1"
+                                    FieldType: ="s"
+                                    Order: =4
+                              - SalesEmail:
+                                  Control: TableDataField@1.5.0
+                                  Variant: textualColumn
+                                  IsLocked: true
+                                  Properties:
+                                    FieldDisplayName: ="Sales Email"
+                                    FieldName: ="cr7bb_salesemail1"
+                                    FieldType: ="s"
+                                    Order: =5
+                  - CustomerForm:
+                      Control: GroupContainer@1.3.0
+                      Variant: ManualLayout
+                      Properties:
+                        Height: =Parent.Height
+                        Visible: =currentMode<>"View"
+                        Width: =Parent.Width
+                      Children:
+                        - CustomerFormContainer:
+                            Control: GroupContainer@1.3.0
+                            Variant: AutoLayout
+                            Properties:
+                              Height: =Parent.Height-50
+                              LayoutDirection: =LayoutDirection.Vertical
+                              LayoutOverflowX: =LayoutOverflow.Scroll
+                              LayoutOverflowY: =LayoutOverflow.Scroll
+                              PaddingLeft: =15
+                              PaddingTop: =15
+                              Width: =Parent.Width
+                            Children:
+                              - CustomerFormBasicSection:
+                                  Control: GroupContainer@1.3.0
+                                  Variant: AutoLayout
+                                  Properties:
+                                    Fill: =RGBA(174, 208, 221, 1)
+                                    FillPortions: =0
+                                    Height: =260
+                                    LayoutDirection: =LayoutDirection.Vertical
+                                    RadiusBottomLeft: =6
+                                    RadiusBottomRight: =6
+                                    RadiusTopLeft: =6
+                                    RadiusTopRight: =6
+                                  Children:
+                                    - CustomerFormBasicTitle:
+                                        Control: Text@0.0.51
+                                        Properties:
+                                          BorderStyle: =BorderStyle.None
+                                          Font: =Font.'Lato Black'
+                                          FontColor: =RGBA(15, 84, 140, 1)
+                                          Height: =45
+                                          PaddingBottom: =8
+                                          PaddingLeft: =10
+                                          PaddingTop: =8
+                                          Size: =20
+                                          Text: =If(currentMode="New","Add Customer","Edit Customer")
+                                          VerticalAlign: =VerticalAlign.Middle
+                                          Width: =Parent.Width
+                                    - CustomerFormCustomerCode:
+                                        Control: CanvasComponent
+                                        ComponentName: cmpEditableText
+                                        Properties:
+                                          EditMode: =currentMode <> "View"
+                                          ErrorFlag: =false
+                                          Height: =80
+                                          LayoutMinHeight: =80
+                                          LayoutMinWidth: =400
+                                          MaxLength: =20
+                                          TitleText: ="Customer Code"
+                                          Value: =currentSelectedCustomer.cr7bb_customercode
+                                          Width: =Parent.Width-20
+                                          isRequired: =true
+                                    - CustomerFormCustomerName:
+                                        Control: CanvasComponent
+                                        ComponentName: cmpEditableText
+                                        Properties:
+                                          EditMode: =currentMode <> "View"
+                                          ErrorFlag: =false
+                                          Height: =80
+                                          LayoutMinHeight: =80
+                                          LayoutMinWidth: =400
+                                          MaxLength: =255
+                                          TitleText: ="Customer Name"
+                                          Value: =currentSelectedCustomer.cr7bb_customername
+                                          Width: =Parent.Width-20
+                                          isRequired: =true
+                                    - CustomerFormRegionLabel:
+                                        Control: Text@0.0.51
+                                        Properties:
+                                          Height: =20
+                                          PaddingLeft: =10
+                                          Text: ="Region *"
+                                          Weight: ='TextCanvas.Weight'.Semibold
+                                          Width: =Parent.Width-20
+                                    - CustomerFormRegion:
+                                        Control: ComboBox@0.0.51
+                                        Properties:
+                                          DefaultSelectedItems: =currentSelectedCustomer.nc_region
+                                          Items: |-
+                                            =Choices('[THFinanceCashCollection]Customers'.nc_region)
+                                          Width: =Parent.Width-40
+                                          X: =10
+                                        Children:
+                                          - RegionValue:
+                                              Control: ComboBoxDataField@1.5.0
+                                              Variant: textualColumn
+                                              IsLocked: true
+                                              Properties:
+                                                FieldDisplayName: ="Region"
+                                                FieldName: ="Value"
+                                                FieldType: ="s"
+                                                Order: =1
+                              - CustomerFormCustomerEmailSection:
+                                  Control: GroupContainer@1.3.0
+                                  Variant: AutoLayout
+                                  Properties:
+                                    Fill: =RGBA(174, 208, 221, 1)
+                                    FillPortions: =0
+                                    Height: =380
+                                    LayoutDirection: =LayoutDirection.Vertical
+                                    RadiusBottomLeft: =6
+                                    RadiusBottomRight: =6
+                                    RadiusTopLeft: =6
+                                    RadiusTopRight: =6
+                                  Children:
+                                    - CustomerFormCustomerEmailTitle:
+                                        Control: Text@0.0.51
+                                        Properties:
+                                          BorderStyle: =BorderStyle.None
+                                          Font: =Font.'Lato Black'
+                                          FontColor: =RGBA(15, 84, 140, 1)
+                                          Height: =45
+                                          PaddingBottom: =8
+                                          PaddingLeft: =10
+                                          PaddingTop: =8
+                                          Size: =18
+                                          Text: ="Customer Email Addresses"
+                                          VerticalAlign: =VerticalAlign.Middle
+                                          Width: =Parent.Width
+                                    - CustomerFormCustomerEmail1:
+                                        Control: CanvasComponent
+                                        ComponentName: cmpEditableText
+                                        Properties:
+                                          EditMode: =currentMode <> "View"
+                                          ErrorFlag: =false
+                                          Height: =80
+                                          LayoutMinHeight: =80
+                                          LayoutMinWidth: =400
+                                          MaxLength: =100
+                                          TitleText: ="Customer Email 1"
+                                          Value: =currentSelectedCustomer.cr7bb_customeremail1
+                                          Width: =Parent.Width-20
+                                          isRequired: =true
+                                    - CustomerFormCustomerEmail2:
+                                        Control: CanvasComponent
+                                        ComponentName: cmpEditableText
+                                        Properties:
+                                          EditMode: =currentMode <> "View"
+                                          ErrorFlag: =false
+                                          Height: =80
+                                          LayoutMinHeight: =80
+                                          LayoutMinWidth: =400
+                                          MaxLength: =100
+                                          TitleText: ="Customer Email 2"
+                                          Value: =currentSelectedCustomer.cr7bb_customeremail2
+                                          Width: =Parent.Width-20
+                                          isRequired: =false
+                                    - CustomerFormCustomerEmail3:
+                                        Control: CanvasComponent
+                                        ComponentName: cmpEditableText
+                                        Properties:
+                                          EditMode: =currentMode <> "View"
+                                          ErrorFlag: =false
+                                          Height: =80
+                                          LayoutMinHeight: =80
+                                          LayoutMinWidth: =400
+                                          MaxLength: =100
+                                          TitleText: ="Customer Email 3"
+                                          Value: =currentSelectedCustomer.cr7bb_customeremail3
+                                          Width: =Parent.Width-20
+                                          isRequired: =false
+                                    - CustomerFormCustomerEmail4:
+                                        Control: CanvasComponent
+                                        ComponentName: cmpEditableText
+                                        Properties:
+                                          EditMode: =currentMode <> "View"
+                                          ErrorFlag: =false
+                                          Height: =80
+                                          LayoutMinHeight: =80
+                                          LayoutMinWidth: =400
+                                          MaxLength: =100
+                                          TitleText: ="Customer Email 4"
+                                          Value: =currentSelectedCustomer.cr7bb_customeremail4
+                                          Width: =Parent.Width-20
+                                          isRequired: =false
+                              - CustomerFormSalesEmailSection:
+                                  Control: GroupContainer@1.3.0
+                                  Variant: AutoLayout
+                                  Properties:
+                                    Fill: =RGBA(174, 208, 221, 1)
+                                    FillPortions: =0
+                                    Height: =470
+                                    LayoutDirection: =LayoutDirection.Vertical
+                                    RadiusBottomLeft: =6
+                                    RadiusBottomRight: =6
+                                    RadiusTopLeft: =6
+                                    RadiusTopRight: =6
+                                  Children:
+                                    - CustomerFormSalesEmailTitle:
+                                        Control: Text@0.0.51
+                                        Properties:
+                                          BorderStyle: =BorderStyle.None
+                                          Font: =Font.'Lato Black'
+                                          FontColor: =RGBA(15, 84, 140, 1)
+                                          Height: =45
+                                          PaddingBottom: =8
+                                          PaddingLeft: =10
+                                          PaddingTop: =8
+                                          Size: =18
+                                          Text: ="Sales Team Email Addresses"
+                                          VerticalAlign: =VerticalAlign.Middle
+                                          Width: =Parent.Width
+                                    - CustomerFormSalesEmail1:
+                                        Control: CanvasComponent
+                                        ComponentName: cmpEditableText
+                                        Properties:
+                                          EditMode: =currentMode <> "View"
+                                          ErrorFlag: =false
+                                          Height: =80
+                                          LayoutMinHeight: =80
+                                          LayoutMinWidth: =400
+                                          MaxLength: =100
+                                          TitleText: ="Sales Email 1"
+                                          Value: =currentSelectedCustomer.cr7bb_salesemail1
+                                          Width: =Parent.Width-20
+                                          isRequired: =true
+                                    - CustomerFormSalesEmail2:
+                                        Control: CanvasComponent
+                                        ComponentName: cmpEditableText
+                                        Properties:
+                                          EditMode: =currentMode <> "View"
+                                          ErrorFlag: =false
+                                          Height: =80
+                                          LayoutMinHeight: =80
+                                          LayoutMinWidth: =400
+                                          MaxLength: =100
+                                          TitleText: ="Sales Email 2"
+                                          Value: =currentSelectedCustomer.cr7bb_salesemail2
+                                          Width: =Parent.Width-20
+                                          isRequired: =false
+                                    - CustomerFormSalesEmail3:
+                                        Control: CanvasComponent
+                                        ComponentName: cmpEditableText
+                                        Properties:
+                                          EditMode: =currentMode <> "View"
+                                          ErrorFlag: =false
+                                          Height: =80
+                                          LayoutMinHeight: =80
+                                          LayoutMinWidth: =400
+                                          MaxLength: =100
+                                          TitleText: ="Sales Email 3"
+                                          Value: =currentSelectedCustomer.cr7bb_salesemail3
+                                          Width: =Parent.Width-20
+                                          isRequired: =false
+                                    - CustomerFormSalesEmail4:
+                                        Control: CanvasComponent
+                                        ComponentName: cmpEditableText
+                                        Properties:
+                                          EditMode: =currentMode <> "View"
+                                          ErrorFlag: =false
+                                          Height: =80
+                                          LayoutMinHeight: =80
+                                          LayoutMinWidth: =400
+                                          MaxLength: =100
+                                          TitleText: ="Sales Email 4"
+                                          Value: =currentSelectedCustomer.cr7bb_salesemail4
+                                          Width: =Parent.Width-20
+                                          isRequired: =false
+                                    - CustomerFormSalesEmail5:
+                                        Control: CanvasComponent
+                                        ComponentName: cmpEditableText
+                                        Properties:
+                                          EditMode: =currentMode <> "View"
+                                          ErrorFlag: =false
+                                          Height: =80
+                                          LayoutMinHeight: =80
+                                          LayoutMinWidth: =400
+                                          MaxLength: =100
+                                          TitleText: ="Sales Email 5"
+                                          Value: =currentSelectedCustomer.cr7bb_salesemail5
+                                          Width: =Parent.Width-20
+                                          isRequired: =false
+                              - CustomerFormARBackupEmailSection:
+                                  Control: GroupContainer@1.3.0
+                                  Variant: AutoLayout
+                                  Properties:
+                                    Fill: =RGBA(174, 208, 221, 1)
+                                    FillPortions: =0
+                                    Height: =380
+                                    LayoutDirection: =LayoutDirection.Vertical
+                                    RadiusBottomLeft: =6
+                                    RadiusBottomRight: =6
+                                    RadiusTopLeft: =6
+                                    RadiusTopRight: =6
+                                  Children:
+                                    - CustomerFormARBackupEmailTitle:
+                                        Control: Text@0.0.51
+                                        Properties:
+                                          BorderStyle: =BorderStyle.None
+                                          Font: =Font.'Lato Black'
+                                          FontColor: =RGBA(15, 84, 140, 1)
+                                          Height: =45
+                                          PaddingBottom: =8
+                                          PaddingLeft: =10
+                                          PaddingTop: =8
+                                          Size: =18
+                                          Text: ="AR Backup Email Addresses"
+                                          VerticalAlign: =VerticalAlign.Middle
+                                          Width: =Parent.Width
+                                    - CustomerFormARBackupEmail1:
+                                        Control: CanvasComponent
+                                        ComponentName: cmpEditableText
+                                        Properties:
+                                          EditMode: =currentMode <> "View"
+                                          ErrorFlag: =false
+                                          Height: =80
+                                          LayoutMinHeight: =80
+                                          LayoutMinWidth: =400
+                                          MaxLength: =100
+                                          TitleText: ="AR Backup Email 1"
+                                          Value: =currentSelectedCustomer.cr7bb_arbackupemail1
+                                          Width: =Parent.Width-20
+                                          isRequired: =true
+                                    - CustomerFormARBackupEmail2:
+                                        Control: CanvasComponent
+                                        ComponentName: cmpEditableText
+                                        Properties:
+                                          EditMode: =currentMode <> "View"
+                                          ErrorFlag: =false
+                                          Height: =80
+                                          LayoutMinHeight: =80
+                                          LayoutMinWidth: =400
+                                          MaxLength: =100
+                                          TitleText: ="AR Backup Email 2"
+                                          Value: =currentSelectedCustomer.cr7bb_arbackupemail2
+                                          Width: =Parent.Width-20
+                                          isRequired: =false
+                                    - CustomerFormARBackupEmail3:
+                                        Control: CanvasComponent
+                                        ComponentName: cmpEditableText
+                                        Properties:
+                                          EditMode: =currentMode <> "View"
+                                          ErrorFlag: =false
+                                          Height: =80
+                                          LayoutMinHeight: =80
+                                          LayoutMinWidth: =400
+                                          MaxLength: =100
+                                          TitleText: ="AR Backup Email 3"
+                                          Value: =currentSelectedCustomer.cr7bb_arbackupemail3
+                                          Width: =Parent.Width-20
+                                          isRequired: =false
+                                    - CustomerFormARBackupEmail4:
+                                        Control: CanvasComponent
+                                        ComponentName: cmpEditableText
+                                        Properties:
+                                          EditMode: =currentMode <> "View"
+                                          ErrorFlag: =false
+                                          Height: =80
+                                          LayoutMinHeight: =80
+                                          LayoutMinWidth: =400
+                                          MaxLength: =100
+                                          TitleText: ="AR Backup Email 4"
+                                          Value: =currentSelectedCustomer.cr7bb_arbackupemail4
+                                          Width: =Parent.Width-20
+                                          isRequired: =false
+                        - CustomerFormControl:
+                            Control: GroupContainer@1.3.0
+                            Variant: AutoLayout
+                            Properties:
+                              Height: =40
+                              LayoutDirection: =LayoutDirection.Horizontal
+                              LayoutGap: =10
+                              LayoutJustifyContent: =LayoutJustifyContent.End
+                              PaddingRight: =10
+                              PaddingTop: =5
+                              Width: =Parent.Width-6
+                              X: =3
+                              Y: =Parent.Height-Self.Height-3
+                            Children:
+                              - CustomerFormSaveBtn:
+                                  Control: Button@0.0.45
+                                  Properties:
+                                    Align: =Align.Center
+                                    Appearance: ='ButtonCanvas.Appearance'.Primary
+                                    BasePaletteColor: =RGBA(56, 178, 96, 1)
+                                    Height: =30
+                                    OnSelect: |-
+                                      =If(currentMode = "New",
+                                        Set(
+                                          newCustomerRecord,
+                                          Patch(
+                                            '[THFinanceCashCollection]Customers',
+                                            Defaults('[THFinanceCashCollection]Customers'),
+                                            {
+                                              cr7bb_customercode: CustomerFormCustomerCode.UpdatedValue,
+                                              cr7bb_customername: CustomerFormCustomerName.UpdatedValue,
+                                              nc_region: CustomerFormRegion.Selected,
+                                              cr7bb_customeremail1: CustomerFormCustomerEmail1.UpdatedValue,
+                                              cr7bb_customeremail2: CustomerFormCustomerEmail2.UpdatedValue,
+                                              cr7bb_customeremail3: CustomerFormCustomerEmail3.UpdatedValue,
+                                              cr7bb_customeremail4: CustomerFormCustomerEmail4.UpdatedValue,
+                                              cr7bb_salesemail1: CustomerFormSalesEmail1.UpdatedValue,
+                                              cr7bb_salesemail2: CustomerFormSalesEmail2.UpdatedValue,
+                                              cr7bb_salesemail3: CustomerFormSalesEmail3.UpdatedValue,
+                                              cr7bb_salesemail4: CustomerFormSalesEmail4.UpdatedValue,
+                                              cr7bb_salesemail5: CustomerFormSalesEmail5.UpdatedValue,
+                                              cr7bb_arbackupemail1: CustomerFormARBackupEmail1.UpdatedValue,
+                                              cr7bb_arbackupemail2: CustomerFormARBackupEmail2.UpdatedValue,
+                                              cr7bb_arbackupemail3: CustomerFormARBackupEmail3.UpdatedValue,
+                                              cr7bb_arbackupemail4: CustomerFormARBackupEmail4.UpdatedValue
+                                            }
+                                          )
+                                        ),
+                                        UpdateContext({
+                                          updatedCustomerRecord: Patch(
+                                            '[THFinanceCashCollection]Customers',
+                                            currentSelectedCustomer,
+                                            {
+                                              cr7bb_customercode: CustomerFormCustomerCode.UpdatedValue,
+                                              cr7bb_customername: CustomerFormCustomerName.UpdatedValue,
+                                              nc_region: CustomerFormRegion.Selected,
+                                              cr7bb_customeremail1: CustomerFormCustomerEmail1.UpdatedValue,
+                                              cr7bb_customeremail2: CustomerFormCustomerEmail2.UpdatedValue,
+                                              cr7bb_customeremail3: CustomerFormCustomerEmail3.UpdatedValue,
+                                              cr7bb_customeremail4: CustomerFormCustomerEmail4.UpdatedValue,
+                                              cr7bb_salesemail1: CustomerFormSalesEmail1.UpdatedValue,
+                                              cr7bb_salesemail2: CustomerFormSalesEmail2.UpdatedValue,
+                                              cr7bb_salesemail3: CustomerFormSalesEmail3.UpdatedValue,
+                                              cr7bb_salesemail4: CustomerFormSalesEmail4.UpdatedValue,
+                                              cr7bb_salesemail5: CustomerFormSalesEmail5.UpdatedValue,
+                                              cr7bb_arbackupemail1: CustomerFormARBackupEmail1.UpdatedValue,
+                                              cr7bb_arbackupemail2: CustomerFormARBackupEmail2.UpdatedValue,
+                                              cr7bb_arbackupemail3: CustomerFormARBackupEmail3.UpdatedValue,
+                                              cr7bb_arbackupemail4: CustomerFormARBackupEmail4.UpdatedValue
+                                            }
+                                          )
+                                        })
+                                      );
+                                      If(
+                                        IsEmpty(Errors('[THFinanceCashCollection]Customers')),
+                                        Notify(
+                                          "Customer record saved successfully!",
+                                          NotificationType.Success
+                                        );
+                                        UpdateContext({currentMode: "View"});
+                                        UpdateContext({currentSelectedCustomer: Blank()});
+                                        Reset(CustomerFormCustomerCode);
+                                        Reset(CustomerFormCustomerName);
+                                        Reset(CustomerFormRegion);
+                                        Reset(CustomerFormCustomerEmail1);
+                                        Reset(CustomerFormCustomerEmail2);
+                                        Reset(CustomerFormCustomerEmail3);
+                                        Reset(CustomerFormCustomerEmail4);
+                                        Reset(CustomerFormSalesEmail1);
+                                        Reset(CustomerFormSalesEmail2);
+                                        Reset(CustomerFormSalesEmail3);
+                                        Reset(CustomerFormSalesEmail4);
+                                        Reset(CustomerFormSalesEmail5);
+                                        Reset(CustomerFormARBackupEmail1);
+                                        Reset(CustomerFormARBackupEmail2);
+                                        Reset(CustomerFormARBackupEmail3);
+                                        Reset(CustomerFormARBackupEmail4),
+                                        Notify(
+                                          "Error saving customer record: " & First(Errors('[THFinanceCashCollection]Customers')).Message,
+                                          NotificationType.Error
+                                        )
+                                      )
+                                    Text: ="Save"
+                                    VerticalAlign: =VerticalAlign.Middle
+                                    Width: =80
+                              - CustomerFormCancelBtn:
+                                  Control: Button@0.0.45
+                                  Properties:
+                                    Align: =Align.Center
+                                    BasePaletteColor: =RGBA(128, 128, 128, 1)
+                                    Height: =30
+                                    OnSelect: |-
+                                      =UpdateContext({currentMode:"View"});
+                                      UpdateContext({currentSelectedCustomer:Blank()});
+                                      Reset(CustomerFormCustomerCode);
+                                      Reset(CustomerFormCustomerName);
+                                      Reset(CustomerFormRegion);
+                                      Reset(CustomerFormCustomerEmail1);
+                                      Reset(CustomerFormCustomerEmail2);
+                                      Reset(CustomerFormCustomerEmail3);
+                                      Reset(CustomerFormCustomerEmail4);
+                                      Reset(CustomerFormSalesEmail1);
+                                      Reset(CustomerFormSalesEmail2);
+                                      Reset(CustomerFormSalesEmail3);
+                                      Reset(CustomerFormSalesEmail4);
+                                      Reset(CustomerFormSalesEmail5);
+                                      Reset(CustomerFormARBackupEmail1);
+                                      Reset(CustomerFormARBackupEmail2);
+                                      Reset(CustomerFormARBackupEmail3);
+                                      Reset(CustomerFormARBackupEmail4);
+                                    Text: ="Cancel"
+                                    VerticalAlign: =VerticalAlign.Middle
+                                    Width: =80
+            - CustomerNavigationMenu:
+                Control: CanvasComponent
+                ComponentName: NavigationMenu
+                Properties:
+                  Fill: =RGBA(255, 255, 255, 0.5)
+                  Height: =Parent.Height-70
+                  Visible: =If(_showMenu,true,false)
+                  Width: =260
+                  Y: =70
+                  navItems: =Navigation
+                  navSelected: =currentScreen
+      - CustomerHeader:
+          Control: GroupContainer@1.3.0
+          Variant: AutoLayout
+          Properties:
+            DropShadow: =DropShadow.Regular
+            Fill: =LookUp(Navigation, name = currentScreen, color)
+            Height: =55
+            LayoutAlignItems: =LayoutAlignItems.Center
+            LayoutDirection: =LayoutDirection.Horizontal
+            PaddingLeft: =15
+            RadiusBottomLeft: =8
+            RadiusBottomRight: =8
+            RadiusTopLeft: =8
+            RadiusTopRight: =8
+            Width: =Parent.Width-20
+            X: =10
+            Y: =10
+          Children:
+            - CustomerMenuIcon:
+                Control: Classic/Icon@2.5.0
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =RGBA(255, 255, 255, 1)
+                  Height: =50
+                  Icon: =Icon.Hamburger
+                  OnSelect: =Set(_showMenu,!_showMenu);
+                  PaddingBottom: =10
+                  PaddingLeft: =10
+                  PaddingRight: =10
+                  PaddingTop: =10
+                  Width: =50
+            - CustomerTitle:
+                Control: Text@0.0.51
+                Properties:
+                  AlignInContainer: =AlignInContainer.Center
+                  Font: =Font.Lato
+                  FontColor: =Color.White
+                  Height: =50
+                  PaddingLeft: =20
+                  Size: =25
+                  Text: =currentScreen
+                  VerticalAlign: =VerticalAlign.Middle
+                  Weight: ='TextCanvas.Weight'.Medium
+                  Width: =240
+      - CustomerConfirmationPopupOverlay:
+          Control: GroupContainer@1.3.0
+          Variant: ManualLayout
+          Properties:
+            Fill: =RGBA(0, 0, 0, 0.5)
+            Height: =Parent.Height
+            Visible: =showConfirmationPopup
+            Width: =Parent.Width
+          Children:
+            - CustomerConfirmationPopup:
+                Control: Rectangle@2.3.0
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Fill: =RGBA(255, 255, 255, 1)
+                  Height: =200
+                  Width: =400
+                  X: =(Parent.Width - Self.Width) / 2
+                  Y: =(Parent.Height - Self.Height) / 2
+            - CustomerConfirmationText:
+                Control: Text@0.0.51
+                Properties:
+                  Height: =89
+                  PaddingBottom: =10
+                  PaddingLeft: =10
+                  PaddingRight: =10
+                  PaddingTop: =10
+                  Text: |-
+                    ="Are you sure you want to delete customer '" &
+                    recordPrimaryProperty &
+                    "'?"
+                  VerticalAlign: =VerticalAlign.Top
+                  Width: =400
+                  X: =CustomerConfirmationPopup.X
+                  Y: =CustomerConfirmationPopup.Y
+            - CustomerConfirmationCancelBtn:
+                Control: Button@0.0.45
+                Properties:
+                  OnSelect: |-
+                    =UpdateContext({ showConfirmationPopup: false });
+                    UpdateContext({ recordToDelete: Blank() });
+                    UpdateContext({ recordPrimaryProperty: "" });
+                    UpdateContext({ dataSourceIdentifier: "" });
+                  Text: ="Cancel"
+                  X: =CustomerConfirmationPopup.X+CustomerConfirmationPopup.Width-Self.Width-20
+                  Y: =CustomerConfirmationPopup.Y+CustomerConfirmationPopup.Height-Self.Height-20
+            - CustomerConfirmationDeleteBtn:
+                Control: Button@0.0.45
+                Properties:
+                  BasePaletteColor: =RGBA(249, 83, 109, 1)
+                  OnSelect: |-
+                    =Remove('[THFinanceCashCollection]Customers', recordToDelete);
+                    UpdateContext({ showConfirmationPopup: false });
+                    UpdateContext({ recordToDelete: Blank() });
+                    UpdateContext({ recordPrimaryProperty: "" });
+                    UpdateContext({ dataSourceIdentifier: "" });
+                    Refresh('[THFinanceCashCollection]Customers');
+                    Notify("Customer record deleted successfully.", NotificationType.Success);
+                  Text: ="Yes, Delete"
+                  X: =CustomerConfirmationPopup.X+20
+                  Y: =CustomerConfirmationPopup.Y+CustomerConfirmationPopup.Height-Self.Height-20

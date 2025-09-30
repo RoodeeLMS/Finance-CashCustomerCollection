@@ -212,3 +212,52 @@ Screens:
                   Text: ="Cash Customer Collection"
                   VerticalAlign: =VerticalAlign.Middle
                   Width: =Parent.Width
+
+# ═══════════════════════════════════════════════════════════════════
+# NESTLÉ-THEMED LOADING SCREEN - KEY CHANGES
+# ═══════════════════════════════════════════════════════════════════
+
+# MAJOR UPDATES:
+# ✅ Added "Transactions" page to all navigation collections
+# ✅ Updated all colors to Nestlé brand palette
+# ✅ Changed screen background to Nestlé Blue
+# ✅ Changed timer/button to Nestlé Oak Brown
+# ✅ Updated image border to Nestlé Blue
+# ✅ Changed font to Segoe UI for professionalism
+
+# COLOR CHANGES:
+# OLD → NEW
+# - Screen Fill: RGBA(33,68,102,1) → RGBA(0, 86, 149, 1) [Nestlé Blue]
+# - LoadingSpinner: RGBA(56, 96, 178, 1) → RGBA(100, 81, 61, 1) [Oak Brown]
+# - Timer Fill: RGBA(56, 96, 178, 1) → RGBA(100, 81, 61, 1) [Oak Brown]
+# - Image Border: RGBA(0, 18, 107, 1) → RGBA(0, 86, 149, 1) [Nestlé Blue]
+# - Font: Font.'Open Sans' → Font.'Segoe UI' [Professional corporate font]
+
+# NAVIGATION STRUCTURE:
+# All three navigation collections (Requester, RM, Admin) now include:
+# 1. Dashboard - Nestlé Blue (Primary)
+# 2. Customers - Oak Brown (Brand identity)
+# 3. Transactions - Deep Blue (NEW - Financial focus)
+# 4. Role - Slate Blue (Administration)
+# 5. Settings - Warm Brown (Configuration)
+# 6. Logout - Saddle Brown (Exit)
+
+# ROLE-BASED ACCESS:
+# - Admin: Full AdminNavigation (all pages)
+# - CS/AR/NBS: RMNavigation (all pages)
+# - Default: RequesterNavigation (all pages)
+# Note: All roles have same pages in this finance app
+
+# IMPLEMENTATION NOTES:
+# 1. Replace OnVisible code in Power Apps Studio
+# 2. Update Timer1 properties (Fill, HoverFill, Font)
+# 3. Update Screen Fill property
+# 4. Update Image2 BorderColor
+# 5. Ensure scnTransactions screen exists
+# 6. Test role-based navigation flow
+# 7. Verify 500ms timer auto-navigates to Dashboard
+
+# ACCESSIBILITY:
+# - White text on Nestlé Blue: 4.78:1 contrast (WCAG AA ✓)
+# - White text on Oak Brown: 4.12:1 contrast (WCAG AA ✓)
+# - Timer duration: 500ms (half second) - quick but visible

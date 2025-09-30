@@ -3,7 +3,21 @@
 **Project:** Finance - Cash Customer Collection Automation
 **Platform:** Microsoft Dataverse
 **Schema Version:** 1.0
-**Last Updated:** September 29, 2025
+**Last Updated:** September 30, 2025
+
+---
+
+## ⚠️ IMPORTANT: Field Name Notice
+
+**This document uses CONCEPTUAL/PLACEHOLDER field names (`nc_` prefix) for planning purposes.**
+
+**For ACTUAL production field names used in Power Apps code, see:**
+- **[FIELD_NAME_REFERENCE.md](FIELD_NAME_REFERENCE.md)** ← Use this for code generation
+- **Exported YAML**: `Powerapp screens-DO-NOT-EDIT/scnCustomer.yaml`
+
+**Production uses `cr7bb_` prefix, not `nc_` prefix shown below.**
+
+---
 
 ## Schema Overview
 

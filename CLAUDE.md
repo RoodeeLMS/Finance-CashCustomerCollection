@@ -70,7 +70,10 @@ This project primarily uses a **Model-Driven Power App** (AR Control Center) wit
 **NEVER edit Power Apps YAML files directly!** Files in `Powerapp components-DO-NOT-EDIT/` and `Powerapp screens-DO-NOT-EDIT/` are read-only exports. Always provide code snippets for manual implementation in Power Apps Studio.
 
 ### Model-Driven Development Focus
-- **Tables**: Use Dataverse native tables (nc_customers, nc_transactions, etc.)
+- **Tables**: Use Dataverse native tables (prefix: `cr7bb_`)
+  - Customer table: `[THFinanceCashCollection]Customers`
+  - Transaction table: `[THFinanceCashCollection]Transactions`
+  - **⚠️ CRITICAL**: Always verify field names from exported YAML in `Powerapp screens-DO-NOT-EDIT/`, not from documentation
 - **Forms**: Configure main/quick create forms for data entry
 - **Views**: Create system/personal views for data analysis
 - **Sitemaps**: Organize navigation around AR workflow

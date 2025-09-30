@@ -1,0 +1,472 @@
+{
+  "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "$connections": {
+      "defaultValue": {},
+      "type": "Object"
+    }
+  },
+  "triggers": {
+    "Recurrence": {
+      "recurrence": {
+        "frequency": "Day",
+        "interval": 1,
+        "schedule": {
+          "hours": ["8"],
+          "minutes": [0]
+        },
+        "timeZone": "SE Asia Standard Time"
+      },
+      "type": "Recurrence"
+    }
+  },
+  "actions": {
+    "Initialize_varProcessDate": {
+      "runAfter": {},
+      "type": "InitializeVariable",
+      "inputs": {
+        "variables": [
+          {
+            "name": "varProcessDate",
+            "type": "string",
+            "value": "@{utcNow()}"
+          }
+        ]
+      }
+    },
+    "Initialize_varBatchID": {
+      "runAfter": {
+        "Initialize_varProcessDate": ["Succeeded"]
+      },
+      "type": "InitializeVariable",
+      "inputs": {
+        "variables": [
+          {
+            "name": "varBatchID",
+            "type": "string",
+            "value": "@{formatDateTime(utcNow(), 'yyyyMMdd_HHmmss')}"
+          }
+        ]
+      }
+    },
+    "Initialize_varRowCounter": {
+      "runAfter": {
+        "Initialize_varBatchID": ["Succeeded"]
+      },
+      "type": "InitializeVariable",
+      "inputs": {
+        "variables": [
+          {
+            "name": "varRowCounter",
+            "type": "integer",
+            "value": 0
+          }
+        ]
+      }
+    },
+    "Initialize_varErrorCount": {
+      "runAfter": {
+        "Initialize_varRowCounter": ["Succeeded"]
+      },
+      "type": "InitializeVariable",
+      "inputs": {
+        "variables": [
+          {
+            "name": "varErrorCount",
+            "type": "integer",
+            "value": 0
+          }
+        ]
+      }
+    },
+    "Initialize_varTransactionCount": {
+      "runAfter": {
+        "Initialize_varErrorCount": ["Succeeded"]
+      },
+      "type": "InitializeVariable",
+      "inputs": {
+        "variables": [
+          {
+            "name": "varTransactionCount",
+            "type": "integer",
+            "value": 0
+          }
+        ]
+      }
+    },
+    "Initialize_varErrorMessages": {
+      "runAfter": {
+        "Initialize_varTransactionCount": ["Succeeded"]
+      },
+      "type": "InitializeVariable",
+      "inputs": {
+        "variables": [
+          {
+            "name": "varErrorMessages",
+            "type": "array",
+            "value": []
+          }
+        ]
+      }
+    },
+    "Initialize_arrProcessedCustomers": {
+      "runAfter": {
+        "Initialize_varErrorMessages": ["Succeeded"]
+      },
+      "type": "InitializeVariable",
+      "inputs": {
+        "variables": [
+          {
+            "name": "arrProcessedCustomers",
+            "type": "array",
+            "value": []
+          }
+        ]
+      }
+    },
+    "Initialize_arrSummaryAmounts": {
+      "runAfter": {
+        "Initialize_arrProcessedCustomers": ["Succeeded"]
+      },
+      "type": "InitializeVariable",
+      "inputs": {
+        "variables": [
+          {
+            "name": "arrSummaryAmounts",
+            "type": "array",
+            "value": []
+          }
+        ]
+      }
+    },
+    "Get_Latest_Excel_File": {
+      "runAfter": {
+        "Initialize_arrSummaryAmounts": ["Succeeded"]
+      },
+      "type": "ApiConnection",
+      "inputs": {
+        "host": {
+          "connection": {
+            "name": "@parameters('$connections')['sharepointonline']['connectionId']"
+          }
+        },
+        "method": "get",
+        "path": "/datasets/@{encodeURIComponent(encodeURIComponent('[SITE-URL]'))}/files",
+        "queries": {
+          "folderPath": "/SAP Daily Exports",
+          "orderby": "Modified desc",
+          "top": 1
+        }
+      },
+      "description": "TODO: Configure SharePoint site URL and folder path"
+    },
+    "Get_File_Content": {
+      "runAfter": {
+        "Get_Latest_Excel_File": ["Succeeded"]
+      },
+      "type": "ApiConnection",
+      "inputs": {
+        "host": {
+          "connection": {
+            "name": "@parameters('$connections')['sharepointonline']['connectionId']"
+          }
+        },
+        "method": "get",
+        "path": "/datasets/@{encodeURIComponent(encodeURIComponent('[SITE-URL]'))}/files/@{encodeURIComponent(first(body('Get_Latest_Excel_File'))?['Id'])}/content"
+      }
+    },
+    "Create_Process_Log": {
+      "runAfter": {
+        "Get_File_Content": ["Succeeded"]
+      },
+      "type": "ApiConnection",
+      "inputs": {
+        "host": {
+          "connection": {
+            "name": "@parameters('$connections')['commondataserviceforapps']['connectionId']"
+          }
+        },
+        "method": "post",
+        "body": {
+          "cr7bb_processdate": "@{formatDateTime(utcNow(), 'yyyy-MM-dd')}",
+          "cr7bb_starttime": "@{utcNow()}",
+          "cr7bb_status": 100000000,
+          "cr7bb_sapfilename": "@{first(body('Get_Latest_Excel_File'))?['Name']}",
+          "cr7bb_processedby": "@{workflow()?['tags']?['xms-workflow-run-id']}",
+          "cr7bb_totalcustomers": 0,
+          "cr7bb_emailssent": 0,
+          "cr7bb_emailsfailed": 0,
+          "cr7bb_transactionsprocessed": 0,
+          "cr7bb_transactionsexcluded": 0
+        },
+        "path": "/v2/datasets/@{encodeURIComponent(encodeURIComponent('[ENVIRONMENT-NAME]'))}/tables/@{encodeURIComponent(encodeURIComponent('cr7bb_processlogs'))}/items"
+      },
+      "description": "TODO: Configure Dataverse environment name"
+    },
+    "Parse_Excel_Rows": {
+      "runAfter": {
+        "Create_Process_Log": ["Succeeded"]
+      },
+      "type": "ApiConnection",
+      "inputs": {
+        "host": {
+          "connection": {
+            "name": "@parameters('$connections')['excelonlinebusiness']['connectionId']"
+          }
+        },
+        "method": "get",
+        "path": "/datasets/@{encodeURIComponent(encodeURIComponent('[SITE-URL]'))}/tables/@{encodeURIComponent(encodeURIComponent('Table1'))}/items"
+      },
+      "description": "TODO: Configure Excel table name - ensure CSV is converted to Excel table format"
+    },
+    "Apply_to_each_Row": {
+      "foreach": "@body('Parse_Excel_Rows')?['value']",
+      "actions": {
+        "Increment_Row_Counter": {
+          "runAfter": {},
+          "type": "IncrementVariable",
+          "inputs": {
+            "name": "varRowCounter",
+            "value": 1
+          }
+        },
+        "Determine_Record_Type": {
+          "runAfter": {
+            "Increment_Row_Counter": ["Succeeded"]
+          },
+          "type": "Compose",
+          "inputs": "@if(equals(variables('varRowCounter'), 1), 'Header', if(empty(items('Apply_to_each_Row')?['Document Number']), 'Summary', 'Transaction'))"
+        },
+        "Switch_Record_Type": {
+          "runAfter": {
+            "Determine_Record_Type": ["Succeeded"]
+          },
+          "type": "Switch",
+          "expression": "@outputs('Determine_Record_Type')",
+          "cases": {
+            "Transaction": {
+              "case": "Transaction",
+              "actions": {
+                "Lookup_Customer": {
+                  "runAfter": {},
+                  "type": "ApiConnection",
+                  "inputs": {
+                    "host": {
+                      "connection": {
+                        "name": "@parameters('$connections')['commondataserviceforapps']['connectionId']"
+                      }
+                    },
+                    "method": "get",
+                    "path": "/v2/datasets/@{encodeURIComponent(encodeURIComponent('[ENVIRONMENT-NAME]'))}/tables/@{encodeURIComponent(encodeURIComponent('cr7bb_customers'))}/items",
+                    "queries": {
+                      "$filter": "cr7bb_customercode eq '@{items('Apply_to_each_Row')?['Account']}'",
+                      "$top": 1
+                    }
+                  }
+                },
+                "Condition_Customer_Found": {
+                  "runAfter": {
+                    "Lookup_Customer": ["Succeeded"]
+                  },
+                  "type": "If",
+                  "expression": {
+                    "and": [
+                      {
+                        "greater": [
+                          "@length(body('Lookup_Customer')?['value'])",
+                          0
+                        ]
+                      }
+                    ]
+                  },
+                  "actions": {
+                    "Calculate_Transaction_Type": {
+                      "runAfter": {},
+                      "type": "Compose",
+                      "inputs": "@switch(items('Apply_to_each_Row')?['Document Type'], 'DG', 'CN', 'DR', 'DN', 'DZ', 'CN', 'Other')"
+                    },
+                    "Check_Exclusion_Keywords": {
+                      "runAfter": {
+                        "Calculate_Transaction_Type": ["Succeeded"]
+                      },
+                      "type": "Compose",
+                      "inputs": "@or(contains(toLower(items('Apply_to_each_Row')?['Text']), 'paid'), contains(toLower(items('Apply_to_each_Row')?['Text']), 'partial payment'), contains(toLower(items('Apply_to_each_Row')?['Text']), 'exclude'), contains(items('Apply_to_each_Row')?['Text'], 'รักษาตลาด'), contains(toLower(items('Apply_to_each_Row')?['Text']), 'bill credit 30 days'), contains(toLower(items('Apply_to_each_Row')?['Text']), 'ptp'))"
+                    },
+                    "Parse_Amount": {
+                      "runAfter": {
+                        "Check_Exclusion_Keywords": ["Succeeded"]
+                      },
+                      "type": "Compose",
+                      "inputs": "@float(replace(replace(items('Apply_to_each_Row')?['Amount in Local Currency'], ',', ''), '\"', ''))"
+                    },
+                    "Create_Transaction_Record": {
+                      "runAfter": {
+                        "Parse_Amount": ["Succeeded"]
+                      },
+                      "type": "ApiConnection",
+                      "inputs": {
+                        "host": {
+                          "connection": {
+                            "name": "@parameters('$connections')['commondataserviceforapps']['connectionId']"
+                          }
+                        },
+                        "method": "post",
+                        "body": {
+                          "cr7bb_customer@odata.bind": "/cr7bb_customers(@{first(body('Lookup_Customer')?['value'])?['cr7bb_customerid']})",
+                          "cr7bb_recordtype": 100000000,
+                          "cr7bb_documentnumber": "@{items('Apply_to_each_Row')?['Document Number']}",
+                          "cr7bb_assignment": "@{items('Apply_to_each_Row')?['Assignment']}",
+                          "cr7bb_documenttype": "@{items('Apply_to_each_Row')?['Document Type']}",
+                          "cr7bb_documentdate": "@{formatDateTime(items('Apply_to_each_Row')?['Document Date'], 'yyyy-MM-dd')}",
+                          "cr7bb_netduedate": "@{formatDateTime(items('Apply_to_each_Row')?['Net Due Date'], 'yyyy-MM-dd')}",
+                          "cr7bb_arrearsdays": "@{int(items('Apply_to_each_Row')?['Arrears by Net Due Date'])}",
+                          "cr7bb_amountlocalcurrency": "@{outputs('Parse_Amount')}",
+                          "cr7bb_textfield": "@{items('Apply_to_each_Row')?['Text']}",
+                          "cr7bb_reference": "@{items('Apply_to_each_Row')?['Reference']}",
+                          "cr7bb_transactiontype": "@{if(equals(outputs('Calculate_Transaction_Type'), 'CN'), 100000000, 100000001)}",
+                          "cr7bb_isexcluded": "@{outputs('Check_Exclusion_Keywords')}",
+                          "cr7bb_excludereason": "@{if(outputs('Check_Exclusion_Keywords'), 'Exclusion keyword in Text field', null)}",
+                          "cr7bb_daycount": "@{int(items('Apply_to_each_Row')?['Arrears by Net Due Date'])}",
+                          "cr7bb_processdate": "@{formatDateTime(variables('varProcessDate'), 'yyyy-MM-dd')}",
+                          "cr7bb_processbatch": "@{variables('varBatchID')}",
+                          "cr7bb_rownumber": "@{variables('varRowCounter')}",
+                          "cr7bb_isprocessed": false,
+                          "cr7bb_emailsent": false
+                        },
+                        "path": "/v2/datasets/@{encodeURIComponent(encodeURIComponent('[ENVIRONMENT-NAME]'))}/tables/@{encodeURIComponent(encodeURIComponent('cr7bb_transactions'))}/items"
+                      }
+                    },
+                    "Increment_Transaction_Counter": {
+                      "runAfter": {
+                        "Create_Transaction_Record": ["Succeeded"]
+                      },
+                      "type": "IncrementVariable",
+                      "inputs": {
+                        "name": "varTransactionCount",
+                        "value": 1
+                      }
+                    }
+                  },
+                  "else": {
+                    "actions": {
+                      "Append_Customer_Not_Found_Error": {
+                        "runAfter": {},
+                        "type": "AppendToArrayVariable",
+                        "inputs": {
+                          "name": "varErrorMessages",
+                          "value": "Row @{variables('varRowCounter')}: Customer @{items('Apply_to_each_Row')?['Account']} not found"
+                        }
+                      },
+                      "Increment_Error_Counter": {
+                        "runAfter": {
+                          "Append_Customer_Not_Found_Error": ["Succeeded"]
+                        },
+                        "type": "IncrementVariable",
+                        "inputs": {
+                          "name": "varErrorCount",
+                          "value": 1
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "Summary": {
+              "case": "Summary",
+              "actions": {
+                "Compose_Summary_Object": {
+                  "runAfter": {},
+                  "type": "Compose",
+                  "inputs": {
+                    "customerCode": "@{items('Apply_to_each_Row')?['Account']}",
+                    "summaryAmount": "@{float(replace(replace(items('Apply_to_each_Row')?['Amount in Local Currency'], ',', ''), '\"', ''))}",
+                    "rowNumber": "@{variables('varRowCounter')}"
+                  }
+                },
+                "Append_to_Summary_Array": {
+                  "runAfter": {
+                    "Compose_Summary_Object": ["Succeeded"]
+                  },
+                  "type": "AppendToArrayVariable",
+                  "inputs": {
+                    "name": "arrSummaryAmounts",
+                    "value": "@outputs('Compose_Summary_Object')"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "actions": {}
+          }
+        }
+      },
+      "runAfter": {
+        "Parse_Excel_Rows": ["Succeeded"]
+      },
+      "type": "Foreach"
+    },
+    "Update_Process_Log": {
+      "runAfter": {
+        "Apply_to_each_Row": ["Succeeded"]
+      },
+      "type": "ApiConnection",
+      "inputs": {
+        "host": {
+          "connection": {
+            "name": "@parameters('$connections')['commondataserviceforapps']['connectionId']"
+          }
+        },
+        "method": "patch",
+        "body": {
+          "cr7bb_endtime": "@{utcNow()}",
+          "cr7bb_status": "@{if(greater(variables('varErrorCount'), 0), 100000002, 100000001)}",
+          "cr7bb_transactionsprocessed": "@{variables('varTransactionCount')}",
+          "cr7bb_errormessages": "@{join(variables('varErrorMessages'), '; ')}"
+        },
+        "path": "/v2/datasets/@{encodeURIComponent(encodeURIComponent('[ENVIRONMENT-NAME]'))}/tables/@{encodeURIComponent(encodeURIComponent('cr7bb_processlogs'))}/items/@{encodeURIComponent(encodeURIComponent(body('Create_Process_Log')?['cr7bb_processlogid']))}"
+      }
+    },
+    "Condition_Send_Email": {
+      "runAfter": {
+        "Update_Process_Log": ["Succeeded"]
+      },
+      "type": "If",
+      "expression": {
+        "or": [
+          {
+            "greater": [
+              "@variables('varErrorCount')",
+              0
+            ]
+          }
+        ]
+      },
+      "actions": {
+        "Send_Summary_Email": {
+          "runAfter": {},
+          "type": "ApiConnection",
+          "inputs": {
+            "host": {
+              "connection": {
+                "name": "@parameters('$connections')['office365']['connectionId']"
+              }
+            },
+            "method": "post",
+            "body": {
+              "To": "ar-team@nestle.com",
+              "Subject": "SAP Data Import - @{formatDateTime(utcNow(), 'yyyy-MM-dd')} - @{if(greater(variables('varErrorCount'), 0), '⚠️ Completed with Errors', '✅ Success')}",
+              "Body": "<h2>SAP Daily Import Summary</h2><p><strong>Process Date:</strong> @{formatDateTime(variables('varProcessDate'), 'dd/MM/yyyy HH:mm')}</p><p><strong>Batch ID:</strong> @{variables('varBatchID')}</p><p><strong>File:</strong> @{first(body('Get_Latest_Excel_File'))?['Name']}</p><h3>Statistics</h3><ul><li>Total Rows Processed: @{variables('varRowCounter')}</li><li>Transactions Created: @{variables('varTransactionCount')}</li><li>Errors: @{variables('varErrorCount')}</li></ul>",
+              "Importance": "@{if(greater(variables('varErrorCount'), 0), 'High', 'Normal')}"
+            },
+            "path": "/v2/Mail"
+          },
+          "description": "TODO: Configure recipient email address"
+        }
+      }
+    }
+  },
+  "outputs": {}
+}

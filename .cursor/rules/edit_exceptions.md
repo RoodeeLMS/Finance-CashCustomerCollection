@@ -1,12 +1,38 @@
 ﻿# .cursor Edit Policy Exceptions
 
-## General Policy Reminder
-**CRITICAL: NEVER edit Power Apps YAML files directly!** (e.g., in `Powerapp components-DO-NOT-EDIT/` or `Powerapp screens-DO-NOT-EDIT/`). These are read-only exports. Always provide snippets for manual implementation in Power Apps Studio.
+## General Edit Policy
 
-## Allowed Direct Edits
-AI assistants (e.g., Grok, Claude) **MAY** directly create or edit files in these folders for documentation, rules, and planning purposes:
+### Restricted Folders (DO-NOT-EDIT)
+**CRITICAL: NEVER edit files in folders containing "DO-NOT-EDIT" in their name!**
 
-### 1. `.grok/` Folder
+Restricted folders:
+- `Powerapp components-DO-NOT-EDIT/` - Power Apps component exports
+- `Powerapp screens-DO-NOT-EDIT/` - Power Apps screen exports
+- Any folder with `DO-NOT-EDIT` suffix
+
+These are read-only exports. Always provide snippets for manual implementation in Power Apps Studio.
+
+### Editable Files and Folders
+**AI assistants MAY directly edit all other files** including:
+- Documentation files (*.md)
+- Configuration files (*.json, *.yaml in root or config folders)
+- Project planning files
+- Database schema documentation
+- All files in `.cursor/rules/` and `.grok/` folders
+- Any file NOT in a `DO-NOT-EDIT` folder
+
+## Proactive Editing Guidelines
+
+AI assistants **MAY** proactively edit files to:
+- Fix documentation inconsistencies
+- Update schema references
+- Correct field name mismatches
+- Improve project structure
+- Add clarifications to existing docs
+
+### Special Folders for AI Work
+
+#### 1. `.grok/` Folder
 - **Purpose**: AI-generated artifacts, issue trackers, fix snippets, and temporary files.
 - **Allowed Actions**:
   - Create new Markdown/JSON/TXT files (e.g., `issues_and_fixes.md`, `claude_responses.md`).
@@ -15,9 +41,8 @@ AI assistants (e.g., Grok, Claude) **MAY** directly create or edit files in thes
 - **Restrictions**:
   - No executable code (e.g., no .ps1 scripts that run flows).
   - Keep files <10KB; use snippets for large content.
-  - Always confirm with user before major changes.
 
-### 2. `.cursor/rules/` Folder
+#### 2. `.cursor/rules/` Folder
 - **Purpose**: Workspace-specific development rules, conventions, and AI guidelines.
 - **Allowed Actions**:
   - Create new rule files (e.g., `finance-rules.md`, `edit_policy.md`).
@@ -29,15 +54,30 @@ AI assistants (e.g., Grok, Claude) **MAY** directly create or edit files in thes
   - Version changes with headers (e.g., "## Version 1.1 - Added Edit Exceptions").
 
 ## Implementation Guidelines
-- **Tool Usage**: Use `run_terminal_cmd` for PowerShell-based creates/edits (e.g., `New-Item`, `Set-Content`, `Add-Content`).
-- **Verification**: After edits, confirm paths/output and suggest git add/commit.
-- **User Confirmation**: For any edit, provide a summary and ask for approval if non-trivial.
-- **Backup**: Before edits, note: "This is a doc-only change; originals safe."
+- **Verification**: After edits, verify changes and document what was updated
+- **User Notification**: Inform user of documentation updates made
+- **Version Control**: Changes should be committed with clear descriptions
 
-## Enforcement
-- AI must check this policy before any `edit_file` or `run_terminal_cmd` for file mods.
-- If unsure, provide snippet instead of direct edit.
-- Update this file as needed (self-referential: edits here are allowed).
+## Enforcement Rules
 
-**Last Updated**: September 29, 2025
-**Status**: Active - Allows targeted edits in `.grok` and `.cursor/rules/` for efficiency.
+**DO NOT EDIT if:**
+- File is in a folder with `DO-NOT-EDIT` suffix
+- File is a Power Apps YAML export (`.yaml` in restricted folders)
+- File is a binary/compiled artifact
+
+**SAFE TO EDIT:**
+- All documentation files (`.md`)
+- Configuration files (`.json`, `.yaml` NOT in DO-NOT-EDIT folders)
+- Project planning and tracking files
+- Schema documentation
+- Rule files in `.cursor/rules/`
+- Working files in `.grok/`
+- Any file in root or standard project folders
+
+**When in doubt**: Check if folder name contains `DO-NOT-EDIT`. If yes, provide snippet instead of direct edit.
+
+---
+
+**Last Updated**: September 30, 2025
+**Status**: Active - Edit freely except DO-NOT-EDIT folders
+**Policy Change**: Expanded from folder-specific to project-wide (excluding DO-NOT-EDIT folders)

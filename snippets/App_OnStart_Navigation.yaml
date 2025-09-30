@@ -1,0 +1,90 @@
+# App OnStart - Navigation Table Setup
+# This code should be added to your Power App's App.OnStart property
+
+App:
+  Properties:
+    OnStart: |-
+      =ClearCollect(
+        Navigation,
+        {
+          name: "Dashboard",
+          screen: scnDashboard,
+          color: RGBA(0, 86, 149, 1)
+        },
+        {
+          name: "Customers",
+          screen: scnCustomer,
+          color: RGBA(100, 81, 61, 1)
+        },
+        {
+          name: "Transactions",
+          screen: scnTransactions,
+          color: RGBA(0, 105, 170, 1)
+        },
+        {
+          name: "Role",
+          screen: scnRole,
+          color: RGBA(67, 95, 117, 1)
+        },
+        {
+          name: "Settings",
+          screen: scnSettings,
+          color: RGBA(120, 100, 82, 1)
+        },
+        {
+          name: "Logout",
+          screen: scnDashboard,
+          color: RGBA(139, 69, 19, 1)
+        }
+      )
+
+# Instructions for implementation:
+# 1. Open your Power App in Power Apps Studio
+# 2. Click on "App" in the tree view (top-level object)
+# 3. Find the "OnStart" property in the formula bar
+# 4. Replace or update the Navigation ClearCollect with the above code
+# 5. Make sure "scnTransactions" screen exists in your app
+# 6. Save and test by clicking "Run OnStart" or reloading the app
+
+# ═══════════════════════════════════════════════════════════════════
+# NESTLÉ BRAND COLOR SCHEME - Professional Finance Application
+# ═══════════════════════════════════════════════════════════════════
+# Based on Nestlé's official brand guidelines (2018+):
+#   Primary: Oak Brown #64513D / RGB(100, 81, 61) - Warmth & tradition
+#   Primary: Nestlé Blue #005695 / RGB(0, 86, 149) - Trust & stability
+#
+# Color Strategy: Conveys trust, professionalism, and corporate identity
+# while staying true to Nestlé's brand essence.
+# ═══════════════════════════════════════════════════════════════════
+
+# Navigation Color Assignments:
+
+# 🔵 Dashboard: Nestlé Blue (RGBA(0, 86, 149, 1))
+#    - Official Nestlé brand blue (#005695)
+#    - Conveys trust, stability, and professionalism
+#    - Perfect for primary entry point and overview
+
+# 🟤 Customers: Nestlé Oak Brown (RGBA(100, 81, 61, 1))
+#    - Official Nestlé brand color (#64513D)
+#    - Core identity, warm yet professional
+#    - Represents relationship management
+
+# 💼 Transactions: Deep Blue (RGBA(0, 105, 170, 1))
+#    - Lighter variant of Nestlé blue
+#    - Financial trust and credibility
+#    - Differentiates from Dashboard while maintaining cohesion
+
+# 👥 Role: Slate Blue (RGBA(67, 95, 117, 1))
+#    - Professional authority and administration
+#    - Complements Nestlé blue palette
+#    - Muted for administrative functions
+
+# ⚙️ Settings: Warm Brown (RGBA(120, 100, 82, 1))
+#    - Derived from oak brown, slightly lighter
+#    - Neutral yet warm
+#    - Maintains brand consistency
+
+# 🚪 Logout: Saddle Brown (RGBA(139, 69, 19, 1))
+#    - Muted warning tone within brand palette
+#    - Stays professional (no harsh red)
+#    - Clear exit signal while brand-appropriate
