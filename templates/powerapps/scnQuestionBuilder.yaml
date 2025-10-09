@@ -1,0 +1,358 @@
+﻿Screens:
+  scnQuestionBuilder:
+    Properties:
+      Fill: =RGBA(243, 242, 241, 1)
+      LoadingSpinnerColor: =RGBA(0, 101, 161, 1)
+      OnVisible: |-
+        =UpdateContext({currentScreen:"Evaluation Form"});
+        Set(_showMenu,false);
+        // Initialize question fields based on whether we're editing or creating
+        If(
+            IsBlank(gblSelectedQuestion),
+            // Create mode - reset all fields
+            Set(gblIsEditQuestionMode, false);
+            Set(gblQuestionResetTrigger, !gblQuestionResetTrigger),
+            // Edit mode - load existing data
+            Set(gblIsEditQuestionMode, true)
+        );
+    Children:
+      - QuestionBuilder_MainContainer:
+          Control: GroupContainer@1.3.0
+          Variant: ManualLayout
+          Properties:
+            DropShadow: =DropShadow.None
+            Height: =Parent.Height
+            Width: =Parent.Width
+          Children:
+            - QuestionBuilder_Header:
+                Control: GroupContainer@1.3.0
+                Variant: AutoLayout
+                Properties:
+                  DropShadow: =DropShadow.Regular
+                  Fill: =RGBA(0, 101, 161, 1)
+                  Height: =55
+                  LayoutAlignItems: =LayoutAlignItems.Center
+                  LayoutDirection: =LayoutDirection.Horizontal
+                  PaddingLeft: =15
+                  RadiusBottomLeft: =8
+                  RadiusBottomRight: =8
+                  RadiusTopLeft: =8
+                  RadiusTopRight: =8
+                  Width: =Parent.Width-20
+                  X: =10
+                  Y: =10
+                Children:
+                  - QuestionBuilder_MenuIcon:
+                      Control: Classic/Icon@2.5.0
+                      Properties:
+                        Color: =RGBA(255, 255, 255, 1)
+                        Height: =50
+                        Icon: =Icon.Hamburger
+                        OnSelect: =Set(_showMenu,!_showMenu)
+                        PaddingBottom: =10
+                        PaddingLeft: =10
+                        PaddingRight: =10
+                        PaddingTop: =10
+                        Width: =50
+                  - QuestionBuilder_HeaderTitle:
+                      Control: Text@0.0.51
+                      Properties:
+                        Font: =Font.Lato
+                        FontColor: =Color.White
+                        Height: =50
+                        PaddingLeft: =20
+                        Size: =25
+                        Text: ="Question Builder"
+                        VerticalAlign: =VerticalAlign.Middle
+                        Weight: ='TextCanvas.Weight'.Medium
+                        Width: =Parent.Width - QuestionBuilder_MenuIcon.Width - 40
+            - QuestionBuilder_Content:
+                Control: GroupContainer@1.3.0
+                Variant: ManualLayout
+                Properties:
+                  DropShadow: =DropShadow.Regular
+                  Fill: =RGBA(255, 255, 255, 1)
+                  Height: =Parent.Height-85
+                  RadiusBottomLeft: =10
+                  RadiusBottomRight: =10
+                  RadiusTopLeft: =10
+                  RadiusTopRight: =10
+                  Width: =Parent.Width-20
+                  X: =10
+                  Y: =75
+                Children:
+                  - QuestionBuilder_Container:
+                      Control: GroupContainer@1.3.0
+                      Variant: AutoLayout
+                      Properties:
+                        DropShadow: =DropShadow.None
+                        Height: =Parent.Height - 80
+                        LayoutDirection: =LayoutDirection.Vertical
+                        LayoutGap: =10
+                        LayoutOverflowY: =LayoutOverflow.Scroll
+                        PaddingBottom: =15
+                        PaddingLeft: =10
+                        PaddingRight: =10
+                        PaddingTop: =15
+                        Width: =Parent.Width
+                        Y: =10
+                      Children:
+                        - QuestionBuilder_Section:
+                            Control: GroupContainer@1.3.0
+                            Variant: AutoLayout
+                            Properties:
+                              DropShadow: =DropShadow.None
+                              Fill: =RGBA(255, 255, 255, 1)
+                              LayoutDirection: =LayoutDirection.Vertical
+                              LayoutGap: =10
+                              LayoutMinHeight: =40
+                              LayoutMinWidth: =100
+                              LayoutOverflowY: =LayoutOverflow.Scroll
+                              RadiusBottomLeft: =6
+                              RadiusBottomRight: =6
+                              RadiusTopLeft: =6
+                              RadiusTopRight: =6
+                              Width: =Parent.Width
+                            Children:
+                              - QuestionBuilder_SectionTitle:
+                                  Control: Text@0.0.51
+                                  Properties:
+                                    Font: =Font.Lato
+                                    FontColor: =RGBA(0, 101, 161, 1)
+                                    Height: =45
+                                    PaddingBottom: =8
+                                    PaddingLeft: =10
+                                    PaddingTop: =8
+                                    Size: =20
+                                    Text: =If(gblIsEditQuestionMode,"Edit Question","Add Question")
+                                    VerticalAlign: =VerticalAlign.Middle
+                                    Weight: ='TextCanvas.Weight'.Semibold
+                                    Width: =Parent.Width
+                              - QuestionBuilder_TextENContainer:
+                                  Control: GroupContainer@1.3.0
+                                  Variant: AutoLayout
+                                  Properties:
+                                    DropShadow: =DropShadow.None
+                                    LayoutDirection: =LayoutDirection.Vertical
+                                    LayoutGap: =5
+                                    LayoutMinWidth: =100
+                                    PaddingLeft: =10
+                                    PaddingRight: =10
+                                    Width: =Parent.Width
+                                  Children:
+                                    - QuestionBuilder_TextENLabel:
+                                        Control: Text@0.0.51
+                                        Properties:
+                                          Height: =20
+                                          Text: ="Question Text (English)"
+                                          Weight: ='TextCanvas.Weight'.Semibold
+                                          Width: =Parent.Width-20
+                                    - QuestionBuilder_TextEN:
+                                        Control: TextInput@0.0.54
+                                        Properties:
+                                          Height: =80
+                                          MaxLength: =250
+                                          Mode: ='TextInputCanvas.Mode'.Multiline
+                                          Value: =If(gblIsEditQuestionMode, gblSelectedQuestion.QuestionText, "")
+                                          Width: =Parent.Width-20
+                              - QuestionBuilder_TextTHContainer:
+                                  Control: GroupContainer@1.3.0
+                                  Variant: AutoLayout
+                                  Properties:
+                                    DropShadow: =DropShadow.None
+                                    LayoutDirection: =LayoutDirection.Vertical
+                                    LayoutGap: =5
+                                    LayoutMinWidth: =100
+                                    PaddingLeft: =10
+                                    PaddingRight: =10
+                                    Width: =Parent.Width
+                                  Children:
+                                    - QuestionBuilder_TextTHLabel:
+                                        Control: Text@0.0.51
+                                        Properties:
+                                          Height: =20
+                                          Text: ="Question Text (Thai) / ข้อความคำถาม"
+                                          Weight: ='TextCanvas.Weight'.Semibold
+                                          Width: =Parent.Width-20
+                                    - QuestionBuilder_TextTH:
+                                        Control: TextInput@0.0.54
+                                        Properties:
+                                          Height: =80
+                                          MaxLength: =250
+                                          Mode: ='TextInputCanvas.Mode'.Multiline
+                                          Value: =If(gblIsEditQuestionMode, gblSelectedQuestion.QuestionText_TH, "")
+                                          Width: =Parent.Width-20
+                              - QuestionBuilder_CategoryContainer:
+                                  Control: GroupContainer@1.3.0
+                                  Variant: AutoLayout
+                                  Properties:
+                                    DropShadow: =DropShadow.None
+                                    LayoutDirection: =LayoutDirection.Vertical
+                                    LayoutGap: =5
+                                    LayoutMinHeight: =60
+                                    LayoutMinWidth: =100
+                                    PaddingLeft: =10
+                                    PaddingRight: =10
+                                    Width: =Parent.Width
+                                  Children:
+                                    - QuestionBuilder_CategoryLabel:
+                                        Control: Text@0.0.51
+                                        Properties:
+                                          Height: =20
+                                          Text: ="Question Category"
+                                          Weight: ='TextCanvas.Weight'.Semibold
+                                          Width: =Parent.Width-20
+                                    - QuestionBuilder_Category:
+                                        Control: TextInput@0.0.54
+                                        Properties:
+                                          Height: =40
+                                          MaxLength: =100
+                                          Value: =If(gblIsEditQuestionMode, gblSelectedQuestion.QuestionCategory, "")
+                                          Width: =Parent.Width-20
+                              - QuestionBuilder_DisplayOrderContainer:
+                                  Control: GroupContainer@1.3.0
+                                  Variant: AutoLayout
+                                  Properties:
+                                    DropShadow: =DropShadow.None
+                                    LayoutDirection: =LayoutDirection.Vertical
+                                    LayoutGap: =5
+                                    LayoutMinHeight: =60
+                                    LayoutMinWidth: =100
+                                    PaddingLeft: =10
+                                    PaddingRight: =10
+                                    Width: =Parent.Width
+                                  Children:
+                                    - QuestionBuilder_DisplayOrderLabel:
+                                        Control: Text@0.0.51
+                                        Properties:
+                                          Height: =20
+                                          Text: ="Display Order"
+                                          Weight: ='TextCanvas.Weight'.Semibold
+                                          Width: =Parent.Width-20
+                                    - QuestionBuilder_DisplayOrder:
+                                        Control: NumberInput@2.9.12
+                                        Properties:
+                                          Value: =If(gblIsEditQuestionMode, gblSelectedQuestion.DisplayOrder, CountRows(Filter('[THInterviewEval]FormQuestions', EvalForm.FormName = gblSelectedEvalForm.FormName)) + 1)
+                                          Width: =Parent.Width-20
+                              - QuestionBuilder_ImageContainer:
+                                  Control: GroupContainer@1.3.0
+                                  Variant: AutoLayout
+                                  Properties:
+                                    DropShadow: =DropShadow.None
+                                    LayoutDirection: =LayoutDirection.Vertical
+                                    LayoutGap: =10
+                                    LayoutMinHeight: =350
+                                    LayoutMinWidth: =100
+                                    PaddingBottom: =10
+                                    PaddingLeft: =10
+                                    PaddingRight: =10
+                                    Width: =Parent.Width
+                                  Children:
+                                    - QuestionBuilder_ImageLabel:
+                                        Control: Text@0.0.51
+                                        Properties:
+                                          Height: =20
+                                          Text: ="Question Image (Optional)"
+                                          Weight: ='TextCanvas.Weight'.Semibold
+                                          Width: =Parent.Width-20
+                                    - QuestionBuilder_ImageUploadArea:
+                                        Control: GroupContainer@1.3.0
+                                        Variant: ManualLayout
+                                        Properties:
+                                          DropShadow: =DropShadow.None
+                                          Height: =180
+                                          Width: =Parent.Width-20
+                                        Children:
+                                          - QuestionBuilder_UploadedImage:
+                                              Control: Image@2.2.3
+                                              Group: QuestionImageUpload
+                                              Properties:
+                                                BorderColor: =RGBA(0, 101, 161, 1)
+                                                Height: =QuestionBuilder_AddImageButton.Height
+                                                Image: =If(IsBlank(QuestionBuilder_AddImageButton.Media), SampleImage, QuestionBuilder_AddImageButton.Media)
+                                                ImagePosition: =ImagePosition.Fill
+                                                Width: =QuestionBuilder_AddImageButton.Width
+                                                X: =QuestionBuilder_AddImageButton.X
+                                                Y: =QuestionBuilder_AddImageButton.Y
+                                          - QuestionBuilder_AddImageButton:
+                                              Control: AddMedia@2.2.1
+                                              Group: QuestionImageUpload
+                                              Properties:
+                                                BorderColor: =RGBA(0, 101, 161, 1)
+                                                Size: =25
+                                                X: =10
+                                                Y: =10
+                  - QuestionBuilder_Control:
+                      Control: GroupContainer@1.3.0
+                      Variant: AutoLayout
+                      Properties:
+                        DropShadow: =DropShadow.None
+                        Height: =50
+                        LayoutAlignItems: =LayoutAlignItems.Center
+                        LayoutDirection: =LayoutDirection.Horizontal
+                        LayoutGap: =10
+                        LayoutJustifyContent: =LayoutJustifyContent.End
+                        PaddingRight: =10
+                        Width: =Parent.Width-20
+                        X: =10
+                        Y: =Parent.Height-Self.Height-10
+                      Children:
+                        - QuestionBuilder_CancelBtn:
+                            Control: Button@0.0.45
+                            Properties:
+                              BasePaletteColor: =RGBA(128, 128, 128, 1)
+                              Height: =35
+                              OnSelect: =Navigate(scnQuestionManager)
+                              Text: ="Cancel"
+                              Width: =80
+                        - QuestionBuilder_SaveBtn:
+                            Control: Button@0.0.45
+                            Properties:
+                              BasePaletteColor: =RGBA(0, 101, 161, 1)
+                              Height: =35
+                              OnSelect: |-
+                                =If(gblIsEditQuestionMode,
+                                    // Edit existing question
+                                    Patch('[THInterviewEval]FormQuestions', gblSelectedQuestion,
+                                        {
+                                            QuestionText: QuestionBuilder_TextEN.Value,
+                                            QuestionText_TH: QuestionBuilder_TextTH.Value,
+                                            QuestionCategory: QuestionBuilder_Category.Value,
+                                            DisplayOrder: QuestionBuilder_DisplayOrder.Value,
+                                            QuestionImage: QuestionBuilder_UploadedImage.Image,
+                                            EvalForm: gblSelectedEvalForm
+                                        }
+                                    ),
+                                    // Create new question
+                                    Patch('[THInterviewEval]FormQuestions',
+                                        Defaults('[THInterviewEval]FormQuestions'),
+                                        {
+                                            QuestionText: QuestionBuilder_TextEN.Value,
+                                            QuestionText_TH: QuestionBuilder_TextTH.Value,
+                                            QuestionCategory: QuestionBuilder_Category.Value,
+                                            DisplayOrder: QuestionBuilder_DisplayOrder.Value,
+                                            QuestionImage: QuestionBuilder_UploadedImage.Image,
+                                            EvalForm: gblSelectedEvalForm
+                                        }
+                                    )
+                                );
+                                If(
+                                    IsEmpty(Errors('[THInterviewEval]FormQuestions')),
+                                    Notify("Question saved successfully!", NotificationType.Success);
+                                    Navigate(scnQuestionManager),
+                                    Notify("Error saving question: " & First(Errors('[THInterviewEval]FormQuestions')).Message, NotificationType.Error)
+                                )
+                              Text: =If(gblIsEditQuestionMode,"Save","Add")
+                              Width: =80
+            - QuestionBuilder_NavigationMenu:
+                Control: CanvasComponent
+                ComponentName: NavigationMenu
+                Properties:
+                  Fill: =RGBA(255, 255, 255, 0.5)
+                  Height: =Parent.Height-70
+                  Visible: =If(_showMenu,true,false)
+                  Width: =260
+                  Y: =70
+                  navItems: =Navigation
+                  navSelected: =currentScreen
+

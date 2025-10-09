@@ -1,0 +1,1013 @@
+﻿Screens:
+  scnCandidate:
+    Properties:
+      LoadingSpinnerColor: =RGBA(56, 96, 178, 1)
+      OnVisible: |
+        =UpdateContext({currentScreen:"Candidate"});
+        UpdateContext({currentMode:"View"});
+        Set(_showMenu,false);
+    Children:
+      - CandidateMainContainer:
+          Control: GroupContainer@1.3.0
+          Variant: ManualLayout
+          Properties:
+            DropShadow: =DropShadow.Regular
+            Height: =Parent.Height
+            Width: =Parent.Width
+          Children:
+            - CandidateContent:
+                Control: GroupContainer@1.3.0
+                Variant: ManualLayout
+                Properties:
+                  DropShadow: =DropShadow.None
+                  Fill: =RGBA(255, 255, 255, 1)
+                  Height: |+
+                    =Parent.Height-85
+
+
+
+
+
+
+                  RadiusBottomLeft: =10
+                  RadiusBottomRight: =10
+                  RadiusTopLeft: =10
+                  RadiusTopRight: =10
+                  Width: |+
+                    =Parent.Width-20
+
+                  X: |
+                    =10
+                  Y: |+
+                    =75
+
+                Children:
+                  - CandidateTable:
+                      Control: GroupContainer@1.3.0
+                      Variant: ManualLayout
+                      Properties:
+                        DropShadow: =DropShadow.Regular
+                        Height: =Parent.Height
+                        RadiusBottomLeft: =10
+                        RadiusBottomRight: =10
+                        RadiusTopLeft: =10
+                        RadiusTopRight: =10
+                        Visible: |
+                          =currentMode="View"
+                        Width: =Parent.Width
+                        Y: |
+                          =0
+                      Children:
+                        - RequestGallery_2:
+                            Control: Gallery@2.15.0
+                            Variant: BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0
+                            Properties:
+                              BorderColor: =RGBA(0, 18, 107, 1)
+                              Fill: =RGBA(214, 221, 224, 1)
+                              Height: |
+                                =Parent.Height-50
+                              Items: ='[THInterviewEval]Candidates'
+                              OnSelect: |-
+                                =UpdateContext({currentMode:"Detail"});
+                                UpdateContext({currentSelectedCandidate: ThisItem});
+                                UpdateContext({currentFormSelectedCandidate:ThisItem});
+                                PositionFormResetComponent_2.CandidateFormReset();
+                              Width: =Parent.Width-20
+                              X: |
+                                =10
+                              Y: |
+                                =45
+                            Children:
+                              - Image1:
+                                  Control: Image@2.2.3
+                                  Properties:
+                                    BorderColor: =RGBA(0, 18, 107, 1)
+                                    Height: =72
+                                    OnSelect: =Select(Parent)
+                                    RadiusBottomLeft: =8
+                                    RadiusBottomRight: =8
+                                    RadiusTopLeft: =8
+                                    RadiusTopRight: =8
+                                    Width: =72
+                                    X: =16
+                                    Y: =(Parent.TemplateHeight / 2) - (Self.Height / 2)
+                              - Title1:
+                                  Control: Label@2.5.1
+                                  Properties:
+                                    BorderColor: =RGBA(0, 0, 0, 1)
+                                    Color: =RGBA(50, 49, 48, 1)
+                                    Font: =Font.'Open Sans'
+                                    FontWeight: =If(ThisItem.IsSelected, FontWeight.Semibold, FontWeight.Normal)
+                                    Height: =Self.Size * 1.8
+                                    OnSelect: =Select(Parent)
+                                    PaddingBottom: =0
+                                    PaddingLeft: =0
+                                    PaddingRight: =0
+                                    PaddingTop: =0
+                                    Size: =14
+                                    Text: =ThisItem.FirstName&" "&ThisItem.LastName
+                                    VerticalAlign: =VerticalAlign.Top
+                                    Width: =Parent.TemplateWidth - 173
+                                    X: =103
+                                    Y: =(Parent.TemplateHeight - (Self.Size * 1.8 + Subtitle1.Size * 1.8)) / 2
+                              - Subtitle1:
+                                  Control: Label@2.5.1
+                                  Properties:
+                                    BorderColor: =RGBA(0, 0, 0, 1)
+                                    Font: =Font.'Open Sans'
+                                    FontWeight: =If(ThisItem.IsSelected, FontWeight.Semibold, FontWeight.Normal)
+                                    Height: =Self.Size * 1.8
+                                    OnSelect: =Select(Parent)
+                                    PaddingBottom: =0
+                                    PaddingLeft: =0
+                                    PaddingRight: =0
+                                    PaddingTop: =0
+                                    Size: =12
+                                    Text: =ThisItem.FirstNameTH&" "&ThisItem.LastNameTH
+                                    VerticalAlign: =VerticalAlign.Top
+                                    Width: =Title1.Width
+                                    X: =Title1.X
+                                    Y: =Title1.Y + Title1.Height
+                              - NextArrow1:
+                                  Control: Classic/Icon@2.5.0
+                                  Properties:
+                                    AccessibleLabel: =Self.Tooltip
+                                    BorderColor: =RGBA(0, 0, 0, 1)
+                                    Color: =RGBA(166, 166, 166, 1)
+                                    DisabledBorderColor: =RGBA(56, 56, 56, 1)
+                                    DisabledColor: =RGBA(119, 119, 119, 1)
+                                    Height: =50
+                                    Icon: =Icon.ChevronRight
+                                    OnSelect: =Select(Parent)
+                                    PaddingBottom: =16
+                                    PaddingLeft: =16
+                                    PaddingRight: =16
+                                    PaddingTop: =16
+                                    Tooltip: ="View item details"
+                                    Width: =50
+                                    X: =Parent.TemplateWidth - Self.Width - 12
+                                    Y: =(Parent.TemplateHeight / 2) - (Self.Height / 2)
+                              - Separator1:
+                                  Control: Rectangle@2.3.0
+                                  Properties:
+                                    BorderColor: =RGBA(0, 18, 107, 1)
+                                    Fill: =RGBA(255, 255, 255, 1)
+                                    Height: =8
+                                    OnSelect: =Select(Parent)
+                                    Width: =Parent.TemplateWidth
+                                    Y: =Parent.TemplateHeight - Self.Height
+                              - Rectangle1:
+                                  Control: Rectangle@2.3.0
+                                  Properties:
+                                    BorderColor: =RGBA(0, 18, 107, 1)
+                                    Fill: =RGBA(0, 18, 107, 1)
+                                    Height: =Parent.TemplateHeight - Separator1.Height
+                                    OnSelect: =Select(Parent)
+                                    Visible: =ThisItem.IsSelected
+                                    Width: =4
+                        - RequestTableControl_2:
+                            Control: GroupContainer@1.3.0
+                            Variant: AutoLayout
+                            Properties:
+                              DropShadow: =DropShadow.None
+                              Height: =40
+                              LayoutDirection: =LayoutDirection.Horizontal
+                              LayoutGap: =5
+                              LayoutJustifyContent: =LayoutJustifyContent.End
+                              LayoutWrap: =true
+                              PaddingRight: =10
+                              PaddingTop: =5
+                              RadiusBottomRight: |
+                                =5
+                              Width: |
+                                =Parent.Width
+                              X: |
+                                =0
+                              Y: =5
+                            Children:
+                              - RequestTableControlLeft_2:
+                                  Control: GroupContainer@1.3.0
+                                  Variant: AutoLayout
+                                  Properties:
+                                    DropShadow: =DropShadow.None
+                                    LayoutDirection: =LayoutDirection.Horizontal
+                                    LayoutMinHeight: =30
+                                    PaddingLeft: =10
+                                    RadiusBottomLeft: =0
+                                    RadiusBottomRight: =0
+                                    RadiusTopLeft: =0
+                                    RadiusTopRight: =0
+                                    X: =40
+                                    Y: =40
+                                  Children:
+                                    - RequestSearch_2:
+                                        Control: TextInput@0.0.54
+                                        Properties:
+                                          Placeholder: ="Search"
+                                          TriggerOutput: ='TextInputCanvas.TriggerOutput'.Delayed
+                              - RequestTableControlRight_2:
+                                  Control: GroupContainer@1.3.0
+                                  Variant: AutoLayout
+                                  Properties:
+                                    DropShadow: =DropShadow.None
+                                    Height: =Parent.Height
+                                    LayoutDirection: =LayoutDirection.Horizontal
+                                    LayoutGap: =5
+                                    LayoutJustifyContent: =LayoutJustifyContent.End
+                                    LayoutMinHeight: =30
+                                    RadiusBottomLeft: =0
+                                    RadiusBottomRight: =0
+                                    RadiusTopLeft: =0
+                                    RadiusTopRight: =0
+                                  Children:
+                                    - RequestStatusCombo_2:
+                                        Control: ComboBox@0.0.51
+                                        Properties:
+                                          Height: =30
+                                          InputTextPlaceholder: ="Status"
+                                          Items: =["In Progress","Completed"]
+                                          PaddingTop: =0
+                                          SelectMultiple: =true
+                                          Width: =160
+                                          X: =40
+                                          Y: =20
+                                    - RequestAddBtn_2:
+                                        Control: Button@0.0.45
+                                        Properties:
+                                          Align: =Align.Center
+                                          Appearance: ='ButtonCanvas.Appearance'.Primary
+                                          Height: =30
+                                          Icon: ="Add"
+                                          OnSelect: |-
+                                            =UpdateContext({currentMode:"New"});
+                                            UpdateContext({currentSelectedCandidate: Blank()});
+                                            UpdateContext({currentFormSelectedCandidate:Blank()});
+                                            PositionFormResetComponent_2.CandidateFormReset();
+                                          Text: ="Add"
+                                          VerticalAlign: =VerticalAlign.Middle
+                                          Width: =80
+                                          X: =285
+                                          Y: =20
+                  - CandidateForm:
+                      Control: GroupContainer@1.3.0
+                      Variant: ManualLayout
+                      Properties:
+                        DropShadow: =DropShadow.None
+                        Height: =Parent.Height
+                        Visible: =currentMode="New"|| currentMode = "Edit"
+                        Width: =Parent.Width
+                        X: |
+                          =0
+                        Y: |
+                          =0
+                      Children:
+                        - OnboardFormControl_2:
+                            Control: GroupContainer@1.3.0
+                            Variant: AutoLayout
+                            Properties:
+                              DropShadow: =DropShadow.Regular
+                              Height: =40
+                              LayoutDirection: =LayoutDirection.Horizontal
+                              LayoutGap: |
+                                =5
+                              LayoutJustifyContent: =LayoutJustifyContent.End
+                              PaddingBottom: =5
+                              PaddingRight: |
+                                =10
+                              PaddingTop: |
+                                =05
+                              Width: |
+                                =Parent.Width-6
+                              X: =3
+                              Y: |
+                                =Parent.Height-Self.Height-3
+                            Children:
+                              - Container9_6:
+                                  Control: GroupContainer@1.3.0
+                                  Variant: AutoLayout
+                                  Properties:
+                                    DropShadow: =DropShadow.None
+                                    FillPortions: =0
+                                    LayoutDirection: =LayoutDirection.Horizontal
+                                    LayoutGap: =5
+                                    LayoutJustifyContent: =LayoutJustifyContent.End
+                                    LayoutMinHeight: =30
+                                    LayoutMinWidth: =100
+                                    RadiusBottomLeft: =0
+                                    RadiusBottomRight: =0
+                                    RadiusTopLeft: =0
+                                    RadiusTopRight: =0
+                                    Width: =200
+                                  Children:
+                                    - OnboardGroupFormAddBtn_2:
+                                        Control: Button@0.0.45
+                                        Properties:
+                                          Height: =30
+                                          OnSelect: "=If(\n    currentMode = \"New\",\n    Set(\n        newRequest,\n        Patch(\n            '[THInterviewEval]Candidates',// Your target Dataverse table\n            Defaults('[THInterviewEval]Candidates'),// Indicates you are creating a NEW record\n            {\n                FirstName: CandidateFormInputFirstName_EN.Value,\n                LastName: CandidateFormInputLastName_EN.Value,\n                FirstNameTH: CandidateFormInputFirstName_TH.Value,\n                LastNameTH: CandidateFormInputLastName_TH.Value,\n                Email: CandidateFormInputEmail.Value\n            }\n        )\n    ),\n    If(\n        currentMode = \"Edit\",\n        Patch(\n            '[THInterviewEval]Candidates',\n            currentSelectedCandidate,\n            {\n                FirstName: CandidateFormInputFirstName_EN.Value,\n                LastName: CandidateFormInputLastName_EN.Value,\n                FirstNameTH: CandidateFormInputFirstName_TH.Value,\n                LastNameTH: CandidateFormInputLastName_TH.Value,\n                Email: CandidateFormInputEmail.Value\n            }\n        ),\n        Notify(\"ModeError\")\n    )\n);\nIf(\n    IsEmpty(Errors('[THInterviewEval]Candidates')),\n    Notify(\n        \"Record created successfully!\",\n        NotificationType.Success\n    );\n    //UpdateContext({currentMode:\"View\"})\n,\n    Notify(\n        \"Error creating record: \" & First(Errors('[THInterviewEval]PositionInterviews')).Message,\n        NotificationType.Error\n    )\n);\nSubmitForm(AttachmentForm_3);\nIf(\n    currentMode = \"Edit\",\n    UpdateContext({currentFormSelectedPosition: Blank()});\n    UpdateContext({currentFormSelectedPosition: currentSelectedCandidate});\n    \n);\nIf(\n    currentMode = \"New\",\n    UpdateContext({currentMode: \"Edit\"});\n    UpdateContext({currentSelectedRequest: Blank()});\n    UpdateContext({currentFormSelectedRequest: newRequest});\n    PositionFormResetComponent_2.PositionFormReset();\n    UpdateContext({currentSelectedRequest: newRequest});    \n    PositionFormResetComponent_2.PositionFormReset();\n)"
+                                          Text: =If(currentMode="New","Save",If(currentMode="Edit","Save","Error"))
+                                          X: =502
+                                          Y: =440
+                                    - OnboardGroupFormCancelBtn_2:
+                                        Control: Button@0.0.45
+                                        Properties:
+                                          Height: =30
+                                          OnSelect: |-
+                                            =UpdateContext({currentMode:"View"});
+                                            UpdateContext({currentSelectedRequest: Blank()});
+                                            UpdateContext({currentFormSelectedRequest: Blank()});
+                                            PositionFormResetComponent_2.PositionFormReset();
+                                          Text: ="Cancel"
+                                          X: =108
+                                          Y: =440
+                        - FormContainer_2:
+                            Control: GroupContainer@1.3.0
+                            Variant: AutoLayout
+                            Properties:
+                              DropShadow: =DropShadow.Regular
+                              Height: |
+                                =Parent.Height-50
+                              LayoutDirection: =LayoutDirection.Vertical
+                              LayoutGap: =10
+                              LayoutOverflowX: =LayoutOverflow.Scroll
+                              LayoutOverflowY: =LayoutOverflow.Scroll
+                              PaddingBottom: =10
+                              PaddingLeft: =10
+                              PaddingRight: =10
+                              PaddingTop: =10
+                              Width: |
+                                =Parent.Width-6
+                              X: =3
+                              Y: |
+                                =3
+                            Children:
+                              - FormAddress_2:
+                                  Control: GroupContainer@1.3.0
+                                  Variant: AutoLayout
+                                  Properties:
+                                    Fill: =RGBA(174, 208, 221, 1)
+                                    FillPortions: =0
+                                    Height: =250
+                                    LayoutDirection: =LayoutDirection.Vertical
+                                    RadiusBottomLeft: =6
+                                    RadiusBottomRight: =6
+                                    RadiusTopLeft: =6
+                                    RadiusTopRight: =6
+                                  Children:
+                                    - FormAddressTitle_4:
+                                        Control: Text@0.0.51
+                                        Properties:
+                                          BorderStyle: =BorderStyle.None
+                                          Font: =Font.'Lato Black'
+                                          FontColor: =RGBA(15, 84, 140, 1)
+                                          Height: =45
+                                          PaddingBottom: =8
+                                          PaddingLeft: =10
+                                          PaddingTop: =8
+                                          Size: =20
+                                          Text: ="Candidate Detail"
+                                          VerticalAlign: =VerticalAlign.Middle
+                                          Width: =Parent.Width
+                                    - FormCandidateRow_1:
+                                        Control: GroupContainer@1.3.0
+                                        Variant: AutoLayout
+                                        Properties:
+                                          DropShadow: =DropShadow.None
+                                          FillPortions: =0
+                                          Height: =65
+                                          LayoutDirection: =LayoutDirection.Horizontal
+                                          LayoutOverflowX: =LayoutOverflow.Scroll
+                                          LayoutOverflowY: =LayoutOverflow.Scroll
+                                          RadiusBottomLeft: =0
+                                          RadiusBottomRight: =0
+                                          RadiusTopLeft: =0
+                                          RadiusTopRight: =0
+                                        Children:
+                                          - RequestFormAddressEnName_3:
+                                              Control: GroupContainer@1.3.0
+                                              Variant: AutoLayout
+                                              Properties:
+                                                DropShadow: =DropShadow.None
+                                                LayoutDirection: =LayoutDirection.Vertical
+                                                LayoutMinHeight: =65
+                                                PaddingLeft: =10
+                                                PaddingTop: =10
+                                                RadiusBottomLeft: =0
+                                                RadiusBottomRight: =0
+                                                RadiusTopLeft: =0
+                                                RadiusTopRight: =0
+                                                Width: =150
+                                              Children:
+                                                - CandidateFormTitleEnName_3:
+                                                    Control: Text@0.0.51
+                                                    Properties:
+                                                      Height: =20
+                                                      Text: ="First Name (EN)"
+                                                      Weight: ='TextCanvas.Weight'.Semibold
+                                                      Width: =Parent.Width-20
+                                                - CandidateFormInputFirstName_EN:
+                                                    Control: TextInput@0.0.54
+                                                    Properties:
+                                                      Appearance: ='TextInputCanvas.Appearance'.FilledDarker
+                                                      MaxLength: |
+                                                        =35
+                                                      Placeholder: =
+                                                      TriggerOutput: ='TextInputCanvas.TriggerOutput'.Delayed
+                                                      Value: =currentFormSelectedCandidate.FirstName
+                                                      Width: =Parent.Width-20
+                                          - RequestFormAddressThName_2:
+                                              Control: GroupContainer@1.3.0
+                                              Variant: AutoLayout
+                                              Properties:
+                                                DropShadow: =DropShadow.None
+                                                LayoutDirection: =LayoutDirection.Vertical
+                                                LayoutMinHeight: =65
+                                                PaddingLeft: =10
+                                                PaddingTop: =10
+                                                RadiusBottomLeft: =0
+                                                RadiusBottomRight: =0
+                                                RadiusTopLeft: =0
+                                                RadiusTopRight: =0
+                                                Width: =150
+                                              Children:
+                                                - RequestFormTitleThName_2:
+                                                    Control: Text@0.0.51
+                                                    Properties:
+                                                      Height: =20
+                                                      Text: ="Last Name (EN)"
+                                                      Weight: ='TextCanvas.Weight'.Semibold
+                                                      Width: =Parent.Width-20
+                                                - CandidateFormInputLastName_EN:
+                                                    Control: TextInput@0.0.54
+                                                    Properties:
+                                                      MaxLength: |
+                                                        =35
+                                                      Placeholder: =
+                                                      Value: =currentFormSelectedCandidate.LastName
+                                                      Width: =Parent.Width-20
+                                    - FormCandidateRow_2:
+                                        Control: GroupContainer@1.3.0
+                                        Variant: AutoLayout
+                                        Properties:
+                                          DropShadow: =DropShadow.None
+                                          FillPortions: =0
+                                          Height: =65
+                                          LayoutDirection: =LayoutDirection.Horizontal
+                                          LayoutOverflowX: =LayoutOverflow.Scroll
+                                          LayoutOverflowY: =LayoutOverflow.Scroll
+                                          RadiusBottomLeft: =0
+                                          RadiusBottomRight: =0
+                                          RadiusTopLeft: =0
+                                          RadiusTopRight: =0
+                                        Children:
+                                          - RequestFormAddressEnName_11:
+                                              Control: GroupContainer@1.3.0
+                                              Variant: AutoLayout
+                                              Properties:
+                                                DropShadow: =DropShadow.None
+                                                LayoutDirection: =LayoutDirection.Vertical
+                                                LayoutMinHeight: =65
+                                                PaddingLeft: =10
+                                                PaddingTop: =10
+                                                RadiusBottomLeft: =0
+                                                RadiusBottomRight: =0
+                                                RadiusTopLeft: =0
+                                                RadiusTopRight: =0
+                                                Width: =150
+                                              Children:
+                                                - CandidateFormTitleEnName_4:
+                                                    Control: Text@0.0.51
+                                                    Properties:
+                                                      Height: =20
+                                                      Text: ="First Name (TH)"
+                                                      Weight: ='TextCanvas.Weight'.Semibold
+                                                      Width: =Parent.Width-20
+                                                - CandidateFormInputFirstName_TH:
+                                                    Control: TextInput@0.0.54
+                                                    Properties:
+                                                      Appearance: ='TextInputCanvas.Appearance'.FilledDarker
+                                                      MaxLength: |
+                                                        =35
+                                                      Placeholder: =
+                                                      TriggerOutput: ='TextInputCanvas.TriggerOutput'.Delayed
+                                                      Value: =currentFormSelectedCandidate.FirstNameTH
+                                                      Width: =Parent.Width-20
+                                          - RequestFormAddressThName_4:
+                                              Control: GroupContainer@1.3.0
+                                              Variant: AutoLayout
+                                              Properties:
+                                                DropShadow: =DropShadow.None
+                                                LayoutDirection: =LayoutDirection.Vertical
+                                                LayoutMinHeight: =65
+                                                PaddingLeft: =10
+                                                PaddingTop: =10
+                                                RadiusBottomLeft: =0
+                                                RadiusBottomRight: =0
+                                                RadiusTopLeft: =0
+                                                RadiusTopRight: =0
+                                                Width: =150
+                                              Children:
+                                                - RequestFormTitleThName_4:
+                                                    Control: Text@0.0.51
+                                                    Properties:
+                                                      Height: =20
+                                                      Text: ="Last Name (TH)"
+                                                      Weight: ='TextCanvas.Weight'.Semibold
+                                                      Width: =Parent.Width-20
+                                                - CandidateFormInputLastName_TH:
+                                                    Control: TextInput@0.0.54
+                                                    Properties:
+                                                      MaxLength: |
+                                                        =35
+                                                      Placeholder: =
+                                                      Value: =currentFormSelectedCandidate.LastNameTH
+                                                      Width: =Parent.Width-20
+                                    - FormCandidateRow_3:
+                                        Control: GroupContainer@1.3.0
+                                        Variant: AutoLayout
+                                        Properties:
+                                          DropShadow: =DropShadow.None
+                                          FillPortions: =0
+                                          Height: =65
+                                          LayoutDirection: =LayoutDirection.Horizontal
+                                          LayoutOverflowX: =LayoutOverflow.Scroll
+                                          LayoutOverflowY: =LayoutOverflow.Scroll
+                                          RadiusBottomLeft: =0
+                                          RadiusBottomRight: =0
+                                          RadiusTopLeft: =0
+                                          RadiusTopRight: =0
+                                        Children:
+                                          - RequestFormAddressEnName_12:
+                                              Control: GroupContainer@1.3.0
+                                              Variant: AutoLayout
+                                              Properties:
+                                                DropShadow: =DropShadow.None
+                                                LayoutDirection: =LayoutDirection.Vertical
+                                                LayoutMinHeight: =65
+                                                PaddingLeft: =10
+                                                PaddingTop: =10
+                                                RadiusBottomLeft: =0
+                                                RadiusBottomRight: =0
+                                                RadiusTopLeft: =0
+                                                RadiusTopRight: =0
+                                                Width: =150
+                                              Children:
+                                                - CandidateFormTitleEnName_5:
+                                                    Control: Text@0.0.51
+                                                    Properties:
+                                                      Height: =20
+                                                      Text: ="Email"
+                                                      Weight: ='TextCanvas.Weight'.Semibold
+                                                      Width: =Parent.Width-20
+                                                - CandidateFormInputEmail:
+                                                    Control: TextInput@0.0.54
+                                                    Properties:
+                                                      Appearance: ='TextInputCanvas.Appearance'.FilledDarker
+                                                      MaxLength: |
+                                                        =35
+                                                      Placeholder: =
+                                                      TriggerOutput: ='TextInputCanvas.TriggerOutput'.Delayed
+                                                      Value: =currentFormSelectedCandidate.Email
+                                                      Width: =Parent.Width-20
+                              - Container3_2:
+                                  Control: GroupContainer@1.3.0
+                                  Variant: ManualLayout
+                                  Properties:
+                                    DropShadow: =DropShadow.None
+                                    RadiusBottomLeft: =0
+                                    RadiusBottomRight: =0
+                                    RadiusTopLeft: =0
+                                    RadiusTopRight: =0
+                                    X: =40
+                                    Y: =40
+                  - CandidateDetail:
+                      Control: GroupContainer@1.3.0
+                      Variant: ManualLayout
+                      Properties:
+                        DropShadow: =DropShadow.None
+                        Height: =Parent.Height
+                        Visible: =currentMode="Detail"
+                        Width: =Parent.Width
+                        X: |
+                          =0
+                        Y: |
+                          =0
+                      Children:
+                        - OnboardFormControl_3:
+                            Control: GroupContainer@1.3.0
+                            Variant: AutoLayout
+                            Properties:
+                              DropShadow: =DropShadow.Regular
+                              Height: =40
+                              LayoutDirection: =LayoutDirection.Horizontal
+                              LayoutGap: |
+                                =5
+                              LayoutJustifyContent: =LayoutJustifyContent.End
+                              PaddingBottom: =5
+                              PaddingRight: |
+                                =10
+                              PaddingTop: |
+                                =05
+                              Width: |
+                                =Parent.Width-6
+                              X: =3
+                              Y: |
+                                =Parent.Height-Self.Height-3
+                            Children:
+                              - Container9_7:
+                                  Control: GroupContainer@1.3.0
+                                  Variant: AutoLayout
+                                  Properties:
+                                    DropShadow: =DropShadow.None
+                                    FillPortions: =0
+                                    LayoutDirection: =LayoutDirection.Horizontal
+                                    LayoutGap: =5
+                                    LayoutJustifyContent: =LayoutJustifyContent.End
+                                    LayoutMinHeight: =30
+                                    LayoutMinWidth: =100
+                                    RadiusBottomLeft: =0
+                                    RadiusBottomRight: =0
+                                    RadiusTopLeft: =0
+                                    RadiusTopRight: =0
+                                    Width: =200
+                                  Children:
+                                    - OnboardGroupFormCancelBtn_3:
+                                        Control: Button@0.0.45
+                                        Properties:
+                                          Height: =30
+                                          OnSelect: |-
+                                            =UpdateContext({currentMode:"Edit"});
+                                            PositionFormResetComponent_2.PositionFormReset();
+                                          Text: ="Edit"
+                                          X: =108
+                                          Y: =440
+                                    - OnboardGroupFormCancelBtn_4:
+                                        Control: Button@0.0.45
+                                        Properties:
+                                          Height: =30
+                                          OnSelect: |-
+                                            =UpdateContext({currentMode:"View"});
+                                            UpdateContext({currentSelectedRequest: Blank()});
+                                            UpdateContext({currentFormSelectedRequest: Blank()});
+                                            PositionFormResetComponent_2.PositionFormReset();
+                                          Text: ="Close"
+                                          X: =108
+                                          Y: =440
+                        - FormContainer_3:
+                            Control: GroupContainer@1.3.0
+                            Variant: AutoLayout
+                            Properties:
+                              DropShadow: =DropShadow.Regular
+                              Height: |
+                                =Parent.Height-50
+                              LayoutDirection: =LayoutDirection.Vertical
+                              LayoutGap: =10
+                              LayoutOverflowX: =LayoutOverflow.Scroll
+                              LayoutOverflowY: =LayoutOverflow.Scroll
+                              PaddingBottom: =10
+                              PaddingLeft: =10
+                              PaddingRight: =10
+                              PaddingTop: =10
+                              Width: |
+                                =Parent.Width-6
+                              X: =3
+                              Y: |
+                                =3
+                            Children:
+                              - FormAddress_3:
+                                  Control: GroupContainer@1.3.0
+                                  Variant: AutoLayout
+                                  Properties:
+                                    Fill: =RGBA(174, 208, 221, 1)
+                                    FillPortions: =0
+                                    LayoutDirection: =LayoutDirection.Vertical
+                                    RadiusBottomLeft: =6
+                                    RadiusBottomRight: =6
+                                    RadiusTopLeft: =6
+                                    RadiusTopRight: =6
+                                  Children:
+                                    - FormAddressTitle_6:
+                                        Control: Text@0.0.51
+                                        Properties:
+                                          BorderStyle: =BorderStyle.None
+                                          Font: =Font.'Lato Black'
+                                          FontColor: =RGBA(15, 84, 140, 1)
+                                          Height: =45
+                                          PaddingBottom: =8
+                                          PaddingLeft: =10
+                                          PaddingTop: =8
+                                          Size: =20
+                                          Text: ="Candidate Detail"
+                                          VerticalAlign: =VerticalAlign.Middle
+                                          Width: =Parent.Width
+                                    - FormAddressRow_5:
+                                        Control: GroupContainer@1.3.0
+                                        Variant: AutoLayout
+                                        Properties:
+                                          DropShadow: =DropShadow.None
+                                          FillPortions: =0
+                                          Height: =65
+                                          LayoutDirection: =LayoutDirection.Horizontal
+                                          LayoutOverflowX: =LayoutOverflow.Scroll
+                                          LayoutOverflowY: =LayoutOverflow.Scroll
+                                          RadiusBottomLeft: =0
+                                          RadiusBottomRight: =0
+                                          RadiusTopLeft: =0
+                                          RadiusTopRight: =0
+                                        Children:
+                                          - RequestFormAddressEnName_9:
+                                              Control: GroupContainer@1.3.0
+                                              Variant: AutoLayout
+                                              Properties:
+                                                DropShadow: =DropShadow.None
+                                                LayoutDirection: =LayoutDirection.Vertical
+                                                LayoutMinHeight: =65
+                                                PaddingLeft: =10
+                                                PaddingTop: =10
+                                                RadiusBottomLeft: =0
+                                                RadiusBottomRight: =0
+                                                RadiusTopLeft: =0
+                                                RadiusTopRight: =0
+                                                Width: =150
+                                              Children:
+                                                - RequestFormTitleEnName_9:
+                                                    Control: Text@0.0.51
+                                                    Properties:
+                                                      Height: =20
+                                                      Text: ="Name"
+                                                      Weight: ='TextCanvas.Weight'.Semibold
+                                                      Width: =Parent.Width-20
+                                                - RequestFormTitleEnName_11:
+                                                    Control: Text@0.0.51
+                                                    Properties:
+                                                      Height: =30
+                                                      Size: =20
+                                                      Text: =currentFormSelectedCandidate.FirstName&" "&currentFormSelectedCandidate.LastName
+                                                      Weight: ='TextCanvas.Weight'.Semibold
+                                                      Width: =Parent.Width-20
+                                    - FormAddressRow_6:
+                                        Control: GroupContainer@1.3.0
+                                        Variant: AutoLayout
+                                        Properties:
+                                          DropShadow: =DropShadow.None
+                                          FillPortions: =0
+                                          Height: =65
+                                          LayoutDirection: =LayoutDirection.Horizontal
+                                          LayoutOverflowX: =LayoutOverflow.Scroll
+                                          LayoutOverflowY: =LayoutOverflow.Scroll
+                                          RadiusBottomLeft: =0
+                                          RadiusBottomRight: =0
+                                          RadiusTopLeft: =0
+                                          RadiusTopRight: =0
+                                        Children:
+                                          - RequestFormAddressEnName_10:
+                                              Control: GroupContainer@1.3.0
+                                              Variant: AutoLayout
+                                              Properties:
+                                                DropShadow: =DropShadow.None
+                                                LayoutDirection: =LayoutDirection.Vertical
+                                                LayoutMinHeight: =65
+                                                PaddingLeft: =10
+                                                PaddingTop: =10
+                                                RadiusBottomLeft: =0
+                                                RadiusBottomRight: =0
+                                                RadiusTopLeft: =0
+                                                RadiusTopRight: =0
+                                                Width: =150
+                                              Children:
+                                                - RequestFormTitleEnName_10:
+                                                    Control: Text@0.0.51
+                                                    Properties:
+                                                      Height: =20
+                                                      Text: ="ชื่อ นามสกุล"
+                                                      Weight: ='TextCanvas.Weight'.Semibold
+                                                      Width: =Parent.Width-20
+                                                - RequestFormTitleEnName_12:
+                                                    Control: Text@0.0.51
+                                                    Properties:
+                                                      Height: =30
+                                                      Size: =20
+                                                      Text: =currentFormSelectedCandidate.FirstNameTH&" "&currentFormSelectedCandidate.LastNameTH
+                                                      Weight: ='TextCanvas.Weight'.Semibold
+                                                      Width: =Parent.Width-20
+                              - FormAttachment_3:
+                                  Control: GroupContainer@1.3.0
+                                  Variant: AutoLayout
+                                  Properties:
+                                    Fill: =RGBA(174, 208, 221, 1)
+                                    FillPortions: =0
+                                    Height: =250
+                                    LayoutDirection: =LayoutDirection.Vertical
+                                    RadiusBottomLeft: =6
+                                    RadiusBottomRight: =6
+                                    RadiusTopLeft: =6
+                                    RadiusTopRight: =6
+                                  Children:
+                                    - FormAddressTitle_7:
+                                        Control: Text@0.0.51
+                                        Properties:
+                                          BorderStyle: =BorderStyle.None
+                                          Font: =Font.'Lato Black'
+                                          FontColor: =RGBA(15, 84, 140, 1)
+                                          Height: =45
+                                          PaddingBottom: =8
+                                          PaddingLeft: =10
+                                          PaddingTop: =8
+                                          Size: =20
+                                          Text: ="Attachments"
+                                          VerticalAlign: =VerticalAlign.Middle
+                                          Width: =Parent.Width
+                                          X: =40
+                                          Y: =40
+                                    - FormAttachmentRow_4:
+                                        Control: GroupContainer@1.3.0
+                                        Variant: AutoLayout
+                                        Properties:
+                                          DropShadow: =DropShadow.None
+                                          FillPortions: =0
+                                          Height: =250
+                                          LayoutDirection: =LayoutDirection.Horizontal
+                                          RadiusBottomLeft: =0
+                                          RadiusBottomRight: =0
+                                          RadiusTopLeft: =0
+                                          RadiusTopRight: =0
+                                        Children:
+                                          - RequestFormAttachment_3:
+                                              Control: GroupContainer@1.3.0
+                                              Variant: AutoLayout
+                                              Properties:
+                                                DropShadow: =DropShadow.None
+                                                FillPortions: =0
+                                                LayoutDirection: =LayoutDirection.Vertical
+                                                LayoutMinHeight: =200
+                                                PaddingLeft: =10
+                                                PaddingTop: =10
+                                                RadiusBottomLeft: =0
+                                                RadiusBottomRight: =0
+                                                RadiusTopLeft: =0
+                                                RadiusTopRight: =0
+                                                Width: =Parent.Width
+                                              Children:
+                                                - AttachmentForm_3:
+                                                    Control: Form@2.4.4
+                                                    Layout: Vertical
+                                                    Properties:
+                                                      BorderColor: =RGBA(0, 18, 107, 1)
+                                                      DataSource: ='[THFinanceCustomerData]CustomerDataRequests'
+                                                      Item: =currentFormSelectedCandidate
+                                                      NumberOfColumns: =1
+                                                    Children:
+                                                      - Attachments_DataCard3_3:
+                                                          Control: TypedDataCard@1.0.7
+                                                          Variant: ClassicAttachmentsEdit
+                                                          Properties:
+                                                            BorderColor: =RGBA(0, 18, 107, 1)
+                                                            DataField: ="{Attachments}"
+                                                            Default: =ThisItem.'Attachments ({Attachments})'
+                                                            DisplayName: =DataSourceInfo([@'[THFinanceCustomerData]CustomerDataRequests'],DataSourceInfo.DisplayName,'Attachments ({Attachments})')
+                                                            Height: =170
+                                                            Required: =false
+                                                            Update: =DataCardValue13_3.Attachments
+                                                            X: =0
+                                                            Y: =0
+                                                          Children:
+                                                            - DataCardKey13_3:
+                                                                Control: Label@2.5.1
+                                                                Properties:
+                                                                  AutoHeight: =true
+                                                                  BorderColor: =RGBA(0, 0, 0, 1)
+                                                                  Color: =RGBA(0, 18, 107, 1)
+                                                                  Font: =Font.'Open Sans'
+                                                                  Height: =1
+                                                                  Text: =Parent.DisplayName
+                                                                  Visible: =false
+                                                                  Width: =Parent.Width - 60
+                                                                  Wrap: =false
+                                                                  X: =30
+                                                                  Y: =10
+                                                            - DataCardValue13_3:
+                                                                Control: Attachments@2.3.0
+                                                                Properties:
+                                                                  BorderColor: =If(IsBlank(Parent.Error), Parent.BorderColor, Color.Red)
+                                                                  DisplayMode: =Parent.DisplayMode
+                                                                  Font: =Font.'Open Sans'
+                                                                  Height: =170
+                                                                  HoverFill: =RGBA(186, 202, 226, 1)
+                                                                  ItemColor: =RGBA(255, 255, 255, 1)
+                                                                  ItemFill: =RGBA(56, 96, 178, 1)
+                                                                  ItemHoverFill: =RGBA(186, 202, 226, 1)
+                                                                  Items: =Parent.Default
+                                                                  PaddingBottom: =5
+                                                                  PaddingLeft: =If(Self.DisplayMode = DisplayMode.Edit, 5, 0)
+                                                                  PaddingRight: =5
+                                                                  PaddingTop: =5
+                                                                  PressedColor: =RGBA(255, 255, 255, 1)
+                                                                  PressedFill: =RGBA(0, 18, 107, 1)
+                                                                  Tooltip: =Parent.DisplayName
+                                                                  Width: =Parent.Width - 60
+                                                                  X: =30
+                                                                  Y: |
+                                                                    =0
+                                                            - ErrorMessage13_3:
+                                                                Control: Label@2.5.1
+                                                                Properties:
+                                                                  AutoHeight: =true
+                                                                  BorderColor: =RGBA(0, 0, 0, 1)
+                                                                  Color: =RGBA(168, 0, 0, 1)
+                                                                  Font: =Font.'Open Sans'
+                                                                  FontWeight: =FontWeight.Semibold
+                                                                  Height: =10
+                                                                  Live: =Live.Assertive
+                                                                  PaddingBottom: =0
+                                                                  PaddingLeft: =0
+                                                                  PaddingRight: =0
+                                                                  PaddingTop: =0
+                                                                  Size: =14
+                                                                  Text: =Parent.Error
+                                                                  Visible: =Parent.DisplayMode=DisplayMode.Edit
+                                                                  Width: =Parent.Width - 60
+                                                                  X: =30
+                                                                  Y: =DataCardValue13_3.Y + DataCardValue13_3.Height
+                              - Container3_3:
+                                  Control: GroupContainer@1.3.0
+                                  Variant: ManualLayout
+                                  Properties:
+                                    DropShadow: =DropShadow.None
+                                    RadiusBottomLeft: =0
+                                    RadiusBottomRight: =0
+                                    RadiusTopLeft: =0
+                                    RadiusTopRight: =0
+                                    X: =40
+                                    Y: =40
+            - PositionNavigationMenu_1:
+                Control: CanvasComponent
+                ComponentName: NavigationMenu
+                Properties:
+                  Fill: =RGBA(255, 255, 255, 0.5)
+                  Height: |
+                    =Parent.Height-70
+                  Visible: =If(_showMenu,true,false)
+                  Width: =260
+                  Y: |+
+                    =70
+
+
+
+                  navItems: =Navigation
+                  navSelected: =currentScreen
+      - CandidateHeader:
+          Control: GroupContainer@1.3.0
+          Variant: AutoLayout
+          Properties:
+            DropShadow: =DropShadow.Regular
+            Fill: =LookUp(Navigation, name = currentScreen, color)
+            Height: =55
+            LayoutAlignItems: =LayoutAlignItems.Center
+            LayoutDirection: =LayoutDirection.Horizontal
+            PaddingLeft: =15
+            RadiusBottomLeft: =8
+            RadiusBottomRight: =8
+            RadiusTopLeft: =8
+            RadiusTopRight: =8
+            Width: |
+              =Parent.Width-20
+            X: |
+              =10
+            Y: |
+              =10
+          Children:
+            - OnboardGroupMenuIcon_2:
+                Control: Classic/Icon@2.5.0
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: |-
+                    =RGBA(255, 255, 255
+                    , 1)
+                  Height: =50
+                  Icon: =Icon.Hamburger
+                  OnSelect: =Set(_showMenu,!_showMenu);
+                  PaddingBottom: =10
+                  PaddingLeft: =10
+                  PaddingRight: =10
+                  PaddingTop: =10
+                  Width: =50
+            - OnboardGroupTitle_2:
+                Control: Text@0.0.51
+                Properties:
+                  Font: =Font.Lato
+                  FontColor: =Color.White
+                  Height: =50
+                  PaddingLeft: |
+                    =20
+                  Size: =25
+                  Text: =currentScreen
+                  VerticalAlign: =VerticalAlign.Middle
+                  Weight: ='TextCanvas.Weight'.Medium
+                  Width: =240
+      - PositionFormResetComponent_2:
+          Control: CanvasComponent
+          ComponentName: PositionFormResetComponent
+          Properties:
+            Height: =100
+            Width: =100
+            X: =-100
+

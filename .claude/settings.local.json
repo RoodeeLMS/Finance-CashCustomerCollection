@@ -6,7 +6,13 @@
       "Bash(git -C \"c:\\Users\\Nick\\Documents\\NestlePowerApp\\Finance-CashCustomerCollection\" diff --stat)",
       "Bash(git -C \"c:\\Users\\Nick\\Documents\\NestlePowerApp\\Finance-CashCustomerCollection\" log -1 --format='%an %ae')",
       "Bash(git add:*)",
-      "Bash(git commit -m \"$(cat <<''EOF''\nAdd complete Dashboard implementation with all fixes\n\n- Created scnDashboard_complete.yaml with AR Control Center\n- Fixed table names: Process Logs, Emaillogs\n- Fixed field names: cr7bb_sendstatus, cr7bb_processdate (text type)\n- Fixed Power Apps syntax: TimeUnit.Minutes, SortOrder.Descending, TextCanvas.Align.End\n- Added Width properties to all Text controls (avoid 96px default)\n- Updated FIELD_NAME_REFERENCE.md with EmailLog and ProcessLog tables\n- Updated power-apps-yaml-best-practices.md with gallery colors, text alignment, unique names\n- Removed alternating row colors (GUID comparison inefficient)\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")"
+      "Bash(git commit -m \"$(cat <<''EOF''\nAdd complete Dashboard implementation with all fixes\n\n- Created scnDashboard_complete.yaml with AR Control Center\n- Fixed table names: Process Logs, Emaillogs\n- Fixed field names: cr7bb_sendstatus, cr7bb_processdate (text type)\n- Fixed Power Apps syntax: TimeUnit.Minutes, SortOrder.Descending, TextCanvas.Align.End\n- Added Width properties to all Text controls (avoid 96px default)\n- Updated FIELD_NAME_REFERENCE.md with EmailLog and ProcessLog tables\n- Updated power-apps-yaml-best-practices.md with gallery colors, text alignment, unique names\n- Removed alternating row colors (GUID comparison inefficient)\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")",
+      "Bash(git push:*)",
+      "Bash(unzip:*)",
+      "Bash(python:*)",
+      "Bash(/dev/null)",
+      "Bash(7z:*)",
+      "Bash(git commit -m \"$(cat <<''EOF''\nAdd Power Automate documentation and new Canvas App screens\n\n- Add comprehensive Power Automate documentation (Collections Engine, deployment, setup)\n- Add Flow Exports folder with exported flow definitions\n- Add solution packages (v1.0.0.2, v1.0.0.3 Complete) with extraction scripts\n- Add 21 new Canvas App screen templates (Candidate, Position, Evaluation, Dashboard, etc.)\n- Add loading screen and role management screens\n- Remove deprecated L6Segmentation screen\n- Update AI assistant rules summary\n- Add recommended approach documentation\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")"
     ],
     "deny": [],
     "ask": []

@@ -1,0 +1,319 @@
+﻿Screens:
+  scnPositionLibrary:
+    Properties:
+      Fill: =RGBA(243, 242, 241, 1)
+      LoadingSpinnerColor: =RGBA(0, 101, 161, 1)
+      OnVisible: |-
+        =UpdateContext({currentScreen:"Position"});
+        Set(_showMenu,false);
+        Set(showDeleteConfirmation, false);
+        Set(positionToDelete, Blank());
+    Children:
+      - PosLib_Container:
+          Control: GroupContainer@1.3.0
+          Variant: ManualLayout
+          Properties:
+            DropShadow: =DropShadow.None
+            Height: =Parent.Height
+            Width: =Parent.Width
+          Children:
+            - PosLib_Header:
+                Control: GroupContainer@1.3.0
+                Variant: AutoLayout
+                Properties:
+                  DropShadow: =DropShadow.Regular
+                  Fill: =RGBA(0, 101, 161, 1)
+                  Height: =55
+                  LayoutAlignItems: =LayoutAlignItems.Center
+                  LayoutDirection: =LayoutDirection.Horizontal
+                  PaddingLeft: =15
+                  RadiusBottomLeft: =8
+                  RadiusBottomRight: =8
+                  RadiusTopLeft: =8
+                  RadiusTopRight: =8
+                  Width: =Parent.Width - 20
+                  X: =10
+                  Y: =10
+                Children:
+                  - PosLib_MenuIcon:
+                      Control: Classic/Icon@2.5.0
+                      Properties:
+                        Color: =RGBA(255, 255, 255, 1)
+                        Height: =50
+                        Icon: =Icon.Hamburger
+                        OnSelect: =Set(_showMenu, !_showMenu)
+                        PaddingBottom: =10
+                        PaddingLeft: =10
+                        PaddingRight: =10
+                        PaddingTop: =10
+                        Width: =50
+                  - PosLib_HeaderTitle:
+                      Control: Text@0.0.51
+                      Properties:
+                        Font: =Font.Lato
+                        FontColor: =Color.White
+                        Height: =50
+                        PaddingLeft: =20
+                        Size: =25
+                        Text: ="Position Management"
+                        VerticalAlign: =VerticalAlign.Middle
+                        Weight: ='TextCanvas.Weight'.Medium
+                        Width: =Parent.Width - PosLib_MenuIcon.Width - 40
+            - PosLib_Content:
+                Control: GroupContainer@1.3.0
+                Variant: ManualLayout
+                Properties:
+                  DropShadow: =DropShadow.Regular
+                  Fill: =RGBA(255, 255, 255, 1)
+                  Height: =Parent.Height - 85
+                  RadiusBottomLeft: =10
+                  RadiusBottomRight: =10
+                  RadiusTopLeft: =10
+                  RadiusTopRight: =10
+                  Width: =Parent.Width - 20
+                  X: =10
+                  Y: =75
+                Children:
+                  - PosLib_TableContainer:
+                      Control: GroupContainer@1.3.0
+                      Variant: ManualLayout
+                      Properties:
+                        DropShadow: =DropShadow.None
+                        Fill: =RGBA(255, 255, 255, 1)
+                        Height: =Parent.Height - 20
+                        RadiusBottomLeft: =10
+                        RadiusBottomRight: =10
+                        RadiusTopLeft: =10
+                        RadiusTopRight: =10
+                        Width: =Parent.Width - 20
+                        X: =10
+                        Y: =10
+                      Children:
+                        - PosLib_ActionBar:
+                            Control: GroupContainer@1.3.0
+                            Variant: AutoLayout
+                            Properties:
+                              DropShadow: =DropShadow.None
+                              Fill: =RGBA(245, 245, 245, 1)
+                              Height: =50
+                              LayoutAlignItems: =LayoutAlignItems.Center
+                              LayoutDirection: =LayoutDirection.Horizontal
+                              LayoutGap: =10
+                              LayoutJustifyContent: =LayoutJustifyContent.End
+                              PaddingLeft: =15
+                              PaddingRight: =15
+                              RadiusTopLeft: =10
+                              RadiusTopRight: =10
+                              Width: =Parent.Width
+                            Children:
+                              - PosLib_AddBtn:
+                                  Control: Button@0.0.45
+                                  Properties:
+                                    BasePaletteColor: =RGBA(0, 101, 161, 1)
+                                    Height: =35
+                                    Icon: ="Add"
+                                    OnSelect: |-
+                                      =Set(gblSelectedPosition, Blank());
+                                      Set(gblIsEditPositionMode, false);
+                                      Navigate(scnPositionBuilder);
+                                    Text: ="New Position"
+                                    Width: =150
+                        - PosLib_PositionsGallery:
+                            Control: Gallery@2.15.0
+                            Variant: BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0
+                            Properties:
+                              Height: =Parent.Height - PosLib_ActionBar.Height - 20
+                              Items: ='[THInterviewEval]PositionInterviews'
+                              TemplatePadding: =5
+                              TemplateSize: =120
+                              Width: =Parent.Width - 20
+                              X: =10
+                              Y: =PosLib_ActionBar.Height + 10
+                            Children:
+                              - PosLib_PositionCard:
+                                  Control: GroupContainer@1.3.0
+                                  Variant: AutoLayout
+                                  Properties:
+                                    Fill: =RGBA(255, 255, 255, 1)
+                                    Height: =120
+                                    LayoutAlignItems: =LayoutAlignItems.Center
+                                    LayoutDirection: =LayoutDirection.Horizontal
+                                    LayoutGap: =15
+                                    LayoutJustifyContent: =LayoutJustifyContent.SpaceBetween
+                                    PaddingBottom: =10
+                                    PaddingLeft: =15
+                                    PaddingRight: =15
+                                    PaddingTop: =10
+                                    RadiusBottomLeft: =6
+                                    RadiusBottomRight: =6
+                                    RadiusTopLeft: =6
+                                    RadiusTopRight: =6
+                                    Width: =Parent.Width
+                                  Children:
+                                    - PosLib_InfoSection:
+                                        Control: GroupContainer@1.3.0
+                                        Variant: AutoLayout
+                                        Properties:
+                                          DropShadow: =DropShadow.None
+                                          LayoutDirection: =LayoutDirection.Vertical
+                                          LayoutGap: =5
+                                          LayoutMinHeight: =40
+                                          LayoutMinWidth: =200
+                                        Children:
+                                          - PosLib_PositionName:
+                                              Control: Text@0.0.51
+                                              Properties:
+                                                Font: =Font.Lato
+                                                FontColor: =RGBA(0, 101, 161, 1)
+                                                Height: =30
+                                                Size: =16
+                                                Text: =ThisItem.'Position Title'
+                                                Weight: ='TextCanvas.Weight'.Semibold
+                                                Width: =Parent.Width
+                                          - PosLib_InterviewerLabel:
+                                              Control: Text@0.0.51
+                                              Properties:
+                                                AutoHeight: =true
+                                                Font: =Font.Lato
+                                                FontColor: =RGBA(100, 100, 100, 1)
+                                                Size: =12
+                                                Text: |-
+                                                  ="Interviewer: " & ThisItem.InterviewerEmail
+                                                Width: =Parent.Width
+                                    - PosLib_ButtonSection:
+                                        Control: GroupContainer@1.3.0
+                                        Variant: AutoLayout
+                                        Properties:
+                                          DropShadow: =DropShadow.None
+                                          FillPortions: =0
+                                          LayoutAlignItems: =LayoutAlignItems.Center
+                                          LayoutDirection: =LayoutDirection.Horizontal
+                                          LayoutGap: =8
+                                          LayoutMinHeight: =40
+                                          LayoutMinWidth: =290
+                                          Width: =290
+                                        Children:
+                                          - PosLib_CandidatesBtn:
+                                              Control: Button@0.0.45
+                                              Properties:
+                                                BasePaletteColor: =RGBA(0, 101, 161, 1)
+                                                Height: =35
+                                                OnSelect: |-
+                                                  =Set(gblSelectedPosition, ThisItem);
+                                                  Navigate(scnPositionCandidates);
+                                                Text: ="Candidates"
+                                                Width: =110
+                                          - PosLib_EditBtn:
+                                              Control: Button@0.0.45
+                                              Properties:
+                                                BasePaletteColor: =RGBA(100, 81, 61, 1)
+                                                Height: =35
+                                                OnSelect: |-
+                                                  =Set(gblSelectedPosition, ThisItem);
+                                                  Set(gblIsEditPositionMode, true);
+                                                  Navigate(scnPositionBuilder);
+                                                Text: ="Edit"
+                                                Width: =80
+                                          - PosLib_DeleteBtn:
+                                              Control: Button@0.0.45
+                                              Properties:
+                                                BasePaletteColor: =RGBA(191, 25, 34, 1)
+                                                Height: =35
+                                                OnSelect: |-
+                                                  =Set(positionToDelete, ThisItem);
+                                                  Set(showDeleteConfirmation, true);
+                                                Text: ="Delete"
+                                                Width: =80
+                  - PosLib_DeleteOverlay:
+                      Control: GroupContainer@1.3.0
+                      Variant: ManualLayout
+                      Properties:
+                        DropShadow: =DropShadow.None
+                        Fill: =RGBA(0, 0, 0, 0.5)
+                        Height: =Parent.Height
+                        Visible: =showDeleteConfirmation
+                        Width: =Parent.Width
+                      Children:
+                        - PosLib_DeleteDialog:
+                            Control: GroupContainer@1.3.0
+                            Variant: AutoLayout
+                            Properties:
+                              DropShadow: =DropShadow.Bold
+                              Fill: =RGBA(255, 255, 255, 1)
+                              LayoutDirection: =LayoutDirection.Vertical
+                              LayoutGap: =20
+                              PaddingBottom: =20
+                              PaddingLeft: =30
+                              PaddingRight: =30
+                              PaddingTop: =20
+                              RadiusBottomLeft: =8
+                              RadiusBottomRight: =8
+                              RadiusTopLeft: =8
+                              RadiusTopRight: =8
+                              Width: =400
+                              X: =(Parent.Width - Self.Width) / 2
+                              Y: =(Parent.Height - Self.Height) / 2
+                            Children:
+                              - PosLib_DeleteTitle:
+                                  Control: Text@0.0.51
+                                  Properties:
+                                    Font: =Font.Lato
+                                    FontColor: =RGBA(191, 25, 34, 1)
+                                    Height: =30
+                                    Size: =18
+                                    Text: ="Delete Position?"
+                                    Weight: ='TextCanvas.Weight'.Semibold
+                                    Width: =Parent.Width - 60
+                              - PosLib_DeleteMessage:
+                                  Control: Text@0.0.51
+                                  Properties:
+                                    AutoHeight: =true
+                                    Font: =Font.Lato
+                                    Text: ="Are you sure you want to delete this position? This action cannot be undone."
+                                    Width: =Parent.Width - 60
+                              - PosLib_ConfirmButtons:
+                                  Control: GroupContainer@1.3.0
+                                  Variant: AutoLayout
+                                  Properties:
+                                    DropShadow: =DropShadow.None
+                                    LayoutAlignItems: =LayoutAlignItems.Center
+                                    LayoutDirection: =LayoutDirection.Horizontal
+                                    LayoutGap: =10
+                                    LayoutJustifyContent: =LayoutJustifyContent.End
+                                    LayoutMinHeight: =40
+                                    LayoutMinWidth: =100
+                                    Width: =Parent.Width - 60
+                                  Children:
+                                    - PosLib_CancelDeleteBtn:
+                                        Control: Button@0.0.45
+                                        Properties:
+                                          BasePaletteColor: =RGBA(128, 128, 128, 1)
+                                          Height: =35
+                                          OnSelect: |-
+                                            =Set(showDeleteConfirmation, false);
+                                            Set(positionToDelete, Blank());
+                                          Text: ="Cancel"
+                                          Width: =90
+                                    - PosLib_ConfirmDeleteBtn:
+                                        Control: Button@0.0.45
+                                        Properties:
+                                          BasePaletteColor: =RGBA(191, 25, 34, 1)
+                                          Height: =35
+                                          OnSelect: |-
+                                            =Remove('[THInterviewEval]PositionInterviews', positionToDelete);
+                                            Set(showDeleteConfirmation, false);
+                                            Set(positionToDelete, Blank());
+                                            Notify("Position deleted successfully", NotificationType.Success);
+                                          Text: ="Delete"
+                                          Width: =90
+            - PosLib_NavigationMenu:
+                Control: CanvasComponent
+                ComponentName: NavigationMenu
+                Properties:
+                  Fill: =RGBA(255, 255, 255, 0.5)
+                  Height: =Parent.Height-70
+                  Visible: =If(_showMenu,true,false)
+                  Width: =260
+                  Y: =70
+                  navItems: =Navigation
+                  navSelected: =currentScreen

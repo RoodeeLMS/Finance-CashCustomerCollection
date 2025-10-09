@@ -1,0 +1,753 @@
+﻿Screens:
+  scnDashboard:
+    Properties:
+      Fill: =RGBA(243, 242, 241, 1)
+      LoadingSpinnerColor: =RGBA(0, 101, 161, 1)
+      OnVisible: |-
+        =/* Initialize screen and detect role */
+        UpdateContext({currentScreen: "Dashboard"});
+        Set(_showMenu, false);
+
+        /* Determine if user is manager (HR/Admin) */
+        Set(_isDashboardManager, _isAdmin || _isHR);
+
+        /* Load data for Interviewer dashboard */
+        If(
+            !_isDashboardManager,
+            ClearCollect(
+                colMyPendingEvals,
+                Filter(
+                    '[THInterviewEval]InterviewEvaluations',
+                    InterviewerEmail = Office365Users.MyProfile().Mail &&
+                    ('Status (cr76f_status)' = "Pending" || 'Status (cr76f_status)' = "Draft")
+                )
+            );
+            ClearCollect(
+                colMyCompletedEvals,
+                Filter(
+                    '[THInterviewEval]InterviewEvaluations',
+                    InterviewerEmail = Office365Users.MyProfile().Mail &&
+                    'Status (cr76f_status)' = "Submitted"
+                )
+            )
+        );
+
+        /* Load data for Manager dashboard */
+        If(
+            _isDashboardManager,
+            Concurrent(
+                ClearCollect(
+                    colAllPendingEvals,
+                    Filter(
+                        '[THInterviewEval]InterviewEvaluations',
+                        'Status (cr76f_status)' = "Pending" || 'Status (cr76f_status)' = "Draft"
+                    )
+                ),
+                ClearCollect(
+                    colRecentSubmissions,
+                    FirstN(
+                        Sort(
+                            Filter(
+                                '[THInterviewEval]InterviewEvaluations',
+                                'Status (cr76f_status)' = "Submitted"
+                            ),
+                            InterviewDate,
+                            SortOrder.Descending
+                        ),
+                        5
+                    )
+                ),
+                Set(_totalPositions, CountIf('[THInterviewEval]PositionInterviews', true)),
+                Set(_totalCandidates, CountIf('[THInterviewEval]Candidates', true)),
+                Set(_pendingCount, CountRows(Filter('[THInterviewEval]InterviewEvaluations', 'Status (cr76f_status)' = "Pending" || 'Status (cr76f_status)' = "Draft"))),
+                Set(_completedThisWeek, CountRows(Filter('[THInterviewEval]InterviewEvaluations', 'Status (cr76f_status)' = "Submitted" && InterviewDate >= Today() - 7)))
+            )
+        );
+    Children:
+      - Dash_Container:
+          Control: GroupContainer@1.3.0
+          Variant: ManualLayout
+          Properties:
+            DropShadow: =DropShadow.None
+            Height: =Parent.Height
+            Width: =Parent.Width
+          Children:
+            - Dash_Header:
+                Control: GroupContainer@1.3.0
+                Variant: AutoLayout
+                Properties:
+                  DropShadow: =DropShadow.Regular
+                  Fill: =RGBA(0, 101, 161, 1)
+                  Height: =55
+                  LayoutAlignItems: =LayoutAlignItems.Center
+                  LayoutDirection: =LayoutDirection.Horizontal
+                  LayoutGap: =10
+                  PaddingLeft: =15
+                  RadiusBottomLeft: =8
+                  RadiusBottomRight: =8
+                  RadiusTopLeft: =8
+                  RadiusTopRight: =8
+                  Width: =Parent.Width - 20
+                  X: =10
+                  Y: =10
+                Children:
+                  - Dash_MenuIcon:
+                      Control: Classic/Icon@2.5.0
+                      Properties:
+                        Color: =RGBA(255, 255, 255, 1)
+                        Height: =50
+                        Icon: =Icon.Hamburger
+                        OnSelect: =Set(_showMenu, !_showMenu)
+                        PaddingBottom: =10
+                        PaddingLeft: =10
+                        PaddingRight: =10
+                        PaddingTop: =10
+                        Width: =50
+                  - Dash_Title:
+                      Control: Text@0.0.51
+                      Properties:
+                        Font: =Font.Lato
+                        FontColor: =Color.White
+                        Height: =50
+                        PaddingLeft: =20
+                        Size: =25
+                        Text: ="Dashboard"
+                        VerticalAlign: =VerticalAlign.Middle
+                        Weight: ='TextCanvas.Weight'.Medium
+                        Width: =400
+            - Dash_Content:
+                Control: GroupContainer@1.3.0
+                Variant: ManualLayout
+                Properties:
+                  DropShadow: =DropShadow.None
+                  Fill: =RGBA(243, 242, 241, 1)
+                  Height: =Parent.Height - 75
+                  Width: =Parent.Width - 20
+                  X: =10
+                  Y: =75
+                Children:
+                  - Dash_InterviewerView:
+                      Control: GroupContainer@1.3.0
+                      Variant: AutoLayout
+                      Properties:
+                        DropShadow: =DropShadow.None
+                        Height: =Parent.Height
+                        LayoutDirection: =LayoutDirection.Vertical
+                        LayoutGap: =15
+                        PaddingBottom: =20
+                        PaddingLeft: =10
+                        PaddingRight: =10
+                        PaddingTop: =20
+                        Visible: =!_isDashboardManager
+                        Width: =Parent.Width
+                      Children:
+                        - Dash_Int_WelcomeCard:
+                            Control: GroupContainer@1.3.0
+                            Variant: AutoLayout
+                            Properties:
+                              DropShadow: =DropShadow.Regular
+                              Fill: =RGBA(255, 255, 255, 1)
+                              LayoutDirection: =LayoutDirection.Vertical
+                              LayoutGap: =10
+                              LayoutMinWidth: =200
+                              PaddingBottom: =20
+                              PaddingLeft: =20
+                              PaddingRight: =20
+                              PaddingTop: =20
+                              RadiusBottomLeft: =10
+                              RadiusBottomRight: =10
+                              RadiusTopLeft: =10
+                              RadiusTopRight: =10
+                              Width: =Parent.Width - 20
+                            Children:
+                              - Dash_Int_WelcomeTitle:
+                                  Control: Text@0.0.51
+                                  Properties:
+                                    AutoHeight: =true
+                                    Font: =Font.Lato
+                                    FontColor: =RGBA(0, 101, 161, 1)
+                                    Size: =22
+                                    Text: ="Welcome, " & Office365Users.MyProfile().DisplayName
+                                    Weight: ='TextCanvas.Weight'.Semibold
+                                    Width: =Parent.Width - 40
+                              - Dash_Int_WelcomeSubtitle:
+                                  Control: Text@0.0.51
+                                  Properties:
+                                    AutoHeight: =true
+                                    Font: =Font.Lato
+                                    FontColor: =RGBA(100, 100, 100, 1)
+                                    Text: ="You have " & CountRows(colMyPendingEvals) & " pending evaluation" & If(CountRows(colMyPendingEvals) <> 1, "s", "")
+                                    Width: =Parent.Width - 40
+                        - Dash_Int_PendingCard:
+                            Control: GroupContainer@1.3.0
+                            Variant: AutoLayout
+                            Properties:
+                              DropShadow: =DropShadow.Regular
+                              Fill: =RGBA(255, 255, 255, 1)
+                              LayoutDirection: =LayoutDirection.Vertical
+                              LayoutGap: =10
+                              LayoutMinHeight: =200
+                              LayoutMinWidth: =200
+                              PaddingBottom: =15
+                              PaddingLeft: =20
+                              PaddingRight: =20
+                              PaddingTop: =15
+                              RadiusBottomLeft: =10
+                              RadiusBottomRight: =10
+                              RadiusTopLeft: =10
+                              RadiusTopRight: =10
+                              Width: =Parent.Width - 20
+                            Children:
+                              - Dash_Int_PendingTitle:
+                                  Control: Text@0.0.51
+                                  Properties:
+                                    Font: =Font.Lato
+                                    FontColor: =RGBA(0, 101, 161, 1)
+                                    Height: =30
+                                    Size: =18
+                                    Text: ="My Pending Evaluations"
+                                    Weight: ='TextCanvas.Weight'.Semibold
+                                    Width: =Parent.Width - 40
+                              - Dash_Int_PendingGallery:
+                                  Control: Gallery@2.15.0
+                                  Variant: Vertical
+                                  Properties:
+                                    Height: =Min(400, CountRows(colMyPendingEvals) * 110 + 10)
+                                    Items: =colMyPendingEvals
+                                    TemplatePadding: =10
+                                    TemplateSize: =100
+                                    Width: =Parent.Width - 40
+                                  Children:
+                                    - Dash_Int_PendingItem:
+                                        Control: GroupContainer@1.3.0
+                                        Variant: ManualLayout
+                                        Properties:
+                                          Fill: =RGBA(250, 250, 250, 1)
+                                          Height: =Parent.TemplateHeight
+                                          RadiusBottomLeft: =8
+                                          RadiusBottomRight: =8
+                                          RadiusTopLeft: =8
+                                          RadiusTopRight: =8
+                                          Width: =Parent.TemplateWidth - 10
+                                        Children:
+                                          - Dash_Int_PendingClickBtn:
+                                              Control: Button@0.0.45
+                                              Properties:
+                                                BasePaletteColor: =RGBA(250, 250, 250, 1)
+                                                BorderColor: =RGBA(0, 0, 0, 0)
+                                                Height: =110
+                                                OnSelect: |-
+                                                  =Set(gblSelectedEvaluation, ThisItem);
+                                                  Navigate(scnEvaluationWelcome)
+                                                Text: =""
+                                                Width: =Parent.Width
+                                          - Dash_Int_PendingCandidate:
+                                              Control: Text@0.0.51
+                                              Properties:
+                                                Font: =Font.Lato
+                                                FontColor: =RGBA(0, 101, 161, 1)
+                                                Height: =25
+                                                Size: =16
+                                                Text: =ThisItem.Candidate.FirstName & " " & ThisItem.Candidate.LastName
+                                                Weight: ='TextCanvas.Weight'.Semibold
+                                                Width: =Parent.Width - 30
+                                                X: =15
+                                                Y: =10
+                                          - Dash_Int_PendingPosition:
+                                              Control: Text@0.0.51
+                                              Properties:
+                                                Font: =Font.Lato
+                                                FontColor: =RGBA(100, 100, 100, 1)
+                                                Height: =25
+                                                Text: |-
+                                                  ="Position: " & ThisItem.Position.'Position Title'
+                                                Width: =Parent.Width - 30
+                                                X: =15
+                                                Y: =40
+                                          - Dash_Int_PendingStatus:
+                                              Control: Text@0.0.51
+                                              Properties:
+                                                Font: =Font.Lato
+                                                FontColor: |-
+                                                  =If(
+                                                      ThisItem.'Status (cr76f_status)' = "Pending",
+                                                      RGBA(255, 140, 0, 1),
+                                                      RGBA(0, 120, 212, 1)
+                                                  )
+                                                Height: =25
+                                                Size: =13
+                                                Text: |-
+                                                  ="Status: " & ThisItem.'Status (cr76f_status)'
+                                                Weight: ='TextCanvas.Weight'.Semibold
+                                                Width: =Parent.Width - 30
+                                                X: =15
+                                                Y: =70
+                              - Dash_Int_EmptyMessage:
+                                  Control: Text@0.0.51
+                                  Properties:
+                                    AutoHeight: =true
+                                    Font: =Font.Lato
+                                    FontColor: =RGBA(150, 150, 150, 1)
+                                    Text: ="No pending evaluations. Great work!"
+                                    Visible: =CountRows(colMyPendingEvals) = 0
+                                    Width: =Parent.Width - 40
+                        - Dash_Int_CompletedCard:
+                            Control: GroupContainer@1.3.0
+                            Variant: AutoLayout
+                            Properties:
+                              DropShadow: =DropShadow.Regular
+                              Fill: =RGBA(255, 255, 255, 1)
+                              LayoutDirection: =LayoutDirection.Vertical
+                              LayoutGap: =10
+                              LayoutMinHeight: =150
+                              LayoutMinWidth: =200
+                              PaddingBottom: =15
+                              PaddingLeft: =20
+                              PaddingRight: =20
+                              PaddingTop: =15
+                              RadiusBottomLeft: =10
+                              RadiusBottomRight: =10
+                              RadiusTopLeft: =10
+                              RadiusTopRight: =10
+                              Width: =Parent.Width - 20
+                            Children:
+                              - Dash_Int_CompletedTitle:
+                                  Control: Text@0.0.51
+                                  Properties:
+                                    Font: =Font.Lato
+                                    FontColor: =RGBA(0, 101, 161, 1)
+                                    Height: =30
+                                    Size: =16
+                                    Text: ="Recent Completions (" & CountRows(colMyCompletedEvals) & ")"
+                                    Weight: ='TextCanvas.Weight'.Semibold
+                                    Width: =Parent.Width - 40
+                              - Dash_Int_CompletedCount:
+                                  Control: Text@0.0.51
+                                  Properties:
+                                    AutoHeight: =true
+                                    Font: =Font.Lato
+                                    FontColor: =RGBA(100, 100, 100, 1)
+                                    Text: ="You have completed " & CountRows(colMyCompletedEvals) & " evaluation" & If(CountRows(colMyCompletedEvals) <> 1, "s", "") & " total"
+                                    Width: =Parent.Width - 40
+                  - Dash_ManagerView:
+                      Control: GroupContainer@1.3.0
+                      Variant: AutoLayout
+                      Properties:
+                        DropShadow: =DropShadow.None
+                        Height: =Parent.Height
+                        LayoutDirection: =LayoutDirection.Vertical
+                        LayoutGap: =15
+                        PaddingBottom: =20
+                        PaddingLeft: =10
+                        PaddingRight: =10
+                        PaddingTop: =20
+                        Visible: =_isDashboardManager
+                        Width: =Parent.Width
+                      Children:
+                        - Dash_Mgr_StatsRow:
+                            Control: GroupContainer@1.3.0
+                            Variant: AutoLayout
+                            Properties:
+                              DropShadow: =DropShadow.None
+                              FillPortions: =0
+                              Height: =Dash_Mgr_StatPositions.Height
+                              LayoutDirection: =LayoutDirection.Horizontal
+                              LayoutGap: =15
+                              LayoutMinHeight: =Dash_Mgr_StatPositions.Height
+                              LayoutMinWidth: =100
+                              LayoutWrap: =true
+                              Width: =Parent.Width - 20
+                            Children:
+                              - Dash_Mgr_StatPositions:
+                                  Control: GroupContainer@1.3.0
+                                  Variant: AutoLayout
+                                  Properties:
+                                    DropShadow: =DropShadow.Regular
+                                    Fill: =RGBA(0, 101, 161, 1)
+                                    LayoutAlignItems: =LayoutAlignItems.Center
+                                    LayoutDirection: =LayoutDirection.Vertical
+                                    LayoutGap: =5
+                                    LayoutJustifyContent: =LayoutJustifyContent.Center
+                                    LayoutMinHeight: =120
+                                    LayoutMinWidth: =150
+                                    PaddingBottom: =20
+                                    PaddingLeft: =20
+                                    PaddingRight: =20
+                                    PaddingTop: =20
+                                    RadiusBottomLeft: =10
+                                    RadiusBottomRight: =10
+                                    RadiusTopLeft: =10
+                                    RadiusTopRight: =10
+                                  Children:
+                                    - Dash_Mgr_StatPositionsValue:
+                                        Control: Text@0.0.51
+                                        Properties:
+                                          Align: ='TextCanvas.Align'.Center
+                                          AutoHeight: =true
+                                          Font: =Font.Lato
+                                          FontColor: =RGBA(255, 255, 255, 1)
+                                          Size: =36
+                                          Text: =Text(_totalPositions)
+                                          Weight: ='TextCanvas.Weight'.Bold
+                                          Width: =100
+                                    - Dash_Mgr_StatPositionsLabel:
+                                        Control: Text@0.0.51
+                                        Properties:
+                                          Align: ='TextCanvas.Align'.Center
+                                          AutoHeight: =true
+                                          Font: =Font.Lato
+                                          FontColor: =RGBA(255, 255, 255, 0.9)
+                                          Text: ="Positions"
+                                          Width: =100
+                              - Dash_Mgr_StatCandidates:
+                                  Control: GroupContainer@1.3.0
+                                  Variant: AutoLayout
+                                  Properties:
+                                    DropShadow: =DropShadow.Regular
+                                    Fill: =RGBA(100, 81, 61, 1)
+                                    LayoutAlignItems: =LayoutAlignItems.Center
+                                    LayoutDirection: =LayoutDirection.Vertical
+                                    LayoutGap: =5
+                                    LayoutJustifyContent: =LayoutJustifyContent.Center
+                                    LayoutMinHeight: =120
+                                    LayoutMinWidth: =150
+                                    PaddingBottom: =20
+                                    PaddingLeft: =20
+                                    PaddingRight: =20
+                                    PaddingTop: =20
+                                    RadiusBottomLeft: =10
+                                    RadiusBottomRight: =10
+                                    RadiusTopLeft: =10
+                                    RadiusTopRight: =10
+                                  Children:
+                                    - Dash_Mgr_StatCandidatesValue:
+                                        Control: Text@0.0.51
+                                        Properties:
+                                          Align: ='TextCanvas.Align'.Center
+                                          AutoHeight: =true
+                                          Font: =Font.Lato
+                                          FontColor: =RGBA(255, 255, 255, 1)
+                                          Size: =36
+                                          Text: =Text(_totalCandidates)
+                                          Weight: ='TextCanvas.Weight'.Bold
+                                          Width: =100
+                                    - Dash_Mgr_StatCandidatesLabel:
+                                        Control: Text@0.0.51
+                                        Properties:
+                                          Align: ='TextCanvas.Align'.Center
+                                          AutoHeight: =true
+                                          Font: =Font.Lato
+                                          FontColor: =RGBA(255, 255, 255, 0.9)
+                                          Text: ="Candidates"
+                                          Width: =100
+                              - Dash_Mgr_StatPending:
+                                  Control: GroupContainer@1.3.0
+                                  Variant: AutoLayout
+                                  Properties:
+                                    DropShadow: =DropShadow.Regular
+                                    Fill: =RGBA(255, 140, 0, 1)
+                                    LayoutAlignItems: =LayoutAlignItems.Center
+                                    LayoutDirection: =LayoutDirection.Vertical
+                                    LayoutGap: =5
+                                    LayoutJustifyContent: =LayoutJustifyContent.Center
+                                    LayoutMinHeight: =120
+                                    LayoutMinWidth: =150
+                                    PaddingBottom: =20
+                                    PaddingLeft: =20
+                                    PaddingRight: =20
+                                    PaddingTop: =20
+                                    RadiusBottomLeft: =10
+                                    RadiusBottomRight: =10
+                                    RadiusTopLeft: =10
+                                    RadiusTopRight: =10
+                                  Children:
+                                    - Dash_Mgr_StatPendingValue:
+                                        Control: Text@0.0.51
+                                        Properties:
+                                          Align: ='TextCanvas.Align'.Center
+                                          AutoHeight: =true
+                                          Font: =Font.Lato
+                                          FontColor: =RGBA(255, 255, 255, 1)
+                                          Size: =36
+                                          Text: =Text(_pendingCount)
+                                          Weight: ='TextCanvas.Weight'.Bold
+                                          Width: =100
+                                    - Dash_Mgr_StatPendingLabel:
+                                        Control: Text@0.0.51
+                                        Properties:
+                                          Align: ='TextCanvas.Align'.Center
+                                          AutoHeight: =true
+                                          Font: =Font.Lato
+                                          FontColor: =RGBA(255, 255, 255, 0.9)
+                                          Text: ="Pending"
+                                          Width: =100
+                              - Dash_Mgr_StatCompleted:
+                                  Control: GroupContainer@1.3.0
+                                  Variant: AutoLayout
+                                  Properties:
+                                    DropShadow: =DropShadow.Regular
+                                    Fill: =RGBA(0, 128, 0, 1)
+                                    LayoutAlignItems: =LayoutAlignItems.Center
+                                    LayoutDirection: =LayoutDirection.Vertical
+                                    LayoutGap: =5
+                                    LayoutJustifyContent: =LayoutJustifyContent.Center
+                                    LayoutMinHeight: =120
+                                    LayoutMinWidth: =150
+                                    PaddingBottom: =20
+                                    PaddingLeft: =20
+                                    PaddingRight: =20
+                                    PaddingTop: =20
+                                    RadiusBottomLeft: =10
+                                    RadiusBottomRight: =10
+                                    RadiusTopLeft: =10
+                                    RadiusTopRight: =10
+                                  Children:
+                                    - Dash_Mgr_StatCompletedValue:
+                                        Control: Text@0.0.51
+                                        Properties:
+                                          Align: ='TextCanvas.Align'.Center
+                                          AutoHeight: =true
+                                          Font: =Font.Lato
+                                          FontColor: =RGBA(255, 255, 255, 1)
+                                          Size: =36
+                                          Text: =Text(_completedThisWeek)
+                                          Weight: ='TextCanvas.Weight'.Bold
+                                          Width: =100
+                                    - Dash_Mgr_StatCompletedLabel:
+                                        Control: Text@0.0.51
+                                        Properties:
+                                          Align: ='TextCanvas.Align'.Center
+                                          AutoHeight: =true
+                                          Font: =Font.Lato
+                                          FontColor: =RGBA(255, 255, 255, 0.9)
+                                          Text: ="This Week"
+                                          Width: =100
+                        - Dash_Mgr_PendingCard:
+                            Control: GroupContainer@1.3.0
+                            Variant: AutoLayout
+                            Properties:
+                              DropShadow: =DropShadow.Regular
+                              Fill: =RGBA(255, 255, 255, 1)
+                              LayoutDirection: =LayoutDirection.Vertical
+                              LayoutGap: =10
+                              LayoutMinHeight: =200
+                              LayoutMinWidth: =200
+                              PaddingBottom: =15
+                              PaddingLeft: =20
+                              PaddingRight: =20
+                              PaddingTop: =15
+                              RadiusBottomLeft: =10
+                              RadiusBottomRight: =10
+                              RadiusTopLeft: =10
+                              RadiusTopRight: =10
+                              Width: =Parent.Width - 20
+                            Children:
+                              - Dash_Mgr_PendingTitle:
+                                  Control: Text@0.0.51
+                                  Properties:
+                                    Font: =Font.Lato
+                                    FontColor: =RGBA(0, 101, 161, 1)
+                                    Height: =30
+                                    Size: =18
+                                    Text: ="All Pending Evaluations"
+                                    Weight: ='TextCanvas.Weight'.Semibold
+                                    Width: =Parent.Width - 40
+                              - Dash_Mgr_PendingGallery:
+                                  Control: Gallery@2.15.0
+                                  Variant: Vertical
+                                  Properties:
+                                    Height: =Min(300, CountRows(colAllPendingEvals) * 110 + 10)
+                                    Items: =colAllPendingEvals
+                                    TemplatePadding: =10
+                                    TemplateSize: =100
+                                    Width: =Parent.Width - 40
+                                  Children:
+                                    - Dash_Mgr_PendingItem:
+                                        Control: GroupContainer@1.3.0
+                                        Variant: AutoLayout
+                                        Properties:
+                                          DropShadow: =DropShadow.Regular
+                                          Fill: =RGBA(250, 250, 250, 1)
+                                          Height: =Parent.TemplateHeight
+                                          LayoutAlignItems: =LayoutAlignItems.Center
+                                          LayoutDirection: =LayoutDirection.Horizontal
+                                          LayoutGap: =10
+                                          LayoutJustifyContent: =LayoutJustifyContent.SpaceBetween
+                                          PaddingBottom: =10
+                                          PaddingLeft: =15
+                                          PaddingRight: =15
+                                          PaddingTop: =10
+                                          RadiusBottomLeft: =8
+                                          RadiusBottomRight: =8
+                                          RadiusTopLeft: =8
+                                          RadiusTopRight: =8
+                                          Width: =Parent.TemplateWidth - 10
+                                        Children:
+                                          - Dash_Mgr_PendingInfo:
+                                              Control: GroupContainer@1.3.0
+                                              Variant: AutoLayout
+                                              Properties:
+                                                DropShadow: =DropShadow.None
+                                                LayoutDirection: =LayoutDirection.Vertical
+                                                LayoutGap: =3
+                                                LayoutMinHeight: =60
+                                                LayoutMinWidth: =200
+                                              Children:
+                                                - Dash_Mgr_PendingCandidate:
+                                                    Control: Text@0.0.51
+                                                    Properties:
+                                                      AutoHeight: =true
+                                                      Font: =Font.Lato
+                                                      FontColor: =RGBA(0, 101, 161, 1)
+                                                      Size: =20
+                                                      Text: =ThisItem.Candidate.FirstName & " " & ThisItem.Candidate.LastName
+                                                      Weight: ='TextCanvas.Weight'.Semibold
+                                                      Width: =Parent.Width
+                                                - Dash_Mgr_PendingPosition:
+                                                    Control: Text@0.0.51
+                                                    Properties:
+                                                      AutoHeight: =true
+                                                      Font: =Font.Lato
+                                                      FontColor: =RGBA(100, 100, 100, 1)
+                                                      Size: =13
+                                                      Text: =ThisItem.Position.'Position Title'
+                                                      Width: =Parent.Width
+                                                - Dash_Mgr_PendingInterviewer:
+                                                    Control: Text@0.0.51
+                                                    Properties:
+                                                      AutoHeight: =true
+                                                      Font: =Font.Lato
+                                                      FontColor: =RGBA(120, 120, 120, 1)
+                                                      Size: =20
+                                                      Text: |-
+                                                        ="Interviewer: " & ThisItem.InterviewerEmail
+                                                      Width: =Parent.Width
+                                          - Dash_Mgr_PendingStatus:
+                                              Control: GroupContainer@1.3.0
+                                              Variant: AutoLayout
+                                              Properties:
+                                                DropShadow: =DropShadow.None
+                                                Fill: |-
+                                                  =If(
+                                                      ThisItem.'Status (cr76f_status)' = "Pending",
+                                                      RGBA(255, 140, 0, 0.2),
+                                                      RGBA(0, 120, 212, 0.2)
+                                                  )
+                                                FillPortions: =0
+                                                Height: =100
+                                                LayoutAlignItems: =LayoutAlignItems.Center
+                                                LayoutDirection: =LayoutDirection.Horizontal
+                                                LayoutJustifyContent: =LayoutJustifyContent.Center
+                                                LayoutMinHeight: =10
+                                                LayoutMinWidth: =100
+                                                PaddingBottom: =5
+                                                PaddingLeft: =10
+                                                PaddingRight: =10
+                                                PaddingTop: =5
+                                                RadiusBottomLeft: =15
+                                                RadiusBottomRight: =15
+                                                RadiusTopLeft: =15
+                                                RadiusTopRight: =15
+                                                Width: =120
+                                              Children:
+                                                - Dash_Mgr_PendingStatusText:
+                                                    Control: Text@0.0.51
+                                                    Properties:
+                                                      Align: ='TextCanvas.Align'.Center
+                                                      Font: =Font.Lato
+                                                      FontColor: |-
+                                                        =If(
+                                                            ThisItem.'Status (cr76f_status)' = "Pending",
+                                                            RGBA(255, 140, 0, 1),
+                                                            RGBA(0, 120, 212, 1)
+                                                        )
+                                                      Size: =20
+                                                      Text: =ThisItem.'Status (cr76f_status)'
+                                                      VerticalAlign: =VerticalAlign.Middle
+                                                      Weight: ='TextCanvas.Weight'.Semibold
+                        - Dash_Mgr_QuickActions:
+                            Control: GroupContainer@1.3.0
+                            Variant: AutoLayout
+                            Properties:
+                              DropShadow: =DropShadow.Regular
+                              Fill: =RGBA(255, 255, 255, 1)
+                              FillPortions: =0
+                              Height: =Dash_Mgr_QuickActionsRow.Y+Dash_Mgr_QuickActionsRow.Height+Dash_Mgr_QuickActionsTitle.Y
+                              LayoutDirection: =LayoutDirection.Vertical
+                              LayoutGap: =10
+                              LayoutMinHeight: =150
+                              LayoutMinWidth: =100
+                              PaddingBottom: =15
+                              PaddingLeft: =20
+                              PaddingRight: =20
+                              PaddingTop: =15
+                              RadiusBottomLeft: =10
+                              RadiusBottomRight: =10
+                              RadiusTopLeft: =10
+                              RadiusTopRight: =10
+                              Width: =Parent.Width - 20
+                            Children:
+                              - Dash_Mgr_QuickActionsTitle:
+                                  Control: Text@0.0.51
+                                  Properties:
+                                    Font: =Font.Lato
+                                    FontColor: =RGBA(0, 101, 161, 1)
+                                    Height: =30
+                                    Size: =18
+                                    Text: ="Quick Actions"
+                                    Weight: ='TextCanvas.Weight'.Semibold
+                                    Width: =Parent.Width - 40
+                              - Dash_Mgr_QuickActionsRow:
+                                  Control: GroupContainer@1.3.0
+                                  Variant: AutoLayout
+                                  Properties:
+                                    DropShadow: =DropShadow.None
+                                    FillPortions: =0
+                                    Height: =Dash_Mgr_CreatePositionBtn.Height
+                                    LayoutDirection: =LayoutDirection.Horizontal
+                                    LayoutGap: =10
+                                    LayoutMinHeight: =40
+                                    LayoutMinWidth: =200
+                                    LayoutWrap: =true
+                                    Width: =Parent.Width - 40
+                                  Children:
+                                    - Dash_Mgr_CreatePositionBtn:
+                                        Control: Button@0.0.45
+                                        Properties:
+                                          BasePaletteColor: =RGBA(0, 101, 161, 1)
+                                          Height: =40
+                                          Icon: ="Add"
+                                          OnSelect: |-
+                                            =Set(gblSelectedPosition, Blank());
+                                            Navigate(scnPositionBuilder)
+                                          Text: ="Create Position"
+                                          Width: =180
+                                    - Dash_Mgr_AddCandidateBtn:
+                                        Control: Button@0.0.45
+                                        Properties:
+                                          BasePaletteColor: =RGBA(100, 81, 61, 1)
+                                          Height: =40
+                                          Icon: ="Add"
+                                          OnSelect: =Navigate(scnCandidate)
+                                          Text: ="Add Candidate"
+                                          Width: =180
+                                    - Dash_Mgr_CreateFormBtn:
+                                        Control: Button@0.0.45
+                                        Properties:
+                                          BasePaletteColor: =RGBA(0, 120, 212, 1)
+                                          Height: =40
+                                          Icon: ="Add"
+                                          OnSelect: =Navigate(scnEvalFormLibrary)
+                                          Text: ="Create Form"
+                                          Width: =180
+            - Dash_NavigationMenu:
+                Control: CanvasComponent
+                ComponentName: NavigationMenu
+                Properties:
+                  Fill: =RGBA(255, 255, 255, 0.5)
+                  Height: =Parent.Height - 70
+                  Visible: =If(_showMenu, true, false)
+                  Width: =260
+                  Y: =70
+                  navItems: =Navigation
+                  navSelected: =currentScreen

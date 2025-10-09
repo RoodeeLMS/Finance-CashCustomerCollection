@@ -1,0 +1,258 @@
+﻿Screens:
+  scnEvalFormBuilder:
+    Properties:
+      Fill: =RGBA(243, 242, 241, 1)
+      LoadingSpinnerColor: =RGBA(0, 101, 161, 1)
+      OnVisible: |-
+        =// Set current screen for navigation
+        UpdateContext({currentScreen:"Evaluation Form"});
+        Set(_showMenu,false);
+
+        // Initialize form fields based on whether we're editing or creating
+        If(
+            IsBlank(gblSelectedEvalForm),
+            // Create mode - reset all fields
+            Set(gblIsEditMode, false);
+            Set(gblFormResetTrigger, !gblFormResetTrigger),
+            // Edit mode - load existing data
+            Set(gblIsEditMode, true)
+        );
+    Children:
+      - FormBuild_Container:
+          Control: GroupContainer@1.3.0
+          Variant: ManualLayout
+          Properties:
+            DropShadow: =DropShadow.None
+            Height: =Parent.Height
+            Width: =Parent.Width
+          Children:
+            - FormBuild_Header:
+                Control: GroupContainer@1.3.0
+                Variant: AutoLayout
+                Properties:
+                  DropShadow: =DropShadow.Regular
+                  Fill: =RGBA(0, 101, 161, 1)
+                  Height: =55
+                  LayoutAlignItems: =LayoutAlignItems.Center
+                  LayoutDirection: =LayoutDirection.Horizontal
+                  PaddingLeft: =15
+                  RadiusBottomLeft: =8
+                  RadiusBottomRight: =8
+                  RadiusTopLeft: =8
+                  RadiusTopRight: =8
+                  Width: =Parent.Width - 20
+                  X: =10
+                  Y: =10
+                Children:
+                  - FormBuild_MenuIcon:
+                      Control: Classic/Icon@2.5.0
+                      Properties:
+                        Color: =RGBA(255, 255, 255, 1)
+                        Height: =50
+                        Icon: =Icon.Hamburger
+                        OnSelect: =Set(_showMenu, !_showMenu)
+                        PaddingBottom: =10
+                        PaddingLeft: =10
+                        PaddingRight: =10
+                        PaddingTop: =10
+                        Width: =50
+                  - FormBuild_HeaderTitle:
+                      Control: Text@0.0.51
+                      Properties:
+                        Font: =Font.Lato
+                        FontColor: =Color.White
+                        Height: =50
+                        PaddingLeft: =20
+                        Size: =25
+                        Text: =If(gblIsEditMode, "Edit Evaluation Form", "Create Evaluation Form")
+                        VerticalAlign: =VerticalAlign.Middle
+                        Weight: ='TextCanvas.Weight'.Medium
+                        Width: =Parent.Width - FormBuild_MenuIcon.Width - 40
+            - FormBuild_Content:
+                Control: GroupContainer@1.3.0
+                Variant: ManualLayout
+                Properties:
+                  DropShadow: =DropShadow.Regular
+                  Fill: =RGBA(255, 255, 255, 1)
+                  Height: =Parent.Height - 85
+                  RadiusBottomLeft: =10
+                  RadiusBottomRight: =10
+                  RadiusTopLeft: =10
+                  RadiusTopRight: =10
+                  Width: =Parent.Width - 20
+                  X: =10
+                  Y: =75
+                Children:
+                  - FormBuild_FormSection:
+                      Control: GroupContainer@1.3.0
+                      Variant: AutoLayout
+                      Properties:
+                        DropShadow: =DropShadow.None
+                        Fill: =RGBA(255, 255, 255, 1)
+                        Height: =Parent.Height - 80
+                        LayoutDirection: =LayoutDirection.Vertical
+                        LayoutGap: =15
+                        LayoutOverflowY: =LayoutOverflow.Scroll
+                        PaddingBottom: =20
+                        PaddingLeft: =20
+                        PaddingRight: =20
+                        PaddingTop: =20
+                        RadiusBottomLeft: =10
+                        RadiusBottomRight: =10
+                        RadiusTopLeft: =10
+                        RadiusTopRight: =10
+                        Width: =Parent.Width - 20
+                        X: =10
+                        Y: =10
+                      Children:
+                        - FormBuild_SectionTitle:
+                            Control: Text@0.0.51
+                            Properties:
+                              Font: =Font.Lato
+                              FontColor: =RGBA(0, 101, 161, 1)
+                              Height: =40
+                              Size: =20
+                              Text: =If(gblIsEditMode, "Edit Form Details", "New Form Details")
+                              VerticalAlign: =VerticalAlign.Middle
+                              Weight: ='TextCanvas.Weight'.Bold
+                              Width: =Parent.Width - 40
+                        - FormBuild_NameEN:
+                            Control: CanvasComponent
+                            ComponentName: cmpEditableText
+                            Properties:
+                              EditMode: =true
+                              ErrorFlag: =false
+                              Height: =80
+                              LayoutMinHeight: =80
+                              LayoutMinWidth: =400
+                              MaxLength: =100
+                              TitleText: ="Form Name (English)"
+                              Value: =If(gblIsEditMode, gblSelectedEvalForm.FormName, If(gblFormResetTrigger, "", ""))
+                              Width: =Parent.Width - 40
+                              isRequired: =true
+                        - FormBuild_NameTH:
+                            Control: CanvasComponent
+                            ComponentName: cmpEditableText
+                            Properties:
+                              EditMode: =true
+                              ErrorFlag: =false
+                              Height: =80
+                              LayoutMinHeight: =80
+                              LayoutMinWidth: =400
+                              MaxLength: =100
+                              TitleText: ="Form Name (Thai)"
+                              Value: =If(gblIsEditMode, gblSelectedEvalForm.FormName_TH, If(gblFormResetTrigger, "", ""))
+                              Width: =Parent.Width - 40
+                              isRequired: =true
+                        - FormBuild_TargetPosition:
+                            Control: CanvasComponent
+                            ComponentName: cmpEditableText
+                            Properties:
+                              EditMode: =true
+                              ErrorFlag: =false
+                              Height: =80
+                              LayoutMinHeight: =80
+                              LayoutMinWidth: =400
+                              MaxLength: =100
+                              TitleText: ="Target Position (Optional)"
+                              Value: =If(gblIsEditMode, gblSelectedEvalForm.TargetPosition, If(gblFormResetTrigger, "", ""))
+                              Width: =Parent.Width - 40
+                              isRequired: =false
+                        - FormBuild_MaxScore:
+                            Control: CanvasComponent
+                            ComponentName: cmpEditableText
+                            Properties:
+                              EditMode: =true
+                              ErrorFlag: =false
+                              Height: =80
+                              LayoutMinHeight: =80
+                              LayoutMinWidth: =400
+                              MaxLength: =10
+                              TitleText: ="Maximum Score per Question"
+                              Value: =If(gblIsEditMode, Text(gblSelectedEvalForm.MaxScore), If(gblFormResetTrigger, "3", "3"))
+                              Width: =Parent.Width - 40
+                              isRequired: =true
+                        - FormBuild_MaxScoreNote:
+                            Control: Text@0.0.51
+                            Properties:
+                              AutoHeight: =true
+                              Font: =Font.Lato
+                              FontColor: =RGBA(100, 100, 100, 1)
+                              Size: =12
+                              Text: |-
+                                ="Note: Typically 3 (1-3 scale) or 4 (1-4 scale)"
+                              Width: =Parent.Width - 40
+                  - FormBuild_ActionButtons:
+                      Control: GroupContainer@1.3.0
+                      Variant: AutoLayout
+                      Properties:
+                        Height: =50
+                        LayoutAlignItems: =LayoutAlignItems.Center
+                        LayoutDirection: =LayoutDirection.Horizontal
+                        LayoutGap: =15
+                        LayoutJustifyContent: =LayoutJustifyContent.End
+                        PaddingRight: =20
+                        Width: =Parent.Width
+                        Y: =Parent.Height - 60
+                      Children:
+                        - FormBuild_CancelBtn:
+                            Control: Button@0.0.45
+                            Properties:
+                              BasePaletteColor: =RGBA(128, 128, 128, 1)
+                              Height: =40
+                              OnSelect: =Navigate(scnEvalFormLibrary)
+                              Text: ="Cancel"
+                              Width: =120
+                        - FormBuild_SaveBtn:
+                            Control: Button@0.0.45
+                            Properties:
+                              BasePaletteColor: =RGBA(0, 101, 161, 1)
+                              Height: =40
+                              OnSelect: |-
+                                =// Validate required fields
+                                If(
+                                    IsBlank(FormBuild_NameEN.UpdatedValue) || IsBlank(FormBuild_NameTH.UpdatedValue) || IsBlank(FormBuild_MaxScore.UpdatedValue),
+                                    Notify("Please fill in all required fields", NotificationType.Warning),
+                                    // Save form
+                                    If(gblIsEditMode,
+                                        // Edit existing form
+                                        Patch('[THInterviewEval]EvalForms', gblSelectedEvalForm,
+                                            {
+                                                FormName: FormBuild_NameEN.UpdatedValue,
+                                                FormName_TH: FormBuild_NameTH.UpdatedValue,
+                                                TargetPosition: FormBuild_TargetPosition.UpdatedValue,
+                                                MaxScore: Value(FormBuild_MaxScore.UpdatedValue)
+                                            }
+                                        ),
+                                        // Create new form
+                                        Patch('[THInterviewEval]EvalForms',
+                                            Defaults('[THInterviewEval]EvalForms'),
+                                            {
+                                                FormName: FormBuild_NameEN.UpdatedValue,
+                                                FormName_TH: FormBuild_NameTH.UpdatedValue,
+                                                TargetPosition: FormBuild_TargetPosition.UpdatedValue,
+                                                MaxScore: Value(FormBuild_MaxScore.UpdatedValue)
+                                            }
+                                        )
+                                    );
+                                    If(
+                                        IsEmpty(Errors('[THInterviewEval]EvalForms')),
+                                        Notify("Form saved successfully!", NotificationType.Success);
+                                        Navigate(scnEvalFormLibrary),
+                                        Notify("Error saving form: " & First(Errors('[THInterviewEval]EvalForms')).Message, NotificationType.Error)
+                                    )
+                                )
+                              Text: =If(gblIsEditMode, "Save Changes", "Create Form")
+                              Width: =140
+            - FormBuild_NavigationMenu:
+                Control: CanvasComponent
+                ComponentName: NavigationMenu
+                Properties:
+                  Fill: =RGBA(255, 255, 255, 0.5)
+                  Height: =Parent.Height - 70
+                  Visible: =If(_showMenu, true, false)
+                  Width: =260
+                  Y: =70
+                  navItems: =Navigation
+                  navSelected: =currentScreen
+

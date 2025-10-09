@@ -1,0 +1,510 @@
+{
+  "properties": {
+    "connectionReferences": {
+      "shared_sharepointonline": {
+        "api": {
+          "name": "shared_sharepointonline"
+        },
+        "connection": {
+          "connectionReferenceLogicalName": "nc_sharedsharepointonline_80205"
+        },
+        "runtimeSource": "embedded"
+      },
+      "shared_commondataserviceforapps": {
+        "api": {
+          "name": "shared_commondataserviceforapps"
+        },
+        "connection": {
+          "connectionReferenceLogicalName": "new_sharedcommondataserviceforapps_7e300"
+        },
+        "runtimeSource": "embedded"
+      },
+      "shared_excelonlinebusiness": {
+        "api": {
+          "name": "shared_excelonlinebusiness"
+        },
+        "connection": {
+          "connectionReferenceLogicalName": "nc_sharedexcelonlinebusiness_67d04"
+        },
+        "runtimeSource": "embedded"
+      },
+      "shared_office365": {
+        "api": {
+          "name": "shared_office365"
+        },
+        "connection": {
+          "connectionReferenceLogicalName": "new_sharedoffice365_50b72"
+        },
+        "runtimeSource": "embedded"
+      }
+    },
+    "definition": {
+      "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+      "contentVersion": "1.0.0.0",
+      "parameters": {
+        "$authentication": {
+          "defaultValue": {},
+          "type": "SecureObject"
+        },
+        "$connections": {
+          "defaultValue": {},
+          "type": "Object"
+        }
+      },
+      "triggers": {
+        "Recurrence": {
+          "type": "Recurrence",
+          "recurrence": {
+            "interval": 1,
+            "frequency": "Day",
+            "timeZone": "SE Asia Standard Time",
+            "schedule": {
+              "hours": ["8"],
+              "minutes": [0]
+            }
+          }
+        }
+      },
+      "actions": {
+        "Initialize_varProcessDate": {
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "varProcessDate",
+                "type": "string",
+                "value": "@{formatDateTime(utcNow(), 'yyyy-MM-dd')}"
+              }
+            ]
+          },
+          "runAfter": {}
+        },
+        "Initialize_varBatchID": {
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "varBatchID",
+                "type": "string",
+                "value": "@{formatDateTime(utcNow(), 'yyyyMMdd_HHmmss')}"
+              }
+            ]
+          },
+          "runAfter": {
+            "Initialize_varProcessDate": ["Succeeded"]
+          }
+        },
+        "Initialize_varRowCounter": {
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "varRowCounter",
+                "type": "integer",
+                "value": 0
+              }
+            ]
+          },
+          "runAfter": {
+            "Initialize_varBatchID": ["Succeeded"]
+          }
+        },
+        "Initialize_varErrorCount": {
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "varErrorCount",
+                "type": "integer",
+                "value": 0
+              }
+            ]
+          },
+          "runAfter": {
+            "Initialize_varRowCounter": ["Succeeded"]
+          }
+        },
+        "Initialize_varTransactionCount": {
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "varTransactionCount",
+                "type": "integer",
+                "value": 0
+              }
+            ]
+          },
+          "runAfter": {
+            "Initialize_varErrorCount": ["Succeeded"]
+          }
+        },
+        "Initialize_varProcessLogID": {
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "varProcessLogID",
+                "type": "string"
+              }
+            ]
+          },
+          "runAfter": {
+            "Initialize_varTransactionCount": ["Succeeded"]
+          }
+        },
+        "Initialize_varErrorMessages": {
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "varErrorMessages",
+                "type": "array",
+                "value": []
+              }
+            ]
+          },
+          "runAfter": {
+            "Initialize_varProcessLogID": ["Succeeded"]
+          }
+        },
+        "Initialize_varFileName": {
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "varFileName",
+                "type": "string"
+              }
+            ]
+          },
+          "runAfter": {
+            "Initialize_varErrorMessages": ["Succeeded"]
+          }
+        },
+        "Get_files_(properties_only)": {
+          "type": "OpenApiConnection",
+          "inputs": {
+            "parameters": {
+              "dataset": "https://nestle.sharepoint.com/teams/THFinancePowerPlatformSolutions",
+              "table": "375efa2c-aef5-4522-b27f-5cd2749a74a8",
+              "folderPath": "/Shared Documents/Cash Customer Collection/01-Daily-SAP-Data/Current",
+              "viewScopeOption": "RecursiveAll",
+              "$filter": "Modified ge '@{addDays(utcNow(), -1)}'",
+              "$orderby": "Modified desc",
+              "$top": 1
+            },
+            "host": {
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+              "operationId": "GetFileItems",
+              "connectionName": "shared_sharepointonline"
+            }
+          },
+          "runAfter": {
+            "Initialize_varFileName": ["Succeeded"]
+          }
+        },
+        "Set_varFileName": {
+          "type": "SetVariable",
+          "inputs": {
+            "name": "varFileName",
+            "value": "@{first(outputs('Get_files_(properties_only)')?['body/value'])?['Name']}"
+          },
+          "runAfter": {
+            "Get_files_(properties_only)": ["Succeeded"]
+          }
+        },
+        "Create_Process_Log": {
+          "type": "OpenApiConnection",
+          "inputs": {
+            "parameters": {
+              "entityName": "cr7bb_thfinancecashcollectionprocesslogs",
+              "item/cr7bb_processdate": "@variables('varProcessDate')",
+              "item/cr7bb_starttime": "@utcNow()",
+              "item/cr7bb_status": "Running",
+              "item/cr7bb_sapfilename": "@variables('varFileName')",
+              "item/cr7bb_processedby": "@{workflow()?['run']?['name']}",
+              "item/cr7bb_totalcustomers": 0,
+              "item/cr7bb_emailssent": 0,
+              "item/cr7bb_emailsfailed": 0,
+              "item/cr7bb_transactionsprocessed": 0,
+              "item/cr7bb_transactionsexcluded": 0
+            },
+            "host": {
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+              "operationId": "CreateRecord",
+              "connectionName": "shared_commondataserviceforapps"
+            }
+          },
+          "runAfter": {
+            "Set_varFileName": ["Succeeded"]
+          }
+        },
+        "Set_varProcessLogID": {
+          "type": "SetVariable",
+          "inputs": {
+            "name": "varProcessLogID",
+            "value": "@{outputs('Create_Process_Log')?['cr7bb_thfinancecashcollectionprocesslogid']}"
+          },
+          "runAfter": {
+            "Create_Process_Log": ["Succeeded"]
+          }
+        },
+        "List_rows_present_in_a_table": {
+          "type": "OpenApiConnection",
+          "inputs": {
+            "parameters": {
+              "source": "groups/02ebed5f-6782-4117-8509-f2a24646f258",
+              "drive": "b!-jBuElvcHUepxeIS8jlWyaETtSFBsJBGqCTRaDVYBTQs-l439a4iRbJ_XNJ0mnSo",
+              "file": "01B47NF3BEUMVG4ZZQNBDZFRXT2ZRQNNPG",
+              "table": "{778FFA65-BF8B-432D-8C1E-2B933455CD27}"
+            },
+            "host": {
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_excelonlinebusiness",
+              "operationId": "GetItems",
+              "connectionName": "shared_excelonlinebusiness"
+            }
+          },
+          "runAfter": {
+            "Set_varProcessLogID": ["Succeeded"]
+          }
+        },
+        "Apply_to_each_row": {
+          "type": "Foreach",
+          "foreach": "@outputs('List_rows_present_in_a_table')?['body/value']",
+          "actions": {
+            "Increment_varRowCounter": {
+              "type": "IncrementVariable",
+              "inputs": {
+                "name": "varRowCounter",
+                "value": 1
+              },
+              "runAfter": {}
+            },
+            "Check_if_Summary_Row": {
+              "type": "If",
+              "expression": {
+                "and": [
+                  {
+                    "equals": [
+                      "@empty(item()?['Document Number'])",
+                      "@true"
+                    ]
+                  }
+                ]
+              },
+              "actions": {
+                "Compose_Summary": {
+                  "type": "Compose",
+                  "inputs": {
+                    "type": "summary",
+                    "account": "@{item()?['Account']}",
+                    "amount": "@{item()?['Amount in Local Currency']}"
+                  }
+                }
+              },
+              "runAfter": {
+                "Increment_varRowCounter": ["Succeeded"]
+              },
+              "else": {
+                "actions": {
+                  "List_customer": {
+                    "type": "OpenApiConnection",
+                    "inputs": {
+                      "parameters": {
+                        "entityName": "cr7bb_thfinancecashcollectioncustomers",
+                        "$filter": "cr7bb_customercode eq '@{item()?['Account']}'",
+                        "$top": 1
+                      },
+                      "host": {
+                        "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+                        "operationId": "ListRecords",
+                        "connectionName": "shared_commondataserviceforapps"
+                      }
+                    },
+                    "runAfter": {}
+                  },
+                  "Check_Customer_Found": {
+                    "type": "If",
+                    "expression": {
+                      "and": [
+                        {
+                          "greater": [
+                            "@length(outputs('List_customer')?['value'])",
+                            0
+                          ]
+                        }
+                      ]
+                    },
+                    "actions": {
+                      "Compose_isExcluded": {
+                        "type": "Compose",
+                        "inputs": "@or(contains(toLower(coalesce(item()?['Text'], '')), 'paid'), contains(toLower(coalesce(item()?['Text'], '')), 'partial payment'), contains(toLower(coalesce(item()?['Text'], '')), 'exclude'), contains(coalesce(item()?['Text'], ''), 'รักษาตลาด'), contains(toLower(coalesce(item()?['Text'], '')), 'bill credit 30 days'))",
+                        "runAfter": {}
+                      },
+                      "Compose_ParsedAmount": {
+                        "type": "Compose",
+                        "inputs": "@float(replace(replace(string(item()?['Amount in Local Currency']), ',', ''), '\"', ''))",
+                        "runAfter": {
+                          "Compose_isExcluded": ["Succeeded"]
+                        }
+                      },
+                      "Compose_TransactionType": {
+                        "type": "Compose",
+                        "inputs": "@if(less(outputs('Compose_ParsedAmount'), 0), 'CN', 'DN')",
+                        "runAfter": {
+                          "Compose_ParsedAmount": ["Succeeded"]
+                        }
+                      },
+                      "Create_transaction": {
+                        "type": "OpenApiConnection",
+                        "inputs": {
+                          "parameters": {
+                            "entityName": "cr7bb_thfinancecashcollectiontransactions",
+                            "item/_cr7bb_customer_value": "@{first(outputs('List_customer')?['value'])?['cr7bb_thfinancecashcollectioncustomerid']}",
+                            "item/cr7bb_recordtype": "Transaction",
+                            "item/cr7bb_documentnumber": "@{item()?['Document Number']}",
+                            "item/cr7bb_assignment": "@{item()?['Assignment']}",
+                            "item/cr7bb_documenttype": "@{item()?['Document Type']}",
+                            "item/cr7bb_documentdate": "@{item()?['Document Date']}",
+                            "item/cr7bb_netduedate": "@{item()?['Net Due Date']}",
+                            "item/cr7bb_arrearsdays": "@{int(coalesce(item()?['Arrears by Net Due Date'], 0))}",
+                            "item/cr7bb_amountlocalcurrency": "@{outputs('Compose_ParsedAmount')}",
+                            "item/cr7bb_textfield": "@{item()?['Text']}",
+                            "item/cr7bb_reference": "@{item()?['Reference']}",
+                            "item/cr7bb_transactiontype": "@{outputs('Compose_TransactionType')}",
+                            "item/cr7bb_isexcluded": "@{outputs('Compose_isExcluded')}",
+                            "item/cr7bb_excludereason": "@{if(outputs('Compose_isExcluded'), 'Keyword found in text field', null)}",
+                            "item/cr7bb_daycount": "@{int(coalesce(item()?['Arrears by Net Due Date'], 0))}",
+                            "item/cr7bb_processdate": "@{variables('varProcessDate')}",
+                            "item/cr7bb_processbatch": "@{variables('varBatchID')}",
+                            "item/cr7bb_rownumber": "@{variables('varRowCounter')}",
+                            "item/cr7bb_isprocessed": false,
+                            "item/cr7bb_emailsent": false
+                          },
+                          "host": {
+                            "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+                            "operationId": "CreateRecord",
+                            "connectionName": "shared_commondataserviceforapps"
+                          }
+                        },
+                        "runAfter": {
+                          "Compose_TransactionType": ["Succeeded"]
+                        }
+                      },
+                      "Increment_varTransactionCount": {
+                        "type": "IncrementVariable",
+                        "inputs": {
+                          "name": "varTransactionCount",
+                          "value": 1
+                        },
+                        "runAfter": {
+                          "Create_transaction": ["Succeeded"]
+                        }
+                      },
+                      "Log_Create_Error": {
+                        "type": "Scope",
+                        "actions": {
+                          "Append_error_to_array": {
+                            "type": "AppendToArrayVariable",
+                            "inputs": {
+                              "name": "varErrorMessages",
+                              "value": "Row @{variables('varRowCounter')}: Failed to create transaction - @{outputs('Create_transaction')?['error']?['message']}"
+                            }
+                          },
+                          "Increment_varErrorCount": {
+                            "type": "IncrementVariable",
+                            "inputs": {
+                              "name": "varErrorCount",
+                              "value": 1
+                            },
+                            "runAfter": {
+                              "Append_error_to_array": ["Succeeded"]
+                            }
+                          }
+                        },
+                        "runAfter": {
+                          "Create_transaction": ["Failed", "TimedOut"]
+                        }
+                      }
+                    },
+                    "runAfter": {
+                      "List_customer": ["Succeeded"]
+                    },
+                    "else": {
+                      "actions": {
+                        "Append_customer_not_found_error": {
+                          "type": "AppendToArrayVariable",
+                          "inputs": {
+                            "name": "varErrorMessages",
+                            "value": "Row @{variables('varRowCounter')}: Customer @{item()?['Account']} not found"
+                          }
+                        },
+                        "Increment_error_count": {
+                          "type": "IncrementVariable",
+                          "inputs": {
+                            "name": "varErrorCount",
+                            "value": 1
+                          },
+                          "runAfter": {
+                            "Append_customer_not_found_error": ["Succeeded"]
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "runAfter": {
+            "List_rows_present_in_a_table": ["Succeeded"]
+          }
+        },
+        "Update_Process_Log": {
+          "type": "OpenApiConnection",
+          "inputs": {
+            "parameters": {
+              "entityName": "cr7bb_thfinancecashcollectionprocesslogs",
+              "recordId": "@variables('varProcessLogID')",
+              "item/cr7bb_endtime": "@utcNow()",
+              "item/cr7bb_status": "@{if(greater(variables('varErrorCount'), 0), 'Completed with errors', 'Completed')}",
+              "item/cr7bb_transactionsprocessed": "@variables('varTransactionCount')",
+              "item/cr7bb_errormessages": "@{join(variables('varErrorMessages'), '; ')}"
+            },
+            "host": {
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+              "operationId": "UpdateRecord",
+              "connectionName": "shared_commondataserviceforapps"
+            }
+          },
+          "runAfter": {
+            "Apply_to_each_row": ["Succeeded", "Failed", "Skipped", "TimedOut"]
+          }
+        },
+        "Send_Summary_Email": {
+          "type": "OpenApiConnection",
+          "inputs": {
+            "parameters": {
+              "emailMessage/To": "Nick.Chamnong@th.nestle.com",
+              "emailMessage/Subject": "SAP Import @{variables('varProcessDate')} - @{if(greater(variables('varErrorCount'), 0), '⚠️ Errors', '✅ Success')}",
+              "emailMessage/Body": "<html><body><h2>SAP Data Import Summary</h2><p><strong>Date:</strong> @{formatDateTime(utcNow(), 'dd/MM/yyyy HH:mm')}</p><p><strong>File:</strong> @{variables('varFileName')}</p><p><strong>Batch ID:</strong> @{variables('varBatchID')}</p><h3>Statistics</h3><ul><li>Total Rows: @{variables('varRowCounter')}</li><li>Transactions Created: @{variables('varTransactionCount')}</li><li>Errors: @{variables('varErrorCount')}</li></ul>@{if(greater(variables('varErrorCount'), 0), concat('<h3 style=\"color: red;\">Errors:</h3><ul>', join(map(variables('varErrorMessages'), concat('<li>', item(), '</li>')), ''), '</ul>'), '')}<p><a href=\"https://make.powerapps.com\">View in Power Automate</a></p></body></html>",
+              "emailMessage/Importance": "@{if(greater(variables('varErrorCount'), 0), 'High', 'Normal')}"
+            },
+            "host": {
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_office365",
+              "operationId": "SendEmailV2",
+              "connectionName": "shared_office365"
+            }
+          },
+          "runAfter": {
+            "Update_Process_Log": ["Succeeded"]
+          }
+        }
+      },
+      "outputs": {}
+    },
+    "templateName": null
+  },
+  "schemaVersion": "1.0.0.0"
+}

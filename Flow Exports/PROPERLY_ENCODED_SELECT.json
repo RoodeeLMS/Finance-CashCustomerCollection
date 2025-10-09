@@ -1,0 +1,14 @@
+{
+  "type": "Select",
+  "inputs": {
+    "from": "@body('Filter_DN_List')",
+    "select": {
+      "html": "@{concat('<tr><td>', item()?['cr7bb_documentnumber'], '</td><td>', formatDateTime(item()?['cr7bb_documentdate'], 'dd/MM/yyyy'), '</td><td>', formatDateTime(item()?['cr7bb_netduedate'], 'dd/MM/yyyy'), '</td><td>', item()?['cr7bb_daycount'], '</td><td>', formatNumber(item()?['cr7bb_amountlocalcurrency'], 'N2'), '</td></tr>')}"
+    }
+  },
+  "runAfter": {
+    "Compose_Email_Subject": [
+      "Succeeded"
+    ]
+  }
+}

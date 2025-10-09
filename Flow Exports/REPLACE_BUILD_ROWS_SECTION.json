@@ -1,0 +1,19 @@
+{
+  "Initialize_varTableRows": {
+    "type": "InitializeVariable",
+    "inputs": {
+      "variables": [
+        {
+          "name": "varTableRows",
+          "type": "string",
+          "value": ""
+        }
+      ]
+    },
+    "runAfter": {
+      "Initialize_varErrorMessages": [
+        "Succeeded"
+      ]
+    }
+  }
+}

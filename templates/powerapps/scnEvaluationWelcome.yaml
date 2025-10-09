@@ -1,0 +1,283 @@
+﻿Screens:
+  scnEvaluationWelcome:
+    Properties:
+      Fill: =RGBA(243, 242, 241, 1)
+      LoadingSpinnerColor: =RGBA(56, 96, 178, 1)
+      OnVisible: |-
+        =// Set current screen for navigation
+        UpdateContext({currentScreen:"Evaluation Welcome"});
+        Set(_showMenu,false);
+
+        // Initialize language if not set
+        If(IsBlank(gblLanguage), Set(gblLanguage, "EN"));
+
+        // Load evaluation data
+        Set(_currentEvaluation, gblSelectedEvaluation);
+
+        // Load associated records
+        Set(_selectedCandidate, _currentEvaluation.Candidate);
+        Set(_selectedPosition, _currentEvaluation.Position);
+        Set(_selectedForm, _currentEvaluation.EvalForm)
+    Children:
+      - Welcome_Container:
+          Control: GroupContainer@1.3.0
+          Variant: ManualLayout
+          Properties:
+            Fill: =RGBA(243, 242, 241, 1)
+            Height: =Parent.Height
+            Width: =Parent.Width
+          Children:
+            - Welcome_Header:
+                Control: GroupContainer@1.3.0
+                Variant: AutoLayout
+                Properties:
+                  DropShadow: =DropShadow.Regular
+                  Fill: =RGBA(0, 101, 161, 1)
+                  Height: =55
+                  LayoutAlignItems: =LayoutAlignItems.Center
+                  LayoutDirection: =LayoutDirection.Horizontal
+                  PaddingLeft: =15
+                  RadiusBottomLeft: =8
+                  RadiusBottomRight: =8
+                  RadiusTopLeft: =8
+                  RadiusTopRight: =8
+                  Width: =Parent.Width - 20
+                  X: =10
+                  Y: =10
+                Children:
+                  - Welcome_MenuIcon:
+                      Control: Classic/Icon@2.5.0
+                      Properties:
+                        Color: =RGBA(255, 255, 255, 1)
+                        Height: =50
+                        Icon: =Icon.Hamburger
+                        OnSelect: =Set(_showMenu, !_showMenu)
+                        PaddingBottom: =10
+                        PaddingLeft: =10
+                        PaddingRight: =10
+                        PaddingTop: =10
+                        Width: =50
+                  - Welcome_HeaderTitle:
+                      Control: Text@0.0.51
+                      Properties:
+                        Font: =Font.Lato
+                        FontColor: =Color.White
+                        Height: =50
+                        PaddingLeft: =20
+                        Size: =25
+                        Text: =If(gblLanguage = "EN", "Evaluation Welcome", "ยินดีต้อนรับการประเมิน")
+                        VerticalAlign: =VerticalAlign.Middle
+                        Weight: ='TextCanvas.Weight'.Medium
+                        Width: =Parent.Width - Welcome_MenuIcon.Width - Welcome_LanguageToggle.Width - 40
+                  - Welcome_LanguageToggle:
+                      Control: Button@0.0.45
+                      Properties:
+                        BasePaletteColor: =RGBA(255, 255, 255, 1)
+                        Height: =35
+                        OnSelect: =Set(gblLanguage, If(gblLanguage = "EN", "TH", "EN"))
+                        Text: =If(gblLanguage = "EN", "แสดงภาษาไทย", "Show English")
+                        Width: =150
+            - Welcome_Card:
+                Control: GroupContainer@1.3.0
+                Variant: AutoLayout
+                Properties:
+                  DropShadow: =DropShadow.Regular
+                  Fill: =RGBA(255, 255, 255, 1)
+                  Height: =600
+                  LayoutAlignItems: =LayoutAlignItems.Stretch
+                  LayoutDirection: =LayoutDirection.Vertical
+                  LayoutGap: =20
+                  PaddingBottom: =50
+                  PaddingLeft: =40
+                  PaddingRight: =40
+                  PaddingTop: =40
+                  RadiusBottomLeft: =12
+                  RadiusBottomRight: =12
+                  RadiusTopLeft: =12
+                  RadiusTopRight: =12
+                  Width: =Min(700, Parent.Width - 80)
+                  X: =(Parent.Width - Self.Width) / 2
+                  Y: =85
+                Children:
+                  - Welcome_Greeting:
+                      Control: Text@0.0.51
+                      Properties:
+                        Align: ='TextCanvas.Align'.Center
+                        AutoHeight: =true
+                        Font: =Font.Lato
+                        FontColor: =RGBA(0, 101, 161, 1)
+                        Size: =20
+                        Text: |-
+                          =If(
+                              gblLanguage = "EN",
+                              "Welcome, " & Office365Users.MyProfile().DisplayName,
+                              "ยินดีต้อนรับ, " & Office365Users.MyProfile().DisplayName
+                          )
+                        Weight: ='TextCanvas.Weight'.Semibold
+                        Width: =Parent.Width - 80
+                  - Welcome_Instructions:
+                      Control: Text@0.0.51
+                      Properties:
+                        Align: ='TextCanvas.Align'.Center
+                        AutoHeight: =true
+                        Font: =Font.Lato
+                        Text: |-
+                          =If(
+                              gblLanguage = "EN",
+                              "You are about to evaluate the following candidate. Please review the information below before starting.",
+                              "คุณกำลังจะประเมินผู้สมัครต่อไปนี้ กรุณาตรวจสอบข้อมูลก่อนเริ่มต้น"
+                          )
+                        Width: =Parent.Width - 80
+                  - Welcome_Divider1:
+                      Control: Rectangle@2.3.0
+                      Properties:
+                        Fill: =RGBA(200, 200, 200, 1)
+                        Height: =1
+                        Width: =Parent.Width - 80
+                  - Welcome_CandidateSection:
+                      Control: GroupContainer@1.3.0
+                      Variant: AutoLayout
+                      Properties:
+                        LayoutDirection: =LayoutDirection.Vertical
+                        LayoutGap: =12
+                        PaddingBottom: =16
+                        PaddingLeft: =16
+                        PaddingRight: =16
+                        PaddingTop: =16
+                      Children:
+                        - Welcome_CandidateLabel:
+                            Control: Text@0.0.51
+                            Properties:
+                              Font: =Font.Lato
+                              FontColor: =RGBA(100, 81, 61, 1)
+                              Size: =16
+                              Text: =If(gblLanguage = "EN", "Candidate Information", "ข้อมูลผู้สมัคร")
+                              Weight: ='TextCanvas.Weight'.Semibold
+                              Width: =Parent.Width - 80
+                        - Welcome_CandidateName:
+                            Control: Text@0.0.51
+                            Properties:
+                              AutoHeight: =true
+                              Font: =Font.Lato
+                              Text: |-
+                                =If(
+                                    gblLanguage = "EN",
+                                    "Name: " & _selectedCandidate.FirstName & " " & _selectedCandidate.LastName,
+                                    "ชื่อ: " & _selectedCandidate.FirstNameTH & " " & _selectedCandidate.LastNameTH
+                                )
+                              Width: =Parent.Width - 80
+                        - Welcome_CandidateEmail:
+                            Control: Text@0.0.51
+                            Properties:
+                              Font: =Font.Lato
+                              Text: |-
+                                ="Email: " & _selectedCandidate.Email
+                              Width: =Parent.Width - 80
+                        - Welcome_Position:
+                            Control: Text@0.0.51
+                            Properties:
+                              Font: =Font.Lato
+                              Text: |-
+                                =If(
+                                    gblLanguage = "EN",
+                                    "Position: " & _selectedPosition.'Position Title',
+                                    "ตำแหน่ง: " & _selectedPosition.'Position Title'
+                                )
+                              Width: =Parent.Width - 80
+                        - Welcome_InterviewDate:
+                            Control: Text@0.0.51
+                            Properties:
+                              Font: =Font.Lato
+                              Text: |-
+                                =If(
+                                    gblLanguage = "EN",
+                                    "Interview Date: " & Text(_currentEvaluation.InterviewDate, "mmm dd, yyyy"),
+                                    "วันที่สัมภาษณ์: " & Text(_currentEvaluation.InterviewDate, "dd/mm/yyyy")
+                                )
+                              Width: =Parent.Width - 80
+                  - Welcome_Divider2:
+                      Control: Rectangle@2.3.0
+                      Properties:
+                        Fill: =RGBA(200, 200, 200, 1)
+                        Height: =1
+                        Width: =Parent.Width - 80
+                  - Welcome_EvalSection:
+                      Control: GroupContainer@1.3.0
+                      Variant: AutoLayout
+                      Properties:
+                        LayoutDirection: =LayoutDirection.Vertical
+                        LayoutGap: =12
+                        PaddingBottom: =16
+                        PaddingLeft: =16
+                        PaddingRight: =16
+                        PaddingTop: =16
+                      Children:
+                        - Welcome_EvalLabel:
+                            Control: Text@0.0.51
+                            Properties:
+                              Font: =Font.Lato
+                              FontColor: =RGBA(100, 81, 61, 1)
+                              Size: =16
+                              Text: =If(gblLanguage = "EN", "Evaluation Details", "รายละเอียดการประเมิน")
+                              Weight: ='TextCanvas.Weight'.Semibold
+                              Width: =Parent.Width - 80
+                        - Welcome_FormName:
+                            Control: Text@0.0.51
+                            Properties:
+                              AutoHeight: =true
+                              Font: =Font.Lato
+                              Text: |-
+                                =If(
+                                    gblLanguage = "EN",
+                                    "Form: " & _selectedForm.FormName,
+                                    "แบบฟอร์ม: " & _selectedForm.FormName_TH
+                                )
+                              Width: =Parent.Width - 80
+                        - Welcome_QuestionCount:
+                            Control: Text@0.0.51
+                            Properties:
+                              Font: =Font.Lato
+                              Text: |-
+                                =If(
+                                    gblLanguage = "EN",
+                                    "Total Questions: " & CountRows(Filter('[THInterviewEval]FormQuestions', EvalForm.FormName = _selectedForm.FormName)),
+                                    "จำนวนคำถาม: " & CountRows(Filter('[THInterviewEval]FormQuestions', EvalForm.FormName = _selectedForm.FormName))
+                                )
+                              Width: =Parent.Width - 80
+                        - Welcome_MaxScore:
+                            Control: Text@0.0.51
+                            Properties:
+                              Font: =Font.Lato
+                              Text: |-
+                                =If(
+                                    gblLanguage = "EN",
+                                    "Maximum Score: " & _selectedForm.MaxScore,
+                                    "คะแนนเต็ม: " & _selectedForm.MaxScore
+                                )
+                              Width: =Parent.Width - 80
+                  - Welcome_Spacer:
+                      Control: Rectangle@2.3.0
+                      Properties:
+                        Fill: =RGBA(0, 0, 0, 0)
+                        Height: =20
+                        Width: =Parent.Width - 80
+                  - Welcome_StartBtn:
+                      Control: Button@0.0.45
+                      Properties:
+                        Appearance: ='ButtonCanvas.Appearance'.Primary
+                        BasePaletteColor: =RGBA(100, 81, 61, 1)
+                        Height: =50
+                        OnSelect: =Navigate(scnEvaluationInterview)
+                        Text: =If(gblLanguage = "EN", "Start Evaluation →", "เริ่มประเมิน →")
+                        Width: =240
+            - Welcome_NavigationMenu:
+                Control: CanvasComponent
+                ComponentName: NavigationMenu
+                Properties:
+                  Fill: =RGBA(255, 255, 255, 0.5)
+                  Height: =Parent.Height - 70
+                  Visible: =If(_showMenu, true, false)
+                  Width: =260
+                  Y: =70
+                  navItems: =Navigation
+                  navSelected: =currentScreen

@@ -1,0 +1,279 @@
+﻿Screens:
+  scnPositionBuilder:
+    Properties:
+      Fill: =RGBA(243, 242, 241, 1)
+      LoadingSpinnerColor: =RGBA(0, 101, 161, 1)
+      OnVisible: |-
+        =UpdateContext({currentScreen:"Position"});
+        Set(_showMenu,false);
+        // Initialize position fields based on whether we're editing or creating
+        If(
+            IsBlank(gblSelectedPosition),
+            // Create mode - reset all fields
+            Set(gblIsEditPositionMode, false);
+            Set(gblPositionResetTrigger, !gblPositionResetTrigger),
+            // Edit mode - load existing data
+            Set(gblIsEditPositionMode, true)
+        );
+    Children:
+      - PosBuild_MainContainer:
+          Control: GroupContainer@1.3.0
+          Variant: ManualLayout
+          Properties:
+            DropShadow: =DropShadow.None
+            Height: =Parent.Height
+            Width: =Parent.Width
+          Children:
+            - PosBuild_Header:
+                Control: GroupContainer@1.3.0
+                Variant: AutoLayout
+                Properties:
+                  DropShadow: =DropShadow.Regular
+                  Fill: =RGBA(0, 101, 161, 1)
+                  Height: =55
+                  LayoutAlignItems: =LayoutAlignItems.Center
+                  LayoutDirection: =LayoutDirection.Horizontal
+                  PaddingLeft: =15
+                  RadiusBottomLeft: =8
+                  RadiusBottomRight: =8
+                  RadiusTopLeft: =8
+                  RadiusTopRight: =8
+                  Width: =Parent.Width-20
+                  X: =10
+                  Y: =10
+                Children:
+                  - PosBuild_MenuIcon:
+                      Control: Classic/Icon@2.5.0
+                      Properties:
+                        Color: =RGBA(255, 255, 255, 1)
+                        Height: =50
+                        Icon: =Icon.Hamburger
+                        OnSelect: =Set(_showMenu,!_showMenu)
+                        PaddingBottom: =10
+                        PaddingLeft: =10
+                        PaddingRight: =10
+                        PaddingTop: =10
+                        Width: =50
+                  - PosBuild_HeaderTitle:
+                      Control: Text@0.0.51
+                      Properties:
+                        Font: =Font.Lato
+                        FontColor: =Color.White
+                        Height: =50
+                        PaddingLeft: =20
+                        Size: =25
+                        Text: =If(gblIsEditPositionMode, "Edit Position", "Create Position")
+                        VerticalAlign: =VerticalAlign.Middle
+                        Weight: ='TextCanvas.Weight'.Medium
+                        Width: =Parent.Width - PosBuild_MenuIcon.Width - 40
+            - PosBuild_Content:
+                Control: GroupContainer@1.3.0
+                Variant: ManualLayout
+                Properties:
+                  DropShadow: =DropShadow.Regular
+                  Fill: =RGBA(255, 255, 255, 1)
+                  Height: =Parent.Height-85
+                  RadiusBottomLeft: =10
+                  RadiusBottomRight: =10
+                  RadiusTopLeft: =10
+                  RadiusTopRight: =10
+                  Width: =Parent.Width-20
+                  X: =10
+                  Y: =75
+                Children:
+                  - PosBuild_FormSection:
+                      Control: GroupContainer@1.3.0
+                      Variant: AutoLayout
+                      Properties:
+                        DropShadow: =DropShadow.None
+                        Fill: =RGBA(255, 255, 255, 1)
+                        Height: =Parent.Height - 80
+                        LayoutDirection: =LayoutDirection.Vertical
+                        LayoutGap: =15
+                        LayoutOverflowY: =LayoutOverflow.Scroll
+                        PaddingBottom: =20
+                        PaddingLeft: =20
+                        PaddingRight: =20
+                        PaddingTop: =20
+                        RadiusBottomLeft: =10
+                        RadiusBottomRight: =10
+                        RadiusTopLeft: =10
+                        RadiusTopRight: =10
+                        Width: =Parent.Width - 20
+                        X: =10
+                        Y: =10
+                      Children:
+                        - PosBuild_SectionTitle:
+                            Control: Text@0.0.51
+                            Properties:
+                              Font: =Font.Lato
+                              FontColor: =RGBA(0, 101, 161, 1)
+                              Height: =40
+                              Size: =20
+                              Text: =If(gblIsEditPositionMode, "Edit Position Details", "New Position Details")
+                              VerticalAlign: =VerticalAlign.Middle
+                              Weight: ='TextCanvas.Weight'.Bold
+                              Width: =Parent.Width - 40
+                        - PosBuild_PositionName:
+                            Control: CanvasComponent
+                            ComponentName: cmpEditableText
+                            Properties:
+                              EditMode: =true
+                              ErrorFlag: =false
+                              Height: =80
+                              LayoutMinHeight: =80
+                              LayoutMinWidth: =400
+                              MaxLength: =250
+                              TitleText: ="Position Name"
+                              Value: =If(gblIsEditPositionMode, gblSelectedPosition.Name, "")
+                              Width: =Parent.Width - 40
+                              isRequired: =true
+                        - PosBuild_PositionTitle:
+                            Control: CanvasComponent
+                            ComponentName: cmpEditableText
+                            Properties:
+                              EditMode: =true
+                              ErrorFlag: =false
+                              Height: =80
+                              LayoutMinHeight: =80
+                              LayoutMinWidth: =400
+                              MaxLength: =250
+                              TitleText: ="Position Title"
+                              Value: =If(gblIsEditPositionMode, gblSelectedPosition.'Position Title', "")
+                              Width: =Parent.Width - 40
+                              isRequired: =true
+                        - PosBuild_PositionTitleNote:
+                            Control: Text@0.0.51
+                            Properties:
+                              AutoHeight: =true
+                              Font: =Font.Lato
+                              FontColor: =RGBA(100, 100, 100, 1)
+                              Size: =12
+                              Text: |-
+                                ="Note: This will be used to match evaluation forms by TargetPosition"
+                              Width: =Parent.Width - 40
+                        - PosBuild_InterviewerContainer:
+                            Control: GroupContainer@1.3.0
+                            Variant: AutoLayout
+                            Properties:
+                              DropShadow: =DropShadow.None
+                              Height: =80
+                              LayoutDirection: =LayoutDirection.Vertical
+                              LayoutMinHeight: =80
+                              LayoutMinWidth: =400
+                              PaddingLeft: =10
+                              PaddingTop: =10
+                              Width: =Parent.Width - 40
+                            Children:
+                              - PosBuild_InterviewerLabel:
+                                  Control: Text@0.0.51
+                                  Properties:
+                                    Font: =Font.Lato
+                                    Height: =20
+                                    Text: ="Interviewer *"
+                                    Weight: ='TextCanvas.Weight'.Semibold
+                                    Width: =Parent.Width - 20
+                              - PosBuild_InterviewerCombo:
+                                  Control: ComboBox@0.0.51
+                                  Properties:
+                                    DefaultSelectedItems: =If(IsBlank(gblSelectedPosition.InterviewerEmail), Blank(), Office365Users.UserProfile(gblSelectedPosition.InterviewerEmail))
+                                    Items: |-
+                                      =If(
+                                          Len(Self.SearchText) >= 2 || !IsBlankOrError(gblSelectedPosition.InterviewerEmail),
+                                          Office365Users.SearchUser({
+                                              searchTerm: Self.SearchText,
+                                              top: 15
+                                          })
+                                      )
+                                    Width: =Parent.Width - 20
+                                  Children:
+                                    - PosBuild_InterviewerDisplayName:
+                                        Control: ComboBoxDataField@1.5.0
+                                        Variant: textualColumn
+                                        IsLocked: true
+                                        Properties:
+                                          FieldDisplayName: ="DisplayName"
+                                          FieldName: ="DisplayName"
+                                          FieldType: ="s"
+                                          Order: =1
+                        - PosBuild_InterviewerNote:
+                            Control: Text@0.0.51
+                            Properties:
+                              AutoHeight: =true
+                              Font: =Font.Lato
+                              FontColor: =RGBA(100, 100, 100, 1)
+                              Size: =12
+                              Text: ="This person will be automatically assigned to conduct evaluations for this position"
+                              Width: =Parent.Width - 40
+                  - PosBuild_ActionButtons:
+                      Control: GroupContainer@1.3.0
+                      Variant: AutoLayout
+                      Properties:
+                        DropShadow: =DropShadow.None
+                        Height: =50
+                        LayoutAlignItems: =LayoutAlignItems.Center
+                        LayoutDirection: =LayoutDirection.Horizontal
+                        LayoutGap: =15
+                        LayoutJustifyContent: =LayoutJustifyContent.End
+                        PaddingRight: =20
+                        Width: =Parent.Width
+                        Y: =Parent.Height - 60
+                      Children:
+                        - PosBuild_CancelBtn:
+                            Control: Button@0.0.45
+                            Properties:
+                              BasePaletteColor: =RGBA(128, 128, 128, 1)
+                              Height: =40
+                              OnSelect: =Navigate(scnPositionLibrary)
+                              Text: ="Cancel"
+                              Width: =120
+                        - PosBuild_SaveBtn:
+                            Control: Button@0.0.45
+                            Properties:
+                              BasePaletteColor: =RGBA(0, 101, 161, 1)
+                              Height: =40
+                              OnSelect: |-
+                                =// Validate required fields
+                                If(
+                                    IsBlank(PosBuild_PositionName.UpdatedValue) || IsBlank(PosBuild_PositionTitle.UpdatedValue) || IsBlank(PosBuild_InterviewerCombo.Selected.Mail),
+                                    Notify("Please fill in all required fields (Position Name, Position Title, and Interviewer)", NotificationType.Warning),
+                                    // Save position
+                                    If(gblIsEditPositionMode,
+                                        // Edit existing position
+                                        Patch('[THInterviewEval]PositionInterviews', gblSelectedPosition,
+                                            {
+                                                Name: PosBuild_PositionName.UpdatedValue,
+                                                'Position Title': PosBuild_PositionTitle.UpdatedValue,
+                                                InterviewerEmail: PosBuild_InterviewerCombo.Selected.Mail
+                                            }
+                                        ),
+                                        // Create new position
+                                        Patch('[THInterviewEval]PositionInterviews',
+                                            Defaults('[THInterviewEval]PositionInterviews'),
+                                            {
+                                                Name: PosBuild_PositionName.UpdatedValue,
+                                                'Position Title': PosBuild_PositionTitle.UpdatedValue,
+                                                InterviewerEmail: PosBuild_InterviewerCombo.Selected.Mail
+                                            }
+                                        )
+                                    );
+                                    If(
+                                        IsEmpty(Errors('[THInterviewEval]PositionInterviews')),
+                                        Notify("Position saved successfully!", NotificationType.Success);
+                                        Navigate(scnPositionLibrary),
+                                        Notify("Error saving position: " & First(Errors('[THInterviewEval]PositionInterviews')).Message, NotificationType.Error)
+                                    )
+                                )
+                              Text: =If(gblIsEditPositionMode, "Save Changes", "Create Position")
+                              Width: =150
+            - PosBuild_NavigationMenu:
+                Control: CanvasComponent
+                ComponentName: NavigationMenu
+                Properties:
+                  Fill: =RGBA(255, 255, 255, 0.5)
+                  Height: =Parent.Height-70
+                  Visible: =If(_showMenu,true,false)
+                  Width: =260
+                  Y: =70
+                  navItems: =Navigation
+                  navSelected: =currentScreen

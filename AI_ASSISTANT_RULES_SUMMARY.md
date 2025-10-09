@@ -136,6 +136,82 @@ Properties:
   Height: Parent.Height-85
 ```
 
+### Gallery Control Best Practices
+
+**Alternating row colors with GUIDs are inefficient**:
+
+```yaml
+# ❌ WRONG - GUID comparison is slow
+Fill: |-
+  =If(
+      ThisItem.IsSelected,
+      RGBA(0, 120, 215, 1),
+      If(
+          Mod(
+              CountRows(Filter(colProcessLog, cr7bb_processlogid <= ThisItem.cr7bb_processlogid)),
+              2
+          ) = 0,
+          RGBA(255, 255, 255, 1),
+          RGBA(245, 245, 245, 1)
+      )
+  )
+
+# ✅ CORRECT - Use simpler selection highlight only
+Fill: |-
+  =If(
+      ThisItem.IsSelected,
+      RGBA(0, 120, 215, 1),
+      RGBA(255, 255, 255, 1)
+  )
+```
+
+### Text Control Width Property
+
+**Always specify Width to avoid 96px default**:
+
+```yaml
+# ❌ WRONG - Missing Width property
+Text_ProcessDate:
+  Control: Text@1.1.1
+  Properties:
+    Text: =Text(ThisItem.cr7bb_processdate, "yyyy-mm-dd")
+
+# ✅ CORRECT - Explicit Width prevents issues
+Text_ProcessDate:
+  Control: Text@1.1.1
+  Properties:
+    Text: =Text(ThisItem.cr7bb_processdate, "yyyy-mm-dd")
+    Width: =250
+```
+
+### Text Alignment for Numbers
+
+**Use TextCanvas.Align.End for right-aligned numbers**:
+
+```yaml
+# ✅ Correct - Right-align numeric data
+Text_TotalAmount:
+  Control: Text@1.1.1
+  Properties:
+    Text: =Text(ThisItem.cr7bb_totalamount, "#,##0.00")
+    Align: =TextCanvas.Align.End  # Right-aligned
+    Width: =150
+```
+
+### Power Apps Enum Syntax
+
+**Use correct TimeUnit and SortOrder syntax**:
+
+```yaml
+# ❌ WRONG - Old syntax
+Filter: =Filter(colProcessLog, DateDiff(cr7bb_processdate, Now(), Minutes) <= 1440)
+SortByColumns: =SortByColumns(colProcessLog, "cr7bb_processdate", Descending)
+
+# ✅ CORRECT - Modern syntax
+Filter: =Filter(colProcessLog, DateDiff(cr7bb_processdate, Now(), TimeUnit.Minutes) <= 1440)
+SortByColumns: =SortByColumns(colProcessLog, "cr7bb_processdate", SortOrder.Descending)
+```
+
 ---
 
 ## 🔄 Power Automate Rules
@@ -144,12 +220,14 @@ Properties:
 
 **Use production table names with `cr7bb_` prefix**:
 
-| ❌ Documentation | ✅ Production |
-|-----------------|--------------|
-| `nc_customers` | `cr7bb_customers` |
-| `nc_transactions` | `cr7bb_transactions` |
-| `nc_processlog` | `cr7bb_processlog` |
-| `nc_emaillog` | `cr7bb_emaillog` |
+| ❌ Documentation | ✅ Production | Display Name |
+|-----------------|--------------|--------------|
+| `nc_customers` | `cr7bb_customers` | `[THFinanceCashCollection]Customers` |
+| `nc_transactions` | `cr7bb_transactions` | `[THFinanceCashCollection]Transactions` |
+| `nc_processlog` | `cr7bb_processlogs` | `Process Logs` |
+| `nc_emaillog` | `cr7bb_emaillogs` | `Emaillogs` |
+
+**Note**: Table names in YAML use display names (e.g., `'[THFinanceCashCollection]Customers'`), while Dataverse connectors use logical names (e.g., `cr7bb_customers`).
 
 ### Environment Configuration
 
@@ -293,7 +371,33 @@ Container:
     LayoutGap: =10
 ```
 
-### 5. CSV Amount Parsing
+### 5. Text Field Type for Dates
+
+```yaml
+# ❌ WRONG - Using DateTime field type (causes Power Apps parsing errors)
+cr7bb_processdate:
+  Type: Edm.DateTimeOffset
+
+# ✅ CORRECT - Use Text field, format as "yyyy-mm-dd"
+cr7bb_processdate:
+  Type: Edm.String  # Text field
+
+# In Power Apps - format for display
+Text: =Text(ThisItem.cr7bb_processdate, "yyyy-mm-dd")
+```
+
+### 6. Table Name Case Sensitivity
+
+```yaml
+# ❌ WRONG - Incorrect table name
+Filter(ProcessLog, ...)  # No such table
+
+# ✅ CORRECT - Use exact display name
+Filter('[Process Logs]', ...)  # Space in name, plural
+Filter(Emaillogs, ...)  # No space, lowercase second word
+```
+
+### 7. CSV Amount Parsing
 ```javascript
 // ❌ WRONG - Doesn't handle commas
 float(item()?['Amount in Local Currency'])
@@ -347,10 +451,10 @@ cp .cursor/rules/*.md ./rules-backup/
 - **Solution Publisher Prefix**: `cr7bb_`
 
 ### Core Tables
-- **Customers**: `cr7bb_customers` (master data)
-- **Transactions**: `cr7bb_transactions` (daily SAP imports)
-- **Process Log**: `cr7bb_processlog` (audit trail)
-- **Email Log**: `cr7bb_emaillog` (communication history)
+- **Customers**: `cr7bb_customers` → Display: `[THFinanceCashCollection]Customers`
+- **Transactions**: `cr7bb_transactions` → Display: `[THFinanceCashCollection]Transactions`
+- **Process Log**: `cr7bb_processlogs` → Display: `Process Logs` (note plural, space)
+- **Email Log**: `cr7bb_emaillogs` → Display: `Emaillogs` (note plural, no space)
 
 ### Business Logic
 - **Exclusion Keywords**: "Paid", "Partial Payment", "รักษาตลาด", "Bill credit 30 days", "PTP", "exclude"
@@ -403,6 +507,18 @@ If you encounter field name issues or rule conflicts:
 
 ---
 
-**Last Updated**: September 30, 2025
+**Last Updated**: September 30, 2025 (Dashboard implementation updates)
 **Status**: Active - All rules verified and tested
 **Maintainer**: AI assistants working on this project
+
+---
+
+## 🆕 Recent Updates (Sept 30, 2025)
+
+### Dashboard Implementation Learnings
+1. **Table name verification**: `Process Logs` (space) vs `Emaillogs` (no space)
+2. **Field type corrections**: Use Text fields for dates (avoid DateTime parsing issues)
+3. **Gallery performance**: Removed inefficient alternating row colors with GUID comparisons
+4. **Enum syntax**: Updated to `TimeUnit.Minutes` and `SortOrder.Descending`
+5. **Text control defaults**: Always specify Width to avoid 96px default
+6. **Field name fixes**: `cr7bb_sendstatus`, `cr7bb_processdate` validated from YAML

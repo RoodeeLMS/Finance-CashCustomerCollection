@@ -1,0 +1,322 @@
+Screens:
+  scnPositionInterviewDetails:
+    Properties:
+      Fill: =RGBA(243, 242, 241, 1)
+      LoadingSpinnerColor: =RGBA(0, 101, 161, 1)
+      OnVisible: |-
+        =/* Initialize screen state and load data */
+        UpdateContext({currentScreen: "Position Interview Details"});
+        Set(_showMenu, false);
+        Set(_isLoading, true);
+        Set(_currentPosition, gblSelectedPosition);
+
+        /* Load ALL evaluations for this position */
+        Concurrent(
+            ClearCollect(colAllPositionEvaluations,
+                Filter('[THInterviewEval]InterviewEvaluations',
+                    Position.'[THInterviewEval]PositionInterview' = _currentPosition.'[THInterviewEval]PositionInterview'
+                )
+            ),
+            ClearCollect(colInterviewRounds,
+                Filter('[THInterviewEval]InterviewRounds',
+                    PositionInterview.'[THInterviewEval]PositionInterview' = _currentPosition.'[THInterviewEval]PositionInterview'
+                )
+            ),
+            ClearCollect(colAllPositionSessions,
+                Filter('[THInterviewEval]InterviewSessions',
+                    InterviewPosition.'[THInterviewEval]PositionInterview' = _currentPosition.'[THInterviewEval]PositionInterview'
+                )
+            )
+        );
+
+        Set(_isLoading, false);
+    Children:
+      - PosIntDet_Container:
+          Control: GroupContainer@1.3.0
+          Variant: ManualLayout
+          Properties:
+            DropShadow: =DropShadow.None
+            Height: =Parent.Height
+            Width: =Parent.Width
+          Children:
+            - PosIntDet_Header:
+                Control: GroupContainer@1.3.0
+                Variant: AutoLayout
+                Properties:
+                  DropShadow: =DropShadow.Regular
+                  Fill: =RGBA(0, 101, 161, 1)
+                  Height: =55
+                  LayoutAlignItems: =LayoutAlignItems.Center
+                  LayoutDirection: =LayoutDirection.Horizontal
+                  LayoutGap: =10
+                  LayoutJustifyContent: =LayoutJustifyContent.SpaceBetween
+                  PaddingLeft: =15
+                  PaddingRight: =15
+                  RadiusBottomLeft: =8
+                  RadiusBottomRight: =8
+                  RadiusTopLeft: =8
+                  RadiusTopRight: =8
+                  Width: =Parent.Width - 20
+                  X: =10
+                  Y: =10
+                Children:
+                  - PosIntDet_HeaderLeft:
+                      Control: GroupContainer@1.3.0
+                      Variant: AutoLayout
+                      Properties:
+                        DropShadow: =DropShadow.None
+                        LayoutAlignItems: =LayoutAlignItems.Center
+                        LayoutDirection: =LayoutDirection.Horizontal
+                        LayoutGap: =10
+                        LayoutMinHeight: =50
+                        LayoutMinWidth: =100
+                      Children:
+                        - PosIntDet_BackBtn:
+                            Control: Button@0.0.45
+                            Properties:
+                              BasePaletteColor: =RGBA(0, 101, 161, 1)
+                              Height: =50
+                              Icon: ="ChevronLeft"
+                              OnSelect: =Navigate(scnPositionLibrary)
+                              Text: =""
+                              Width: =50
+                        - PosIntDet_HeaderTitle:
+                            Control: Text@0.0.51
+                            Properties:
+                              Font: =Font.Lato
+                              FontColor: =Color.White
+                              Height: =50
+                              PaddingLeft: =20
+                              Size: =25
+                              Text: ="Position Interview Management"
+                              VerticalAlign: =VerticalAlign.Middle
+                              Weight: ='TextCanvas.Weight'.Medium
+                              Width: =Parent.Width - PosIntDet_BackBtn.Width - 40
+            - PosIntDet_Content:
+                Control: GroupContainer@1.3.0
+                Variant: ManualLayout
+                Properties:
+                  DropShadow: =DropShadow.Regular
+                  Fill: =RGBA(255, 255, 255, 1)
+                  Height: =Parent.Height - 85
+                  RadiusBottomLeft: =10
+                  RadiusBottomRight: =10
+                  RadiusTopLeft: =10
+                  RadiusTopRight: =10
+                  Width: =Parent.Width - 20
+                  X: =10
+                  Y: =75
+                Children:
+                  - PosIntDet_InfoSection:
+                      Control: GroupContainer@1.3.0
+                      Variant: AutoLayout
+                      Properties:
+                        DropShadow: =DropShadow.None
+                        Fill: =RGBA(245, 245, 245, 1)
+                        Height: =100
+                        LayoutDirection: =LayoutDirection.Vertical
+                        LayoutGap: =5
+                        PaddingBottom: =15
+                        PaddingLeft: =15
+                        PaddingRight: =15
+                        PaddingTop: =15
+                        RadiusTopLeft: =10
+                        RadiusTopRight: =10
+                        Width: =Parent.Width
+                      Children:
+                        - PosIntDet_PositionTitle:
+                            Control: Text@0.0.51
+                            Properties:
+                              Font: =Font.Lato
+                              FontColor: =RGBA(0, 101, 161, 1)
+                              Height: =25
+                              Size: =18
+                              Text: |-
+                                ="Position: " & _currentPosition.'Position Title'
+                              Weight: ='TextCanvas.Weight'.Semibold
+                              Width: =Parent.Width - 30
+                        - PosIntDet_InterviewerInfo:
+                            Control: Text@0.0.51
+                            Properties:
+                              Font: =Font.Lato
+                              FontColor: =RGBA(100, 100, 100, 1)
+                              Height: =20
+                              Text: |-
+                                ="Primary Interviewer: " & _currentPosition.InterviewerEmail
+                              Width: =Parent.Width - 30
+                        - PosIntDet_StatsInfo:
+                            Control: Text@0.0.51
+                            Properties:
+                              Font: =Font.Lato
+                              FontColor: =RGBA(100, 100, 100, 1)
+                              Height: =20
+                              Text: |-
+                                ="Total Candidates: " & CountRows(colAllPositionEvaluations) & " | Total Sessions: " & CountRows(colAllPositionSessions)
+                              Width: =Parent.Width - 30
+                  - PosIntDet_RoundsGallery:
+                      Control: Gallery@2.15.0
+                      Variant: Vertical
+                      Properties:
+                        Height: =Parent.Height - PosIntDet_InfoSection.Height - 40
+                        Items: =colInterviewRounds
+                        TemplatePadding: =0
+                        TemplateSize: =200
+                        Width: =Parent.Width - 40
+                        X: =20
+                        Y: =PosIntDet_InfoSection.Height + 20
+                      Children:
+                        - PosIntDet_RoundCard:
+                            Control: GroupContainer@1.3.0
+                            Variant: AutoLayout
+                            Properties:
+                              Fill: =RGBA(255, 255, 255, 1)
+                              Height: =180
+                              LayoutDirection: =LayoutDirection.Vertical
+                              LayoutGap: =10
+                              PaddingBottom: =15
+                              PaddingLeft: =20
+                              PaddingRight: =20
+                              PaddingTop: =15
+                              RadiusBottomLeft: =8
+                              RadiusBottomRight: =8
+                              RadiusTopLeft: =8
+                              RadiusTopRight: =8
+                              Width: =Parent.TemplateWidth - 10
+                            Children:
+                              - PosIntDet_RoundHeader:
+                                  Control: GroupContainer@1.3.0
+                                  Variant: AutoLayout
+                                  Properties:
+                                    DropShadow: =DropShadow.None
+                                    LayoutAlignItems: =LayoutAlignItems.Center
+                                    LayoutDirection: =LayoutDirection.Horizontal
+                                    LayoutGap: =10
+                                    LayoutJustifyContent: =LayoutJustifyContent.SpaceBetween
+                                    LayoutMinHeight: =30
+                                    LayoutMinWidth: =100
+                                    Width: =Parent.Width - 40
+                                  Children:
+                                    - PosIntDet_RoundName:
+                                        Control: Text@0.0.51
+                                        Properties:
+                                          AutoHeight: =true
+                                          FillPortions: =1
+                                          Font: =Font.Lato
+                                          FontColor: =RGBA(0, 101, 161, 1)
+                                          Size: =16
+                                          Text: =ThisItem.Name
+                                          Weight: ='TextCanvas.Weight'.Semibold
+                                          Width: =200
+                              - PosIntDet_RoundStats:
+                                  Control: Text@0.0.51
+                                  Properties:
+                                    AutoHeight: =true
+                                    Font: =Font.Lato
+                                    FontColor: =RGBA(100, 100, 100, 1)
+                                    Text: |-
+                                      =With(
+                                          {
+                                              sessionsInRound: CountRows(
+                                                  Filter(colAllPositionSessions,
+                                                      InterviewRound.Name = ThisItem.Name)
+                                              )
+                                          },
+                                          sessionsInRound & " session" & If(sessionsInRound <> 1, "s", "") & " scheduled"
+                                      )
+                                    Width: =Parent.Width - 40
+                              - PosIntDet_RoundActions:
+                                  Control: GroupContainer@1.3.0
+                                  Variant: AutoLayout
+                                  Properties:
+                                    DropShadow: =DropShadow.None
+                                    LayoutAlignItems: =LayoutAlignItems.Center
+                                    LayoutDirection: =LayoutDirection.Horizontal
+                                    LayoutGap: =10
+                                    LayoutMinHeight: =40
+                                    LayoutMinWidth: =100
+                                    Width: =Parent.Width - 40
+                                  Children:
+                                    - PosIntDet_ViewCandidatesBtn:
+                                        Control: Button@0.0.45
+                                        Properties:
+                                          BasePaletteColor: =RGBA(0, 101, 161, 1)
+                                          Height: =35
+                                          OnSelect: |-
+                                            =If(
+                                                !IsBlank(ThisItem),
+                                                Set(_selectedRound, ThisItem);
+                                                Set(_showRoundDetailsModal, true);
+                                                Notify("Loading candidates for " & ThisItem.Name, NotificationType.Information),
+                                                Notify("Unable to load round details", NotificationType.Error)
+                                            )
+                                          Text: ="View Candidates"
+                                          Width: =150
+                                    - PosIntDet_AddCandidateBtn:
+                                        Control: Button@0.0.45
+                                        Properties:
+                                          BasePaletteColor: =RGBA(100, 81, 61, 1)
+                                          Height: =35
+                                          OnSelect: |-
+                                            =If(
+                                                !IsBlank(ThisItem),
+                                                Set(_preselectedRound, ThisItem);
+                                                Set(_showAssignModal, true);
+                                                Notify("Opening candidate assignment for " & ThisItem.Name, NotificationType.Information),
+                                                Notify("Unable to assign candidate", NotificationType.Error)
+                                            )
+                                          Text: ="Add Candidate"
+                                          Width: =140
+                              - PosIntDet_EmptyMessage:
+                                  Control: Text@0.0.51
+                                  Properties:
+                                    AutoHeight: =true
+                                    Font: =Font.Lato
+                                    FontColor: =RGBA(150, 150, 150, 1)
+                                    Size: =13
+                                    Text: |-
+                                      =If(
+                                          CountRows(Filter(colAllPositionSessions, InterviewRound.Name = ThisItem.Name)) = 0,
+                                          "No candidates assigned to this round yet",
+                                          ""
+                                      )
+                                    Visible: =CountRows(Filter(colAllPositionSessions, InterviewRound.Name = ThisItem.Name)) = 0
+                                    Width: =Parent.Width - 40
+            - PosIntDet_LoadingSpinner:
+                Control: GroupContainer@1.3.0
+                Variant: AutoLayout
+                Properties:
+                  DropShadow: =DropShadow.None
+                  Fill: =RGBA(255, 255, 255, 0.9)
+                  Height: =Parent.Height
+                  LayoutAlignItems: =LayoutAlignItems.Center
+                  LayoutDirection: =LayoutDirection.Vertical
+                  LayoutJustifyContent: =LayoutJustifyContent.Center
+                  Visible: =_isLoading
+                  Width: =Parent.Width
+                Children:
+                  - PosIntDet_LoadingIcon:
+                      Control: Classic/Icon@2.5.0
+                      Properties:
+                        Color: =RGBA(0, 101, 161, 1)
+                        Height: =60
+                        Icon: =Icon.Sync
+                        Width: =60
+                  - PosIntDet_LoadingText:
+                      Control: Text@0.0.51
+                      Properties:
+                        Font: =Font.Lato
+                        FontColor: =RGBA(0, 101, 161, 1)
+                        Size: =16
+                        Text: ="Loading position details..."
+                        Weight: ='TextCanvas.Weight'.Medium
+            - PosIntDet_NavigationMenu:
+                Control: CanvasComponent
+                ComponentName: NavigationMenu
+                Properties:
+                  Fill: =RGBA(255, 255, 255, 0.5)
+                  Height: =Parent.Height - 70
+                  Visible: =If(_showMenu, true, false)
+                  Width: =260
+                  Y: =70
+                  navItems: =Navigation
+                  navSelected: =currentScreen

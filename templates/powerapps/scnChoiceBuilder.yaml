@@ -1,0 +1,305 @@
+﻿Screens:
+  scnChoiceBuilder:
+    Properties:
+      Fill: =RGBA(243, 242, 241, 1)
+      LoadingSpinnerColor: =RGBA(0, 101, 161, 1)
+      OnVisible: |-
+        =UpdateContext({currentScreen:"Evaluation Form"});
+        Set(_showMenu,false);
+        // Initialize choice fields based on whether we're editing or creating
+        If(
+            IsBlank(gblSelectedChoice),
+            // Create mode - reset all fields
+            Set(gblIsEditChoiceMode, false);
+            Set(gblChoiceResetTrigger, !gblChoiceResetTrigger),
+            // Edit mode - load existing data
+            Set(gblIsEditChoiceMode, true)
+        );
+    Children:
+      - ChoiceBuilder_MainContainer:
+          Control: GroupContainer@1.3.0
+          Variant: ManualLayout
+          Properties:
+            DropShadow: =DropShadow.None
+            Height: =Parent.Height
+            Width: =Parent.Width
+          Children:
+            - ChoiceBuilder_Header:
+                Control: GroupContainer@1.3.0
+                Variant: AutoLayout
+                Properties:
+                  DropShadow: =DropShadow.Regular
+                  Fill: =RGBA(0, 101, 161, 1)
+                  Height: =55
+                  LayoutAlignItems: =LayoutAlignItems.Center
+                  LayoutDirection: =LayoutDirection.Horizontal
+                  PaddingLeft: =15
+                  RadiusBottomLeft: =8
+                  RadiusBottomRight: =8
+                  RadiusTopLeft: =8
+                  RadiusTopRight: =8
+                  Width: =Parent.Width-20
+                  X: =10
+                  Y: =10
+                Children:
+                  - ChoiceBuilder_MenuIcon:
+                      Control: Classic/Icon@2.5.0
+                      Properties:
+                        Color: =RGBA(255, 255, 255, 1)
+                        Height: =50
+                        Icon: =Icon.Hamburger
+                        OnSelect: =Set(_showMenu,!_showMenu)
+                        PaddingBottom: =10
+                        PaddingLeft: =10
+                        PaddingRight: =10
+                        PaddingTop: =10
+                        Width: =50
+                  - ChoiceBuilder_HeaderTitle:
+                      Control: Text@0.0.51
+                      Properties:
+                        Font: =Font.Lato
+                        FontColor: =Color.White
+                        Height: =50
+                        PaddingLeft: =20
+                        Size: =25
+                        Text: ="Choice Builder"
+                        VerticalAlign: =VerticalAlign.Middle
+                        Weight: ='TextCanvas.Weight'.Medium
+                        Width: =Parent.Width - ChoiceBuilder_MenuIcon.Width - 40
+            - ChoiceBuilder_Content:
+                Control: GroupContainer@1.3.0
+                Variant: ManualLayout
+                Properties:
+                  DropShadow: =DropShadow.Regular
+                  Fill: =RGBA(255, 255, 255, 1)
+                  Height: =Parent.Height-85
+                  RadiusBottomLeft: =10
+                  RadiusBottomRight: =10
+                  RadiusTopLeft: =10
+                  RadiusTopRight: =10
+                  Width: =Parent.Width-20
+                  X: =10
+                  Y: =75
+                Children:
+                  - ChoiceBuilder_Container:
+                      Control: GroupContainer@1.3.0
+                      Variant: AutoLayout
+                      Properties:
+                        DropShadow: =DropShadow.None
+                        Height: =Parent.Height - 80
+                        LayoutDirection: =LayoutDirection.Vertical
+                        LayoutGap: =10
+                        LayoutOverflowY: =LayoutOverflow.Scroll
+                        PaddingBottom: =15
+                        PaddingLeft: =10
+                        PaddingRight: =10
+                        PaddingTop: =15
+                        Width: =Parent.Width
+                        Y: =10
+                      Children:
+                        - ChoiceBuilder_Section:
+                            Control: GroupContainer@1.3.0
+                            Variant: AutoLayout
+                            Properties:
+                              DropShadow: =DropShadow.None
+                              Fill: =RGBA(255, 255, 255, 1)
+                              LayoutDirection: =LayoutDirection.Vertical
+                              LayoutGap: =10
+                              LayoutMinHeight: =40
+                              LayoutMinWidth: =100
+                              LayoutOverflowY: =LayoutOverflow.Scroll
+                              RadiusBottomLeft: =6
+                              RadiusBottomRight: =6
+                              RadiusTopLeft: =6
+                              RadiusTopRight: =6
+                              Width: =Parent.Width
+                            Children:
+                              - ChoiceBuilder_SectionTitle:
+                                  Control: Text@0.0.51
+                                  Properties:
+                                    Font: =Font.Lato
+                                    FontColor: =RGBA(0, 101, 161, 1)
+                                    Height: =45
+                                    PaddingBottom: =8
+                                    PaddingLeft: =10
+                                    PaddingTop: =8
+                                    Size: =20
+                                    Text: =If(gblIsEditChoiceMode,"Edit Choice","Add Choice")
+                                    VerticalAlign: =VerticalAlign.Middle
+                                    Weight: ='TextCanvas.Weight'.Semibold
+                                    Width: =Parent.Width
+                              - ChoiceBuilder_TextENContainer:
+                                  Control: GroupContainer@1.3.0
+                                  Variant: AutoLayout
+                                  Properties:
+                                    DropShadow: =DropShadow.None
+                                    LayoutDirection: =LayoutDirection.Vertical
+                                    LayoutGap: =5
+                                    LayoutMinWidth: =100
+                                    PaddingLeft: =10
+                                    PaddingRight: =10
+                                    Width: =Parent.Width
+                                  Children:
+                                    - ChoiceBuilder_TextENLabel:
+                                        Control: Text@0.0.51
+                                        Properties:
+                                          Height: =20
+                                          Text: ="Choice Text (English)"
+                                          Weight: ='TextCanvas.Weight'.Semibold
+                                          Width: =Parent.Width-20
+                                    - ChoiceBuilder_TextEN:
+                                        Control: TextInput@0.0.54
+                                        Properties:
+                                          Height: =80
+                                          MaxLength: =100
+                                          Mode: ='TextInputCanvas.Mode'.Multiline
+                                          Value: =If(gblIsEditChoiceMode, gblSelectedChoice.ChoiceText, "")
+                                          Width: =Parent.Width-20
+                              - ChoiceBuilder_TextTHContainer:
+                                  Control: GroupContainer@1.3.0
+                                  Variant: AutoLayout
+                                  Properties:
+                                    DropShadow: =DropShadow.None
+                                    LayoutDirection: =LayoutDirection.Vertical
+                                    LayoutGap: =5
+                                    LayoutMinWidth: =100
+                                    PaddingLeft: =10
+                                    PaddingRight: =10
+                                    Width: =Parent.Width
+                                  Children:
+                                    - ChoiceBuilder_TextTHLabel:
+                                        Control: Text@0.0.51
+                                        Properties:
+                                          Height: =20
+                                          Text: ="Choice Text (Thai) / ข้อความตัวเลือก"
+                                          Weight: ='TextCanvas.Weight'.Semibold
+                                          Width: =Parent.Width-20
+                                    - ChoiceBuilder_TextTH:
+                                        Control: TextInput@0.0.54
+                                        Properties:
+                                          Height: =80
+                                          MaxLength: =100
+                                          Mode: ='TextInputCanvas.Mode'.Multiline
+                                          Value: =If(gblIsEditChoiceMode, gblSelectedChoice.ChoiceText_TH, "")
+                                          Width: =Parent.Width-20
+                              - ChoiceBuilder_OrderContainer:
+                                  Control: GroupContainer@1.3.0
+                                  Variant: AutoLayout
+                                  Properties:
+                                    DropShadow: =DropShadow.None
+                                    LayoutDirection: =LayoutDirection.Vertical
+                                    LayoutGap: =5
+                                    LayoutMinWidth: =100
+                                    PaddingLeft: =10
+                                    PaddingRight: =10
+                                    Width: =Parent.Width
+                                  Children:
+                                    - ChoiceBuilder_OrderLabel:
+                                        Control: Text@0.0.51
+                                        Properties:
+                                          Height: =20
+                                          Text: ="Display Order"
+                                          Weight: ='TextCanvas.Weight'.Semibold
+                                          Width: =Parent.Width-20
+                                    - ChoiceBuilder_Order:
+                                        Control: NumberInput@2.9.12
+                                        Properties:
+                                          Value: =If(gblIsEditChoiceMode, gblSelectedChoice.Order, CountRows(Filter('[THInterviewEval]FormChoices', FormQuestion.'[THInterviewEval]FormQuestion' = gblSelectedQuestion.'[THInterviewEval]FormQuestion')) + 1)
+                                          Width: =Parent.Width-20
+                              - ChoiceBuilder_ScoreContainer:
+                                  Control: GroupContainer@1.3.0
+                                  Variant: AutoLayout
+                                  Properties:
+                                    DropShadow: =DropShadow.None
+                                    LayoutDirection: =LayoutDirection.Vertical
+                                    LayoutGap: =5
+                                    LayoutMinWidth: =100
+                                    PaddingBottom: =10
+                                    PaddingLeft: =10
+                                    PaddingRight: =10
+                                    Width: =Parent.Width
+                                  Children:
+                                    - ChoiceBuilder_ScoreLabel:
+                                        Control: Text@0.0.51
+                                        Properties:
+                                          Height: =20
+                                          Text: ="Score Value"
+                                          Weight: ='TextCanvas.Weight'.Semibold
+                                          Width: =Parent.Width-20
+                                    - ChoiceBuilder_Score:
+                                        Control: NumberInput@2.9.12
+                                        Properties:
+                                          Value: =If(gblIsEditChoiceMode, gblSelectedChoice.Score, 1)
+                                          Width: =Parent.Width-20
+                  - ChoiceBuilder_Control:
+                      Control: GroupContainer@1.3.0
+                      Variant: AutoLayout
+                      Properties:
+                        DropShadow: =DropShadow.None
+                        Height: =50
+                        LayoutAlignItems: =LayoutAlignItems.Center
+                        LayoutDirection: =LayoutDirection.Horizontal
+                        LayoutGap: =10
+                        LayoutJustifyContent: =LayoutJustifyContent.End
+                        PaddingRight: =10
+                        Width: =Parent.Width-20
+                        X: =10
+                        Y: =Parent.Height-Self.Height-10
+                      Children:
+                        - ChoiceBuilder_CancelBtn:
+                            Control: Button@0.0.45
+                            Properties:
+                              BasePaletteColor: =RGBA(128, 128, 128, 1)
+                              Height: =35
+                              OnSelect: =Navigate(scnQuestionManager)
+                              Text: ="Cancel"
+                              Width: =80
+                        - ChoiceBuilder_SaveBtn:
+                            Control: Button@0.0.45
+                            Properties:
+                              BasePaletteColor: =RGBA(0, 101, 161, 1)
+                              Height: =35
+                              OnSelect: |-
+                                =If(gblIsEditChoiceMode,
+                                    // Edit existing choice
+                                    Patch('[THInterviewEval]FormChoices', gblSelectedChoice,
+                                        {
+                                            ChoiceText: ChoiceBuilder_TextEN.Value,
+                                            ChoiceText_TH: ChoiceBuilder_TextTH.Value,
+                                            FormQuestion: gblSelectedQuestion,
+                                            Order: ChoiceBuilder_Order.Value,
+                                            Score: ChoiceBuilder_Score.Value
+                                        }
+                                    ),
+                                    // Create new choice
+                                    Patch('[THInterviewEval]FormChoices',
+                                        Defaults('[THInterviewEval]FormChoices'),
+                                        {
+                                            ChoiceText: ChoiceBuilder_TextEN.Value,
+                                            ChoiceText_TH: ChoiceBuilder_TextTH.Value,
+                                            FormQuestion: gblSelectedQuestion,
+                                            Order: ChoiceBuilder_Order.Value,
+                                            Score: ChoiceBuilder_Score.Value
+                                        }
+                                    )
+                                );
+                                If(
+                                    IsEmpty(Errors('[THInterviewEval]FormChoices')),
+                                    Notify("Choice saved successfully!", NotificationType.Success);
+                                    Navigate(scnQuestionManager),
+                                    Notify("Error saving choice: " & First(Errors('[THInterviewEval]FormChoices')).Message, NotificationType.Error)
+                                )
+                              Text: =If(gblIsEditChoiceMode,"Save","Add")
+                              Width: =80
+            - ChoiceBuilder_NavigationMenu:
+                Control: CanvasComponent
+                ComponentName: NavigationMenu
+                Properties:
+                  Fill: =RGBA(255, 255, 255, 0.5)
+                  Height: =Parent.Height-70
+                  Visible: =If(_showMenu,true,false)
+                  Width: =260
+                  Y: =70
+                  navItems: =Navigation
+                  navSelected: =currentScreen
+

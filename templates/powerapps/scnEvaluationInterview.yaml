@@ -1,0 +1,810 @@
+﻿Screens:
+  scnEvaluationInterview:
+    Properties:
+      Fill: =RGBA(243, 242, 241, 1)
+      LoadingSpinnerColor: =RGBA(0, 101, 161, 1)
+      OnVisible: |-
+        =// Set current screen for navigation
+        UpdateContext({currentScreen:"Interviewer Evaluation"});
+        Set(_showMenu,false);
+
+        // Initialize language if not set
+        If(IsBlank(gblLanguage), Set(gblLanguage, "EN"));
+
+        // Load evaluation data
+        Set(_currentEvaluation, gblSelectedEvaluation);
+
+        // Load associated records
+        Set(_selectedCandidate, _currentEvaluation.Candidate);
+        Set(_selectedPosition, _currentEvaluation.Position);
+        Set(_selectedForm, _currentEvaluation.EvalForm);
+
+        // Load questions for this form, sorted by display order
+        ClearCollect(colEvalQuestions,
+            Sort(
+                Filter('[THInterviewEval]FormQuestions',
+                    EvalForm.FormName = _selectedForm.FormName
+                ),
+                DisplayOrder
+            )
+        );
+
+        // Add question index to collection for navigation
+        Clear(colIndexedQuestions);
+        ForAll(
+            Sequence(CountRows(colEvalQuestions)) As IndexNum,
+            Collect(colIndexedQuestions,
+                Patch(
+                    Last(FirstN(colEvalQuestions, IndexNum.Value)),
+                    {QuestionIndex: IndexNum.Value}
+                )
+            )
+        );
+
+        // Initialize empty answer collection
+        ClearCollect(colUserAnswers, Blank());
+
+        // Set current question index
+        Set(gblCurrentQuestionIndex, 1);
+
+        // Flag to show review screen
+        Set(showReviewScreen, false)
+    Children:
+      - IntEval_Container:
+          Control: GroupContainer@1.3.0
+          Variant: ManualLayout
+          Properties:
+            DropShadow: =DropShadow.Regular
+            Height: =Parent.Height
+            Width: =Parent.Width
+          Children:
+            - IntEval_Header:
+                Control: GroupContainer@1.3.0
+                Variant: AutoLayout
+                Properties:
+                  DropShadow: =DropShadow.Regular
+                  Fill: =RGBA(0, 101, 161, 1)
+                  Height: =55
+                  LayoutAlignItems: =LayoutAlignItems.Center
+                  LayoutDirection: =LayoutDirection.Horizontal
+                  PaddingLeft: =15
+                  RadiusBottomLeft: =8
+                  RadiusBottomRight: =8
+                  RadiusTopLeft: =8
+                  RadiusTopRight: =8
+                  Width: =Parent.Width - 20
+                  X: =10
+                  Y: =10
+                Children:
+                  - IntEval_MenuIcon:
+                      Control: Classic/Icon@2.5.0
+                      Properties:
+                        Color: =RGBA(255, 255, 255, 1)
+                        Height: =50
+                        Icon: =Icon.Hamburger
+                        OnSelect: =Set(_showMenu, !_showMenu)
+                        PaddingBottom: =10
+                        PaddingLeft: =10
+                        PaddingRight: =10
+                        PaddingTop: =10
+                        Width: =50
+                  - IntEval_HeaderTitle:
+                      Control: Text@0.0.51
+                      Properties:
+                        Font: =Font.Lato
+                        FontColor: =Color.White
+                        Height: =50
+                        PaddingLeft: =20
+                        Size: =25
+                        Text: |-
+                          =If(
+                              gblLanguage = "EN",
+                              "Interview Evaluation",
+                              "การประเมินการสัมภาษณ์"
+                          )
+                        VerticalAlign: =VerticalAlign.Middle
+                        Weight: ='TextCanvas.Weight'.Medium
+                        Width: =Parent.Width - IntEval_MenuIcon.Width - IntEval_LanguageToggle.Width - 40
+                  - IntEval_LanguageToggle:
+                      Control: Button@0.0.45
+                      Properties:
+                        BasePaletteColor: =RGBA(255, 255, 255, 1)
+                        Height: =35
+                        OnSelect: =Set(gblLanguage, If(gblLanguage = "EN", "TH", "EN"))
+                        Text: =If(gblLanguage = "EN", "แสดงภาษาไทย", "Show English")
+                        Width: =150
+            - IntEval_Content:
+                Control: GroupContainer@1.3.0
+                Variant: ManualLayout
+                Properties:
+                  Fill: =RGBA(255, 255, 255, 1)
+                  Height: =Parent.Height - 85
+                  RadiusBottomLeft: =10
+                  RadiusBottomRight: =10
+                  RadiusTopLeft: =10
+                  RadiusTopRight: =10
+                  Width: =Parent.Width - 20
+                  X: =10
+                  Y: =75
+                Children:
+                  - IntEval_ProgressSection:
+                      Control: GroupContainer@1.3.0
+                      Variant: AutoLayout
+                      Properties:
+                        Height: =90
+                        LayoutAlignItems: =LayoutAlignItems.Stretch
+                        LayoutDirection: =LayoutDirection.Vertical
+                        LayoutGap: =10
+                        PaddingBottom: =15
+                        PaddingLeft: =20
+                        PaddingRight: =20
+                        PaddingTop: =15
+                        Width: =Parent.Width
+                      Children:
+                        - IntEval_ProgressText:
+                            Control: Text@0.0.51
+                            Properties:
+                              Align: ='TextCanvas.Align'.Center
+                              Font: =Font.Lato
+                              Size: =16
+                              Text: |-
+                                =If(
+                                    gblLanguage = "EN",
+                                    "Question " & gblCurrentQuestionIndex & " of " & CountRows(colIndexedQuestions),
+                                    "คำถามที่ " & gblCurrentQuestionIndex & " จาก " & CountRows(colIndexedQuestions)
+                                )
+                              Weight: ='TextCanvas.Weight'.Semibold
+                        - IntEval_ProgressBar:
+                            Control: Progress@1.1.34
+                            Properties:
+                              Height: =30
+                              Max: =CountRows(colIndexedQuestions)
+                              Value: =gblCurrentQuestionIndex
+                  - IntEval_CompactInfo:
+                      Control: GroupContainer@1.3.0
+                      Variant: AutoLayout
+                      Properties:
+                        Fill: =RGBA(247, 232, 211, 0.3)
+                        Height: =50
+                        LayoutAlignItems: =LayoutAlignItems.Center
+                        LayoutDirection: =LayoutDirection.Horizontal
+                        LayoutGap: =15
+                        PaddingLeft: =20
+                        PaddingRight: =20
+                        Width: =Parent.Width-40
+                        X: =20
+                        Y: =IntEval_ProgressSection.Y + IntEval_ProgressSection.Height + 10
+                      Children:
+                        - IntEval_CompactText:
+                            Control: Text@0.0.51
+                            Properties:
+                              Font: =Font.Lato
+                              FontColor: =RGBA(100, 81, 61, 1)
+                              Size: =13
+                              Text: |-
+                                =If(
+                                    gblLanguage = "EN",
+                                    _selectedCandidate.FirstName & " " & _selectedCandidate.LastName & " • " & _selectedPosition.'Position Title',
+                                    _selectedCandidate.FirstNameTH & " " & _selectedCandidate.LastNameTH & " • " & _selectedPosition.'Position Title'
+                                )
+                              Weight: ='TextCanvas.Weight'.Semibold
+                              Width: =Parent.Width - 40
+                  - IntEval_QuestionSection:
+                      Control: GroupContainer@1.3.0
+                      Variant: AutoLayout
+                      Properties:
+                        Height: =IntEval_NavigationButtons.Y - Self.Y - 20
+                        LayoutDirection: =LayoutDirection.Vertical
+                        LayoutGap: =15
+                        LayoutOverflowY: =LayoutOverflow.Scroll
+                        PaddingBottom: =20
+                        PaddingLeft: =20
+                        PaddingRight: =20
+                        PaddingTop: =20
+                        Width: =Parent.Width-40
+                        X: =20
+                        Y: =IntEval_CompactInfo.Y + IntEval_CompactInfo.Height + 20
+                      Children:
+                        - IntEval_CategoryTag:
+                            Control: Text@0.0.51
+                            Properties:
+                              AutoHeight: =true
+                              Font: =Font.Lato
+                              FontColor: =RGBA(0, 101, 161, 1)
+                              Size: =12
+                              Text: |-
+                                =With(
+                                    {currentQ: LookUp(colIndexedQuestions, QuestionIndex = gblCurrentQuestionIndex)},
+                                    If(
+                                        gblLanguage = "EN",
+                                        "Category: " & currentQ.QuestionCategory,
+                                        "หมวดหมู่: " & currentQ.QuestionCategory
+                                    )
+                                )
+                              Weight: ='TextCanvas.Weight'.Semibold
+                              Width: =Parent.Width - 40
+                        - IntEval_QuestionText:
+                            Control: Text@0.0.51
+                            Properties:
+                              AutoHeight: =true
+                              Font: =Font.Lato
+                              Size: =18
+                              Text: |-
+                                =With(
+                                    {currentQ: LookUp(colIndexedQuestions, QuestionIndex = gblCurrentQuestionIndex)},
+                                    If(
+                                        gblLanguage = "EN",
+                                        currentQ.QuestionText,
+                                        currentQ.QuestionText_TH
+                                    )
+                                )
+                              Weight: ='TextCanvas.Weight'.Semibold
+                              Width: =Parent.Width - 40
+                        - IntEval_QuestionImage:
+                            Control: Image@2.2.3
+                            Properties:
+                              Height: |-
+                                =With(
+                                    {currentQ: LookUp(colIndexedQuestions, QuestionIndex = gblCurrentQuestionIndex)},
+                                    If(
+                                        IsBlankOrError(currentQ.QuestionImage),
+                                        0,
+                                        200
+                                    )
+                                )
+                              Image: =LookUp(colIndexedQuestions, QuestionIndex = gblCurrentQuestionIndex).QuestionImage
+                              RadiusBottomLeft: =8
+                              RadiusBottomRight: =8
+                              RadiusTopLeft: =8
+                              RadiusTopRight: =8
+                              Visible: |-
+                                =!IsBlankOrError(
+                                    LookUp(colIndexedQuestions, QuestionIndex = gblCurrentQuestionIndex).QuestionImage
+                                )
+                              Width: =Parent.Width - 40
+                        - IntEval_ChoicesGallery:
+                            Control: Gallery@2.15.0
+                            Variant: BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0
+                            Properties:
+                              Height: =Min(400, Self.AllItemsCount * 70)
+                              Items: |-
+                                =Sort(
+                                    Filter('[THInterviewEval]FormChoices',
+                                        FormQuestion.'[THInterviewEval]FormQuestion' =
+                                        LookUp(colIndexedQuestions, QuestionIndex = gblCurrentQuestionIndex).'[THInterviewEval]FormQuestion'
+                                    ),
+                                    Order
+                                )
+                              TemplatePadding: =5
+                              TemplateSize: =70
+                              Width: =Parent.Width - 40
+                            Children:
+                              - IntEval_SelectionBar:
+                                  Control: Rectangle@2.3.0
+                                  Properties:
+                                    BorderColor: =RGBA(0, 101, 161, 1)
+                                    Fill: =RGBA(0, 101, 161, 1)
+                                    Height: =Parent.TemplateHeight
+                                    OnSelect: =Select(Parent)
+                                    Visible: =LookUp(colUserAnswers, QuestionIndex = gblCurrentQuestionIndex).ChoiceID = ThisItem.'[THInterviewEval]FormChoice'
+                                    Width: =1
+                              - IntEval_ItemContainer:
+                                  Control: GroupContainer@1.3.0
+                                  Variant: AutoLayout
+                                  Properties:
+                                    DropShadow: =DropShadow.None
+                                    Height: =Parent.TemplateHeight
+                                    LayoutAlignItems: =LayoutAlignItems.Center
+                                    LayoutDirection: =LayoutDirection.Horizontal
+                                    LayoutGap: =16
+                                    PaddingLeft: =16
+                                    PaddingRight: =16
+                                    Width: =Parent.TemplateWidth
+                                  Children:
+                                    - IntEval_RadioCircle:
+                                        Control: Circle@2.3.0
+                                        Properties:
+                                          BorderColor: =RGBA(0, 101, 161, 1)
+                                          BorderThickness: =2
+                                          Fill: |-
+                                            =If(
+                                                LookUp(colUserAnswers, QuestionIndex = gblCurrentQuestionIndex).ChoiceID = ThisItem.'[THInterviewEval]FormChoice',
+                                                RGBA(0, 101, 161, 1),
+                                                RGBA(255, 255, 255, 1)
+                                            )
+                                          Height: =24
+                                          Width: =24
+                                    - IntEval_TextContainer:
+                                        Control: GroupContainer@1.3.0
+                                        Variant: AutoLayout
+                                        Properties:
+                                          DropShadow: =DropShadow.None
+                                          LayoutDirection: =LayoutDirection.Vertical
+                                          LayoutGap: =2
+                                          LayoutMinWidth: =200
+                                        Children:
+                                          - IntEval_ChoiceText:
+                                              Control: Text@0.0.51
+                                              Properties:
+                                                AutoHeight: =true
+                                                Font: =Font.Lato
+                                                FontColor: |-
+                                                  =If(
+                                                      LookUp(colUserAnswers, QuestionIndex = gblCurrentQuestionIndex).ChoiceID = ThisItem.'[THInterviewEval]FormChoice',
+                                                      RGBA(0, 101, 161, 1),
+                                                      RGBA(50, 49, 48, 1)
+                                                  )
+                                                Text: |-
+                                                  =If(
+                                                      gblLanguage = "EN",
+                                                      ThisItem.ChoiceText,
+                                                      ThisItem.ChoiceText_TH
+                                                  )
+                                                Weight: |-
+                                                  =If(
+                                                      LookUp(colUserAnswers, QuestionIndex = gblCurrentQuestionIndex).ChoiceID = ThisItem.'[THInterviewEval]FormChoice',
+                                                      'TextCanvas.Weight'.Semibold,
+                                                      'TextCanvas.Weight'.Regular
+                                                  )
+                                                Width: =Parent.Width
+                                          - IntEval_ScoreText:
+                                              Control: Text@0.0.51
+                                              Properties:
+                                                AutoHeight: =true
+                                                Font: =Font.Lato
+                                                FontColor: =RGBA(100, 81, 61, 1)
+                                                Size: =12
+                                                Text: |-
+                                                  =If(
+                                                      gblLanguage = "EN",
+                                                      ThisItem.Score & " " & If(ThisItem.Score = 1, "point", "points"),
+                                                      ThisItem.Score & " คะแนน"
+                                                  )
+                                                Weight: ='TextCanvas.Weight'.Semibold
+                                                Width: =Parent.Width
+                              - IntEval_ClickOverlay:
+                                  Control: Rectangle@2.3.0
+                                  Properties:
+                                    Fill: =RGBA(0, 0, 0, 0)
+                                    Height: =Parent.TemplateHeight
+                                    OnSelect: |-
+                                      =// Save answer to collection
+                                      With(
+                                          {
+                                              currentQ: LookUp(colIndexedQuestions, QuestionIndex = gblCurrentQuestionIndex),
+                                              questionID: LookUp(colIndexedQuestions, QuestionIndex = gblCurrentQuestionIndex).'[THInterviewEval]FormQuestion'
+                                          },
+                                          // Remove existing answer for this question if any
+                                          Remove(colUserAnswers,
+                                              LookUp(colUserAnswers, QuestionIndex = gblCurrentQuestionIndex)
+                                          );
+                                          // Add new answer
+                                          Collect(colUserAnswers,
+                                              {
+                                                  QuestionIndex: gblCurrentQuestionIndex,
+                                                  QuestionID: questionID,
+                                                  QuestionText: currentQ.QuestionText,
+                                                  QuestionText_TH: currentQ.QuestionText_TH,
+                                                  ChoiceID: ThisItem.'[THInterviewEval]FormChoice',
+                                                  ChoiceText: ThisItem.ChoiceText,
+                                                  ChoiceText_TH: ThisItem.ChoiceText_TH,
+                                                  Score: ThisItem.Score
+                                              }
+                                          )
+                                      )
+                                    Width: =Parent.TemplateWidth
+                  - IntEval_NavigationButtons:
+                      Control: GroupContainer@1.3.0
+                      Variant: AutoLayout
+                      Properties:
+                        Height: =50
+                        LayoutAlignItems: =LayoutAlignItems.Center
+                        LayoutDirection: =LayoutDirection.Horizontal
+                        LayoutGap: =10
+                        LayoutJustifyContent: =LayoutJustifyContent.SpaceBetween
+                        PaddingLeft: =20
+                        PaddingRight: =20
+                        Width: =Parent.Width
+                        Y: =Parent.Height - Self.Height - 10
+                      Children:
+                        - IntEval_PreviousBtn:
+                            Control: Button@0.0.45
+                            Properties:
+                              BasePaletteColor: =RGBA(128, 128, 128, 1)
+                              Height: =40
+                              OnSelect: =Set(gblCurrentQuestionIndex, gblCurrentQuestionIndex - 1)
+                              Text: =If(gblLanguage = "EN", "← Previous", "← ก่อนหน้า")
+                              Visible: =gblCurrentQuestionIndex > 1
+                              Width: =120
+                        - IntEval_NextBtn:
+                            Control: Button@0.0.45
+                            Properties:
+                              BasePaletteColor: =RGBA(0, 120, 215, 1)
+                              Height: =40
+                              OnSelect: =Set(gblCurrentQuestionIndex, gblCurrentQuestionIndex + 1)
+                              Text: =If(gblLanguage = "EN", "Next →", "ถัดไป →")
+                              Visible: =gblCurrentQuestionIndex < CountRows(colIndexedQuestions)
+                              Width: =120
+                        - IntEval_SaveDraftBtn:
+                            Control: Button@0.0.45
+                            Properties:
+                              BasePaletteColor: =RGBA(156, 220, 79, 1)
+                              Height: =40
+                              OnSelect: |-
+                                =// TODO: Implement save as draft
+                                Notify("Draft save functionality coming soon", NotificationType.Information)
+                              Text: =If(gblLanguage = "EN", "Save Draft", "บันทึกแบบร่าง")
+                              Width: =130
+                        - IntEval_ReviewSubmitBtn:
+                            Control: Button@0.0.45
+                            Properties:
+                              BasePaletteColor: =RGBA(0, 101, 161, 1)
+                              Height: =40
+                              OnSelect: =Navigate(scnEvaluationSummary)
+                              Text: =If(gblLanguage = "EN", "Review & Submit →", "ตรวจสอบและส่ง →")
+                              Visible: =gblCurrentQuestionIndex = CountRows(colIndexedQuestions)
+                              Width: =150
+            - IntEval_NavigationMenu:
+                Control: CanvasComponent
+                ComponentName: NavigationMenu
+                Properties:
+                  Fill: =RGBA(255, 255, 255, 0.5)
+                  Height: =Parent.Height - 70
+                  Visible: =If(_showMenu, true, false)
+                  Width: =260
+                  Y: =70
+                  navItems: =Navigation
+                  navSelected: =currentScreen
+      - IntEval_ReviewOverlay:
+          Control: GroupContainer@1.3.0
+          Variant: ManualLayout
+          Properties:
+            Fill: =RGBA(0, 0, 0, 0.7)
+            Height: =Parent.Height
+            Visible: =showReviewScreen
+            Width: =Parent.Width
+          Children:
+            - IntEval_ReviewPanel:
+                Control: GroupContainer@1.3.0
+                Variant: ManualLayout
+                Properties:
+                  Fill: =RGBA(255, 255, 255, 1)
+                  Height: =Parent.Height - 100
+                  RadiusBottomLeft: =10
+                  RadiusBottomRight: =10
+                  RadiusTopLeft: =10
+                  RadiusTopRight: =10
+                  Width: =600
+                  X: =(Parent.Width - Self.Width) / 2
+                  Y: =50
+                Children:
+                  - IntEval_ReviewTitle:
+                      Control: Text@0.0.51
+                      Properties:
+                        Align: ='TextCanvas.Align'.Center
+                        Font: =Font.Lato
+                        Size: =20
+                        Text: =If(gblLanguage = "EN", "Evaluation Summary", "สรุปการประเมิน")
+                        Weight: ='TextCanvas.Weight'.Bold
+                        Width: =Parent.Width
+                        Y: =20
+                  - IntEval_ScoringSummary:
+                      Control: GroupContainer@1.3.0
+                      Variant: ManualLayout
+                      Properties:
+                        Fill: =RGBA(247, 232, 211, 0.3)
+                        Height: =120
+                        RadiusBottomLeft: =8
+                        RadiusBottomRight: =8
+                        RadiusTopLeft: =8
+                        RadiusTopRight: =8
+                        Width: =Parent.Width - 40
+                        X: =20
+                        Y: =60
+                      Children:
+                        - IntEval_AnsweredLabel:
+                            Control: Text@0.0.51
+                            Properties:
+                              Font: =Font.Lato
+                              Text: |-
+                                =If(
+                                    gblLanguage = "EN",
+                                    "Questions Answered:",
+                                    "คำถามที่ตอบ:"
+                                )
+                              Width: =200
+                              X: =20
+                              Y: =15
+                        - IntEval_AnsweredValue:
+                            Control: Text@0.0.51
+                            Properties:
+                              Align: ='TextCanvas.Align'.End
+                              Font: =Font.Lato
+                              Text: =CountRows(colUserAnswers) & " / " & CountRows(colIndexedQuestions)
+                              Weight: ='TextCanvas.Weight'.Semibold
+                              Width: =Parent.Width - 240
+                              X: =220
+                              Y: =15
+                        - IntEval_TotalScoreLabel:
+                            Control: Text@0.0.51
+                            Properties:
+                              Font: =Font.Lato
+                              Text: |-
+                                =If(
+                                    gblLanguage = "EN",
+                                    "Total Score:",
+                                    "คะแนนรวม:"
+                                )
+                              Width: =200
+                              X: =20
+                              Y: =45
+                        - IntEval_TotalScoreValue:
+                            Control: Text@0.0.51
+                            Properties:
+                              Align: ='TextCanvas.Align'.End
+                              Font: =Font.Lato
+                              Text: =Sum(colUserAnswers, Score) & " / " & _selectedForm.MaxScore
+                              Weight: ='TextCanvas.Weight'.Semibold
+                              Width: =Parent.Width - 240
+                              X: =220
+                              Y: =45
+                        - IntEval_PercentageLabel:
+                            Control: Text@0.0.51
+                            Properties:
+                              Font: =Font.Lato
+                              Text: |-
+                                =If(
+                                    gblLanguage = "EN",
+                                    "Percentage:",
+                                    "เปอร์เซ็นต์:"
+                                )
+                              Width: =200
+                              X: =20
+                              Y: =75
+                        - IntEval_PercentageValue:
+                            Control: Text@0.0.51
+                            Properties:
+                              Align: ='TextCanvas.Align'.End
+                              Font: =Font.Lato
+                              Text: |-
+                                =If(
+                                    _selectedForm.MaxScore > 0,
+                                    Round((Sum(colUserAnswers, Score) / _selectedForm.MaxScore) * 100, 1) & "%",
+                                    "N/A"
+                                )
+                              Weight: ='TextCanvas.Weight'.Semibold
+                              Width: =Parent.Width - 240
+                              X: =220
+                              Y: =75
+                  - IntEval_OutcomeSection:
+                      Control: GroupContainer@1.3.0
+                      Variant: AutoLayout
+                      Properties:
+                        Fill: |-
+                          =With(
+                              {percentage: (Sum(colUserAnswers, Score) / _selectedForm.MaxScore) * 100},
+                              If(
+                                  percentage >= 70,
+                                  RGBA(144, 238, 144, 0.3),
+                                  RGBA(255, 182, 193, 0.3)
+                              )
+                          )
+                        Height: =100
+                        LayoutAlignItems: =LayoutAlignItems.Center
+                        LayoutDirection: =LayoutDirection.Vertical
+                        LayoutGap: =8
+                        LayoutJustifyContent: =LayoutJustifyContent.Center
+                        RadiusBottomLeft: =8
+                        RadiusBottomRight: =8
+                        RadiusTopLeft: =8
+                        RadiusTopRight: =8
+                        Width: =Parent.Width - 40
+                        X: =20
+                        Y: =195
+                      Children:
+                        - IntEval_OutcomeLabel:
+                            Control: Text@0.0.51
+                            Properties:
+                              Align: ='TextCanvas.Align'.Center
+                              Font: =Font.Lato
+                              FontColor: |-
+                                =With(
+                                    {percentage: (Sum(colUserAnswers, Score) / _selectedForm.MaxScore) * 100},
+                                    If(
+                                        percentage >= 70,
+                                        RGBA(0, 100, 0, 1),
+                                        RGBA(178, 34, 34, 1)
+                                    )
+                                )
+                              Size: =18
+                              Text: |-
+                                =If(
+                                    gblLanguage = "EN",
+                                    "Outcome",
+                                    "ผลการประเมิน"
+                                )
+                              Weight: ='TextCanvas.Weight'.Semibold
+                              Width: =Parent.Width - 40
+                        - IntEval_OutcomeResult:
+                            Control: Text@0.0.51
+                            Properties:
+                              Align: ='TextCanvas.Align'.Center
+                              Font: =Font.Lato
+                              FontColor: |-
+                                =With(
+                                    {percentage: (Sum(colUserAnswers, Score) / _selectedForm.MaxScore) * 100},
+                                    If(
+                                        percentage >= 70,
+                                        RGBA(0, 100, 0, 1),
+                                        RGBA(178, 34, 34, 1)
+                                    )
+                                )
+                              Size: =24
+                              Text: |-
+                                =With(
+                                    {percentage: (Sum(colUserAnswers, Score) / _selectedForm.MaxScore) * 100},
+                                    If(
+                                        gblLanguage = "EN",
+                                        If(percentage >= 70, "✓ PASS", "✗ FAIL"),
+                                        If(percentage >= 70, "✓ ผ่าน", "✗ ไม่ผ่าน")
+                                    )
+                                )
+                              Weight: ='TextCanvas.Weight'.Bold
+                              Width: =Parent.Width - 40
+                  - IntEval_AnswersGallery:
+                      Control: Gallery@2.15.0
+                      Variant: Vertical
+                      Properties:
+                        Height: =Parent.Height - 460
+                        Items: =colUserAnswers
+                        TemplateSize: =80
+                        Width: =Parent.Width - 40
+                        X: =20
+                        Y: =310
+                      Children:
+                        - IntEval_ReviewQuestionNumber:
+                            Control: Text@0.0.51
+                            Properties:
+                              Font: =Font.Lato
+                              FontColor: =RGBA(0, 101, 161, 1)
+                              Size: =12
+                              Text: |-
+                                =If(
+                                    gblLanguage = "EN",
+                                    "Q" & ThisItem.QuestionIndex,
+                                    "ข้อ " & ThisItem.QuestionIndex
+                                )
+                              Weight: ='TextCanvas.Weight'.Semibold
+                              Width: =40
+                              X: =10
+                              Y: =5
+                        - IntEval_ReviewQuestionText:
+                            Control: Text@0.0.51
+                            Properties:
+                              AutoHeight: =true
+                              Font: =Font.Lato
+                              Size: =12
+                              Text: |-
+                                =If(
+                                    gblLanguage = "EN",
+                                    ThisItem.QuestionText,
+                                    ThisItem.QuestionText_TH
+                                )
+                              Width: =Parent.TemplateWidth - 60
+                              X: =50
+                              Y: =5
+                        - IntEval_ReviewAnswer:
+                            Control: Text@0.0.51
+                            Properties:
+                              AutoHeight: =true
+                              Font: =Font.Lato
+                              FontColor: =RGBA(0, 101, 161, 1)
+                              Size: =11
+                              Text: |-
+                                =If(
+                                    gblLanguage = "EN",
+                                    "→ " & ThisItem.ChoiceText & " (" & ThisItem.Score & " pts)",
+                                    "→ " & ThisItem.ChoiceText_TH & " (" & ThisItem.Score & " คะแนน)"
+                                )
+                              Weight: ='TextCanvas.Weight'.Semibold
+                              Width: =Parent.TemplateWidth - 60
+                              X: =50
+                              Y: =45
+                  - IntEval_ReviewButtons:
+                      Control: GroupContainer@1.3.0
+                      Variant: AutoLayout
+                      Properties:
+                        Height: =60
+                        LayoutAlignItems: =LayoutAlignItems.Center
+                        LayoutDirection: =LayoutDirection.Horizontal
+                        LayoutGap: =15
+                        LayoutJustifyContent: =LayoutJustifyContent.Center
+                        Width: =Parent.Width
+                        Y: =Parent.Height - 70
+                      Children:
+                        - IntEval_ReviewCloseBtn:
+                            Control: Button@0.0.45
+                            Properties:
+                              BasePaletteColor: =RGBA(128, 128, 128, 1)
+                              Height: =40
+                              OnSelect: =Set(showReviewScreen, false)
+                              Text: =If(gblLanguage = "EN", "← Back", "← กลับ")
+                              Width: =120
+                        - IntEval_SubmitBtn:
+                            Control: Button@0.0.45
+                            Properties:
+                              BasePaletteColor: =RGBA(0, 101, 161, 1)
+                              Height: =40
+                              OnSelect: |-
+                                =// Validate all questions answered
+                                If(
+                                    CountRows(colUserAnswers) < CountRows(colIndexedQuestions),
+                                    Notify(
+                                        If(gblLanguage = "EN",
+                                            "Please answer all questions before submitting.",
+                                            "กรุณาตอบคำถามให้ครบทุกข้อก่อนส่ง"
+                                        ),
+                                        NotificationType.Warning
+                                    ),
+                                    // Save evaluation to Dataverse
+                                    With(
+                                        {
+                                            totalScore: Sum(colUserAnswers, Score),
+                                            percentage: (Sum(colUserAnswers, Score) / _selectedForm.MaxScore) * 100,
+                                            outcome: If((Sum(colUserAnswers, Score) / _selectedForm.MaxScore) * 100 >= 70, "Pass", "Fail")
+                                        },
+                                        Patch(
+                                            '[THInterviewEval]InterviewEvaluations',
+                                            _currentEvaluation,
+                                            {
+                                                'Status (cr76f_status)': "Submitted",
+                                                AverageScore: Sum(colUserAnswers, Score) / CountRows(colUserAnswers),
+                                                FinalRecommendation: outcome,
+                                                Comments: ""
+                                            }
+                                        );
+                                        // Save individual answers with historical snapshots
+                                        ForAll(
+                                            colUserAnswers,
+                                            With(
+                                                {
+                                                    answerScore: ThisRecord.Score,
+                                                    answerChoiceID: ThisRecord.ChoiceID,
+                                                    answerQuestionIndex: ThisRecord.QuestionIndex,
+                                                    answerQuestionText: ThisRecord.QuestionText,
+                                                    answerQuestionText_TH: ThisRecord.QuestionText_TH,
+                                                    answerChoiceText: ThisRecord.ChoiceText,
+                                                    answerChoiceText_TH: ThisRecord.ChoiceText_TH
+                                                },
+                                                With(
+                                                    {
+                                                        question: LookUp(colIndexedQuestions, QuestionIndex = answerQuestionIndex)
+                                                    },
+                                                    Patch(
+                                                        '[THInterviewEval]EvalFormScores',
+                                                        Defaults('[THInterviewEval]EvalFormScores'),
+                                                        {
+                                                            InterviewEvaluation: _currentEvaluation,
+                                                            EvalFormQuestion: question,
+                                                            Score: answerScore,
+                                                            HistoricalQuestionText: answerQuestionText,
+                                                            HistoricalQuestionText_TH: answerQuestionText_TH,
+                                                            HistoricalChoiceText: answerChoiceText,
+                                                            HistoricalChoiceText_TH: answerChoiceText_TH
+                                                        }
+                                                    )
+                                                )
+                                            )
+                                        );
+                                        Notify(
+                                            If(gblLanguage = "EN",
+                                                "Evaluation submitted successfully!",
+                                                "ส่งการประเมินเรียบร้อยแล้ว!"
+                                            ),
+                                            NotificationType.Success
+                                        );
+                                        Navigate(scnDashboard)
+                                    )
+                                )
+                              Text: =If(gblLanguage = "EN", "Submit Evaluation", "ส่งการประเมิน")
+                              Width: =180
