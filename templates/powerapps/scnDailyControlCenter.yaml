@@ -1,0 +1,750 @@
+Screens:
+  scnDailyControlCenter:
+    Properties:
+      Fill: =RGBA(243, 242, 241, 1)
+      LoadingSpinnerColor: =RGBA(100, 81, 61, 1)
+      OnVisible: |-
+        =// Refresh data sources for today's activity
+        Refresh('[THFinanceCashCollection]ProcessLogs');
+        Refresh('[THFinanceCashCollection]EmailLogs');
+        Refresh('[THFinanceCashCollection]Transactions');
+        Refresh('[THFinanceCashCollection]Customers');
+
+        // Get today's process logs (cr7bb_processdate is TEXT type)
+        Set(
+            _todayProcessLog,
+            First(
+                Filter(
+                    '[THFinanceCashCollection]ProcessLogs',
+                    cr7bb_processdate = Text(Today(), "yyyy-mm-dd")
+                )
+            )
+        );
+
+        // Calculate email statistics (cr7bb_sentdatetime is DateTime type)
+        Set(
+            _emailStats,
+            {
+                Sent: CountRows(
+                    Filter(
+                        '[THFinanceCashCollection]EmailLogs',
+                        DateValue(cr7bb_sentdatetime) = Today() &&
+                        cr7bb_sendstatus = "Sent"
+                    )
+                ),
+                Failed: CountRows(
+                    Filter(
+                        '[THFinanceCashCollection]EmailLogs',
+                        DateValue(cr7bb_sentdatetime) = Today() &&
+                        cr7bb_sendstatus = "Failed"
+                    )
+                ),
+                Skipped: CountRows(
+                    Filter(
+                        '[THFinanceCashCollection]EmailLogs',
+                        DateValue(cr7bb_sentdatetime) = Today() &&
+                        cr7bb_sendstatus = "Skipped"
+                    )
+                )
+            }
+        );
+
+        // Get important customers (high balance or late payments)
+        ClearCollect(
+            colImportantCustomers,
+            Filter(
+                AddColumns(
+                    '[THFinanceCashCollection]Customers',
+                    TotalDue,
+                    Sum(
+                        Filter(
+                            '[THFinanceCashCollection]Transactions',
+                            cr7bb_customercode = ThisRecord.cr7bb_customercode &&
+                            !cr7bb_processed
+                        ),
+                        cr7bb_amount
+                    ),
+                    MaxDayCount,
+                    Max(
+                        Filter(
+                            '[THFinanceCashCollection]Transactions',
+                            cr7bb_customercode = ThisRecord.cr7bb_customercode &&
+                            !cr7bb_processed
+                        ),
+                        cr7bb_daycount
+                    )
+                ),
+                TotalDue > 100000 || MaxDayCount >= 3
+            )
+        );
+
+        // Get recent activity (last 10 records)
+        ClearCollect(
+            colRecentActivity,
+            FirstN(
+                Sort(
+                    '[THFinanceCashCollection]EmailLogs',
+                    cr7bb_sentdatetime,
+                    SortOrder.Descending
+                ),
+                10
+            )
+        );
+    Children:
+      # ===== HEADER =====
+      - HeaderContainer:
+          Control: GroupContainer@1.3.0
+          Variant: AutoLayout
+          Properties:
+            Fill: =RGBA(0, 101, 161, 1)
+            Height: =80
+            LayoutDirection: =LayoutDirection.Horizontal
+            LayoutAlignItems: =LayoutAlignItems.Center
+            LayoutGap: =20
+            LayoutMode: =LayoutMode.Auto
+            LayoutMinHeight: =0
+            LayoutMinWidth: =100
+            DropShadow: =DropShadow.None
+            PaddingLeft: =24
+            PaddingRight: =24
+            Width: =Parent.Width
+          Children:
+            - HeaderTitle:
+                Control: Text@0.0.51
+                Properties:
+                  Text: ="Daily Control Center"
+                  Font: =Font.Lato
+                  Weight: ='TextCanvas.Weight'.Bold
+                  FontColor: =RGBA(255, 255, 255, 1)
+                  Size: =24
+                  Width: =400
+                  Height: =40
+                  VerticalAlign: =VerticalAlign.Middle
+            - RefreshButton:
+                Control: Button@0.0.45
+                Properties:
+                  Text: ="Refresh"
+                  Fill: =RGBA(100, 81, 61, 1)
+                  FontColor: =RGBA(255, 255, 255, 1)
+                  Height: =40
+                  Width: =120
+                  OnSelect: =scnDailyControlCenter.OnVisible
+
+      # ===== MAIN CONTENT CONTAINER =====
+      - MainScrollContainer:
+          Control: GroupContainer@1.3.0
+          Variant: verticalAutoLayoutContainer
+          Properties:
+            Fill: =RGBA(243, 242, 241, 1)
+            Height: =Parent.Height - HeaderContainer.Height
+            Y: =HeaderContainer.Height
+            Width: =Parent.Width
+            LayoutMode: =LayoutMode.Auto
+            LayoutDirection: =LayoutDirection.Vertical
+            LayoutGap: =24
+            LayoutMinHeight: =40
+            LayoutMinWidth: =100
+            DropShadow: =DropShadow.None
+            PaddingTop: =24
+            PaddingLeft: =24
+            PaddingRight: =24
+            PaddingBottom: =24
+            LayoutOverflowY: =LayoutOverflow.Scroll
+          Children:
+            # ===== STATUS CARD =====
+            - StatusCard:
+                Control: GroupContainer@1.3.0
+                Variant: AutoLayout
+                Properties:
+                  Fill: =RGBA(255, 255, 255, 1)
+                  DropShadow: =DropShadow.Light
+                  Height: =180
+                  LayoutMinHeight: =0
+                  LayoutMinWidth: =1000
+                  LayoutMode: =LayoutMode.Auto
+                  LayoutDirection: =LayoutDirection.Vertical
+                  LayoutGap: =16
+                  PaddingTop: =20
+                  PaddingLeft: =20
+                  PaddingRight: =20
+                  PaddingBottom: =20
+                Children:
+                  - StatusCardHeader:
+                      Control: Text@0.0.51
+                      Properties:
+                        Text: ="System Status"
+                        Font: =Font.Lato
+                        Weight: ='TextCanvas.Weight'.Bold
+                        FontColor: =RGBA(0, 101, 161, 1)
+                        Size: =20
+                        Width: =960
+                        Height: =32
+                  - StatusIndicatorsContainer:
+                      Control: GroupContainer@1.3.0
+                      Variant: horizontalAutoLayoutContainer
+                      Properties:
+                        LayoutMode: =LayoutMode.Auto
+                        LayoutDirection: =LayoutDirection.Horizontal
+                        LayoutGap: =40
+                        Height: =90
+                        LayoutMinHeight: =0
+                        LayoutMinWidth: =960
+                        DropShadow: =DropShadow.None
+                      Children:
+                        # SAP Import Status
+                        - SAPImportStatus:
+                            Control: GroupContainer@1.3.0
+                            Variant: AutoLayout
+                            Properties:
+                              LayoutMode: =LayoutMode.Auto
+                              LayoutDirection: =LayoutDirection.Horizontal
+                              LayoutGap: =12
+                              LayoutAlignItems: =LayoutAlignItems.Center
+                              Height: =90
+                              Width: =400
+                              LayoutMinHeight: =0
+                              LayoutMinWidth: =100
+                              DropShadow: =DropShadow.None
+                            Children:
+                              - SAPStatusIcon:
+                                  Control: Icon@2.5.0
+                                  Properties:
+                                    Icon: =If(
+                                        !IsBlank(_todayProcessLog) && _todayProcessLog.cr7bb_status = "Completed",
+                                        Icon.CheckBadge,
+                                        If(
+                                            !IsBlank(_todayProcessLog) && _todayProcessLog.cr7bb_status = "Failed",
+                                            Icon.CancelBadge,
+                                            Icon.Clock
+                                        )
+                                    )
+                                    Color: =If(
+                                        !IsBlank(_todayProcessLog) && _todayProcessLog.cr7bb_status = "Completed",
+                                        RGBA(16, 124, 16, 1),
+                                        If(
+                                            !IsBlank(_todayProcessLog) && _todayProcessLog.cr7bb_status = "Failed",
+                                            RGBA(168, 0, 0, 1),
+                                            RGBA(255, 185, 0, 1)
+                                        )
+                                    )
+                                    Width: =64
+                                    Height: =64
+                              - SAPStatusDetails:
+                                  Control: GroupContainer@1.3.0
+                                  Variant: AutoLayout
+                                  Properties:
+                                    LayoutMode: =LayoutMode.Auto
+                                    LayoutDirection: =LayoutDirection.Vertical
+                                    LayoutGap: =4
+                                    Height: =80
+                                    Width: =320
+                                    LayoutMinHeight: =0
+                                    LayoutMinWidth: =100
+                                    DropShadow: =DropShadow.None
+                                  Children:
+                                    - SAPStatusTitle:
+                                        Control: Text@0.0.51
+                                        Properties:
+                                          Text: ="SAP Import"
+                                          Font: =Font.'Segoe UI'
+                                          Weight: ='TextCanvas.Weight'.Semibold
+                                          FontColor: =RGBA(50, 49, 48, 1)
+                                          Size: =16
+                                          Width: =320
+                                          Height: =28
+                                    - SAPStatusText:
+                                        Control: Text@0.0.51
+                                        Properties:
+                                          Text: |-
+                                            =If(
+                                                IsBlank(_todayProcessLog),
+                                                "Waiting to run...",
+                                                _todayProcessLog.cr7bb_status & " at " &
+                                                Text(DateTimeValue(_todayProcessLog.cr7bb_processdate), "[$-th-TH]hh:mm")
+                                            )
+                                          Font: =Font.'Segoe UI'
+                                          FontColor: =RGBA(96, 94, 92, 1)
+                                          Size: =14
+                                          Width: =320
+                                          Height: =24
+                                    - SAPRecordCount:
+                                        Control: Text@0.0.51
+                                        Properties:
+                                          Text: =If(
+                                              !IsBlank(_todayProcessLog),
+                                              _todayProcessLog.cr7bb_recordsprocessed & " transactions processed",
+                                              ""
+                                          )
+                                          Font: =Font.'Segoe UI'
+                                          FontColor: =RGBA(96, 94, 92, 1)
+                                          Size: =12
+                                          Width: =320
+                                          Height: =20
+
+                        # Email Engine Status
+                        - EmailEngineStatus:
+                            Control: GroupContainer@1.3.0
+                            Variant: AutoLayout
+                            Properties:
+                              LayoutMode: =LayoutMode.Auto
+                              LayoutDirection: =LayoutDirection.Horizontal
+                              LayoutGap: =12
+                              LayoutAlignItems: =LayoutAlignItems.Center
+                              Height: =90
+                              Width: =400
+                              LayoutMinHeight: =0
+                              LayoutMinWidth: =100
+                              DropShadow: =DropShadow.None
+                            Children:
+                              - EmailStatusIcon:
+                                  Control: Icon@2.5.0
+                                  Properties:
+                                    Icon: =If(
+                                        _emailStats.Sent > 0 && _emailStats.Failed = 0,
+                                        Icon.CheckBadge,
+                                        If(
+                                            _emailStats.Failed > 0,
+                                            Icon.Warning,
+                                            Icon.Clock
+                                        )
+                                    )
+                                    Color: =If(
+                                        _emailStats.Sent > 0 && _emailStats.Failed = 0,
+                                        RGBA(16, 124, 16, 1),
+                                        If(
+                                            _emailStats.Failed > 0,
+                                            RGBA(255, 185, 0, 1),
+                                            RGBA(96, 94, 92, 1)
+                                        )
+                                    )
+                                    Width: =64
+                                    Height: =64
+                              - EmailStatusDetails:
+                                  Control: GroupContainer@1.3.0
+                                  Variant: AutoLayout
+                                  Properties:
+                                    LayoutMode: =LayoutMode.Auto
+                                    LayoutDirection: =LayoutDirection.Vertical
+                                    LayoutGap: =4
+                                    Height: =80
+                                    Width: =320
+                                    LayoutMinHeight: =0
+                                    LayoutMinWidth: =100
+                                    DropShadow: =DropShadow.None
+                                  Children:
+                                    - EmailStatusTitle:
+                                        Control: Text@0.0.51
+                                        Properties:
+                                          Text: ="Email Engine"
+                                          Font: =Font.'Segoe UI'
+                                          Weight: ='TextCanvas.Weight'.Semibold
+                                          FontColor: =RGBA(50, 49, 48, 1)
+                                          Size: =16
+                                          Width: =320
+                                          Height: =28
+                                    - EmailStatusText:
+                                        Control: Text@0.0.51
+                                        Properties:
+                                          Text: |-
+                                            =If(
+                                                _emailStats.Sent = 0 && _emailStats.Failed = 0,
+                                                "Waiting to run...",
+                                                _emailStats.Sent & " sent, " & _emailStats.Failed & " failed"
+                                            )
+                                          Font: =Font.'Segoe UI'
+                                          FontColor: =RGBA(96, 94, 92, 1)
+                                          Size: =14
+                                          Width: =320
+                                          Height: =24
+                                    - EmailSkippedCount:
+                                        Control: Text@0.0.51
+                                        Properties:
+                                          Text: =If(
+                                              _emailStats.Skipped > 0,
+                                              _emailStats.Skipped & " customers skipped (CN > DN)",
+                                              ""
+                                          )
+                                          Font: =Font.'Segoe UI'
+                                          FontColor: =RGBA(96, 94, 92, 1)
+                                          Size: =12
+                                          Width: =320
+                                          Height: =20
+
+            # ===== QUICK ACTIONS =====
+            - QuickActionsCard:
+                Control: GroupContainer@1.3.0
+                Variant: AutoLayout
+                Properties:
+                  Fill: =RGBA(255, 255, 255, 1)
+                  DropShadow: =DropShadow.Light
+                  Height: =140
+                  LayoutMinHeight: =0
+                  LayoutMinWidth: =1000
+                  LayoutMode: =LayoutMode.Auto
+                  LayoutDirection: =LayoutDirection.Vertical
+                  LayoutGap: =16
+                  PaddingTop: =20
+                  PaddingLeft: =20
+                  PaddingRight: =20
+                  PaddingBottom: =20
+                Children:
+                  - QuickActionsHeader:
+                      Control: Text@0.0.51
+                      Properties:
+                        Text: ="Quick Actions"
+                        Font: =Font.Lato
+                        Weight: ='TextCanvas.Weight'.Bold
+                        FontColor: =RGBA(0, 101, 161, 1)
+                        Size: =20
+                        Width: =960
+                        Height: =32
+                  - QuickActionsButtons:
+                      Control: GroupContainer@1.3.0
+                      Variant: horizontalAutoLayoutContainer
+                      Properties:
+                        LayoutMode: =LayoutMode.Auto
+                        LayoutDirection: =LayoutDirection.Horizontal
+                        LayoutGap: =16
+                        Height: =50
+                        LayoutMinHeight: =0
+                        LayoutMinWidth: =960
+                        DropShadow: =DropShadow.None
+                      Children:
+                        - ReviewEmailsButton:
+                            Control: Button@0.0.45
+                            Properties:
+                              Text: ="📧 Review Today's Emails"
+                              Fill: =RGBA(0, 101, 161, 1)
+                              FontColor: =RGBA(255, 255, 255, 1)
+                              Height: =50
+                              Width: =240
+                              OnSelect: =Navigate(scnEmailMonitor)
+                        - ViewFailedButton:
+                            Control: Button@0.0.45
+                            Properties:
+                              Text: |-
+                                ="⚠️ View Failed (" & _emailStats.Failed & ")"
+                              Fill: =If(
+                                  _emailStats.Failed > 0,
+                                  RGBA(168, 0, 0, 1),
+                                  RGBA(200, 198, 196, 1)
+                              )
+                              FontColor: =RGBA(255, 255, 255, 1)
+                              Height: =50
+                              Width: =200
+                              DisplayMode: =If(
+                                  _emailStats.Failed > 0,
+                                  DisplayMode.Edit,
+                                  DisplayMode.Disabled
+                              )
+                              OnSelect: |-
+                                =Set(_emailStatusFilter, "Failed");
+                                Navigate(scnEmailMonitor)
+                        - CustomerLookupButton:
+                            Control: Button@0.0.45
+                            Properties:
+                              Text: ="🔍 Customer Lookup"
+                              Fill: =RGBA(100, 81, 61, 1)
+                              FontColor: =RGBA(255, 255, 255, 1)
+                              Height: =50
+                              Width: =200
+                              OnSelect: =Navigate(scnCustomer)
+                        - TransactionsButton:
+                            Control: Button@0.0.45
+                            Properties:
+                              Text: ="📊 Transaction Inspector"
+                              Fill: =RGBA(0, 101, 161, 1)
+                              FontColor: =RGBA(255, 255, 255, 1)
+                              Height: =50
+                              Width: =240
+                              OnSelect: =Navigate(scnTransactions)
+
+            # ===== IMPORTANT CUSTOMERS =====
+            - ImportantCustomersCard:
+                Control: GroupContainer@1.3.0
+                Variant: AutoLayout
+                Properties:
+                  Fill: =RGBA(255, 255, 255, 1)
+                  DropShadow: =DropShadow.Light
+                  LayoutMinHeight: =300
+                  LayoutMinWidth: =1000
+                  LayoutMode: =LayoutMode.Auto
+                  LayoutDirection: =LayoutDirection.Vertical
+                  LayoutGap: =16
+                  PaddingTop: =20
+                  PaddingLeft: =20
+                  PaddingRight: =20
+                  PaddingBottom: =20
+                Children:
+                  - ImportantCustomersHeader:
+                      Control: Text@0.0.51
+                      Properties:
+                        Text: ="Important Customers (High Balance or Late Payments)"
+                        Font: =Font.Lato
+                        Weight: ='TextCanvas.Weight'.Bold
+                        FontColor: =RGBA(0, 101, 161, 1)
+                        Size: =20
+                        Width: =960
+                        Height: =32
+                  - ImportantCustomersGallery:
+                      Control: Gallery@2.15.0
+                      Variant: galleryVertical
+                      Properties:
+                        Items: =colImportantCustomers
+                        Height: =300
+                        Width: =960
+                        LayoutMinHeight: =200
+                        TemplatePadding: =0
+                        TemplateSize: =90
+                      Children:
+                        - CustomerItemContainer:
+                            Control: GroupContainer@1.3.0
+                            Variant: horizontalAutoLayoutContainer
+                            Properties:
+                              Fill: =RGBA(250, 249, 248, 1)
+                              Height: =80
+                              Width: =940
+                              LayoutMode: =LayoutMode.Auto
+                              LayoutDirection: =LayoutDirection.Horizontal
+                              LayoutGap: =16
+                              LayoutAlignItems: =LayoutAlignItems.Center
+                              LayoutMinHeight: =0
+                              LayoutMinWidth: =100
+                              DropShadow: =DropShadow.None
+                              PaddingLeft: =16
+                              PaddingRight: =16
+                            Children:
+                              - DayCountIndicator:
+                                  Control: GroupContainer@1.3.0
+                                  Variant: AutoLayout
+                                  Properties:
+                                    Fill: =If(
+                                        ThisItem.MaxDayCount >= 4,
+                                        RGBA(168, 0, 0, 1),
+                                        If(
+                                            ThisItem.MaxDayCount = 3,
+                                            RGBA(255, 185, 0, 1),
+                                            RGBA(16, 124, 16, 1)
+                                        )
+                                    )
+                                    Width: =60
+                                    Height: =60
+                                    LayoutMode: =LayoutMode.Auto
+                                    LayoutJustifyContent: =LayoutJustifyContent.Center
+                                    LayoutAlignItems: =LayoutAlignItems.Center
+                                    LayoutMinHeight: =0
+                                    LayoutMinWidth: =60
+                                    DropShadow: =DropShadow.None
+                                  Children:
+                                    - DayCountText:
+                                        Control: Text@0.0.51
+                                        Properties:
+                                          Text: =Text(ThisItem.MaxDayCount) & "d"
+                                          Font: =Font.Lato
+                                          Weight: ='TextCanvas.Weight'.Bold
+                                          FontColor: =RGBA(255, 255, 255, 1)
+                                          Size: =18
+                                          Width: =50
+                                          Height: =30
+                                          Align: ='TextCanvas.Align'.Center
+                                          VerticalAlign: =VerticalAlign.Middle
+                              - CustomerDetails:
+                                  Control: GroupContainer@1.3.0
+                                  Variant: AutoLayout
+                                  Properties:
+                                    LayoutMode: =LayoutMode.Auto
+                                    LayoutDirection: =LayoutDirection.Vertical
+                                    LayoutGap: =4
+                                    Height: =70
+                                    Width: =500
+                                    LayoutMinHeight: =0
+                                    LayoutMinWidth: =100
+                                    DropShadow: =DropShadow.None
+                                  Children:
+                                    - CustomerName:
+                                        Control: Text@0.0.51
+                                        Properties:
+                                          Text: =ThisItem.cr7bb_customername
+                                          Font: =Font.'Segoe UI'
+                                          Weight: ='TextCanvas.Weight'.Semibold
+                                          FontColor: =RGBA(50, 49, 48, 1)
+                                          Size: =14
+                                          Width: =500
+                                          Height: =24
+                                    - CustomerCode:
+                                        Control: Text@0.0.51
+                                        Properties:
+                                          Text: |-
+                                            ="Code: " & ThisItem.cr7bb_customercode
+                                          Font: =Font.'Segoe UI'
+                                          FontColor: =RGBA(96, 94, 92, 1)
+                                          Size: =12
+                                          Width: =500
+                                          Height: =20
+                                    - CustomerEmail:
+                                        Control: Text@0.0.51
+                                        Properties:
+                                          Text: =ThisItem.cr7bb_customeremail
+                                          Font: =Font.'Segoe UI'
+                                          FontColor: =RGBA(96, 94, 92, 1)
+                                          Size: =12
+                                          Width: =500
+                                          Height: =20
+                              - BalanceAmount:
+                                  Control: Text@0.0.51
+                                  Properties:
+                                    Text: |-
+                                      =Text(ThisItem.TotalDue, "[$-th-TH]#,##0.00")
+                                    Font: =Font.Lato
+                                    Weight: ='TextCanvas.Weight'.Bold
+                                    FontColor: =RGBA(168, 0, 0, 1)
+                                    Size: =18
+                                    Width: =180
+                                    Height: =30
+                                    Align: ='TextCanvas.Align'.End
+                                    VerticalAlign: =VerticalAlign.Middle
+                              - ViewDetailsButton:
+                                  Control: Button@0.0.45
+                                  Properties:
+                                    Text: ="View Details"
+                                    Fill: =RGBA(0, 101, 161, 1)
+                                    FontColor: =RGBA(255, 255, 255, 1)
+                                    Height: =40
+                                    Width: =140
+                                    OnSelect: |-
+                                      =Set(_selectedCustomer, ThisItem);
+                                      Navigate(scnTransactions)
+
+            # ===== RECENT ACTIVITY =====
+            - RecentActivityCard:
+                Control: GroupContainer@1.3.0
+                Variant: AutoLayout
+                Properties:
+                  Fill: =RGBA(255, 255, 255, 1)
+                  DropShadow: =DropShadow.Light
+                  LayoutMinHeight: =250
+                  LayoutMinWidth: =1000
+                  LayoutMode: =LayoutMode.Auto
+                  LayoutDirection: =LayoutDirection.Vertical
+                  LayoutGap: =16
+                  PaddingTop: =20
+                  PaddingLeft: =20
+                  PaddingRight: =20
+                  PaddingBottom: =20
+                Children:
+                  - RecentActivityHeader:
+                      Control: Text@0.0.51
+                      Properties:
+                        Text: ="Recent Activity (Last 10 Emails)"
+                        Font: =Font.Lato
+                        Weight: ='TextCanvas.Weight'.Bold
+                        FontColor: =RGBA(0, 101, 161, 1)
+                        Size: =20
+                        Width: =960
+                        Height: =32
+                  - RecentActivityGallery:
+                      Control: Gallery@2.15.0
+                      Variant: galleryVertical
+                      Properties:
+                        Items: =colRecentActivity
+                        Height: =250
+                        Width: =960
+                        LayoutMinHeight: =150
+                        TemplatePadding: =0
+                        TemplateSize: =70
+                      Children:
+                        - ActivityItemContainer:
+                            Control: GroupContainer@1.3.0
+                            Variant: horizontalAutoLayoutContainer
+                            Properties:
+                              Fill: =RGBA(250, 249, 248, 1)
+                              Height: =60
+                              Width: =940
+                              LayoutMode: =LayoutMode.Auto
+                              LayoutDirection: =LayoutDirection.Horizontal
+                              LayoutGap: =16
+                              LayoutAlignItems: =LayoutAlignItems.Center
+                              LayoutMinHeight: =0
+                              LayoutMinWidth: =100
+                              DropShadow: =DropShadow.None
+                              PaddingLeft: =16
+                              PaddingRight: =16
+                            Children:
+                              - ActivityIcon:
+                                  Control: Icon@2.5.0
+                                  Properties:
+                                    Icon: =If(
+                                        ThisItem.cr7bb_sendstatus = "Sent",
+                                        Icon.MailCheck,
+                                        If(
+                                            ThisItem.cr7bb_sendstatus = "Failed",
+                                            Icon.MailAlert,
+                                            Icon.MailForward
+                                        )
+                                    )
+                                    Color: =If(
+                                        ThisItem.cr7bb_sendstatus = "Sent",
+                                        RGBA(16, 124, 16, 1),
+                                        If(
+                                            ThisItem.cr7bb_sendstatus = "Failed",
+                                            RGBA(168, 0, 0, 1),
+                                            RGBA(96, 94, 92, 1)
+                                        )
+                                    )
+                                    Width: =40
+                                    Height: =40
+                              - ActivityDetails:
+                                  Control: GroupContainer@1.3.0
+                                  Variant: AutoLayout
+                                  Properties:
+                                    LayoutMode: =LayoutMode.Auto
+                                    LayoutDirection: =LayoutDirection.Vertical
+                                    LayoutGap: =2
+                                    Height: =50
+                                    Width: =600
+                                    LayoutMinHeight: =0
+                                    LayoutMinWidth: =100
+                                    DropShadow: =DropShadow.None
+                                  Children:
+                                    - ActivityText:
+                                        Control: Text@0.0.51
+                                        Properties:
+                                          Text: |-
+                                            ="Email " & ThisItem.cr7bb_sendstatus & " to " &
+                                            ThisItem.cr7bb_customer.cr7bb_customername
+                                          Font: =Font.'Segoe UI'
+                                          Weight: ='TextCanvas.Weight'.Semibold
+                                          FontColor: =RGBA(50, 49, 48, 1)
+                                          Size: =13
+                                          Width: =600
+                                          Height: =26
+                                    - ActivityTimestamp:
+                                        Control: Text@0.0.51
+                                        Properties:
+                                          Text: |-
+                                            =Text(ThisItem.cr7bb_sentdatetime, "[$-th-TH]dd/mm/yyyy hh:mm")
+                                          Font: =Font.'Segoe UI'
+                                          FontColor: =RGBA(96, 94, 92, 1)
+                                          Size: =11
+                                          Width: =600
+                                          Height: =20
+                              - ActivityStatus:
+                                  Control: Text@0.0.51
+                                  Properties:
+                                    Text: =ThisItem.cr7bb_sendstatus
+                                    Font: =Font.'Segoe UI'
+                                    Weight: ='TextCanvas.Weight'.Semibold
+                                    FontColor: =If(
+                                        ThisItem.cr7bb_sendstatus = "Sent",
+                                        RGBA(16, 124, 16, 1),
+                                        If(
+                                            ThisItem.cr7bb_sendstatus = "Failed",
+                                            RGBA(168, 0, 0, 1),
+                                            RGBA(96, 94, 92, 1)
+                                        )
+                                    )
+                                    Size: =13
+                                    Width: =100
+                                    Height: =26
+                                    Align: ='TextCanvas.Align'.Center
+                                    VerticalAlign: =VerticalAlign.Middle

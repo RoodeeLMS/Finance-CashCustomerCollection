@@ -163,13 +163,75 @@ This schema implements **Option 2: Database-driven** approach for customer data 
 - **Completed**: Successfully finished
 - **Failed**: Process encountered errors
 
+### 5. Role Master Data (`nc_role`)
+
+**Purpose:** Define available user roles for role-based access control (RBAC).
+
+**Actual Table Name:** `[THFinanceCashCollection]Role` (Physical: `cr7bb_THFinanceCashCollectionRole`)
+
+| Field Name | Data Type | Required | Description |
+|------------|-----------|----------|-------------|
+| `nc_roleid` | Primary Key | Yes | Auto-generated unique identifier |
+| `nc_rolename` | Text(100) | Yes | Role name (e.g., "Admin", "AR User") |
+
+**Production Field Names (cr7bb_ prefix):**
+- `cr7bb_thfinancecashcollectionroleid` - Primary Key
+- `cr7bb_rolename` - Role name (Primary Name field)
+
+**Pre-configured Roles:**
+- **Admin** - IT administrators with full system access
+- **AR User** - Accounts Receivable team members
+
+**Business Rules:**
+- `nc_rolename` must be unique
+- Cannot delete roles that have active assignments
+
+### 6. User Role Assignment (`nc_roleassignment`)
+
+**Purpose:** Assign roles to users for application access control.
+
+**Actual Table Name:** `[THFinanceCashCollection]RoleAssignment` (Physical: `cr7bb_THFinanceCashCollectionRoleAssignment`)
+
+| Field Name | Data Type | Required | Description |
+|------------|-----------|----------|-------------|
+| `nc_roleassignmentid` | Primary Key | Yes | Auto-generated unique identifier |
+| `nc_assignmentkey` | Text(255) | Yes | Composite key: email + role (Primary Name field) |
+| `nc_useremail` | Email | Yes | User's email address (Office 365 account) |
+| `nc_username` | Text(255) | Yes | User's display name |
+| `nc_role` | Lookup(nc_role) | Yes | Reference to role record |
+
+**Production Field Names (cr7bb_ prefix):**
+- `cr7bb_thfinancecashcollectionroleassignmentid` - Primary Key
+- `cr7bb_assignmentkey` - Assignment key (Primary Name)
+- `cr7bb_email` - User email
+- `cr7bb_username` - User name
+- `cr7bb_role` - Lookup to Role table
+
+**Business Rules:**
+- `nc_useremail` must match Office 365 user
+- One role per user (single assignment)
+- `nc_assignmentkey` format: `{email}_{rolename}` for uniqueness
+- Cannot delete assignment for currently logged-in user
+
+**Usage Notes:**
+- ❌ **No `cr7bb_active` field** - All role assignments are active by default
+- Loading screen checks: `LookUp('[THFinanceCashCollection]UserRoles', cr7bb_useremail = User().Email)`
+- Users without role assignment are redirected to unauthorized screen
+
 ## Relationships
 
 ```
 nc_customers (1) ←→ (N) nc_transactions
 nc_customers (1) ←→ (N) nc_emaillog
 nc_processlog (1) ←→ (N) nc_emaillog
+nc_role (1) ←→ (N) nc_roleassignment
 ```
+
+**Relationship Details:**
+- **Customer → Transactions**: One customer can have many transaction records
+- **Customer → Email Logs**: One customer can have many email logs
+- **Process Log → Email Logs**: One process run generates many email logs
+- **Role → Role Assignments**: One role can be assigned to many users
 
 ## Security Model
 

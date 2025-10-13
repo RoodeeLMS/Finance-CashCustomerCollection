@@ -1,0 +1,176 @@
+{
+  "modifications": {
+    "description": "Modifications needed for SAP Import Flow to add filename tracking and file renaming",
+
+    "1_ADD_VARIABLE_varSourceFilePath": {
+      "location": "After Initialize_varFileName (line 227-244)",
+      "action": "ADD_NEW_ACTION",
+      "code": {
+        "Initialize_varSourceFilePath": {
+          "runAfter": {
+            "Initialize_varFileName": ["Succeeded"]
+          },
+          "metadata": {
+            "operationMetadataId": "NEW-GUID-1"
+          },
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [{
+              "name": "varSourceFilePath",
+              "type": "string"
+            }]
+          }
+        }
+      },
+      "then_update": "Get_files_(properties_only) runAfter to Initialize_varSourceFilePath"
+    },
+
+    "2_SET_SOURCE_FILE_PATH": {
+      "location": "After Set_varFileName (line 273-286)",
+      "action": "ADD_NEW_ACTION",
+      "code": {
+        "Set_varSourceFilePath": {
+          "runAfter": {
+            "Set_varFileName": ["Succeeded"]
+          },
+          "metadata": {
+            "operationMetadataId": "NEW-GUID-2"
+          },
+          "type": "SetVariable",
+          "inputs": {
+            "name": "varSourceFilePath",
+            "value": "@{first(outputs('Get_files_(properties_only)')?['body/value'])?['{Path}']}"
+          }
+        }
+      },
+      "then_update": "Create_Process_Log runAfter to Set_varSourceFilePath"
+    },
+
+    "3_CHECK_FILE_ALREADY_PROCESSED": {
+      "location": "After Set_varSourceFilePath",
+      "action": "ADD_NEW_ACTION",
+      "code": {
+        "Condition_Check_File_Already_Processed": {
+          "actions": {
+            "Update_ProcessLog_FileAlreadyProcessed": {
+              "type": "OpenApiConnection",
+              "inputs": {
+                "parameters": {
+                  "entityName": "cr7bb_thfinancecashcollectionprocesslogs",
+                  "recordId": "@variables('varProcessLogID')",
+                  "item/cr7bb_status": 676180005,
+                  "item/cr7bb_endtime": "@utcNow()",
+                  "item/cr7bb_errormessages": "File already processed (contains _Processed suffix)"
+                },
+                "host": {
+                  "connectionName": "shared_commondataserviceforapps-1",
+                  "operationId": "UpdateRecord",
+                  "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps"
+                }
+              }
+            },
+            "Terminate_Already_Processed": {
+              "runAfter": {
+                "Update_ProcessLog_FileAlreadyProcessed": ["Succeeded"]
+              },
+              "type": "Terminate",
+              "inputs": {
+                "runStatus": "Succeeded"
+              }
+            }
+          },
+          "runAfter": {
+            "Set_varSourceFilePath": ["Succeeded"]
+          },
+          "expression": {
+            "contains": [
+              "@variables('varFileName')",
+              "_Processed"
+            ]
+          },
+          "type": "If"
+        }
+      },
+      "then_update": "Create_Process_Log runAfter to Condition_Check_File_Already_Processed"
+    },
+
+    "4_ADD_SOURCEFILEPATH_TO_PROCESSLOG": {
+      "location": "Create_Process_Log action (line 288-317)",
+      "action": "MODIFY_EXISTING",
+      "add_parameters": {
+        "item/cr7bb_sourcefilepath": "@variables('varSourceFilePath')"
+      }
+    },
+
+    "5_ADD_FILENAME_TO_TRANSACTIONS": {
+      "location": "Create_transaction action (line 402-441)",
+      "action": "MODIFY_EXISTING",
+      "add_parameters": {
+        "item/cr7bb_sourcefilename": "@variables('varFileName')",
+        "item/cr7bb_sourcefilepath": "@variables('varSourceFilePath')"
+      }
+    },
+
+    "6_RENAME_FILE_AFTER_PROCESSING": {
+      "location": "After Apply_to_each_row, before Update_Process_Log",
+      "action": "ADD_NEW_ACTIONS",
+      "code": {
+        "Copy_File_with_Processed_Suffix": {
+          "runAfter": {
+            "Apply_to_each_row": ["Succeeded"]
+          },
+          "metadata": {
+            "operationMetadataId": "NEW-GUID-3"
+          },
+          "type": "OpenApiConnection",
+          "inputs": {
+            "parameters": {
+              "dataset": "https://nestle.sharepoint.com/teams/THFinancePowerPlatformSolutions",
+              "source": "@first(outputs('Get_files_(properties_only)')?['body/value'])?['{Path}']",
+              "destination": "@{replace(first(outputs('Get_files_(properties_only)')?['body/value'])?['{Path}'], '.xlsx', '_Processed.xlsx')}",
+              "overwrite": true,
+              "queryParameters": {}
+            },
+            "host": {
+              "connectionName": "shared_sharepointonline-1",
+              "operationId": "CopyFile",
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+            }
+          }
+        },
+        "Delete_Original_File": {
+          "runAfter": {
+            "Copy_File_with_Processed_Suffix": ["Succeeded"]
+          },
+          "metadata": {
+            "operationMetadataId": "NEW-GUID-4"
+          },
+          "type": "OpenApiConnection",
+          "inputs": {
+            "parameters": {
+              "dataset": "https://nestle.sharepoint.com/teams/THFinancePowerPlatformSolutions",
+              "id": "@first(outputs('Get_files_(properties_only)')?['body/value'])?['{Identifier}']"
+            },
+            "host": {
+              "connectionName": "shared_sharepointonline-1",
+              "operationId": "DeleteFile",
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+            }
+          }
+        }
+      },
+      "then_update": "Update_Process_Log runAfter to Delete_Original_File"
+    },
+
+    "7_UPDATE_STATUS_IN_PROCESSLOG": {
+      "location": "Update_Process_Log action (line 526-553)",
+      "action": "MODIFY_EXISTING",
+      "change_parameter": {
+        "item/cr7bb_status": "@if(greater(variables('varErrorCount'), 0), 676180003, 676180001)"
+      },
+      "note": "Changed to use 676180003 for 'Completed with errors' instead of 124850001"
+    }
+  },
+
+  "summary": "These modifications add file tracking, prevent reprocessing, and rename files after successful processing."
+}

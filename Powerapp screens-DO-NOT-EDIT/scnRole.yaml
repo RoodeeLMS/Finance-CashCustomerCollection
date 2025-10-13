@@ -1,243 +1,271 @@
 Screens:
   scnRole:
     Properties:
-      LoadingSpinnerColor: =RGBA(56, 96, 178, 1)
+      Fill: =RGBA(243, 242, 241, 1)
+      LoadingSpinnerColor: =RGBA(0, 101, 161, 1)
       OnVisible: |-
-        =UpdateContext({currentScreen:"Role"});
-        UpdateContext({currentMode:"View"});
-        Set(_showMenu,false);
-        UpdateContext({ showConfirmationPopup: false });
-        UpdateContext({ dataSourceIdentifier: "" });
-        UpdateContext({ recordToDelete: Blank() });
-        UpdateContext({ recordPrimaryProperty: "" });
+        =// Check if user is Admin, redirect if not
+
+        // Initialize local variables
+        UpdateContext({
+            currentScreen: "Role Management",
+            _showMenu: false,
+            _currentMode: "View",
+            _showDeleteConfirmation: false,
+            _selectedUser: Blank(),
+            _userToDelete: Blank()
+        });
     Children:
-      - RoleMainContainer:
+      - Role_Container:
           Control: GroupContainer@1.3.0
           Variant: ManualLayout
           Properties:
-            DropShadow: =DropShadow.Regular
+            DropShadow: =DropShadow.None
             Height: =Parent.Height
             Width: =Parent.Width
           Children:
-            - RoleContent:
+            - Role_Header:
+                Control: GroupContainer@1.3.0
+                Variant: AutoLayout
+                Properties:
+                  DropShadow: =DropShadow.Regular
+                  Fill: =RGBA(0, 101, 161, 1)
+                  Height: =55
+                  LayoutAlignItems: =LayoutAlignItems.Center
+                  LayoutDirection: =LayoutDirection.Horizontal
+                  PaddingLeft: =15
+                  RadiusBottomLeft: =8
+                  RadiusBottomRight: =8
+                  RadiusTopLeft: =8
+                  RadiusTopRight: =8
+                  Width: =Parent.Width - 20
+                  X: =10
+                  Y: =10
+                Children:
+                  - Role_MenuIcon:
+                      Control: Classic/Icon@2.5.0
+                      Properties:
+                        Color: =RGBA(255, 255, 255, 1)
+                        Height: =50
+                        Icon: =Icon.Hamburger
+                        OnSelect: |-
+                          =UpdateContext({_showMenu: !_showMenu})
+                        PaddingBottom: =10
+                        PaddingLeft: =10
+                        PaddingRight: =10
+                        PaddingTop: =10
+                        Width: =50
+                  - Role_HeaderTitle:
+                      Control: Text@0.0.51
+                      Properties:
+                        Font: =Font.Lato
+                        FontColor: =Color.White
+                        Height: =50
+                        PaddingLeft: =20
+                        Size: =25
+                        Text: ="User Role Management"
+                        VerticalAlign: =VerticalAlign.Middle
+                        Weight: ='TextCanvas.Weight'.Medium
+                        Width: =Parent.Width - Role_MenuIcon.Width - 40
+            - Role_Content:
                 Control: GroupContainer@1.3.0
                 Variant: ManualLayout
                 Properties:
-                  DropShadow: =DropShadow.None
+                  DropShadow: =DropShadow.Regular
                   Fill: =RGBA(255, 255, 255, 1)
-                  Height: |+
-                    =Parent.Height-85
-
-
-
-
-
-
+                  Height: =Parent.Height - 85
                   RadiusBottomLeft: =10
                   RadiusBottomRight: =10
                   RadiusTopLeft: =10
                   RadiusTopRight: =10
-                  Width: |+
-                    =Parent.Width-20
-
-                  X: |
-                    =10
+                  Width: =Parent.Width - 20
+                  X: =10
                   Y: =75
                 Children:
-                  - RoleTable:
+                  - Role_TableView:
                       Control: GroupContainer@1.3.0
                       Variant: ManualLayout
                       Properties:
                         Height: =Parent.Height
-                        Visible: |
-                          =currentMode="View"
+                        Visible: =_currentMode = "View"
                         Width: =Parent.Width
                       Children:
-                        - RoleTableControl:
+                        - Role_ActionBar:
                             Control: GroupContainer@1.3.0
                             Variant: AutoLayout
                             Properties:
-                              Height: =40
+                              Fill: =RGBA(245, 245, 245, 1)
+                              Height: =50
+                              LayoutAlignItems: =LayoutAlignItems.Center
                               LayoutDirection: =LayoutDirection.Horizontal
-                              LayoutGap: |
-                                =10
+                              LayoutGap: =10
                               LayoutJustifyContent: =LayoutJustifyContent.End
-                              PaddingRight: =10
-                              PaddingTop: |
-                                =5
-                              RadiusBottomRight: |
-                                =5
+                              PaddingLeft: =15
+                              PaddingRight: =15
+                              RadiusTopLeft: =10
+                              RadiusTopRight: =10
                               Width: =Parent.Width
-                              X: =Parent.Width-Self.Width
-                              Y: =20
                             Children:
-                              - RoleAddBtn:
+                              - Role_AddBtn:
                                   Control: Button@0.0.45
                                   Properties:
-                                    Align: =Align.Center
-                                    Appearance: ='ButtonCanvas.Appearance'.Primary
-                                    BasePaletteColor: =RGBA(141, 229, 250, 1)
-                                    Height: =30
+                                    BasePaletteColor: =RGBA(0, 101, 161, 1)
+                                    Height: =35
                                     Icon: ="Add"
                                     OnSelect: |-
-                                      =UpdateContext({currentMode:"New"});
-                                      UpdateContext({currentSelectedRoleAssignment:Blank()});
-                                      Reset(RoleFormAreaCombo);
-                                      Reset(RoleFormUserCombo);
+                                      =UpdateContext({
+                                          _currentMode: "New",
+                                          _selectedUser: Blank()
+                                      })
                                     Text: ="Add User"
-                                    VerticalAlign: =VerticalAlign.Middle
                                     Width: =120
-                                    X: =325
-                                    Y: =20
-                              - RoleEditBtn:
+                              - Role_EditBtn:
                                   Control: Button@0.0.45
                                   Properties:
-                                    BasePaletteColor: =RGBA(141, 229, 250, 1)
-                                    DisplayMode: =If(IsBlankOrError(RoleTableTbl.Selected),DisplayMode.Disabled,DisplayMode.Edit)
-                                    Height: =30
+                                    BasePaletteColor: =RGBA(100, 81, 61, 1)
+                                    DisplayMode: |-
+                                      =If(
+                                          IsBlankOrError(Role_Table.Selected),
+                                          DisplayMode.Disabled,
+                                          DisplayMode.Edit
+                                      )
+                                    Height: =35
+                                    Icon: ="Edit"
                                     OnSelect: |-
-                                      =UpdateContext({currentMode:"Edit"});
-                                      UpdateContext({currentSelectedRoleAssignement:RoleTableTbl.Selected});
-                                      Reset(RoleFormAreaCombo);
-                                      Reset(RoleFormUserCombo);
+                                      =UpdateContext({
+                                          _currentMode: "Edit",
+                                          _selectedUser: Role_Table.Selected
+                                      })
                                     Text: ="Edit"
-                                    X: =79
-                                    Y: =10
-                              - RoleRemoveBtn:
+                                    Width: =80
+                              - Role_DeleteBtn:
                                   Control: Button@0.0.45
                                   Properties:
-                                    Align: =Align.Center
-                                    Appearance: ='ButtonCanvas.Appearance'.Primary
-                                    BasePaletteColor: =RGBA(249, 83, 109, 1)
-                                    DisplayMode: =If(IsBlankOrError(RoleTableTbl.Selected),DisplayMode.Disabled,DisplayMode.Edit)
-                                    Height: =30
+                                    BasePaletteColor: =RGBA(191, 25, 34, 1)
+                                    DisplayMode: |-
+                                      =If(
+                                          IsBlankOrError(Role_Table.Selected),
+                                          DisplayMode.Disabled,
+                                          DisplayMode.Edit
+                                      )
+                                    Height: =35
                                     Icon: ="Delete"
                                     OnSelect: |-
                                       =UpdateContext({
-                                            recordToDelete: RoleTableTbl.Selected,
-                                            recordPrimaryProperty: "UserName", // Changed from "Display Name"
-                                            dataSourceIdentifier: "RoleAssignment",
-                                            showConfirmationPopup: true
-                                        });
-                                    Text: ="Remove"
-                                    VerticalAlign: =VerticalAlign.Middle
-                                    Width: =100
-                                    X: =325
-                                    Y: =20
-                        - RoleTableTbl:
+                                          _userToDelete: Role_Table.Selected,
+                                          _showDeleteConfirmation: true
+                                      })
+                                    Text: ="Delete"
+                                    Width: =90
+                        - Role_Table:
                             Control: Table@1.0.278
                             Properties:
                               DateTimeFormat: ='PowerAppsOneGrid.DateTimeFormat'.ShortDate
                               EnableRangeSelection: ='PowerAppsOneGrid.EnableRangeSelection'.Enable
-                              Height: |
-                                =Parent.Height-70
+                              Height: =Parent.Height - 60
                               Items: ='[THFinanceCashCollection]RoleAssignments'
                               ReflowBehavior: ='PowerAppsOneGrid.ReflowBehavior'.Reflow
-                              Visible: =currentMode="View"
-                              Width: =Parent.Width
-                              Y: =60
+                              ShowAvatar: ="no"
+                              Width: =Parent.Width - 20
+                              X: =10
+                              Y: =55
                             Children:
-                              - Email3:
+                              - Email2:
                                   Control: TableDataField@1.5.0
                                   Variant: textualColumn
                                   IsLocked: true
                                   Properties:
                                     FieldDisplayName: ="Email"
-                                    FieldName: ="cr76f_email"
+                                    FieldName: ="cr7bb_email"
                                     FieldType: ="s"
-                                    Order: =3
-                              - UserName1:
-                                  Control: TableDataField@1.5.0
-                                  Variant: textualColumn
-                                  IsLocked: true
-                                  Properties:
-                                    FieldDisplayName: ="UserName"
-                                    FieldName: ="cr76f_username"
-                                    FieldType: ="s"
-                                    Order: =2
-                              - Role3:
+                                    Order: =1
+                              - Role2:
                                   Control: TableDataField@1.5.0
                                   IsLocked: true
                                   Properties:
                                     FieldDisplayName: ="Role"
-                                    FieldName: ="cr76f_Role"
+                                    FieldName: ="cr7bb_Role"
                                     FieldType: ="E"
-                                    Order: =4
-                                    Width: =50
-                  - RoleForm:
+                                    Order: =2
+                  - Role_FormView:
                       Control: GroupContainer@1.3.0
                       Variant: ManualLayout
                       Properties:
                         Height: =Parent.Height
-                        Visible: =currentMode="New"|| currentMode = "Edit"
+                        Visible: =_currentMode = "New" || _currentMode = "Edit"
                         Width: =Parent.Width
-                        X: |
-                          =0
                       Children:
-                        - RoleFormContainer:
+                        - Role_FormContainer:
                             Control: GroupContainer@1.3.0
                             Variant: AutoLayout
                             Properties:
-                              Height: |
-                                =Parent.Height-50
+                              Height: =Parent.Height - 50
                               LayoutDirection: =LayoutDirection.Vertical
-                              LayoutOverflowX: =LayoutOverflow.Scroll
-                              LayoutOverflowY: =LayoutOverflow.Scroll
-                              PaddingLeft: =15
-                              PaddingTop: =15
+                              LayoutGap: =15
+                              PaddingLeft: =20
+                              PaddingRight: =20
+                              PaddingTop: =20
                               Width: =Parent.Width
                             Children:
-                              - RoleFormUserLabel:
+                              - Role_Form_UserLabel:
                                   Control: Text@0.0.51
                                   Properties:
-                                    Height: =20
-                                    Text: ="User"
-                                    Width: =95
-                                    X: =25
-                                    Y: =120
-                              - RoleFormUserCombo:
+                                    Font: =Font.Lato
+                                    FontColor: =RGBA(100, 100, 100, 1)
+                                    Height: =25
+                                    Text: ="Select User:"
+                                    Weight: ='TextCanvas.Weight'.Semibold
+                                    Width: =Parent.Width - 40
+                              - Role_Form_UserCombo:
                                   Control: ComboBox@0.0.51
                                   Properties:
-                                    DefaultSelectedItems: |
-                                      =If(IsBlank(currentSelectedRoleAssignement),Blank(),Office365Users.UserProfile(currentSelectedRoleAssignement.Email))
-                                    Items: |+
+                                    BasePaletteColor: =RGBA(0, 101, 161, 1)
+                                    DefaultSelectedItems: |-
                                       =If(
-                                          (Len(Self.SearchText) >= 2)||!IsBlankOrError(currentSelectedRoleAssignement.Email), 
+                                          IsBlank(_selectedUser),
+                                          Blank(),
+                                          Office365Users.UserProfile(_selectedUser.Email)
+                                      )
+                                    DisplayMode: |-
+                                      =If(
+                                          _currentMode = "Edit",
+                                          DisplayMode.View,
+                                          DisplayMode.Edit
+                                      )
+                                    Height: =40
+                                    Items: |-
+                                      =If(
+                                          (Len(Self.SearchText) >= 2) || !IsBlankOrError(_selectedUser.Email),
                                           Office365Users.SearchUser({
                                               searchTerm: Self.SearchText,
-                                              top: 15 
-                                          }) // No .value needed here
+                                              top: 15
+                                          })
                                       )
-
-                                    Width: =250
-                                    X: =25
-                                    Y: =140
+                                    Width: =Parent.Width - 40
                                   Children:
-                                    - DisplayName1_1:
+                                    - DisplayNameField:
                                         Control: ComboBoxDataField@1.5.0
-                                        Variant: textualColumn
-                                        IsLocked: true
                                         Properties:
-                                          FieldDisplayName: ="DisplayName"
+                                          FieldDisplayName: ="Display Name"
                                           FieldName: ="DisplayName"
                                           FieldType: ="s"
-                                          Order: =1
-                              - RoleFormAreaLabel:
+                              - Role_Form_RoleLabel:
                                   Control: Text@0.0.51
                                   Properties:
-                                    Height: =20
-                                    Text: ="Role"
-                                    Width: =95
-                                    X: =25
-                                    Y: =180
-                              - RoleFormAreaCombo:
+                                    Font: =Font.Lato
+                                    FontColor: =RGBA(100, 100, 100, 1)
+                                    Height: =25
+                                    Text: ="Role:"
+                                    Weight: ='TextCanvas.Weight'.Semibold
+                                    Width: =Parent.Width - 40
+                              - Role_Form_RoleCombo:
                                   Control: ComboBox@0.0.51
                                   Properties:
-                                    DefaultSelectedItems: =currentSelectedRoleAssignement.Role
+                                    BasePaletteColor: =RGBA(0, 101, 161, 1)
+                                    DefaultSelectedItems: =_selectedUser.Role
+                                    Height: =40
                                     Items: ='[THFinanceCashCollection]Roles'
-                                    Width: =250
-                                    X: =25
-                                    Y: =199
+                                    Width: =Parent.Width - 40
                                   Children:
                                     - RoleName1:
                                         Control: ComboBoxDataField@1.5.0
@@ -245,208 +273,159 @@ Screens:
                                         IsLocked: true
                                         Properties:
                                           FieldDisplayName: ="RoleName"
-                                          FieldName: ="cr76f_rolename"
+                                          FieldName: ="cr7bb_rolename"
                                           FieldType: ="s"
                                           Order: =1
-                        - RoleFormControl:
+                        - Role_FormActionBar:
                             Control: GroupContainer@1.3.0
                             Variant: AutoLayout
                             Properties:
-                              Height: =40
+                              Fill: =RGBA(245, 245, 245, 1)
+                              Height: =50
+                              LayoutAlignItems: =LayoutAlignItems.Center
                               LayoutDirection: =LayoutDirection.Horizontal
-                              LayoutGap: |
-                                =5
+                              LayoutGap: =10
                               LayoutJustifyContent: =LayoutJustifyContent.End
-                              PaddingRight: |
-                                =10
-                              PaddingTop: |
-                                =05
+                              PaddingRight: =15
                               Width: =Parent.Width
-                              X: |
-                                =0
-                              Y: =Parent.Height-Self.Height
+                              Y: =Parent.Height - Self.Height
                             Children:
-                              - RoleFormAddBtn:
+                              - Role_Form_SaveBtn:
                                   Control: Button@0.0.45
                                   Properties:
-                                    Height: =30
+                                    BasePaletteColor: =RGBA(0, 101, 161, 1)
+                                    Height: =35
+                                    Icon: ="Save"
                                     OnSelect: |-
-                                      =If(currentMode="New",
-                                          Patch('[THFinanceCashCollection]RoleAssignments',          // Your target Dataverse table
-                                              Defaults('[THFinanceCashCollection]RoleAssignments'), // Indicates you are creating a NEW record
+                                      =If(
+                                          _currentMode = "New",
+                                          Patch(
+                                              '[THFinanceCashCollection]RoleAssignments',
+                                              Defaults('[THFinanceCashCollection]RoleAssignments'),
                                               {
-                                                  AssignmentKey:RoleFormUserCombo.Selected.DisplayName&"-"&RoleFormAreaCombo.Selected.RoleName,
-                                                  UserName:RoleFormUserCombo.Selected.DisplayName,
-                                                  Role:RoleFormAreaCombo.Selected,
-                                                  Email: RoleFormUserCombo.Selected.Mail
-                                              }),
-                                          If(currentMode="Edit",Patch('[THFinanceCashCollection]RoleAssignments',currentSelectedRoleAssignement,
+                                                  AssignmentKey: Role_Form_UserCombo.Selected.DisplayName & "-" & Role_Form_RoleCombo.Selected.RoleName,
+                                                  UserName: Role_Form_UserCombo.Selected.DisplayName,
+                                                  Email: Role_Form_UserCombo.Selected.Mail,
+                                                  Role: Role_Form_RoleCombo.Selected
+                                              }
+                                          ),
+                                          Patch(
+                                              '[THFinanceCashCollection]RoleAssignments',
+                                              _selectedUser,
                                               {
-                                                  AssignmentKey:RoleFormUserCombo.Selected.DisplayName&"-"&RoleFormAreaCombo.Selected.RoleName,
-                                                  UserName:RoleFormUserCombo.Selected.DisplayName,
-                                                  Role:RoleFormAreaCombo.Selected,
-                                                  Email: RoleFormUserCombo.Selected.Mail
-                                              }),
-                                              Notify("ModeError"))
+                                                  AssignmentKey: Role_Form_UserCombo.Selected.DisplayName & "-" & Role_Form_RoleCombo.Selected.RoleName,
+                                                  UserName: Role_Form_UserCombo.Selected.DisplayName,
+                                                  Role: Role_Form_RoleCombo.Selected
+                                              }
+                                          )
                                       );
                                       If(
                                           IsEmpty(Errors('[THFinanceCashCollection]RoleAssignments')),
-                                          Notify("Record created successfully!", NotificationType.Success);
-                                          UpdateContext({currentMode:"View"}),
-                                          Notify("Error creating record: " & First(Errors('[THFinanceCashCollection]RoleAssignments')).Message, NotificationType.Error)
+                                          Notify("User saved successfully", NotificationType.Success);
+                                          UpdateContext({_currentMode: "View"}),
+                                          Notify("Error saving user: " & First(Errors('[THFinanceCashCollection]RoleAssignments')).Message, NotificationType.Error)
                                       )
-                                    Text: =If(currentMode="New","Add",If(currentMode="Edit","Save","Error"))
-                                    X: =610
-                                    Y: =440
-                              - RoleFormCancelBtn:
+                                    Text: =If(_currentMode = "New", "Add", "Save")
+                                    Width: =90
+                              - Role_Form_CancelBtn:
                                   Control: Button@0.0.45
                                   Properties:
-                                    Height: =30
-                                    OnSelect: =UpdateContext({currentMode:"View"});
+                                    BasePaletteColor: =RGBA(100, 100, 100, 1)
+                                    Height: =35
+                                    Icon: ="Cancel"
+                                    OnSelect: |-
+                                      =UpdateContext({_currentMode: "View"})
                                     Text: ="Cancel"
-                                    X: =108
-                                    Y: =440
-            - RoleNavigationMenu:
+                                    Width: =90
+            - Role_NavigationMenu:
                 Control: CanvasComponent
                 ComponentName: NavigationMenu
                 Properties:
                   Fill: =RGBA(255, 255, 255, 0.5)
-                  Height: |
-                    =Parent.Height-70
-                  Visible: =If(_showMenu,true,false)
+                  Height: =Parent.Height - 70
+                  Visible: =If(_showMenu, true, false)
                   Width: =260
-                  Y: |+
-                    =70
-
-
-
+                  Y: =70
                   navItems: =Navigation
                   navSelected: =currentScreen
-      - RoleHeader:
-          Control: GroupContainer@1.3.0
-          Variant: AutoLayout
-          Properties:
-            DropShadow: =DropShadow.Regular
-            Fill: =LookUp(Navigation, name = currentScreen, color)
-            Height: =55
-            LayoutAlignItems: =LayoutAlignItems.Center
-            LayoutDirection: =LayoutDirection.Horizontal
-            PaddingLeft: =15
-            RadiusBottomLeft: =8
-            RadiusBottomRight: =8
-            RadiusTopLeft: =8
-            RadiusTopRight: =8
-            Width: |
-              =Parent.Width-20
-            X: =10
-            Y: =10
-          Children:
-            - RoleMenuIcon:
-                Control: Classic/Icon@2.5.0
+            - Role_DeleteConfirmationOverlay:
+                Control: GroupContainer@1.3.0
+                Variant: ManualLayout
                 Properties:
-                  BorderColor: =RGBA(0, 18, 107, 1)
-                  Color: |-
-                    =RGBA(255, 255, 255
-                    , 1)
-                  Height: =50
-                  Icon: =Icon.Hamburger
-                  OnSelect: =Set(_showMenu,!_showMenu);
-                  PaddingBottom: =10
-                  PaddingLeft: =10
-                  PaddingRight: =10
-                  PaddingTop: =10
-                  Width: =50
-            - RoleTitle:
-                Control: Text@0.0.51
-                Properties:
-                  AlignInContainer: =AlignInContainer.Center
-                  Font: =Font.Lato
-                  FontColor: =Color.White
-                  Height: =50
-                  PaddingLeft: |
-                    =20
-                  Size: =25
-                  Text: =currentScreen
-                  VerticalAlign: =VerticalAlign.Middle
-                  Weight: ='TextCanvas.Weight'.Medium
-                  Width: =240
-      - RoleConfirmationPopupOverlay:
-          Control: GroupContainer@1.3.0
-          Variant: ManualLayout
-          Properties:
-            Fill: =RGBA(0, 0, 0, 0.5)
-            Height: =Parent.Height
-            Visible: =showConfirmationPopup
-            Width: =Parent.Width
-            X: |
-              =0
-            Y: |
-              =0
-          Children:
-            - RoleConfirmationPopup:
-                Control: Rectangle@2.3.0
-                Properties:
-                  BorderColor: =RGBA(0, 18, 107, 1)
-                  Fill: =RGBA(255, 255, 255, 1)
-                  Height: |
-                    =200
-                  Width: |
-                    =400
-                  X: =(Parent.Width - Self.Width) / 2
-                  Y: =(Parent.Height - Self.Height) / 2
-            - TextCanvas1_3:
-                Control: Text@0.0.51
-                Properties:
-                  Height: =89
-                  PaddingBottom: =10
-                  PaddingLeft: =10
-                  PaddingRight: =10
-                  PaddingTop: =10
-                  Text: |-
-                    ="Are you sure you want to delete '" &
-                    Switch(
-                        recordPrimaryProperty, // The string variable holding the property name
-                        "UserName", recordToDelete.UserName,
-                        "UNKNOWN PROPERTY" // Default fallback text if no match (helps in debugging)
-                    ) &
-                    "'?"
-                  VerticalAlign: =VerticalAlign.Top
-                  Width: =400
-                  X: =RoleConfirmationPopup.X
-                  Y: =RoleConfirmationPopup.Y
-            - ButtonCanvas1_1:
-                Control: Button@0.0.45
-                Properties:
-                  OnSelect: |-
-                    =UpdateContext({ showConfirmationPopup: false });
-                    UpdateContext({ tableToDelete: Blank() });
-                    UpdateContext({ descriptionToDelete: "" });
-                    UpdateContext({ recordToDelete: Blank() });
-                  Text: ="Cancel"
-                  X: =RoleConfirmationPopup.X+RoleConfirmationPopup.Width-Self.Width-20
-                  Y: =RoleConfirmationPopup.Y+RoleConfirmationPopup.Height-Self.Height-20
-            - ButtonCanvas3_1:
-                Control: Button@0.0.45
-                Properties:
-                  BasePaletteColor: =RGBA(249, 83, 109, 1)
-                  OnSelect: |-
-                    =Switch(
-                          dataSourceIdentifier,
-                          "RoleAssignment", Remove('[THFinanceCashCollection]RoleAssignments', recordToDelete), // Fixed data source
-                          Notify("Error: Unknown data source for deletion. Deletion aborted.", NotificationType.Error)
-                      );
-
-                      UpdateContext({ showConfirmationPopup: false }); // Hide the popup
-
-                      // Refresh the correct data source
-                      If(
-                          !IsBlank(dataSourceIdentifier), // Basic check
-                          Switch(
-                              dataSourceIdentifier,
-                              "RoleAssignment", Refresh('[THFinanceCashCollection]RoleAssignments') // Fixed data source
-                          );
-                          Notify("Record deleted successfully.", NotificationType.Success); // Show success after refresh
-                      );
-                  Text: ="Yes, Delete"
-                  X: =RoleConfirmationPopup.X+20
-                  Y: =RoleConfirmationPopup.Y+RoleConfirmationPopup.Height-Self.Height-20
+                  Fill: =RGBA(0, 0, 0, 0.5)
+                  Height: =Parent.Height
+                  Visible: =_showDeleteConfirmation
+                  Width: =Parent.Width
+                Children:
+                  - Role_DeleteConfirmationBox:
+                      Control: GroupContainer@1.3.0
+                      Variant: AutoLayout
+                      Properties:
+                        DropShadow: =DropShadow.Regular
+                        Fill: =RGBA(255, 255, 255, 1)
+                        LayoutDirection: =LayoutDirection.Vertical
+                        LayoutGap: =20
+                        PaddingBottom: =20
+                        PaddingLeft: =20
+                        PaddingRight: =20
+                        PaddingTop: =20
+                        RadiusBottomLeft: =10
+                        RadiusBottomRight: =10
+                        RadiusTopLeft: =10
+                        RadiusTopRight: =10
+                        Width: =400
+                        X: =(Parent.Width - Self.Width) / 2
+                        Y: =(Parent.Height - Self.Height) / 2
+                      Children:
+                        - Role_DeleteConfirmationText:
+                            Control: Text@0.0.51
+                            Properties:
+                              Font: =Font.Lato
+                              FontColor: =RGBA(0, 0, 0, 1)
+                              Height: =80
+                              Size: =16
+                              Text: ="Are you sure you want to delete '" & _userToDelete.UserName & "' (" & _userToDelete.Email & ")?"
+                              VerticalAlign: =VerticalAlign.Top
+                              Weight: ='TextCanvas.Weight'.Semibold
+                              Width: =360
+                        - Role_DeleteConfirmationButtons:
+                            Control: GroupContainer@1.3.0
+                            Variant: AutoLayout
+                            Properties:
+                              DropShadow: =DropShadow.None
+                              LayoutDirection: =LayoutDirection.Horizontal
+                              LayoutGap: =10
+                              LayoutJustifyContent: =LayoutJustifyContent.End
+                              LayoutMinHeight: =40
+                              LayoutMinWidth: =100
+                              Width: =360
+                            Children:
+                              - Role_DeleteConfirmBtn:
+                                  Control: Button@0.0.45
+                                  Properties:
+                                    BasePaletteColor: =RGBA(191, 25, 34, 1)
+                                    Height: =35
+                                    Icon: ="Delete"
+                                    OnSelect: |-
+                                      =Remove('[THFinanceCashCollection]RoleAssignments', _userToDelete);
+                                      Notify("User deleted successfully", NotificationType.Success);
+                                      UpdateContext({
+                                          _showDeleteConfirmation: false,
+                                          _userToDelete: Blank()
+                                      });
+                                      Refresh('[THFinanceCashCollection]RoleAssignments')
+                                    Text: ="Yes, Delete"
+                                    Width: =120
+                              - Role_DeleteCancelBtn:
+                                  Control: Button@0.0.45
+                                  Properties:
+                                    BasePaletteColor: =RGBA(100, 100, 100, 1)
+                                    Height: =35
+                                    Icon: ="Cancel"
+                                    OnSelect: |-
+                                      =UpdateContext({
+                                          _showDeleteConfirmation: false,
+                                          _userToDelete: Blank()
+                                      })
+                                    Text: ="Cancel"
+                                    Width: =90

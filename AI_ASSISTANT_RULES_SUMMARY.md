@@ -6,6 +6,26 @@
 
 ---
 
+## 📖 Quick Start for AI Assistants
+
+**For Screen Development**, read in this order:
+
+1. **Universal Standards** - `~/.claude/powerapp-standards/`
+   - `universal-powerapp-checklist.md` (core rules)
+   - `nestle-brand-standards.md` (colors, fonts)
+   - `powerapp-control-reference.md` (quick index)
+
+2. **Project Documentation** - This folder
+   - **`SCREEN_DEVELOPMENT_GUIDE.md`** ⭐ - Complete workflow & patterns
+   - **`FIELD_NAME_REFERENCE.md`** - Field names (cr7bb_ prefix)
+   - **This file** - Quick reference summary
+
+3. **Detailed References** - As needed
+   - `dataverse-common-patterns.md` - Dataverse syntax
+   - `modern-controls-complete-reference.md` - Control details
+
+---
+
 ## 🚨 Critical Rules - READ FIRST
 
 ### 1. Field Naming Convention ⚠️ MOST IMPORTANT
@@ -258,19 +278,25 @@ SortByColumns: =SortByColumns(colProcessLog, "cr7bb_processdate", SortOrder.Desc
 ## 📁 Project Structure
 
 ```
-├── .cursor/rules/              # AI assistant rules (EDITABLE)
+├── .cursor/rules/                      # AI assistant rules (EDITABLE)
 │   ├── edit_exceptions.md
 │   ├── power-apps-field-binding.md
 │   └── field-name-verification.md
-├── .grok/                      # AI artifacts (EDITABLE)
-├── Powerapp components-DO-NOT-EDIT/  # ❌ READ ONLY
-├── Powerapp screens-DO-NOT-EDIT/     # ❌ READ ONLY
-├── client docs/                # Client files (EDITABLE)
-├── templates/                  # Templates (EDITABLE)
-├── CLAUDE.md                   # Project instructions (EDITABLE)
-├── FIELD_NAME_REFERENCE.md     # 🥇 PRIMARY FIELD REFERENCE
-├── database_schema.md          # Conceptual schema (nc_ prefix)
-└── PROJECT_STATUS.md           # Current status
+├── .grok/                              # AI artifacts (EDITABLE)
+├── templates/powerapps/                # ✅ WORKING DIRECTORY (EDITABLE)
+│   ├── scnDailyControlCenter.yaml     # Latest: Daily Control Center
+│   ├── scnCustomer.yaml               # Customer management
+│   └── ... (work-in-progress screens)
+├── Powerapp components-DO-NOT-EDIT/    # ❌ READ ONLY
+├── Powerapp screens-DO-NOT-EDIT/       # ❌ READ ONLY (production reference)
+├── client docs/                        # Client files (EDITABLE)
+├── CLAUDE.md                           # 📖 Project instructions
+├── SCREEN_DEVELOPMENT_GUIDE.md         # 🎓 Screen development workflow
+├── FIELD_NAME_REFERENCE.md             # 🥇 PRIMARY FIELD REFERENCE
+├── REDESIGNED_SCREENS.md               # 🎨 Screen architecture decisions
+├── AI_ASSISTANT_RULES_SUMMARY.md       # 📋 This file
+├── database_schema.md                  # Conceptual schema (nc_ prefix)
+└── PROJECT_STATUS.md                   # Current status
 ```
 
 ---

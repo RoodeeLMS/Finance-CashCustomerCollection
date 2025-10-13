@@ -1,0 +1,659 @@
+Screens:
+  scnSettings:
+    Properties:
+      Fill: =RGBA(243, 242, 241, 1)
+      LoadingSpinnerColor: =RGBA(0, 101, 161, 1)
+      OnVisible: |-
+        =UpdateContext({currentScreen: "Settings"});
+        Set(_showMenu, false);
+        Set(_selectedTab, "Templates");
+        ClearCollect(
+            colSettings,
+            '[THFinanceCashCollection]Settings'
+        );
+    Children:
+      - Settings_Container:
+          Control: GroupContainer@1.3.0
+          Variant: ManualLayout
+          Properties:
+            DropShadow: =DropShadow.None
+            Height: =Parent.Height
+            Width: =Parent.Width
+          Children:
+            - Settings_Header:
+                Control: GroupContainer@1.3.0
+                Variant: AutoLayout
+                Properties:
+                  DropShadow: =DropShadow.Regular
+                  Fill: =RGBA(0, 101, 161, 1)
+                  Height: =55
+                  LayoutAlignItems: =LayoutAlignItems.Center
+                  LayoutDirection: =LayoutDirection.Horizontal
+                  LayoutGap: =10
+                  LayoutJustifyContent: =LayoutJustifyContent.SpaceBetween
+                  PaddingLeft: =15
+                  PaddingRight: =15
+                  RadiusBottomLeft: =8
+                  RadiusBottomRight: =8
+                  RadiusTopLeft: =8
+                  RadiusTopRight: =8
+                  Width: =Parent.Width - 20
+                  X: =10
+                  Y: =10
+                Children:
+                  - Settings_HeaderLeft:
+                      Control: GroupContainer@1.3.0
+                      Variant: AutoLayout
+                      Properties:
+                        DropShadow: =DropShadow.None
+                        LayoutAlignItems: =LayoutAlignItems.Center
+                        LayoutDirection: =LayoutDirection.Horizontal
+                        LayoutGap: =10
+                        LayoutMinHeight: =50
+                        LayoutMinWidth: =100
+                      Children:
+                        - Settings_MenuIcon:
+                            Control: Classic/Icon@2.5.0
+                            Properties:
+                              Color: =RGBA(255, 255, 255, 1)
+                              Height: =50
+                              Icon: =Icon.Hamburger
+                              OnSelect: =Set(_showMenu, !_showMenu)
+                              PaddingBottom: =10
+                              PaddingLeft: =10
+                              PaddingRight: =10
+                              PaddingTop: =10
+                              Width: =50
+                        - Settings_HeaderTitle:
+                            Control: Text@0.0.51
+                            Properties:
+                              Font: =Font.Lato
+                              FontColor: =Color.White
+                              Height: =50
+                              PaddingLeft: =20
+                              Size: =25
+                              Text: ="System Settings"
+                              VerticalAlign: =VerticalAlign.Middle
+                              Weight: ='TextCanvas.Weight'.Medium
+                              Width: =Parent.Width - Settings_MenuIcon.Width - 40
+            - Settings_Content:
+                Control: GroupContainer@1.3.0
+                Variant: ManualLayout
+                Properties:
+                  DropShadow: =DropShadow.Regular
+                  Fill: =RGBA(255, 255, 255, 1)
+                  Height: =Parent.Height - 85
+                  RadiusBottomLeft: =10
+                  RadiusBottomRight: =10
+                  RadiusTopLeft: =10
+                  RadiusTopRight: =10
+                  Width: =Parent.Width - 20
+                  X: =10
+                  Y: =75
+                Children:
+                  - Settings_TabNavigation:
+                      Control: GroupContainer@1.3.0
+                      Variant: AutoLayout
+                      Properties:
+                        DropShadow: =DropShadow.None
+                        Fill: =RGBA(255, 255, 255, 1)
+                        Height: =50
+                        LayoutAlignItems: =LayoutAlignItems.Center
+                        LayoutDirection: =LayoutDirection.Horizontal
+                        LayoutGap: =5
+                        PaddingLeft: =15
+                        PaddingRight: =15
+                        Width: =Parent.Width
+                      Children:
+                        - Settings_TabTemplates:
+                            Control: Button@0.0.45
+                            Properties:
+                              BasePaletteColor: |-
+                                =If(
+                                    _selectedTab = "Templates",
+                                    RGBA(0, 101, 161, 1),
+                                    RGBA(128, 128, 128, 1)
+                                )
+                              Height: =40
+                              OnSelect: =Set(_selectedTab, "Templates")
+                              Text: ="Templates"
+                              Width: =150
+                        - Settings_TabThresholds:
+                            Control: Button@0.0.45
+                            Properties:
+                              BasePaletteColor: |-
+                                =If(
+                                    _selectedTab = "Thresholds",
+                                    RGBA(0, 101, 161, 1),
+                                    RGBA(128, 128, 128, 1)
+                                )
+                              Height: =40
+                              OnSelect: =Set(_selectedTab, "Thresholds")
+                              Text: ="Thresholds"
+                              Width: =150
+                        - Settings_TabQRCodes:
+                            Control: Button@0.0.45
+                            Properties:
+                              BasePaletteColor: |-
+                                =If(
+                                    _selectedTab = "QR Codes",
+                                    RGBA(0, 101, 161, 1),
+                                    RGBA(128, 128, 128, 1)
+                                )
+                              Height: =40
+                              OnSelect: =Set(_selectedTab, "QR Codes")
+                              Text: ="QR Codes"
+                              Width: =150
+                        - Settings_TabSystem:
+                            Control: Button@0.0.45
+                            Properties:
+                              BasePaletteColor: |-
+                                =If(
+                                    _selectedTab = "System",
+                                    RGBA(0, 101, 161, 1),
+                                    RGBA(128, 128, 128, 1)
+                                )
+                              Height: =40
+                              OnSelect: =Set(_selectedTab, "System")
+                              Text: ="System"
+                              Width: =150
+                  - Settings_TabContent:
+                      Control: GroupContainer@1.3.0
+                      Variant: AutoLayout
+                      Properties:
+                        DropShadow: =DropShadow.None
+                        Fill: =RGBA(255, 255, 255, 1)
+                        Height: =Parent.Height - 70
+                        LayoutDirection: =LayoutDirection.Vertical
+                        LayoutGap: =15
+                        LayoutOverflowY: =LayoutOverflow.Scroll
+                        PaddingBottom: =20
+                        PaddingLeft: =20
+                        PaddingRight: =20
+                        PaddingTop: =20
+                        Width: =Parent.Width
+                        Y: =60
+                      Children:
+                        - Settings_TemplatesContent:
+                            Control: GroupContainer@1.3.0
+                            Variant: AutoLayout
+                            Properties:
+                              DropShadow: =DropShadow.None
+                              LayoutDirection: =LayoutDirection.Vertical
+                              LayoutGap: =15
+                              LayoutMinHeight: =40
+                              LayoutMinWidth: =100
+                              Visible: =_selectedTab = "Templates"
+                              Width: =Parent.Width - 40
+                            Children:
+                              - Settings_TemplateATitle:
+                                  Control: Text@0.0.51
+                                  Properties:
+                                    Font: =Font.Lato
+                                    FontColor: =RGBA(0, 0, 0, 1)
+                                    Size: =18
+                                    Text: ="Email Template A (Day 1-2):"
+                                    Weight: ='TextCanvas.Weight'.Semibold
+                                    Width: =Parent.Width - 40
+                              - Settings_TemplateASubjectLabel:
+                                  Control: Text@0.0.51
+                                  Properties:
+                                    Font: =Font.Lato
+                                    FontColor: =RGBA(100, 100, 100, 1)
+                                    Text: ="Subject:"
+                                    Weight: ='TextCanvas.Weight'.Semibold
+                                    Width: =Parent.Width - 40
+                              - Settings_TemplateASubjectInput:
+                                  Control: TextInput@0.0.54
+                                  Properties:
+                                    BasePaletteColor: =RGBA(0, 101, 161, 1)
+                                    Height: =40
+                                    Placeholder: ="Enter email subject..."
+                                    Value: |-
+                                      =LookUp(
+                                          colSettings,
+                                          cr7bb_settingname = "EmailTemplate_A_Subject"
+                                      ).cr7bb_settingvalue
+                                    Width: =Parent.Width - 40
+                              - Settings_TemplateABodyLabel:
+                                  Control: Text@0.0.51
+                                  Properties:
+                                    Font: =Font.Lato
+                                    FontColor: =RGBA(100, 100, 100, 1)
+                                    Text: ="Body (HTML):"
+                                    Weight: ='TextCanvas.Weight'.Semibold
+                                    Width: =Parent.Width - 40
+                              - Settings_TemplateABodyInput:
+                                  Control: TextInput@0.0.54
+                                  Properties:
+                                    BasePaletteColor: =RGBA(0, 101, 161, 1)
+                                    Height: =150
+                                    MaxLength: =2000
+                                    Mode: ='TextInputCanvas.Mode'.Multiline
+                                    Placeholder: ="Enter email body HTML..."
+                                    Value: |-
+                                      =LookUp(
+                                          colSettings,
+                                          cr7bb_settingname = "EmailTemplate_A_Body"
+                                      ).cr7bb_settingvalue
+                                    Width: =Parent.Width - 40
+                              - Settings_TemplateAActions:
+                                  Control: GroupContainer@1.3.0
+                                  Variant: AutoLayout
+                                  Properties:
+                                    DropShadow: =DropShadow.None
+                                    LayoutDirection: =LayoutDirection.Horizontal
+                                    LayoutGap: =10
+                                    LayoutMinHeight: =40
+                                    LayoutMinWidth: =100
+                                    Width: =Parent.Width - 40
+                                  Children:
+                                    - Settings_TemplateASaveBtn:
+                                        Control: Button@0.0.45
+                                        Properties:
+                                          BasePaletteColor: =RGBA(0, 101, 161, 1)
+                                          Height: =40
+                                          Icon: ="Save"
+                                          OnSelect: |-
+                                            =Patch(
+                                                '[THFinanceCashCollection]Settings',
+                                                LookUp(colSettings, cr7bb_settingname = "EmailTemplate_A_Subject"),
+                                                {cr7bb_settingvalue: Settings_TemplateASubjectInput.Value}
+                                            );
+                                            Patch(
+                                                '[THFinanceCashCollection]Settings',
+                                                LookUp(colSettings, cr7bb_settingname = "EmailTemplate_A_Body"),
+                                                {cr7bb_settingvalue: Settings_TemplateABodyInput.Value}
+                                            );
+                                            If(
+                                                IsEmpty(Errors('[THFinanceCashCollection]Settings')),
+                                                Notify("Template A saved successfully", NotificationType.Success);
+                                                ClearCollect(colSettings, '[THFinanceCashCollection]Settings'),
+                                                Notify("Error: " & First(Errors('[THFinanceCashCollection]Settings')).Message, NotificationType.Error)
+                                            )
+                                          Text: ="Save"
+                                          Width: =100
+                                    - Settings_TemplateATestBtn:
+                                        Control: Button@0.0.45
+                                        Properties:
+                                          BasePaletteColor: =RGBA(100, 81, 61, 1)
+                                          Height: =40
+                                          Icon: ="Mail"
+                                          OnSelect: =Notify("Test email feature coming soon", NotificationType.Information)
+                                          Text: ="Test Email"
+                                          Width: =120
+                              - Settings_DividerA:
+                                  Control: Rectangle@2.3.0
+                                  Properties:
+                                    BorderColor: =RGBA(200, 200, 200, 1)
+                                    Fill: =RGBA(200, 200, 200, 1)
+                                    Height: =1
+                                    Width: =Parent.Width - 40
+                              - Settings_TemplateBTitle:
+                                  Control: Text@0.0.51
+                                  Properties:
+                                    Font: =Font.Lato
+                                    FontColor: =RGBA(0, 0, 0, 1)
+                                    Size: =18
+                                    Text: ="Email Template B (Day 3 - Warning):"
+                                    Weight: ='TextCanvas.Weight'.Semibold
+                                    Width: =Parent.Width - 40
+                              - Settings_TemplateBSubjectLabel:
+                                  Control: Text@0.0.51
+                                  Properties:
+                                    Font: =Font.Lato
+                                    FontColor: =RGBA(100, 100, 100, 1)
+                                    Text: ="Subject:"
+                                    Weight: ='TextCanvas.Weight'.Semibold
+                                    Width: =Parent.Width - 40
+                              - Settings_TemplateBSubjectInput:
+                                  Control: TextInput@0.0.54
+                                  Properties:
+                                    BasePaletteColor: =RGBA(0, 101, 161, 1)
+                                    Height: =40
+                                    Placeholder: ="Enter email subject..."
+                                    Value: |-
+                                      =LookUp(
+                                          colSettings,
+                                          cr7bb_settingname = "EmailTemplate_B_Subject"
+                                      ).cr7bb_settingvalue
+                                    Width: =Parent.Width - 40
+                              - Settings_TemplateBBodyLabel:
+                                  Control: Text@0.0.51
+                                  Properties:
+                                    Font: =Font.Lato
+                                    FontColor: =RGBA(100, 100, 100, 1)
+                                    Text: ="Body (HTML):"
+                                    Weight: ='TextCanvas.Weight'.Semibold
+                                    Width: =Parent.Width - 40
+                              - Settings_TemplateBBodyInput:
+                                  Control: TextInput@0.0.54
+                                  Properties:
+                                    BasePaletteColor: =RGBA(0, 101, 161, 1)
+                                    Height: =150
+                                    MaxLength: =2000
+                                    Mode: ='TextInputCanvas.Mode'.Multiline
+                                    Placeholder: ="Enter email body HTML..."
+                                    Value: |-
+                                      =LookUp(
+                                          colSettings,
+                                          cr7bb_settingname = "EmailTemplate_B_Body"
+                                      ).cr7bb_settingvalue
+                                    Width: =Parent.Width - 40
+                              - Settings_TemplateBActions:
+                                  Control: GroupContainer@1.3.0
+                                  Variant: AutoLayout
+                                  Properties:
+                                    DropShadow: =DropShadow.None
+                                    LayoutDirection: =LayoutDirection.Horizontal
+                                    LayoutGap: =10
+                                    LayoutMinHeight: =40
+                                    LayoutMinWidth: =100
+                                    Width: =Parent.Width - 40
+                                  Children:
+                                    - Settings_TemplateBSaveBtn:
+                                        Control: Button@0.0.45
+                                        Properties:
+                                          BasePaletteColor: =RGBA(0, 101, 161, 1)
+                                          Height: =40
+                                          Icon: ="Save"
+                                          OnSelect: |-
+                                            =Patch(
+                                                '[THFinanceCashCollection]Settings',
+                                                LookUp(colSettings, cr7bb_settingname = "EmailTemplate_B_Subject"),
+                                                {cr7bb_settingvalue: Settings_TemplateBSubjectInput.Value}
+                                            );
+                                            Patch(
+                                                '[THFinanceCashCollection]Settings',
+                                                LookUp(colSettings, cr7bb_settingname = "EmailTemplate_B_Body"),
+                                                {cr7bb_settingvalue: Settings_TemplateBBodyInput.Value}
+                                            );
+                                            If(
+                                                IsEmpty(Errors('[THFinanceCashCollection]Settings')),
+                                                Notify("Template B saved successfully", NotificationType.Success);
+                                                ClearCollect(colSettings, '[THFinanceCashCollection]Settings'),
+                                                Notify("Error: " & First(Errors('[THFinanceCashCollection]Settings')).Message, NotificationType.Error)
+                                            )
+                                          Text: ="Save"
+                                          Width: =100
+                                    - Settings_TemplateBTestBtn:
+                                        Control: Button@0.0.45
+                                        Properties:
+                                          BasePaletteColor: =RGBA(100, 81, 61, 1)
+                                          Height: =40
+                                          Icon: ="Mail"
+                                          OnSelect: =Notify("Test email feature coming soon", NotificationType.Information)
+                                          Text: ="Test Email"
+                                          Width: =120
+                        - Settings_ThresholdsContent:
+                            Control: GroupContainer@1.3.0
+                            Variant: AutoLayout
+                            Properties:
+                              DropShadow: =DropShadow.None
+                              LayoutDirection: =LayoutDirection.Vertical
+                              LayoutGap: =15
+                              LayoutMinHeight: =40
+                              LayoutMinWidth: =100
+                              Visible: =_selectedTab = "Thresholds"
+                              Width: =Parent.Width - 40
+                            Children:
+                              - Settings_ThresholdTitle:
+                                  Control: Text@0.0.51
+                                  Properties:
+                                    Font: =Font.Lato
+                                    FontColor: =RGBA(0, 0, 0, 1)
+                                    Size: =18
+                                    Text: ="Day Count Thresholds"
+                                    Weight: ='TextCanvas.Weight'.Semibold
+                                    Width: =Parent.Width - 40
+                              - Settings_TemplateBThresholdLabel:
+                                  Control: Text@0.0.51
+                                  Properties:
+                                    Font: =Font.Lato
+                                    FontColor: =RGBA(100, 100, 100, 1)
+                                    Text: |-
+                                      ="Template B Day Count (default: 3):"
+                                    Weight: ='TextCanvas.Weight'.Semibold
+                                    Width: =Parent.Width - 40
+                              - Settings_TemplateBThresholdInput:
+                                  Control: TextInput@0.0.54
+                                  Properties:
+                                    BasePaletteColor: =RGBA(0, 101, 161, 1)
+                                    Height: =40
+                                    Placeholder: ="3"
+                                    Value: |-
+                                      =LookUp(
+                                          colSettings,
+                                          cr7bb_settingname = "DayCount_TemplateB"
+                                      ).cr7bb_settingvalue
+                                    Width: =200
+                              - Settings_TemplateCThresholdLabel:
+                                  Control: Text@0.0.51
+                                  Properties:
+                                    Font: =Font.Lato
+                                    FontColor: =RGBA(100, 100, 100, 1)
+                                    Text: |-
+                                      ="Template C Day Count (default: 4):"
+                                    Weight: ='TextCanvas.Weight'.Semibold
+                                    Width: =Parent.Width - 40
+                              - Settings_TemplateCThresholdInput:
+                                  Control: TextInput@0.0.54
+                                  Properties:
+                                    BasePaletteColor: =RGBA(0, 101, 161, 1)
+                                    Height: =40
+                                    Placeholder: ="4"
+                                    Value: |-
+                                      =LookUp(
+                                          colSettings,
+                                          cr7bb_settingname = "DayCount_TemplateC"
+                                      ).cr7bb_settingvalue
+                                    Width: =200
+                              - Settings_LateFeeLabel:
+                                  Control: Text@0.0.51
+                                  Properties:
+                                    Font: =Font.Lato
+                                    FontColor: =RGBA(100, 100, 100, 1)
+                                    Text: |-
+                                      ="Late Fee Rate % (default: 1.5):"
+                                    Weight: ='TextCanvas.Weight'.Semibold
+                                    Width: =Parent.Width - 40
+                              - Settings_LateFeeInput:
+                                  Control: TextInput@0.0.54
+                                  Properties:
+                                    BasePaletteColor: =RGBA(0, 101, 161, 1)
+                                    Height: =40
+                                    Placeholder: ="1.5"
+                                    Value: |-
+                                      =LookUp(
+                                          colSettings,
+                                          cr7bb_settingname = "LateFeeRate"
+                                      ).cr7bb_settingvalue
+                                    Width: =200
+                              - Settings_ThresholdSaveBtn:
+                                  Control: Button@0.0.45
+                                  Properties:
+                                    BasePaletteColor: =RGBA(0, 101, 161, 1)
+                                    Height: =40
+                                    Icon: ="Save"
+                                    OnSelect: |-
+                                      =Patch(
+                                          '[THFinanceCashCollection]Settings',
+                                          LookUp(colSettings, cr7bb_settingname = "DayCount_TemplateB"),
+                                          {cr7bb_settingvalue: Settings_TemplateBThresholdInput.Value}
+                                      );
+                                      Patch(
+                                          '[THFinanceCashCollection]Settings',
+                                          LookUp(colSettings, cr7bb_settingname = "DayCount_TemplateC"),
+                                          {cr7bb_settingvalue: Settings_TemplateCThresholdInput.Value}
+                                      );
+                                      Patch(
+                                          '[THFinanceCashCollection]Settings',
+                                          LookUp(colSettings, cr7bb_settingname = "LateFeeRate"),
+                                          {cr7bb_settingvalue: Settings_LateFeeInput.Value}
+                                      );
+                                      If(
+                                          IsEmpty(Errors('[THFinanceCashCollection]Settings')),
+                                          Notify("Thresholds saved successfully", NotificationType.Success);
+                                          ClearCollect(colSettings, '[THFinanceCashCollection]Settings'),
+                                          Notify("Error: " & First(Errors('[THFinanceCashCollection]Settings')).Message, NotificationType.Error)
+                                      )
+                                    Text: ="Save Thresholds"
+                                    Width: =180
+                        - Settings_QRCodesContent:
+                            Control: GroupContainer@1.3.0
+                            Variant: AutoLayout
+                            Properties:
+                              DropShadow: =DropShadow.None
+                              LayoutDirection: =LayoutDirection.Vertical
+                              LayoutGap: =15
+                              LayoutMinHeight: =40
+                              LayoutMinWidth: =100
+                              Visible: =_selectedTab = "QR Codes"
+                              Width: =Parent.Width - 40
+                            Children:
+                              - Settings_QRCodesTitle:
+                                  Control: Text@0.0.51
+                                  Properties:
+                                    Font: =Font.Lato
+                                    FontColor: =RGBA(0, 0, 0, 1)
+                                    Size: =18
+                                    Text: ="QR Code Management"
+                                    Weight: ='TextCanvas.Weight'.Semibold
+                                    Width: =Parent.Width - 40
+                              - Settings_QRCodesInfo:
+                                  Control: Text@0.0.51
+                                  Properties:
+                                    AutoHeight: =true
+                                    Font: =Font.Lato
+                                    FontColor: =RGBA(100, 100, 100, 1)
+                                    Text: ="QR codes are stored in SharePoint. Configure mapping and upload settings here."
+                                    Width: =Parent.Width - 40
+                              - Settings_QRCodesFolderLabel:
+                                  Control: Text@0.0.51
+                                  Properties:
+                                    Font: =Font.Lato
+                                    FontColor: =RGBA(100, 100, 100, 1)
+                                    Text: ="SharePoint Folder Path:"
+                                    Weight: ='TextCanvas.Weight'.Semibold
+                                    Width: =Parent.Width - 40
+                              - Settings_QRCodesFolderInput:
+                                  Control: TextInput@0.0.54
+                                  Properties:
+                                    BasePaletteColor: =RGBA(0, 101, 161, 1)
+                                    Height: =40
+                                    Placeholder: ="/sites/Finance/QRCodes"
+                                    Value: |-
+                                      =LookUp(
+                                          colSettings,
+                                          cr7bb_settingname = "QRCode_SharePointFolder"
+                                      ).cr7bb_settingvalue
+                                    Width: =Parent.Width - 40
+                              - Settings_QRCodesSaveBtn:
+                                  Control: Button@0.0.45
+                                  Properties:
+                                    BasePaletteColor: =RGBA(0, 101, 161, 1)
+                                    Height: =40
+                                    Icon: ="Save"
+                                    OnSelect: |-
+                                      =Patch(
+                                          '[THFinanceCashCollection]Settings',
+                                          LookUp(colSettings, cr7bb_settingname = "QRCode_SharePointFolder"),
+                                          {cr7bb_settingvalue: Settings_QRCodesFolderInput.Value}
+                                      );
+                                      If(
+                                          IsEmpty(Errors('[THFinanceCashCollection]Settings')),
+                                          Notify("QR Code settings saved successfully", NotificationType.Success);
+                                          ClearCollect(colSettings, '[THFinanceCashCollection]Settings'),
+                                          Notify("Error: " & First(Errors('[THFinanceCashCollection]Settings')).Message, NotificationType.Error)
+                                      )
+                                    Text: ="Save Settings"
+                                    Width: =150
+                        - Settings_SystemContent:
+                            Control: GroupContainer@1.3.0
+                            Variant: AutoLayout
+                            Properties:
+                              DropShadow: =DropShadow.None
+                              LayoutDirection: =LayoutDirection.Vertical
+                              LayoutGap: =15
+                              LayoutMinHeight: =40
+                              LayoutMinWidth: =100
+                              Visible: =_selectedTab = "System"
+                              Width: =Parent.Width - 40
+                            Children:
+                              - Settings_SystemTitle:
+                                  Control: Text@0.0.51
+                                  Properties:
+                                    Font: =Font.Lato
+                                    FontColor: =RGBA(0, 0, 0, 1)
+                                    Size: =18
+                                    Text: ="System Configuration"
+                                    Weight: ='TextCanvas.Weight'.Semibold
+                                    Width: =Parent.Width - 40
+                              - Settings_AutomationLabel:
+                                  Control: Text@0.0.51
+                                  Properties:
+                                    Font: =Font.Lato
+                                    FontColor: =RGBA(100, 100, 100, 1)
+                                    Text: ="Enable Daily Automation:"
+                                    Weight: ='TextCanvas.Weight'.Semibold
+                                    Width: =Parent.Width - 40
+                              - Settings_AutomationInfo:
+                                  Control: Text@0.0.51
+                                  Properties:
+                                    AutoHeight: =true
+                                    Font: =Font.Lato
+                                    FontColor: =RGBA(100, 100, 100, 1)
+                                    Size: =13
+                                    Text: ="When enabled, the system will automatically process transactions and send emails daily. Configured in Power Automate flow."
+                                    Width: =Parent.Width - 40
+                              - Settings_SenderEmailLabel:
+                                  Control: Text@0.0.51
+                                  Properties:
+                                    Font: =Font.Lato
+                                    FontColor: =RGBA(100, 100, 100, 1)
+                                    Text: ="Sender Email Address:"
+                                    Weight: ='TextCanvas.Weight'.Semibold
+                                    Width: =Parent.Width - 40
+                              - Settings_SenderEmailInput:
+                                  Control: TextInput@0.0.54
+                                  Properties:
+                                    BasePaletteColor: =RGBA(0, 101, 161, 1)
+                                    Height: =40
+                                    Placeholder: ="ar@nestle.com"
+                                    Value: |-
+                                      =LookUp(
+                                          colSettings,
+                                          cr7bb_settingname = "Email_SenderAddress"
+                                      ).cr7bb_settingvalue
+                                    Width: =Parent.Width - 40
+                              - Settings_SystemSaveBtn:
+                                  Control: Button@0.0.45
+                                  Properties:
+                                    BasePaletteColor: =RGBA(0, 101, 161, 1)
+                                    Height: =40
+                                    Icon: ="Save"
+                                    OnSelect: |-
+                                      =Patch(
+                                          '[THFinanceCashCollection]Settings',
+                                          LookUp(colSettings, cr7bb_settingname = "Email_SenderAddress"),
+                                          {cr7bb_settingvalue: Settings_SenderEmailInput.Value}
+                                      );
+                                      If(
+                                          IsEmpty(Errors('[THFinanceCashCollection]Settings')),
+                                          Notify("System settings saved successfully", NotificationType.Success);
+                                          ClearCollect(colSettings, '[THFinanceCashCollection]Settings'),
+                                          Notify("Error: " & First(Errors('[THFinanceCashCollection]Settings')).Message, NotificationType.Error)
+                                      )
+                                    Text: ="Save Settings"
+                                    Width: =150
+            - Settings_NavigationMenu:
+                Control: CanvasComponent
+                ComponentName: NavigationMenu
+                Properties:
+                  Fill: =RGBA(255, 255, 255, 0.5)
+                  Height: =Parent.Height - 70
+                  Visible: =If(_showMenu, true, false)
+                  Width: =260
+                  Y: =70
+                  navItems: =Navigation
+                  navSelected: =currentScreen

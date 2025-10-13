@@ -1,0 +1,604 @@
+Screens:
+  scnTransactions:
+    Properties:
+      LoadingSpinnerColor: =RGBA(56, 96, 178, 1)
+      OnVisible: =UpdateContext({currentScreen:"Transactions", currentMode:"View", showConfirmationPopup:false, dataSourceIdentifier:"", recordToDelete:Defaults('[THFinanceCashCollection]Transactions'), recordPrimaryProperty:"", currentSelectedTransaction:Defaults('[THFinanceCashCollection]Transactions'), transactionSearchText:"", filterProcessDate:Today(), filterCustomer:Defaults('[THFinanceCashCollection]Customers'), filterRecordType:Blank(), filterExcludedOnly:false}); Set(_showMenu,false); ClearCollect(colTransactions, Filter('[THFinanceCashCollection]Transactions', cr7bb_transactionprocessdate = Today()))
+    Children:
+      - TransactionMainContainer:
+          Control: GroupContainer@1.3.0
+          Variant: ManualLayout
+          Properties:
+            DropShadow: =DropShadow.Regular
+            Height: =Parent.Height
+            Width: =Parent.Width
+          Children:
+            - TransactionContent:
+                Control: GroupContainer@1.3.0
+                Variant: ManualLayout
+                Properties:
+                  DropShadow: =DropShadow.Regular
+                  Fill: =RGBA(255, 255, 255, 1)
+                  Height: =Parent.Height-85
+                  RadiusBottomLeft: =10
+                  RadiusBottomRight: =10
+                  RadiusTopLeft: =10
+                  RadiusTopRight: =10
+                  Width: =Parent.Width-20
+                  X: =10
+                  Y: =75
+                Children:
+                  - TransactionTableView:
+                      Control: GroupContainer@1.3.0
+                      Variant: ManualLayout
+                      Properties:
+                        Height: =Parent.Height
+                        Visible: =currentMode="View"
+                        Width: =Parent.Width
+                      Children:
+                        - TransactionFilterBar:
+                            Control: GroupContainer@1.3.0
+                            Variant: AutoLayout
+                            Properties:
+                              Fill: =RGBA(240, 248, 255, 1)
+                              Height: =130
+                              LayoutDirection: =LayoutDirection.Vertical
+                              LayoutGap: =10
+                              PaddingBottom: =10
+                              PaddingLeft: =10
+                              PaddingRight: =10
+                              PaddingTop: =10
+                              Width: =Parent.Width
+                            Children:
+                              - TransactionFilterRow1:
+                                  Control: GroupContainer@1.3.0
+                                  Variant: AutoLayout
+                                  Properties:
+                                    Height: =40
+                                    LayoutDirection: =LayoutDirection.Horizontal
+                                    LayoutGap: =10
+                                  Children:
+                                    - TransactionSearchInput:
+                                        Control: TextInput@0.0.54
+                                        Properties:
+                                          Height: =40
+                                          OnChange: =UpdateContext({transactionSearchText:Self.Value})
+                                          Placeholder: ="Search by document number, customer code, or reference..."
+                                          Value: =transactionSearchText
+                                          Width: =400
+                                    - TransactionProcessDatePicker:
+                                        Control: DatePicker@0.0.46
+                                        Properties:
+                                          Height: =40
+                                          OnChange: =ClearCollect(colTransactions, Filter('[THFinanceCashCollection]Transactions', cr7bb_transactionprocessdate = Self.SelectedDate))
+                                          SelectedDate: =filterProcessDate
+                                          Width: =200
+                                    - TransactionClearDateBtn:
+                                        Control: Button@0.0.45
+                                        Properties:
+                                          Height: =40
+                                          OnSelect: =UpdateContext({filterProcessDate:Blank()}); ClearCollect(colTransactions, '[THFinanceCashCollection]Transactions')
+                                          Text: ="All Dates"
+                                          Width: =100
+                              - TransactionFilterRow2:
+                                  Control: GroupContainer@1.3.0
+                                  Variant: AutoLayout
+                                  Properties:
+                                    Height: =40
+                                    LayoutDirection: =LayoutDirection.Horizontal
+                                    LayoutGap: =10
+                                  Children:
+                                    - TransactionRecordTypeDropdown:
+                                        Control: ComboBox@0.0.51
+                                        Properties:
+                                          DefaultSelectedItems: =If(IsBlank(filterRecordType), Blank(), LookUp(Choices('Record Type Choice'), Value = filterRecordType))
+                                          Height: =40
+                                          Items: =Choices('Record Type Choice')
+                                          OnChange: =UpdateContext({filterRecordType:Self.Selected.Value})
+                                          Width: =200
+                                    - TransactionExcludedToggle:
+                                        Control: CheckBox@0.0.30
+                                        Properties:
+                                          Checked: =filterExcludedOnly
+                                          Height: =40
+                                          OnCheck: =UpdateContext({filterExcludedOnly:true})
+                                          OnUncheck: =UpdateContext({filterExcludedOnly:false})
+                                          Width: =150
+                              - TransactionFilterRow3:
+                                  Control: GroupContainer@1.3.0
+                                  Variant: AutoLayout
+                                  Properties:
+                                    Height: =40
+                                    LayoutDirection: =LayoutDirection.Horizontal
+                                    LayoutGap: =10
+                                    LayoutJustifyContent: =LayoutJustifyContent.SpaceBetween
+                                    Width: =Parent.Width-20
+                                  Children:
+                                    - TransactionStatsContainer:
+                                        Control: GroupContainer@1.3.0
+                                        Variant: AutoLayout
+                                        Properties:
+                                          Height: =40
+                                          LayoutDirection: =LayoutDirection.Horizontal
+                                          LayoutGap: =20
+                                        Children:
+                                          - TransactionCountLabel:
+                                              Control: Text@0.0.51
+                                              Properties:
+                                                Font: =Font.'Segoe UI'
+                                                FontColor: =RGBA(0, 0, 0, 0.7)
+                                                Height: =40
+                                                Text: |-
+                                                  ="Total: " & CountRows(Filter(colTransactions, (IsBlank(transactionSearchText) || StartsWith(Upper(cr7bb_documentnumber), Upper(transactionSearchText)) || StartsWith(Upper(cr7bb_referenceinformation), Upper(transactionSearchText))) && (IsBlank(filterRecordType) || cr7bb_recordtype = filterRecordType) && (!filterExcludedOnly || cr7bb_isexcluded = true))) & " transactions"
+                                                VerticalAlign: =VerticalAlign.Middle
+                                                Weight: ='TextCanvas.Weight'.Semibold
+                                                Width: =200
+                                          - TransactionAmountLabel:
+                                              Control: Text@0.0.51
+                                              Properties:
+                                                Font: =Font.'Segoe UI'
+                                                FontColor: =RGBA(0, 0, 0, 0.7)
+                                                Height: =40
+                                                Text: |-
+                                                  ="Total Amount: " & Text(Sum(Filter(colTransactions, (IsBlank(transactionSearchText) || StartsWith(Upper(cr7bb_documentnumber), Upper(transactionSearchText)) || StartsWith(Upper(cr7bb_referenceinformation), Upper(transactionSearchText))) && (IsBlank(filterRecordType) || cr7bb_recordtype = filterRecordType) && (!filterExcludedOnly || cr7bb_isexcluded = true)), cr7bb_amountlocalcurrency), "#,##0.00")
+                                                VerticalAlign: =VerticalAlign.Middle
+                                                Weight: ='TextCanvas.Weight'.Semibold
+                                                Width: =250
+                                    - TransactionButtonGroup:
+                                        Control: GroupContainer@1.3.0
+                                        Variant: AutoLayout
+                                        Properties:
+                                          Height: =40
+                                          LayoutDirection: =LayoutDirection.Horizontal
+                                          LayoutGap: =10
+                                        Children:
+                                          - TransactionViewDetailsBtn:
+                                              Control: Button@0.0.45
+                                              Properties:
+                                                BasePaletteColor: =RGBA(141, 229, 250, 1)
+                                                DisplayMode: =If(IsBlankOrError(TransactionTableTbl.Selected),DisplayMode.Disabled,DisplayMode.Edit)
+                                                Height: =40
+                                                Icon: ="DetailList"
+                                                OnSelect: =UpdateContext({currentMode:"Details", currentSelectedTransaction:TransactionTableTbl.Selected})
+                                                Text: ="View Details"
+                                                VerticalAlign: =VerticalAlign.Middle
+                                                Width: =140
+                                          - TransactionMarkPaidBtn:
+                                              Control: Button@0.0.45
+                                              Properties:
+                                                BasePaletteColor: =RGBA(56, 178, 96, 1)
+                                                DisplayMode: =If(IsBlankOrError(TransactionTableTbl.Selected),DisplayMode.Disabled,DisplayMode.Edit)
+                                                Height: =40
+                                                Icon: ="Checkmark"
+                                                OnSelect: |-
+                                                  =Patch('[THFinanceCashCollection]Transactions', TransactionTableTbl.Selected, {cr7bb_isexcluded: true, cr7bb_excludereason: "Manually marked as paid"}); Notify("Transaction marked as paid", NotificationType.Success)
+                                                Text: ="Mark Paid"
+                                                VerticalAlign: =VerticalAlign.Middle
+                                                Width: =120
+                                          - TransactionExcludeBtn:
+                                              Control: Button@0.0.45
+                                              Properties:
+                                                BasePaletteColor: =RGBA(255, 152, 0, 1)
+                                                DisplayMode: =If(IsBlankOrError(TransactionTableTbl.Selected),DisplayMode.Disabled,DisplayMode.Edit)
+                                                Height: =40
+                                                Icon: ="Cancel"
+                                                OnSelect: |-
+                                                  =Patch('[THFinanceCashCollection]Transactions', TransactionTableTbl.Selected, {cr7bb_isexcluded: true, cr7bb_excludereason: "Manually excluded by user"}); Notify("Transaction excluded", NotificationType.Success)
+                                                Text: ="Exclude"
+                                                VerticalAlign: =VerticalAlign.Middle
+                                                Width: =100
+                                          - TransactionRefreshBtn:
+                                              Control: Button@0.0.45
+                                              Properties:
+                                                BasePaletteColor: =RGBA(128, 128, 128, 1)
+                                                Height: =40
+                                                Icon: ="Refresh"
+                                                OnSelect: =ClearCollect(colTransactions, If(IsBlank(filterProcessDate), '[THFinanceCashCollection]Transactions', Filter('[THFinanceCashCollection]Transactions', cr7bb_transactionprocessdate = filterProcessDate)))
+                                                Text: ="Refresh"
+                                                VerticalAlign: =VerticalAlign.Middle
+                                                Width: =100
+                        - TransactionTableTbl:
+                            Control: Table@1.0.278
+                            Properties:
+                              DateTimeFormat: ='PowerAppsOneGrid.DateTimeFormat'.ShortDate
+                              EnableRangeSelection: ='PowerAppsOneGrid.EnableRangeSelection'.Enable
+                              Height: =Parent.Height-150
+                              Items: =Filter(colTransactions, (IsBlank(transactionSearchText) || StartsWith(Upper(cr7bb_documentnumber), Upper(transactionSearchText)) || StartsWith(Upper(cr7bb_referenceinformation), Upper(transactionSearchText))) && (IsBlank(filterRecordType) || cr7bb_recordtype = filterRecordType) && (!filterExcludedOnly || cr7bb_isexcluded = true))
+                              ReflowBehavior: ='PowerAppsOneGrid.ReflowBehavior'.Reflow
+                              Visible: =currentMode="View"
+                              Width: =Parent.Width-20
+                              X: =10
+                              Y: =140
+                            Children:
+                              - TransactionCustomer:
+                                  Control: TableDataField@1.5.0
+                                  Variant: textualColumn
+                                  IsLocked: true
+                                  Properties:
+                                    FieldDisplayName: ="Customer"
+                                    FieldName: ="cr7bb_customer"
+                                    FieldType: ="s"
+                                    Order: =1
+                              - TransactionDocumentNumber:
+                                  Control: TableDataField@1.5.0
+                                  Variant: textualColumn
+                                  IsLocked: true
+                                  Properties:
+                                    FieldDisplayName: ="Document Number"
+                                    FieldName: ="cr7bb_documentnumber"
+                                    FieldType: ="s"
+                                    Order: =2
+                              - TransactionDocumentType:
+                                  Control: TableDataField@1.5.0
+                                  Variant: textualColumn
+                                  IsLocked: true
+                                  Properties:
+                                    FieldDisplayName: ="Doc Type"
+                                    FieldName: ="cr7bb_documenttype"
+                                    FieldType: ="s"
+                                    Order: =3
+                              - TransactionDocumentDate:
+                                  Control: TableDataField@1.5.0
+                                  IsLocked: true
+                                  Properties:
+                                    FieldDisplayName: ="Document Date"
+                                    FieldName: ="cr7bb_documentdate"
+                                    FieldType: ="D"
+                                    Order: =4
+                              - TransactionNetDueDate:
+                                  Control: TableDataField@1.5.0
+                                  IsLocked: true
+                                  Properties:
+                                    FieldDisplayName: ="Due Date"
+                                    FieldName: ="cr7bb_netduedate"
+                                    FieldType: ="D"
+                                    Order: =5
+                              - TransactionDayCount:
+                                  Control: TableDataField@1.5.0
+                                  IsLocked: true
+                                  Properties:
+                                    FieldDisplayName: ="Days"
+                                    FieldName: ="cr7bb_daycount"
+                                    FieldType: ="N"
+                                    Order: =6
+                              - TransactionAmount:
+                                  Control: TableDataField@1.5.0
+                                  IsLocked: true
+                                  Properties:
+                                    FieldDisplayName: ="Amount"
+                                    FieldName: ="cr7bb_amountlocalcurrency"
+                                    FieldType: ="C"
+                                    Order: =7
+                              - TransactionType:
+                                  Control: TableDataField@1.5.0
+                                  IsLocked: true
+                                  Properties:
+                                    FieldDisplayName: ="Type"
+                                    FieldName: ="cr7bb_transactiontype"
+                                    FieldType: ="E"
+                                    Order: =8
+                              - TransactionExcluded:
+                                  Control: TableDataField@1.5.0
+                                  IsLocked: true
+                                  Properties:
+                                    FieldDisplayName: ="Excluded"
+                                    FieldName: ="cr7bb_isexcluded"
+                                    FieldType: ="B"
+                                    Order: =9
+                              - TransactionProcessDate:
+                                  Control: TableDataField@1.5.0
+                                  IsLocked: true
+                                  Properties:
+                                    FieldDisplayName: ="Process Date"
+                                    FieldName: ="cr7bb_transactionprocessdate"
+                                    FieldType: ="D"
+                                    Order: =10
+                  - TransactionDetailsView:
+                      Control: GroupContainer@1.3.0
+                      Variant: ManualLayout
+                      Properties:
+                        Height: =Parent.Height
+                        Visible: =currentMode="Details"
+                        Width: =Parent.Width
+                      Children:
+                        - TransactionDetailsContainer:
+                            Control: GroupContainer@1.3.0
+                            Variant: AutoLayout
+                            Properties:
+                              Height: =Parent.Height-50
+                              LayoutDirection: =LayoutDirection.Vertical
+                              LayoutGap: =10
+                              LayoutOverflowX: =LayoutOverflow.Scroll
+                              LayoutOverflowY: =LayoutOverflow.Scroll
+                              PaddingLeft: =15
+                              PaddingTop: =15
+                              Width: =Parent.Width
+                            Children:
+                              - TransactionDetailsTitle:
+                                  Control: Text@0.0.51
+                                  Properties:
+                                    BorderStyle: =BorderStyle.None
+                                    Font: =Font.'Lato Black'
+                                    FontColor: =RGBA(15, 84, 140, 1)
+                                    Height: =45
+                                    PaddingBottom: =8
+                                    PaddingLeft: =10
+                                    PaddingTop: =8
+                                    Size: =20
+                                    Text: ="Transaction Details"
+                                    VerticalAlign: =VerticalAlign.Middle
+                                    Width: =Parent.Width
+                              - TransactionDetailsBasicSection:
+                                  Control: GroupContainer@1.3.0
+                                  Variant: AutoLayout
+                                  Properties:
+                                    Fill: =RGBA(174, 208, 221, 1)
+                                    FillPortions: =0
+                                    Height: =400
+                                    LayoutDirection: =LayoutDirection.Vertical
+                                    LayoutGap: =5
+                                    PaddingBottom: =10
+                                    PaddingLeft: =10
+                                    PaddingRight: =10
+                                    PaddingTop: =10
+                                    RadiusBottomLeft: =6
+                                    RadiusBottomRight: =6
+                                    RadiusTopLeft: =6
+                                    RadiusTopRight: =6
+                                  Children:
+                                    - TransactionDetailsSectionTitle:
+                                        Control: Text@0.0.51
+                                        Properties:
+                                          Font: =Font.'Lato Black'
+                                          FontColor: =RGBA(15, 84, 140, 1)
+                                          Height: =30
+                                          Size: =16
+                                          Text: ="Basic Information"
+                                          VerticalAlign: =VerticalAlign.Middle
+                                    - TransactionDetailsCustomerLabel:
+                                        Control: Text@0.0.51
+                                        Properties:
+                                          Height: =30
+                                          Text: |-
+                                            ="Customer: " & LookUp('[THFinanceCashCollection]Customers', cr7bb_thfinancecashcollectioncustomerid = currentSelectedTransaction.Customer.'[THFinanceCashCollection]Customer').cr7bb_customername & " (" & LookUp('[THFinanceCashCollection]Customers', cr7bb_thfinancecashcollectioncustomerid = currentSelectedTransaction.Customer.'[THFinanceCashCollection]Customer').cr7bb_customercode & ")"
+                                          VerticalAlign: =VerticalAlign.Middle
+                                          Width: =Parent.Width-20
+                                    - TransactionDetailsDocNumberLabel:
+                                        Control: Text@0.0.51
+                                        Properties:
+                                          Height: =30
+                                          Text: |-
+                                            ="Document Number: " & currentSelectedTransaction.cr7bb_documentnumber
+                                          VerticalAlign: =VerticalAlign.Middle
+                                          Width: =Parent.Width-20
+                                    - TransactionDetailsDocTypeLabel:
+                                        Control: Text@0.0.51
+                                        Properties:
+                                          Height: =30
+                                          Text: |-
+                                            ="Document Type: " & currentSelectedTransaction.cr7bb_documenttype
+                                          VerticalAlign: =VerticalAlign.Middle
+                                          Width: =Parent.Width-20
+                                    - TransactionDetailsDocDateLabel:
+                                        Control: Text@0.0.51
+                                        Properties:
+                                          Height: =30
+                                          Text: |-
+                                            ="Document Date: " & Text(currentSelectedTransaction.cr7bb_documentdate, "dd/mm/yyyy")
+                                          VerticalAlign: =VerticalAlign.Middle
+                                          Width: =Parent.Width-20
+                                    - TransactionDetailsDueDateLabel:
+                                        Control: Text@0.0.51
+                                        Properties:
+                                          Height: =30
+                                          Text: |-
+                                            ="Net Due Date: " & Text(currentSelectedTransaction.cr7bb_netduedate, "dd/mm/yyyy")
+                                          VerticalAlign: =VerticalAlign.Middle
+                                          Width: =Parent.Width-20
+                                    - TransactionDetailsAmountLabel:
+                                        Control: Text@0.0.51
+                                        Properties:
+                                          Font: =Font.'Segoe UI'
+                                          FontColor: =If(currentSelectedTransaction.cr7bb_amountlocalcurrency < 0, RGBA(0, 128, 0, 1), RGBA(255, 0, 0, 1))
+                                          Height: =30
+                                          Text: |-
+                                            ="Amount: " & Text(currentSelectedTransaction.cr7bb_amountlocalcurrency, "#,##0.00")
+                                          VerticalAlign: =VerticalAlign.Middle
+                                          Weight: ='TextCanvas.Weight'.Bold
+                                          Width: =Parent.Width-20
+                                    - TransactionDetailsDayCountLabel:
+                                        Control: Text@0.0.51
+                                        Properties:
+                                          Height: =30
+                                          Text: |-
+                                            ="Day Count: " & currentSelectedTransaction.cr7bb_daycount
+                                          VerticalAlign: =VerticalAlign.Middle
+                                          Width: =Parent.Width-20
+                                    - TransactionDetailsReferenceLabel:
+                                        Control: Text@0.0.51
+                                        Properties:
+                                          Height: =30
+                                          Text: |-
+                                            ="Reference: " & currentSelectedTransaction.cr7bb_referenceinformation
+                                          VerticalAlign: =VerticalAlign.Middle
+                                          Width: =Parent.Width-20
+                                    - TransactionDetailsTextLabel:
+                                        Control: Text@0.0.51
+                                        Properties:
+                                          AutoHeight: =true
+                                          Height: =60
+                                          Text: |-
+                                            ="Text: " & currentSelectedTransaction.cr7bb_textfield
+                                          VerticalAlign: =VerticalAlign.Top
+                                          Width: =Parent.Width-20
+                              - TransactionDetailsProcessingSection:
+                                  Control: GroupContainer@1.3.0
+                                  Variant: AutoLayout
+                                  Properties:
+                                    Fill: =RGBA(255, 243, 224, 1)
+                                    FillPortions: =0
+                                    Height: =280
+                                    LayoutDirection: =LayoutDirection.Vertical
+                                    LayoutGap: =5
+                                    PaddingBottom: =10
+                                    PaddingLeft: =10
+                                    PaddingRight: =10
+                                    PaddingTop: =10
+                                    RadiusBottomLeft: =6
+                                    RadiusBottomRight: =6
+                                    RadiusTopLeft: =6
+                                    RadiusTopRight: =6
+                                  Children:
+                                    - TransactionDetailsProcessingTitle:
+                                        Control: Text@0.0.51
+                                        Properties:
+                                          Font: =Font.'Lato Black'
+                                          FontColor: =RGBA(15, 84, 140, 1)
+                                          Height: =30
+                                          Size: =16
+                                          Text: ="Processing Status"
+                                          VerticalAlign: =VerticalAlign.Middle
+                                    - TransactionDetailsRecordTypeLabel:
+                                        Control: Text@0.0.51
+                                        Properties:
+                                          Height: =30
+                                          Text: |-
+                                            ="Record Type: " & currentSelectedTransaction.cr7bb_recordtype
+                                          VerticalAlign: =VerticalAlign.Middle
+                                          Width: =Parent.Width-20
+                                    - TransactionDetailsTransTypeLabel:
+                                        Control: Text@0.0.51
+                                        Properties:
+                                          Height: =30
+                                          Text: |-
+                                            ="Transaction Type: " & currentSelectedTransaction.cr7bb_transactiontype
+                                          VerticalAlign: =VerticalAlign.Middle
+                                          Width: =Parent.Width-20
+                                    - TransactionDetailsExcludedLabel:
+                                        Control: Text@0.0.51
+                                        Properties:
+                                          FontColor: =If(currentSelectedTransaction.cr7bb_isexcluded, RGBA(255, 0, 0, 1), RGBA(0, 128, 0, 1))
+                                          Height: =30
+                                          Text: |-
+                                            ="Excluded: " & If(currentSelectedTransaction.cr7bb_isexcluded, "Yes", "No")
+                                          VerticalAlign: =VerticalAlign.Middle
+                                          Weight: ='TextCanvas.Weight'.Semibold
+                                          Width: =Parent.Width-20
+                                    - TransactionDetailsExcludeReasonLabel:
+                                        Control: Text@0.0.51
+                                        Properties:
+                                          Height: =30
+                                          Text: |-
+                                            ="Exclude Reason: " & currentSelectedTransaction.cr7bb_excludereason
+                                          VerticalAlign: =VerticalAlign.Middle
+                                          Width: =Parent.Width-20
+                                    - TransactionDetailsProcessDateLabel:
+                                        Control: Text@0.0.51
+                                        Properties:
+                                          Height: =30
+                                          Text: |-
+                                            ="Process Date: " & Text(currentSelectedTransaction.cr7bb_transactionprocessdate, "dd/mm/yyyy")
+                                          VerticalAlign: =VerticalAlign.Middle
+                                          Width: =Parent.Width-20
+                                    - TransactionDetailsBatchLabel:
+                                        Control: Text@0.0.51
+                                        Properties:
+                                          Height: =30
+                                          Text: |-
+                                            ="Process Batch: " & currentSelectedTransaction.cr7bb_processbatch
+                                          VerticalAlign: =VerticalAlign.Middle
+                                          Width: =Parent.Width-20
+                                    - TransactionDetailsProcessedLabel:
+                                        Control: Text@0.0.51
+                                        Properties:
+                                          Height: =30
+                                          Text: |-
+                                            ="Is Processed: " & If(currentSelectedTransaction.cr7bb_isprocessed, "Yes", "No")
+                                          VerticalAlign: =VerticalAlign.Middle
+                                          Width: =Parent.Width-20
+                                    - TransactionDetailsEmailSentLabel:
+                                        Control: Text@0.0.51
+                                        Properties:
+                                          Height: =30
+                                          Text: |-
+                                            ="Email Sent: " & If(currentSelectedTransaction.cr7bb_emailsent, "Yes", "No")
+                                          VerticalAlign: =VerticalAlign.Middle
+                                          Width: =Parent.Width-20
+                        - TransactionDetailsControlBar:
+                            Control: GroupContainer@1.3.0
+                            Variant: AutoLayout
+                            Properties:
+                              Height: =40
+                              LayoutDirection: =LayoutDirection.Horizontal
+                              LayoutGap: =10
+                              LayoutJustifyContent: =LayoutJustifyContent.End
+                              PaddingRight: =10
+                              PaddingTop: =5
+                              Width: =Parent.Width-6
+                              X: =3
+                              Y: =Parent.Height-Self.Height-3
+                            Children:
+                              - TransactionDetailsBackBtn:
+                                  Control: Button@0.0.45
+                                  Properties:
+                                    Align: =Align.Center
+                                    BasePaletteColor: =RGBA(128, 128, 128, 1)
+                                    Height: =30
+                                    OnSelect: =UpdateContext({currentMode:"View", currentSelectedTransaction:Blank()})
+                                    Text: ="Back to List"
+                                    VerticalAlign: =VerticalAlign.Middle
+                                    Width: =120
+            - TransactionNavigationMenu:
+                Control: CanvasComponent
+                ComponentName: NavigationMenu
+                Properties:
+                  Fill: =RGBA(255, 255, 255, 0.5)
+                  Height: =Parent.Height-70
+                  Visible: =If(_showMenu,true,false)
+                  Width: =260
+                  Y: =70
+                  navItems: =Navigation
+                  navSelected: =currentScreen
+      - TransactionHeader:
+          Control: GroupContainer@1.3.0
+          Variant: AutoLayout
+          Properties:
+            DropShadow: =DropShadow.Regular
+            Fill: =LookUp(Navigation, name = currentScreen, color)
+            Height: =55
+            LayoutAlignItems: =LayoutAlignItems.Center
+            LayoutDirection: =LayoutDirection.Horizontal
+            PaddingLeft: =15
+            RadiusBottomLeft: =8
+            RadiusBottomRight: =8
+            RadiusTopLeft: =8
+            RadiusTopRight: =8
+            Width: =Parent.Width-20
+            X: =10
+            Y: =10
+          Children:
+            - TransactionMenuIcon:
+                Control: Classic/Icon@2.5.0
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =RGBA(255, 255, 255, 1)
+                  Height: =50
+                  Icon: =Icon.Hamburger
+                  OnSelect: =Set(_showMenu,!_showMenu);
+                  PaddingBottom: =10
+                  PaddingLeft: =10
+                  PaddingRight: =10
+                  PaddingTop: =10
+                  Width: =50
+            - TransactionTitle:
+                Control: Text@0.0.51
+                Properties:
+                  AlignInContainer: =AlignInContainer.Center
+                  Font: =Font.Lato
+                  FontColor: =Color.White
+                  Height: =50
+                  PaddingLeft: =20
+                  Size: =25
+                  Text: =currentScreen
+                  VerticalAlign: =VerticalAlign.Middle
+                  Weight: ='TextCanvas.Weight'.Medium
+                  Width: =240

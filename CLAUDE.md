@@ -59,39 +59,122 @@ Skip customers with text fields containing: "Paid", "Partial Payment", "รั�
 
 ## Power Apps Development Rules
 
-This project primarily uses a **Model-Driven Power App** (AR Control Center) with supplementary Canvas App components. Key development guidelines:
+This project uses **Canvas App** for the AR Control Center. Follow Nestlé Power Apps universal standards.
 
-### Application Architecture Priority
-1. **Primary**: Model-Driven App with Dataverse tables, forms, and views
-2. **Secondary**: Canvas App components for custom business logic where needed
-3. **Integration**: Power Automate flows for automation and data processing
+### 📚 Universal Standards (ALWAYS READ)
 
-### Critical File Policy
-**NEVER edit Power Apps YAML files directly!** Files in `Powerapp components-DO-NOT-EDIT/` and `Powerapp screens-DO-NOT-EDIT/` are read-only exports. Always provide code snippets for manual implementation in Power Apps Studio.
+**Location**: `~/.claude/powerapp-standards/`
 
-### Model-Driven Development Focus
-- **Tables**: Use Dataverse native tables (prefix: `cr7bb_`)
-  - Customer table: `[THFinanceCashCollection]Customers`
-  - Transaction table: `[THFinanceCashCollection]Transactions`
-  - **⚠️ CRITICAL**: Always verify field names from exported YAML in `Powerapp screens-DO-NOT-EDIT/`, not from documentation
-- **Forms**: Configure main/quick create forms for data entry
-- **Views**: Create system/personal views for data analysis
-- **Sitemaps**: Organize navigation around AR workflow
-- **Business Rules**: Implement validation at the table level
+This project follows **Nestlé Power Apps Universal Standards v1.4**. Before creating or editing screens, AI assistants MUST read:
 
-### Canvas Component Guidelines (When Used)
-- Component names must be globally unique using functional prefixes:
-```yaml
-# Model-Driven friendly naming
-- ARDashboard_MainContainer
-- CustomerMgmt_EmailForm
-- TransactionList_FilterPanel
+1. **Core Standards** (Always Read):
+   - `universal-powerapp-checklist.md` - Critical rules & common errors
+   - `nestle-brand-standards.md` - Nestlé colors, fonts, layouts
+   - `powerapp-control-reference.md` - Quick index (links-only navigation)
+
+2. **Detailed References** (Read When Needed):
+   - `modern-controls-complete-reference.md` - Modern controls (Button@0.0.45, Text@0.0.51)
+   - `classic-controls-reference.md` - Classic controls (Icon@2.5.0, Gallery@2.15.0)
+   - `powerapp-yaml-complete-guide.md` - YAML syntax & schema
+
+3. **Data Source** (Project-Specific):
+   - `dataverse-common-patterns.md` - Dataverse CRUD, syntax, relationships
+
+4. **Development Guides** (Task-Specific):
+   - `powerapp-naming-conventions.md` - Naming rules
+   - `powerapp-common-errors.md` - Error troubleshooting
+   - `gallery-patterns.md` - Gallery implementation patterns
+
+### 🎯 Project-Specific Overrides
+
+**Documentation Hierarchy**: Project docs override universal standards
+
+**Project-Specific Files** (Read After Universal):
+- `FIELD_NAME_REFERENCE.md` - **PRIMARY SOURCE** for field names (cr7bb_ prefix)
+- `AI_ASSISTANT_RULES_SUMMARY.md` - Project-specific rules & patterns
+- `REDESIGNED_SCREENS.md` - Screen architecture & design decisions
+
+### 🚀 Development Workflow
+
+**Screen Lifecycle**:
+1. **Create** in `templates/powerapps/` (working directory)
+2. **Quick check** with `/quick-check <file>` during development (10-30 sec)
+3. **Full review** with subagent or `/review-powerapp-screen` when ready (2-3 min)
+4. **Fix** all critical + standards issues
+5. **Import** to Power Apps Studio manually
+6. **Export** from Power Apps Studio to `Powerapp screens-DO-NOT-EDIT/` (production reference)
+
+**Daily Workflow**:
+```
+Edit in templates/powerapps/
+→ Say "check scnMyScreen" (quick validation)
+→ Fix errors, repeat
+→ Say "review scnMyScreen" when ready
+→ Import to Power Apps Studio
 ```
 
-### Control Properties (Canvas Components)
-- **TextInput Controls**: Use `.Value` property, not `.Text`
+### ⚙️ Available Tools
+
+**Subagent** (Auto-Activates):
+- **`powerapp-screen-reviewer`** - Comprehensive review after you create/edit screens
+  - Auto-invokes when significant changes made
+  - Checks critical errors, standards, best practices
+  - 2-3 min thorough analysis
+
+**Slash Commands** (Manual):
+- **`/review-powerapp-screen <file>`** - Comprehensive review (2-3 min)
+- **`/quick-check <file>`** - Fast syntax check (10-30 sec, critical only)
+- **`/init-powerapp-project <name> <source>`** - Initialize new project
+
+### 🎨 Nestlé Brand Compliance
+
+**Colors** (from nestle-brand-standards.md):
+- **Nestlé Blue**: RGBA(0, 101, 161, 1) - Primary buttons, headers
+- **Nestlé Red**: RGBA(212, 41, 57, 1) - Warnings, alerts
+- **Oak Brown**: RGBA(100, 81, 61, 1) - Secondary buttons
+
+**Fonts**:
+- **Primary**: Lato (with Weight property)
+- **Secondary**: Segoe UI (system font)
+- **Never use**: Font.'Lato Black' (use Font.Lato with Weight property)
+
+**Typography**:
+- Headers: Size 20-24, Weight.Bold
+- Body: Size 14-16, Weight.Semibold or Regular
+- Labels: Size 12-14
+
+### ⚠️ Critical Rules (Project-Specific)
+
+**Field Names**:
+- **ALWAYS verify from FIELD_NAME_REFERENCE.md**
+- All fields use `cr7bb_` prefix (NOT `nc_` from schema docs)
+- Example: `cr7bb_customercode`, `cr7bb_customername`, `cr7bb_Region`
+
+**Dataverse Tables**:
+- `[THFinanceCashCollection]Customers` - Customer master data
+- `[THFinanceCashCollection]Transactions` - Transaction line items
+- `[THFinanceCashCollection]ProcessLogs` - Process execution logs (TEXT date type)
+- `[THFinanceCashCollection]EmailLogs` - Email send logs
+
+**Date Fields**:
+- **ProcessLogs**: `cr7bb_processdate` is TEXT type (format: "yyyy-mm-dd")
+- **EmailLogs**: `cr7bb_sentdatetime` is DateTime type
+
+**Control Properties**:
+- **TextInput**: Use `.Value` property, not `.Text`
 - **Power Fx Formulas**: ALL expressions must start with `=` symbol
-- **Dataverse Integration**: Use Dataverse connector, not SharePoint lists
+- **AutoLayout Containers**: MUST set LayoutMinHeight and LayoutMinWidth (dangerous defaults!)
+- **Text Controls**: Always specify Width property (default 96px causes issues)
+
+**PowerFx Field Naming Patterns**:
+- **Dataverse Logical Names**: Use `cr7bb_` prefix (e.g., `cr7bb_customercode`, `cr7bb_Region`)
+- **Dataverse Display Names**: Can omit prefix when referencing from record variables (e.g., `Region`, `CustomerCode`)
+- Both work interchangeably: `_selectedCustomer.cr7bb_Region` = `_selectedCustomer.Region`
+- **Best Practice**: Use Display Names for readability in formulas
+- **Calculated Column Names** (AddColumns, ShowColumns): NO QUOTES on column name parameter
+  - Correct: `AddColumns(table, TransactionTypeText, expression)`
+  - Wrong: `AddColumns(table, "TransactionTypeText", expression)`
+  - Column name is an identifier, not a string literal
 
 ## Development Commands
 

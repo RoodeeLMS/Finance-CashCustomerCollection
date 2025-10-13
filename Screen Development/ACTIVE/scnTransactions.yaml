@@ -4,27 +4,40 @@ Screens:
       Fill: =RGBA(243, 242, 241, 1)
       LoadingSpinnerColor: =RGBA(0, 101, 161, 1)
       OnVisible: |-
-        =UpdateContext({currentScreen: "Transaction Management"});
-        Set(_showMenu, false);
-        Set(_selectedCustomer, Blank());
-        Set(_dateFrom, DateAdd(Today(), -30, TimeUnit.Days));
-        Set(_dateTo, Today());
-        Set(_typeFilter, "All");
-        Set(_statusFilter, "All");
+        =// Batch local variables with UpdateContext
+        UpdateContext({
+            currentScreen: "Transactions",
+            _showMenu: false,
+            _selectedCustomer: Blank(),
+            _dateFrom: DateAdd(Today(), -30, TimeUnit.Days),
+            _dateTo: Today(),
+            _typeFilter: "All",
+            _statusFilter: "All"
+        });
 
-        /* Load customers for filter dropdown */
+        // Load customers for filter dropdown
         ClearCollect(
             colCustomers,
             Sort('[THFinanceCashCollection]Customers', cr7bb_customername, SortOrder.Ascending)
         );
 
-        /* Load all transactions */
+        // Load all transactions into collection with TransactionTypeText and AmountFormatted
         ClearCollect(
             colTransactions,
-            SortByColumns(
+            AddColumns(
                 '[THFinanceCashCollection]Transactions',
-                "cr7bb_documentdate",
-                SortOrder.Ascending
+                TransactionTypeText,
+                If(
+                    cr7bb_transactiontype = 'Transaction Type Choice'.'Credit Note',
+                    "CN",
+                    If(
+                        cr7bb_transactiontype = 'Transaction Type Choice'.'Debit Note',
+                        "DN",
+                        ""
+                    )
+                ),
+                AmountFormatted,
+                "฿" & Text(cr7bb_amountlocalcurrency, "#,##0.00")
             )
         );
     Children:
@@ -253,18 +266,42 @@ Screens:
                               LayoutMinWidth: =100
                               Width: =Parent.Width - 30
                             Children:
-                              - Trans_ApplyBtn:
-                                  Control: Button@0.0.45
+                              - Trans_FilterInfo:
+                                  Control: Text@0.0.51
                                   Properties:
-                                    BasePaletteColor: =RGBA(0, 101, 161, 1)
+                                    Font: =Font.Lato
+                                    FontColor: =RGBA(100, 100, 100, 1)
                                     Height: =35
-                                    Icon: ="Filter"
-                                    OnSelect: |-
-                                      =ClearCollect(
-                                          colTransactions,
-                                          SortByColumns(
+                                    Text: |-
+                                      ="Records: " & CountRows(
+                                          Filter(
+                                              colTransactions,
+                                              (IsBlank(_selectedCustomer) || Customer.'[THFinanceCashCollection]Customer' = _selectedCustomer.'[THFinanceCashCollection]Customer') &&
+                                              cr7bb_documentdate >= _dateFrom &&
+                                              cr7bb_documentdate <= _dateTo &&
+                                              (_typeFilter = "All" ||
+                                               (_typeFilter = "CN" && cr7bb_transactiontype = 'Transaction Type Choice'.'Credit Note') ||
+                                               (_typeFilter = "DN" && cr7bb_transactiontype = 'Transaction Type Choice'.'Debit Note')) &&
+                                              (_statusFilter = "All" ||
+                                               (_statusFilter = "Processed" && cr7bb_isprocessed = true) ||
+                                               (_statusFilter = "Unprocessed" && cr7bb_isprocessed = false))
+                                          )
+                                      )
+                                    VerticalAlign: =VerticalAlign.Middle
+                                    Weight: ='TextCanvas.Weight'.Regular
+                                    Width: =250
+                              - Trans_TotalLabel:
+                                  Control: Text@0.0.51
+                                  Properties:
+                                    Font: =Font.Lato
+                                    FontColor: =RGBA(0, 0, 0, 1)
+                                    Height: =35
+                                    Size: =16
+                                    Text: |-
+                                      ="Total: ฿" & Text(
+                                          Sum(
                                               Filter(
-                                                  '[THFinanceCashCollection]Transactions',
+                                                  colTransactions,
                                                   (IsBlank(_selectedCustomer) || Customer.'[THFinanceCashCollection]Customer' = _selectedCustomer.'[THFinanceCashCollection]Customer') &&
                                                   cr7bb_documentdate >= _dateFrom &&
                                                   cr7bb_documentdate <= _dateTo &&
@@ -275,22 +312,10 @@ Screens:
                                                    (_statusFilter = "Processed" && cr7bb_isprocessed = true) ||
                                                    (_statusFilter = "Unprocessed" && cr7bb_isprocessed = false))
                                               ),
-                                              "cr7bb_documentdate",
-                                              SortOrder.Ascending
-                                          )
-                                      );
-                                      Notify("Filters applied", NotificationType.Success)
-                                    Text: ="Apply Filters"
-                                    Width: =150
-                              - Trans_TotalLabel:
-                                  Control: Text@0.0.51
-                                  Properties:
-                                    Font: =Font.Lato
-                                    FontColor: =RGBA(0, 0, 0, 1)
-                                    Height: =35
-                                    Size: =16
-                                    Text: |-
-                                      ="Total: ฿" & Text(Sum(colTransactions, cr7bb_amountlocalcurrency), "#,##0.00")
+                                              cr7bb_amountlocalcurrency
+                                          ),
+                                          "#,##0.00"
+                                      )
                                     VerticalAlign: =VerticalAlign.Middle
                                     Weight: ='TextCanvas.Weight'.Bold
                                     Width: =300
@@ -344,24 +369,22 @@ Screens:
                                           CountRows(Trans_Table.SelectedItems) & " transactions marked as processed",
                                           NotificationType.Success
                                       );
-                                      /* Refresh data */
                                       ClearCollect(
                                           colTransactions,
-                                          SortByColumns(
-                                              Filter(
-                                                  '[THFinanceCashCollection]Transactions',
-                                                  (IsBlank(_selectedCustomer) || Customer.'[THFinanceCashCollection]Customer' = _selectedCustomer.'[THFinanceCashCollection]Customer') &&
-                                                  cr7bb_documentdate >= _dateFrom &&
-                                                  cr7bb_documentdate <= _dateTo &&
-                                                  (_typeFilter = "All" ||
-                                                   (_typeFilter = "CN" && cr7bb_transactiontype = 'Transaction Type Choice'.'Credit Note') ||
-                                                   (_typeFilter = "DN" && cr7bb_transactiontype = 'Transaction Type Choice'.'Debit Note')) &&
-                                                  (_statusFilter = "All" ||
-                                                   (_statusFilter = "Processed" && cr7bb_isprocessed = true) ||
-                                                   (_statusFilter = "Unprocessed" && cr7bb_isprocessed = false))
+                                          AddColumns(
+                                              '[THFinanceCashCollection]Transactions',
+                                              TransactionTypeText,
+                                              If(
+                                                  cr7bb_transactiontype = 'Transaction Type Choice'.'Credit Note',
+                                                  "CN",
+                                                  If(
+                                                      cr7bb_transactiontype = 'Transaction Type Choice'.'Debit Note',
+                                                      "DN",
+                                                      ""
+                                                  )
                                               ),
-                                              "cr7bb_documentdate",
-                                              SortOrder.Ascending
+                                              AmountFormatted,
+                                              "฿" & Text(cr7bb_amountlocalcurrency, "#,##0.00")
                                           )
                                       )
                                     Text: ="Mark Processed"
@@ -379,7 +402,23 @@ Screens:
                             Control: Table@1.0.278
                             Properties:
                               Height: =Parent.Height - 60
-                              Items: =colTransactions
+                              Items: |-
+                                =SortByColumns(
+                                    Filter(
+                                        colTransactions,
+                                        (IsBlank(_selectedCustomer) || Customer.'[THFinanceCashCollection]Customer' = _selectedCustomer.'[THFinanceCashCollection]Customer') &&
+                                        cr7bb_documentdate >= _dateFrom &&
+                                        cr7bb_documentdate <= _dateTo &&
+                                        (_typeFilter = "All" ||
+                                         (_typeFilter = "CN" && cr7bb_transactiontype = 'Transaction Type Choice'.'Credit Note') ||
+                                         (_typeFilter = "DN" && cr7bb_transactiontype = 'Transaction Type Choice'.'Debit Note')) &&
+                                        (_statusFilter = "All" ||
+                                         (_statusFilter = "Processed" && cr7bb_isprocessed = true) ||
+                                         (_statusFilter = "Unprocessed" && cr7bb_isprocessed = false))
+                                    ),
+                                    "cr7bb_documentdate",
+                                    SortOrder.Ascending
+                                )
                               Width: =Parent.Width
                               Y: =50
                             Children:
@@ -389,7 +428,7 @@ Screens:
                                   IsLocked: true
                                   Properties:
                                     FieldDisplayName: ="Type"
-                                    FieldName: ="cr7bb_transactiontype"
+                                    FieldName: ="TransactionTypeText"
                                     FieldType: ="s"
                                     Order: =1
                               - Trans_DocumentColumn:
@@ -425,9 +464,10 @@ Screens:
                                   IsLocked: true
                                   Properties:
                                     FieldDisplayName: ="Amount"
-                                    FieldName: ="cr7bb_amountlocalcurrency"
-                                    FieldType: ="c"
+                                    FieldName: ="AmountFormatted"
+                                    FieldType: ="s"
                                     Order: =5
+                                    Width: =120
                               - Trans_NoteColumn:
                                   Control: TableDataField@1.5.0
                                   Variant: textualColumn
@@ -521,7 +561,16 @@ Screens:
                                     Text: |-
                                       ="CN Total: ฿" & Text(
                                           Sum(
-                                              Filter(colTransactions, cr7bb_transactiontype = 'Transaction Type Choice'.'Credit Note'),
+                                              Filter(
+                                                  colTransactions,
+                                                  (IsBlank(_selectedCustomer) || Customer.'[THFinanceCashCollection]Customer' = _selectedCustomer.'[THFinanceCashCollection]Customer') &&
+                                                  cr7bb_documentdate >= _dateFrom &&
+                                                  cr7bb_documentdate <= _dateTo &&
+                                                  cr7bb_transactiontype = 'Transaction Type Choice'.'Credit Note' &&
+                                                  (_statusFilter = "All" ||
+                                                   (_statusFilter = "Processed" && cr7bb_isprocessed = true) ||
+                                                   (_statusFilter = "Unprocessed" && cr7bb_isprocessed = false))
+                                              ),
                                               cr7bb_amountlocalcurrency
                                           ),
                                           "#,##0.00"
@@ -538,7 +587,16 @@ Screens:
                                     Text: |-
                                       ="DN Total: ฿" & Text(
                                           Sum(
-                                              Filter(colTransactions, cr7bb_transactiontype = 'Transaction Type Choice'.'Debit Note'),
+                                              Filter(
+                                                  colTransactions,
+                                                  (IsBlank(_selectedCustomer) || Customer.'[THFinanceCashCollection]Customer' = _selectedCustomer.'[THFinanceCashCollection]Customer') &&
+                                                  cr7bb_documentdate >= _dateFrom &&
+                                                  cr7bb_documentdate <= _dateTo &&
+                                                  cr7bb_transactiontype = 'Transaction Type Choice'.'Debit Note' &&
+                                                  (_statusFilter = "All" ||
+                                                   (_statusFilter = "Processed" && cr7bb_isprocessed = true) ||
+                                                   (_statusFilter = "Unprocessed" && cr7bb_isprocessed = false))
+                                              ),
                                               cr7bb_amountlocalcurrency
                                           ),
                                           "#,##0.00"
@@ -574,7 +632,24 @@ Screens:
                               Height: =30
                               Size: =16
                               Text: |-
-                                ="Net Owed: ฿" & Text(Sum(colTransactions, cr7bb_amountlocalcurrency), "#,##0.00")
+                                ="Net Owed: ฿" & Text(
+                                    Sum(
+                                        Filter(
+                                            colTransactions,
+                                            (IsBlank(_selectedCustomer) || Customer.'[THFinanceCashCollection]Customer' = _selectedCustomer.'[THFinanceCashCollection]Customer') &&
+                                            cr7bb_documentdate >= _dateFrom &&
+                                            cr7bb_documentdate <= _dateTo &&
+                                            (_typeFilter = "All" ||
+                                             (_typeFilter = "CN" && cr7bb_transactiontype = 'Transaction Type Choice'.'Credit Note') ||
+                                             (_typeFilter = "DN" && cr7bb_transactiontype = 'Transaction Type Choice'.'Debit Note')) &&
+                                            (_statusFilter = "All" ||
+                                             (_statusFilter = "Processed" && cr7bb_isprocessed = true) ||
+                                             (_statusFilter = "Unprocessed" && cr7bb_isprocessed = false))
+                                        ),
+                                        cr7bb_amountlocalcurrency
+                                    ),
+                                    "#,##0.00"
+                                )
                               VerticalAlign: =VerticalAlign.Middle
                               Weight: ='TextCanvas.Weight'.Bold
                               Width: =Parent.Width - 30

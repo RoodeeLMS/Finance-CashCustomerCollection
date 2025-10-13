@@ -1,0 +1,687 @@
+{
+  "properties": {
+    "connectionReferences": {
+      "shared_commondataserviceforapps": {
+        "api": {
+          "name": "shared_commondataserviceforapps"
+        },
+        "connection": {
+          "connectionReferenceLogicalName": "new_sharedcommondataserviceforapps_7e300"
+        },
+        "runtimeSource": "embedded"
+      },
+      "shared_office365": {
+        "api": {
+          "name": "shared_office365"
+        },
+        "connection": {
+          "connectionReferenceLogicalName": "new_sharedoffice365_50b72"
+        },
+        "runtimeSource": "embedded"
+      },
+      "shared_sharepointonline": {
+        "api": {
+          "name": "shared_sharepointonline"
+        },
+        "connection": {
+          "connectionReferenceLogicalName": "nc_sharedsharepointonline_80205"
+        },
+        "runtimeSource": "embedded"
+      },
+      "shared_office365users": {
+        "api": {
+          "name": "shared_office365users"
+        },
+        "connection": {
+          "connectionReferenceLogicalName": "new_sharedoffice365users_0fee9"
+        },
+        "runtimeSource": "embedded"
+      }
+    },
+    "definition": {
+      "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+      "contentVersion": "1.0.0.0",
+      "parameters": {
+        "$authentication": {
+          "defaultValue": {},
+          "type": "SecureObject"
+        },
+        "$connections": {
+          "defaultValue": {},
+          "type": "Object"
+        },
+        "PA Test Notification Email (nc_PATestNotificationEmail)": {
+          "defaultValue": "Nick.Chamnong@th.nestle.com",
+          "type": "String",
+          "metadata": {
+            "schemaName": "nc_PATestNotificationEmail"
+          }
+        },
+        "PA Current Environment Mode (nc_PACurrentEnvironmentMode)": {
+          "defaultValue": "Production",
+          "type": "String",
+          "metadata": {
+            "schemaName": "nc_PACurrentEnvironmentMode",
+            "description": "Production/Development"
+          }
+        },
+        "System Notification Email (nc_SystemNotificationEmail)": {
+          "defaultValue": "Nick.Chamnong@th.nestle.com",
+          "type": "String",
+          "metadata": {
+            "schemaName": "nc_SystemNotificationEmail"
+          }
+        }
+      },
+      "triggers": {
+        "Recurrence": {
+          "type": "Recurrence",
+          "recurrence": {
+            "interval": 1,
+            "frequency": "Day",
+            "timeZone": "SE Asia Standard Time",
+            "schedule": {
+              "hours": [
+                "13"
+              ],
+              "minutes": [
+                30
+              ]
+            }
+          }
+        }
+      },
+      "actions": {
+        "Initialize_varProcessDate": {
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "varProcessDate",
+                "type": "string",
+                "value": "@{formatDateTime(utcNow(), 'yyyy-MM-dd')}"
+              }
+            ]
+          },
+          "runAfter": {}
+        },
+        "Initialize_varEmailsSent": {
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "varEmailsSent",
+                "type": "integer",
+                "value": 0
+              }
+            ]
+          },
+          "runAfter": {
+            "Initialize_varProcessDate": [
+              "Succeeded"
+            ]
+          }
+        },
+        "Initialize_varEmailsFailed": {
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "varEmailsFailed",
+                "type": "integer",
+                "value": 0
+              }
+            ]
+          },
+          "runAfter": {
+            "Initialize_varEmailsSent": [
+              "Succeeded"
+            ]
+          }
+        },
+        "Initialize_varCustomersProcessed": {
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "varCustomersProcessed",
+                "type": "integer",
+                "value": 0
+              }
+            ]
+          },
+          "runAfter": {
+            "Initialize_varEmailsFailed": [
+              "Succeeded"
+            ]
+          }
+        },
+        "Initialize_varErrorMessages": {
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "varErrorMessages",
+                "type": "array",
+                "value": []
+              }
+            ]
+          },
+          "runAfter": {
+            "Initialize_varCustomersProcessed": [
+              "Succeeded"
+            ]
+          }
+        },
+        "List_Process_Logs": {
+          "type": "OpenApiConnection",
+          "inputs": {
+            "parameters": {
+              "entityName": "cr7bb_thfinancecashcollectionprocesslogs",
+              "$filter": "cr7bb_processdate eq '@{variables('varProcessDate')}' and cr7bb_endtime ne null",
+              "$orderby": "cr7bb_endtime desc",
+              "$top": 1
+            },
+            "host": {
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+              "operationId": "ListRecords",
+              "connectionName": "shared_commondataserviceforapps"
+            }
+          },
+          "runAfter": {
+            "Initialize_varErrorMessages": [
+              "Succeeded"
+            ]
+          }
+        },
+        "Check_Import_Completed": {
+          "type": "If",
+          "expression": {
+            "and": [
+              {
+                "equals": [
+                  "@length(coalesce(outputs('List_Process_Logs')?['value'], createArray()))",
+                  0
+                ]
+              }
+            ]
+          },
+          "actions": {
+            "Send_error_email": {
+              "type": "OpenApiConnection",
+              "inputs": {
+                "parameters": {
+                  "emailMessage/To": "Nick.Chamnong@th.nestle.com",
+                  "emailMessage/Subject": "⚠️ Collections Engine - SAP Import Not Completed",
+                  "emailMessage/Body": "<p>SAP import for @{variables('varProcessDate')} has not completed. Collections email engine cannot run.</p>",
+                  "emailMessage/Importance": "High"
+                },
+                "host": {
+                  "apiId": "/providers/Microsoft.PowerApps/apis/shared_office365",
+                  "operationId": "SendEmailV2",
+                  "connectionName": "shared_office365"
+                }
+              }
+            },
+            "Terminate": {
+              "type": "Terminate",
+              "inputs": {
+                "runStatus": "Failed",
+                "runError": {
+                  "message": "SAP import not completed"
+                }
+              },
+              "runAfter": {
+                "Send_error_email": [
+                  "Succeeded"
+                ]
+              }
+            }
+          },
+          "else": {
+            "actions": {}
+          },
+          "runAfter": {
+            "List_Process_Logs": [
+              "Succeeded"
+            ]
+          }
+        },
+        "List_Transactions": {
+          "type": "OpenApiConnection",
+          "inputs": {
+            "parameters": {
+              "entityName": "cr7bb_thfinancecashcollectiontransactions",
+              "$select": "cr7bb_thfinancecashcollectiontransactionid,_cr7bb_customer_value,cr7bb_documentnumber,cr7bb_documentdate,cr7bb_amountlocalcurrency,cr7bb_daycount,cr7bb_isexcluded,cr7bb_transactiontype,cr7bb_netduedate,cr7bb_documenttype",
+              "$filter": "cr7bb_processdate eq '@{variables('varProcessDate')}' and cr7bb_recordtype eq 'Transaction' and cr7bb_emailsent eq false",
+              "$top": 5000
+            },
+            "host": {
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+              "operationId": "ListRecords",
+              "connectionName": "shared_commondataserviceforapps"
+            }
+          },
+          "runAfter": {
+            "Check_Import_Completed": [
+              "Succeeded"
+            ]
+          }
+        },
+        "Select_Customer_IDs": {
+          "type": "Select",
+          "inputs": {
+            "from": "@outputs('List_Transactions')?['value']",
+            "select": "@item()?['_cr7bb_customer_value']"
+          },
+          "runAfter": {
+            "List_Transactions": [
+              "Succeeded"
+            ]
+          }
+        },
+        "Get_Unique_Customers": {
+          "type": "Compose",
+          "inputs": "@union(outputs('Select_Customer_IDs'), outputs('Select_Customer_IDs'))",
+          "runAfter": {
+            "Select_Customer_IDs": [
+              "Succeeded"
+            ]
+          }
+        },
+        "Apply_to_each_Customer": {
+          "type": "Foreach",
+          "foreach": "@outputs('Get_Unique_Customers')",
+          "actions": {
+            "Increment_varCustomersProcessed": {
+              "type": "IncrementVariable",
+              "inputs": {
+                "name": "varCustomersProcessed",
+                "value": 1
+              }
+            },
+            "Get_Customer": {
+              "type": "OpenApiConnection",
+              "inputs": {
+                "parameters": {
+                  "entityName": "cr7bb_thfinancecashcollectioncustomers",
+                  "recordId": "@item()"
+                },
+                "host": {
+                  "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+                  "operationId": "GetItem",
+                  "connectionName": "shared_commondataserviceforapps"
+                }
+              },
+              "runAfter": {
+                "Increment_varCustomersProcessed": [
+                  "Succeeded"
+                ]
+              }
+            },
+            "Filter_Customer_Transactions": {
+              "type": "Query",
+              "inputs": {
+                "from": "@outputs('List_Transactions')?['value']",
+                "where": "@equals(item()?['_cr7bb_customer_value'], outputs('Get_Customer')?['cr7bb_thfinancecashcollectioncustomerid'])"
+              },
+              "runAfter": {
+                "Get_Customer": [
+                  "Succeeded"
+                ]
+              }
+            },
+            "Filter_Non_Excluded": {
+              "type": "Query",
+              "inputs": {
+                "from": "@body('Filter_Customer_Transactions')",
+                "where": "@equals(item()?['cr7bb_isexcluded'], false)"
+              },
+              "runAfter": {
+                "Filter_Customer_Transactions": [
+                  "Succeeded"
+                ]
+              }
+            },
+            "Check_All_Excluded": {
+              "type": "If",
+              "expression": {
+                "and": [
+                  {
+                    "equals": [
+                      "@length(body('Filter_Non_Excluded'))",
+                      0
+                    ]
+                  }
+                ]
+              },
+              "actions": {},
+              "else": {
+                "actions": {
+                  "Filter_CN_List": {
+                    "type": "Query",
+                    "inputs": {
+                      "from": "@body('Filter_Non_Excluded')",
+                      "where": "@less(item()?['cr7bb_amountlocalcurrency'], 0)"
+                    }
+                  },
+                  "Filter_DN_List": {
+                    "type": "Query",
+                    "inputs": {
+                      "from": "@body('Filter_Non_Excluded')",
+                      "where": "@greater(item()?['cr7bb_amountlocalcurrency'], 0)"
+                    },
+                    "runAfter": {
+                      "Filter_CN_List": [
+                        "Succeeded"
+                      ]
+                    }
+                  },
+                  "Compose_CN_Total": {
+                    "type": "Compose",
+                    "inputs": "@if(greater(length(body('Filter_CN_List')), 0), sum(body('Filter_CN_List'), 'cr7bb_amountlocalcurrency'), 0)",
+                    "runAfter": {
+                      "Filter_DN_List": [
+                        "Succeeded"
+                      ]
+                    }
+                  },
+                  "Compose_DN_Total": {
+                    "type": "Compose",
+                    "inputs": "@if(greater(length(body('Filter_DN_List')), 0), sum(body('Filter_DN_List'), 'cr7bb_amountlocalcurrency'), 0)",
+                    "runAfter": {
+                      "Compose_CN_Total": [
+                        "Succeeded"
+                      ]
+                    }
+                  },
+                  "Compose_Net_Amount": {
+                    "type": "Compose",
+                    "inputs": "@add(outputs('Compose_DN_Total'), outputs('Compose_CN_Total'))",
+                    "runAfter": {
+                      "Compose_DN_Total": [
+                        "Succeeded"
+                      ]
+                    }
+                  },
+                  "Check_Should_Send": {
+                    "type": "If",
+                    "expression": {
+                      "and": [
+                        {
+                          "greater": [
+                            "@length(body('Filter_DN_List'))",
+                            0
+                          ]
+                        },
+                        {
+                          "greater": [
+                            "@outputs('Compose_Net_Amount')",
+                            0
+                          ]
+                        }
+                      ]
+                    },
+                    "actions": {
+                      "Compose_Max_DayCount": {
+                        "type": "Compose",
+                        "inputs": "@if(greater(length(body('Filter_DN_List')), 0), max(map(body('Filter_DN_List'), item()?['cr7bb_daycount'])), 0)"
+                      },
+                      "Compose_Template_Selection": {
+                        "type": "Compose",
+                        "inputs": "@if(lessOrEquals(outputs('Compose_Max_DayCount'), 2), 'Template_A', if(equals(outputs('Compose_Max_DayCount'), 3), 'Template_B', 'Template_C'))",
+                        "runAfter": {
+                          "Compose_Max_DayCount": [
+                            "Succeeded"
+                          ]
+                        }
+                      },
+                      "Compose_Email_Subject": {
+                        "type": "Compose",
+                        "inputs": "@{outputs('Get_Customer')?['cr7bb_customercode']}, @{outputs('Get_Customer')?['cr7bb_customername']}, รายละเอียดบิลวันที่ @{formatDateTime(min(map(body('Filter_DN_List'), item()?['cr7bb_documentdate'])), 'dd/MM/yyyy')} - @{formatDateTime(max(map(body('Filter_DN_List'), item()?['cr7bb_documentdate'])), 'dd/MM/yyyy')}",
+                        "runAfter": {
+                          "Compose_Template_Selection": [
+                            "Succeeded"
+                          ]
+                        }
+                      },
+                      "Get_QR_Code": {
+                        "type": "OpenApiConnection",
+                        "inputs": {
+                          "parameters": {
+                            "dataset": "https://nestle.sharepoint.com/teams/THFinancePowerPlatformSolutions",
+                            "id": "/Shared Documents/Cash Customer Collection/03-QR-Codes/@{outputs('Get_Customer')?['cr7bb_customercode']}.jpg",
+                            "inferContentType": true
+                          },
+                          "host": {
+                            "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                            "operationId": "GetFileContent",
+                            "connectionName": "shared_sharepointonline"
+                          }
+                        },
+                        "runAfter": {
+                          "Create_HTML_table": [
+                            "Succeeded"
+                          ]
+                        }
+                      },
+                      "Get_AR_rep": {
+                        "type": "OpenApiConnection",
+                        "inputs": {
+                          "parameters": {
+                            "id": "@outputs('Get_Customer')?['cr7bb_arbackupemail1']"
+                          },
+                          "host": {
+                            "apiId": "/providers/Microsoft.PowerApps/apis/shared_office365users",
+                            "operationId": "UserProfile_V2",
+                            "connectionName": "shared_office365users"
+                          }
+                        },
+                        "runAfter": {
+                          "Get_QR_Code": [
+                            "Succeeded",
+                            "Failed"
+                          ]
+                        }
+                      },
+                      "Create_Email_Log": {
+                        "type": "OpenApiConnection",
+                        "inputs": {
+                          "parameters": {
+                            "entityName": "cr7bb_thfinancecashcollectionemaillogs",
+                            "item/cr7bb_emailsubject": "@outputs('Compose_Email_Subject')",
+                            "item/cr7bb_ccemails": "@outputs('Compose_CC_Emails')",
+                            "item/cr7bb_Customer@odata.bind": "@outputs('Get_Customer')?['body/@odata.id']",
+                            "item/cr7bb_emailtemplate": "@outputs('Compose_Template_Selection')",
+                            "item/cr7bb_maxdaycount": "@outputs('Compose_Max_DayCount')",
+                            "item/cr7bb_processdate": "@variables('varProcessDate')",
+                            "item/cr7bb_qrcodeincluded": "@not(empty(body('Get_QR_Code')))",
+                            "item/cr7bb_recipientemails": "@outputs('Compose_Recipient_Emails')",
+                            "item/cr7bb_sendstatus": "Pending Approval",
+                            "item/cr7bb_approvalstatus": 676180000,
+                            "item/cr7bb_emailbodypreview": "@substring(replace(replace(replace(outputs('Compose_Email_Body'), '<[^>]+>', ''), '&nbsp;', ' '), '\n', ' '), 0, min(length(outputs('Compose_Email_Body')), 500))",
+                            "item/cr7bb_sentdatetime": "@utcNow()",
+                            "item/cr7bb_totalamount": "@outputs('Compose_Net_Amount')",
+                            "item/cr7bb_transactioncount": "@length(body('Filter_DN_List'))"
+                          },
+                          "host": {
+                            "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+                            "operationId": "CreateRecord",
+                            "connectionName": "shared_commondataserviceforapps"
+                          }
+                        },
+                        "runAfter": {
+                          "Compose_CC_Emails": [
+                            "Succeeded"
+                          ]
+                        }
+                      },
+                      "Update_Email_Counters": {
+                        "type": "Scope",
+                        "actions": {
+                          "Increment_EmailsSent": {
+                            "type": "IncrementVariable",
+                            "inputs": {
+                              "name": "varEmailsSent",
+                              "value": 1
+                            }
+                          }
+                        },
+                        "runAfter": {
+                          "Create_Email_Log": [
+                            "Succeeded"
+                          ]
+                        }
+                      },
+                      "Log_Email_Failed": {
+                        "type": "Scope",
+                        "actions": {
+                          "Increment_EmailsFailed": {
+                            "type": "IncrementVariable",
+                            "inputs": {
+                              "name": "varEmailsFailed",
+                              "value": 1
+                            }
+                          },
+                          "Append_Email_Error": {
+                            "type": "AppendToArrayVariable",
+                            "inputs": {
+                              "name": "varErrorMessages",
+                              "value": "Customer @{outputs('Get_Customer')?['cr7bb_customercode']}: Email failed - @{outputs('Send_Email')?['error']?['message']}"
+                            },
+                            "runAfter": {
+                              "Increment_EmailsFailed": [
+                                "Succeeded"
+                              ]
+                            }
+                          }
+                        },
+                        "runAfter": {
+                          "Create_Email_Log": [
+                            "Failed",
+                            "TimedOut"
+                          ]
+                        }
+                      },
+                      "Update_Transaction_Records": {
+                        "type": "Foreach",
+                        "foreach": "@body('Filter_DN_List')",
+                        "actions": {
+                          "Update_Transaction": {
+                            "type": "OpenApiConnection",
+                            "inputs": {
+                              "parameters": {
+                                "entityName": "cr7bb_thfinancecashcollectiontransactions",
+                                "recordId": "@item()?['cr7bb_thfinancecashcollectiontransactionid']",
+                                "item/cr7bb_emailsent": true,
+                                "item/cr7bb_isprocessed": true
+                              },
+                              "host": {
+                                "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+                                "operationId": "UpdateRecord",
+                                "connectionName": "shared_commondataserviceforapps"
+                              }
+                            }
+                          }
+                        },
+                        "runAfter": {
+                          "Update_Email_Counters": [
+                            "Succeeded"
+                          ]
+                        }
+                      },
+                      "Create_HTML_table": {
+                        "type": "Table",
+                        "inputs": {
+                          "from": "@body('Filter_DN_List')",
+                          "format": "HTML"
+                        },
+                        "runAfter": {
+                          "Compose_Email_Subject": [
+                            "Succeeded"
+                          ]
+                        }
+                      },
+                      "Compose_Email_Body": {
+                        "type": "Compose",
+                        "inputs": "<html><body style=\"font-family: Arial, sans-serif;\"><p>เรียน คุณ @{outputs('Get_Customer')?['cr7bb_customername']}</p><p>ตามที่บริษัทได้ตรวจสอบยอดค้างชำระพบว่า ณ วันที่ @{formatDateTime(utcNow(), 'dd/MM/yyyy')} ท่านมียอดค้างชำระดังนี้</p><table border=\"1\" cellpadding=\"5\" style=\"border-collapse: collapse;\"><tr style=\"background-color: #0078D4; color: white;\"><th>เลขที่เอกสาร</th><th>วันที่เอกสาร</th><th>วันครบกำหนด</th><th>จำนวนวันค้าง</th><th>จำนวนเงิน (THB)</th></tr>@{body('Create_HTML_table')}</table><p><strong>รวมยอดค้างชำระทั้งสิ้น: @{formatNumber(outputs('Compose_Net_Amount'), 'N2')} บาท</strong></p><p>กรุณาชำระเงินผ่าน PromptPay QR Code ที่แนบมาพร้อมนี้</p>@{if(equals(outputs('Compose_Template_Selection'), 'Template_B'), '<p style=\"color: #D83B01; font-weight: bold;\">⚠️ หมายเหตุ: หากไม่ชำระภายในวันที่ @{formatDateTime(addDays(utcNow(), 1), ''dd/MM/yyyy'')} ท่านจะสูญเสียสิทธิ์ส่วนลด Cash Discount</p>', '')}@{if(equals(outputs('Compose_Template_Selection'), 'Template_C'), '<p style=\"color: #A4262C; font-weight: bold;\">⚠️ การชำระล่าช้า: ท่านจะถูกเรียกเก็บค่า MI (ดอกเบี้ยเงินเฟ้อจากการชำระล่าช้า) กรุณาติดต่อ AR ทันที</p>', '')}<p>ขอบคุณค่ะ</p><p>@{coalesce(outputs('Get_AR_rep')?['displayName'], 'AR Team')}<br/>Accounts Receivable<br/>Email: @{coalesce(outputs('Get_AR_rep')?['mail'], outputs('Get_Customer')?['cr7bb_arbackupemail1'])}</p></body></html>",
+                        "runAfter": {
+                          "Get_AR_rep": [
+                            "Succeeded"
+                          ]
+                        }
+                      },
+                      "Compose_Recipient_Emails": {
+                        "type": "Compose",
+                        "inputs": "@join(filter(createArray(outputs('Get_Customer')?['cr7bb_customeremail1'], outputs('Get_Customer')?['cr7bb_customeremail2'], outputs('Get_Customer')?['cr7bb_customeremail3'], outputs('Get_Customer')?['cr7bb_customeremail4']), not(empty(item()))), '; ')",
+                        "runAfter": {
+                          "Compose_Email_Body": [
+                            "Succeeded"
+                          ]
+                        }
+                      },
+                      "Compose_CC_Emails": {
+                        "type": "Compose",
+                        "inputs": "@join(filter(createArray(outputs('Get_Customer')?['cr7bb_salesemail1'], outputs('Get_Customer')?['cr7bb_salesemail2'], outputs('Get_Customer')?['cr7bb_salesemail3'], outputs('Get_Customer')?['cr7bb_arbackupemail1'], outputs('Get_Customer')?['cr7bb_arbackupemail2']), not(empty(item()))), '; ')",
+                        "runAfter": {
+                          "Compose_Recipient_Emails": [
+                            "SUCCEEDED"
+                          ]
+                        }
+                      }
+                    },
+                    "else": {
+                      "actions": {}
+                    },
+                    "runAfter": {
+                      "Compose_Net_Amount": [
+                        "Succeeded"
+                      ]
+                    }
+                  }
+                }
+              },
+              "runAfter": {
+                "Filter_Non_Excluded": [
+                  "Succeeded"
+                ]
+              }
+            }
+          },
+          "runAfter": {
+            "Get_Unique_Customers": [
+              "Succeeded"
+            ]
+          }
+        },
+        "Send_Summary_Email_to_AR": {
+          "type": "OpenApiConnection",
+          "inputs": {
+            "parameters": {
+              "emailMessage/To": "@parameters('System Notification Email (nc_SystemNotificationEmail)')",
+              "emailMessage/Subject": "Collections Summary @{variables('varProcessDate')} - @{if(greater(variables('varEmailsFailed'), 0), '⚠️ Errors', '✅ Success')}",
+              "emailMessage/Body": "Process Date: @{formatDateTime(variables('varProcessDate'), 'dd/MM/yyyy')}\nCustomers Processed: @{variables('varCustomersProcessed')}\nEmails Sent: @{variables('varEmailsSent')}\nEmails Failed: @{variables('varEmailsFailed')}\n\n[HTML formatting to be added in Power Automate editor]",
+              "emailMessage/Importance": "@{if(greater(variables('varEmailsFailed'), 0), 'High', 'Normal')}"
+            },
+            "host": {
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_office365",
+              "operationId": "SendEmailV2",
+              "connectionName": "shared_office365"
+            }
+          },
+          "runAfter": {
+            "Apply_to_each_Customer": [
+              "Succeeded",
+              "Failed",
+              "Skipped",
+              "TimedOut"
+            ]
+          }
+        }
+      },
+      "outputs": {}
+    },
+    "templateName": null
+  },
+  "schemaVersion": "1.0.0.0"
+}

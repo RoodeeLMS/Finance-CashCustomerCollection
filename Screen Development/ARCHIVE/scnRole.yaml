@@ -1,0 +1,452 @@
+Screens:
+  scnRole:
+    Properties:
+      LoadingSpinnerColor: =RGBA(56, 96, 178, 1)
+      OnVisible: |-
+        =UpdateContext({currentScreen:"Role"});
+        UpdateContext({currentMode:"View"});
+        Set(_showMenu,false);
+        UpdateContext({ showConfirmationPopup: false });
+        UpdateContext({ dataSourceIdentifier: "" });
+        UpdateContext({ recordToDelete: Blank() });
+        UpdateContext({ recordPrimaryProperty: "" });
+    Children:
+      - RoleMainContainer:
+          Control: GroupContainer@1.3.0
+          Variant: ManualLayout
+          Properties:
+            DropShadow: =DropShadow.Regular
+            Height: =Parent.Height
+            Width: =Parent.Width
+          Children:
+            - RoleContent:
+                Control: GroupContainer@1.3.0
+                Variant: ManualLayout
+                Properties:
+                  DropShadow: =DropShadow.None
+                  Fill: =RGBA(255, 255, 255, 1)
+                  Height: |+
+                    =Parent.Height-85
+
+
+
+
+
+
+                  RadiusBottomLeft: =10
+                  RadiusBottomRight: =10
+                  RadiusTopLeft: =10
+                  RadiusTopRight: =10
+                  Width: |+
+                    =Parent.Width-20
+
+                  X: |
+                    =10
+                  Y: =75
+                Children:
+                  - RoleTable:
+                      Control: GroupContainer@1.3.0
+                      Variant: ManualLayout
+                      Properties:
+                        Height: =Parent.Height
+                        Visible: |
+                          =currentMode="View"
+                        Width: =Parent.Width
+                      Children:
+                        - RoleTableControl:
+                            Control: GroupContainer@1.3.0
+                            Variant: AutoLayout
+                            Properties:
+                              Height: =40
+                              LayoutDirection: =LayoutDirection.Horizontal
+                              LayoutGap: |
+                                =10
+                              LayoutJustifyContent: =LayoutJustifyContent.End
+                              PaddingRight: =10
+                              PaddingTop: |
+                                =5
+                              RadiusBottomRight: |
+                                =5
+                              Width: =Parent.Width
+                              X: =Parent.Width-Self.Width
+                              Y: =20
+                            Children:
+                              - RoleAddBtn:
+                                  Control: Button@0.0.45
+                                  Properties:
+                                    Align: =Align.Center
+                                    Appearance: ='ButtonCanvas.Appearance'.Primary
+                                    BasePaletteColor: =RGBA(141, 229, 250, 1)
+                                    Height: =30
+                                    Icon: ="Add"
+                                    OnSelect: |-
+                                      =UpdateContext({currentMode:"New"});
+                                      UpdateContext({currentSelectedRoleAssignment:Blank()});
+                                      Reset(RoleFormAreaCombo);
+                                      Reset(RoleFormUserCombo);
+                                    Text: ="Add User"
+                                    VerticalAlign: =VerticalAlign.Middle
+                                    Width: =120
+                                    X: =325
+                                    Y: =20
+                              - RoleEditBtn:
+                                  Control: Button@0.0.45
+                                  Properties:
+                                    BasePaletteColor: =RGBA(141, 229, 250, 1)
+                                    DisplayMode: =If(IsBlankOrError(RoleTableTbl.Selected),DisplayMode.Disabled,DisplayMode.Edit)
+                                    Height: =30
+                                    OnSelect: |-
+                                      =UpdateContext({currentMode:"Edit"});
+                                      UpdateContext({currentSelectedRoleAssignement:RoleTableTbl.Selected});
+                                      Reset(RoleFormAreaCombo);
+                                      Reset(RoleFormUserCombo);
+                                    Text: ="Edit"
+                                    X: =79
+                                    Y: =10
+                              - RoleRemoveBtn:
+                                  Control: Button@0.0.45
+                                  Properties:
+                                    Align: =Align.Center
+                                    Appearance: ='ButtonCanvas.Appearance'.Primary
+                                    BasePaletteColor: =RGBA(249, 83, 109, 1)
+                                    DisplayMode: =If(IsBlankOrError(RoleTableTbl.Selected),DisplayMode.Disabled,DisplayMode.Edit)
+                                    Height: =30
+                                    Icon: ="Delete"
+                                    OnSelect: |-
+                                      =UpdateContext({
+                                            recordToDelete: RoleTableTbl.Selected,
+                                            recordPrimaryProperty: "UserName", // Changed from "Display Name"
+                                            dataSourceIdentifier: "RoleAssignment",
+                                            showConfirmationPopup: true
+                                        });
+                                    Text: ="Remove"
+                                    VerticalAlign: =VerticalAlign.Middle
+                                    Width: =100
+                                    X: =325
+                                    Y: =20
+                        - RoleTableTbl:
+                            Control: Table@1.0.278
+                            Properties:
+                              DateTimeFormat: ='PowerAppsOneGrid.DateTimeFormat'.ShortDate
+                              EnableRangeSelection: ='PowerAppsOneGrid.EnableRangeSelection'.Enable
+                              Height: |
+                                =Parent.Height-70
+                              Items: ='[THFinanceCashCollection]RoleAssignments'
+                              ReflowBehavior: ='PowerAppsOneGrid.ReflowBehavior'.Reflow
+                              Visible: =currentMode="View"
+                              Width: =Parent.Width
+                              Y: =60
+                            Children:
+                              - Email3:
+                                  Control: TableDataField@1.5.0
+                                  Variant: textualColumn
+                                  IsLocked: true
+                                  Properties:
+                                    FieldDisplayName: ="Email"
+                                    FieldName: ="cr76f_email"
+                                    FieldType: ="s"
+                                    Order: =3
+                              - UserName1:
+                                  Control: TableDataField@1.5.0
+                                  Variant: textualColumn
+                                  IsLocked: true
+                                  Properties:
+                                    FieldDisplayName: ="UserName"
+                                    FieldName: ="cr76f_username"
+                                    FieldType: ="s"
+                                    Order: =2
+                              - Role3:
+                                  Control: TableDataField@1.5.0
+                                  IsLocked: true
+                                  Properties:
+                                    FieldDisplayName: ="Role"
+                                    FieldName: ="cr76f_Role"
+                                    FieldType: ="E"
+                                    Order: =4
+                                    Width: =50
+                  - RoleForm:
+                      Control: GroupContainer@1.3.0
+                      Variant: ManualLayout
+                      Properties:
+                        Height: =Parent.Height
+                        Visible: =currentMode="New"|| currentMode = "Edit"
+                        Width: =Parent.Width
+                        X: |
+                          =0
+                      Children:
+                        - RoleFormContainer:
+                            Control: GroupContainer@1.3.0
+                            Variant: AutoLayout
+                            Properties:
+                              Height: |
+                                =Parent.Height-50
+                              LayoutDirection: =LayoutDirection.Vertical
+                              LayoutOverflowX: =LayoutOverflow.Scroll
+                              LayoutOverflowY: =LayoutOverflow.Scroll
+                              PaddingLeft: =15
+                              PaddingTop: =15
+                              Width: =Parent.Width
+                            Children:
+                              - RoleFormUserLabel:
+                                  Control: Text@0.0.51
+                                  Properties:
+                                    Height: =20
+                                    Text: ="User"
+                                    Width: =95
+                                    X: =25
+                                    Y: =120
+                              - RoleFormUserCombo:
+                                  Control: ComboBox@0.0.51
+                                  Properties:
+                                    DefaultSelectedItems: |
+                                      =If(IsBlank(currentSelectedRoleAssignement),Blank(),Office365Users.UserProfile(currentSelectedRoleAssignement.Email))
+                                    Items: |+
+                                      =If(
+                                          (Len(Self.SearchText) >= 2)||!IsBlankOrError(currentSelectedRoleAssignement.Email), 
+                                          Office365Users.SearchUser({
+                                              searchTerm: Self.SearchText,
+                                              top: 15 
+                                          }) // No .value needed here
+                                      )
+
+                                    Width: =250
+                                    X: =25
+                                    Y: =140
+                                  Children:
+                                    - DisplayName1_1:
+                                        Control: ComboBoxDataField@1.5.0
+                                        Variant: textualColumn
+                                        IsLocked: true
+                                        Properties:
+                                          FieldDisplayName: ="DisplayName"
+                                          FieldName: ="DisplayName"
+                                          FieldType: ="s"
+                                          Order: =1
+                              - RoleFormAreaLabel:
+                                  Control: Text@0.0.51
+                                  Properties:
+                                    Height: =20
+                                    Text: ="Role"
+                                    Width: =95
+                                    X: =25
+                                    Y: =180
+                              - RoleFormAreaCombo:
+                                  Control: ComboBox@0.0.51
+                                  Properties:
+                                    DefaultSelectedItems: =currentSelectedRoleAssignement.Role
+                                    Items: ='[THFinanceCashCollection]Roles'
+                                    Width: =250
+                                    X: =25
+                                    Y: =199
+                                  Children:
+                                    - RoleName1:
+                                        Control: ComboBoxDataField@1.5.0
+                                        Variant: textualColumn
+                                        IsLocked: true
+                                        Properties:
+                                          FieldDisplayName: ="RoleName"
+                                          FieldName: ="cr76f_rolename"
+                                          FieldType: ="s"
+                                          Order: =1
+                        - RoleFormControl:
+                            Control: GroupContainer@1.3.0
+                            Variant: AutoLayout
+                            Properties:
+                              Height: =40
+                              LayoutDirection: =LayoutDirection.Horizontal
+                              LayoutGap: |
+                                =5
+                              LayoutJustifyContent: =LayoutJustifyContent.End
+                              PaddingRight: |
+                                =10
+                              PaddingTop: |
+                                =05
+                              Width: =Parent.Width
+                              X: |
+                                =0
+                              Y: =Parent.Height-Self.Height
+                            Children:
+                              - RoleFormAddBtn:
+                                  Control: Button@0.0.45
+                                  Properties:
+                                    Height: =30
+                                    OnSelect: |-
+                                      =If(currentMode="New",
+                                          Patch('[THFinanceCashCollection]RoleAssignments',          // Your target Dataverse table
+                                              Defaults('[THFinanceCashCollection]RoleAssignments'), // Indicates you are creating a NEW record
+                                              {
+                                                  AssignmentKey:RoleFormUserCombo.Selected.DisplayName&"-"&RoleFormAreaCombo.Selected.RoleName,
+                                                  UserName:RoleFormUserCombo.Selected.DisplayName,
+                                                  Role:RoleFormAreaCombo.Selected,
+                                                  Email: RoleFormUserCombo.Selected.Mail
+                                              }),
+                                          If(currentMode="Edit",Patch('[THFinanceCashCollection]RoleAssignments',currentSelectedRoleAssignement,
+                                              {
+                                                  AssignmentKey:RoleFormUserCombo.Selected.DisplayName&"-"&RoleFormAreaCombo.Selected.RoleName,
+                                                  UserName:RoleFormUserCombo.Selected.DisplayName,
+                                                  Role:RoleFormAreaCombo.Selected,
+                                                  Email: RoleFormUserCombo.Selected.Mail
+                                              }),
+                                              Notify("ModeError"))
+                                      );
+                                      If(
+                                          IsEmpty(Errors('[THFinanceCashCollection]RoleAssignments')),
+                                          Notify("Record created successfully!", NotificationType.Success);
+                                          UpdateContext({currentMode:"View"}),
+                                          Notify("Error creating record: " & First(Errors('[THFinanceCashCollection]RoleAssignments')).Message, NotificationType.Error)
+                                      )
+                                    Text: =If(currentMode="New","Add",If(currentMode="Edit","Save","Error"))
+                                    X: =610
+                                    Y: =440
+                              - RoleFormCancelBtn:
+                                  Control: Button@0.0.45
+                                  Properties:
+                                    Height: =30
+                                    OnSelect: =UpdateContext({currentMode:"View"});
+                                    Text: ="Cancel"
+                                    X: =108
+                                    Y: =440
+            - RoleNavigationMenu:
+                Control: CanvasComponent
+                ComponentName: NavigationMenu
+                Properties:
+                  Fill: =RGBA(255, 255, 255, 0.5)
+                  Height: |
+                    =Parent.Height-70
+                  Visible: =If(_showMenu,true,false)
+                  Width: =260
+                  Y: |+
+                    =70
+
+
+
+                  navItems: =Navigation
+                  navSelected: =currentScreen
+      - RoleHeader:
+          Control: GroupContainer@1.3.0
+          Variant: AutoLayout
+          Properties:
+            DropShadow: =DropShadow.Regular
+            Fill: =LookUp(Navigation, name = currentScreen, color)
+            Height: =55
+            LayoutAlignItems: =LayoutAlignItems.Center
+            LayoutDirection: =LayoutDirection.Horizontal
+            PaddingLeft: =15
+            RadiusBottomLeft: =8
+            RadiusBottomRight: =8
+            RadiusTopLeft: =8
+            RadiusTopRight: =8
+            Width: |
+              =Parent.Width-20
+            X: =10
+            Y: =10
+          Children:
+            - RoleMenuIcon:
+                Control: Classic/Icon@2.5.0
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: |-
+                    =RGBA(255, 255, 255
+                    , 1)
+                  Height: =50
+                  Icon: =Icon.Hamburger
+                  OnSelect: =Set(_showMenu,!_showMenu);
+                  PaddingBottom: =10
+                  PaddingLeft: =10
+                  PaddingRight: =10
+                  PaddingTop: =10
+                  Width: =50
+            - RoleTitle:
+                Control: Text@0.0.51
+                Properties:
+                  AlignInContainer: =AlignInContainer.Center
+                  Font: =Font.Lato
+                  FontColor: =Color.White
+                  Height: =50
+                  PaddingLeft: |
+                    =20
+                  Size: =25
+                  Text: =currentScreen
+                  VerticalAlign: =VerticalAlign.Middle
+                  Weight: ='TextCanvas.Weight'.Medium
+                  Width: =240
+      - RoleConfirmationPopupOverlay:
+          Control: GroupContainer@1.3.0
+          Variant: ManualLayout
+          Properties:
+            Fill: =RGBA(0, 0, 0, 0.5)
+            Height: =Parent.Height
+            Visible: =showConfirmationPopup
+            Width: =Parent.Width
+            X: |
+              =0
+            Y: |
+              =0
+          Children:
+            - RoleConfirmationPopup:
+                Control: Rectangle@2.3.0
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Fill: =RGBA(255, 255, 255, 1)
+                  Height: |
+                    =200
+                  Width: |
+                    =400
+                  X: =(Parent.Width - Self.Width) / 2
+                  Y: =(Parent.Height - Self.Height) / 2
+            - TextCanvas1_3:
+                Control: Text@0.0.51
+                Properties:
+                  Height: =89
+                  PaddingBottom: =10
+                  PaddingLeft: =10
+                  PaddingRight: =10
+                  PaddingTop: =10
+                  Text: |-
+                    ="Are you sure you want to delete '" &
+                    Switch(
+                        recordPrimaryProperty, // The string variable holding the property name
+                        "UserName", recordToDelete.UserName,
+                        "UNKNOWN PROPERTY" // Default fallback text if no match (helps in debugging)
+                    ) &
+                    "'?"
+                  VerticalAlign: =VerticalAlign.Top
+                  Width: =400
+                  X: =RoleConfirmationPopup.X
+                  Y: =RoleConfirmationPopup.Y
+            - ButtonCanvas1_1:
+                Control: Button@0.0.45
+                Properties:
+                  OnSelect: |-
+                    =UpdateContext({ showConfirmationPopup: false });
+                    UpdateContext({ tableToDelete: Blank() });
+                    UpdateContext({ descriptionToDelete: "" });
+                    UpdateContext({ recordToDelete: Blank() });
+                  Text: ="Cancel"
+                  X: =RoleConfirmationPopup.X+RoleConfirmationPopup.Width-Self.Width-20
+                  Y: =RoleConfirmationPopup.Y+RoleConfirmationPopup.Height-Self.Height-20
+            - ButtonCanvas3_1:
+                Control: Button@0.0.45
+                Properties:
+                  BasePaletteColor: =RGBA(249, 83, 109, 1)
+                  OnSelect: |-
+                    =Switch(
+                          dataSourceIdentifier,
+                          "RoleAssignment", Remove('[THFinanceCashCollection]RoleAssignments', recordToDelete), // Fixed data source
+                          Notify("Error: Unknown data source for deletion. Deletion aborted.", NotificationType.Error)
+                      );
+
+                      UpdateContext({ showConfirmationPopup: false }); // Hide the popup
+
+                      // Refresh the correct data source
+                      If(
+                          !IsBlank(dataSourceIdentifier), // Basic check
+                          Switch(
+                              dataSourceIdentifier,
+                              "RoleAssignment", Refresh('[THFinanceCashCollection]RoleAssignments') // Fixed data source
+                          );
+                          Notify("Record deleted successfully.", NotificationType.Success); // Show success after refresh
+                      );
+                  Text: ="Yes, Delete"
+                  X: =RoleConfirmationPopup.X+20
+                  Y: =RoleConfirmationPopup.Y+RoleConfirmationPopup.Height-Self.Height-20

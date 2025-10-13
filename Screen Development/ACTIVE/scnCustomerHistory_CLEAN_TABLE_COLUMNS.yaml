@@ -1,0 +1,64 @@
+# Clean Table Column Definitions for Transaction Table
+# Replace the existing Table columns with these
+
+Children:
+  - Trans_TypeColumn:
+      Control: TableDataField@1.5.0
+      Variant: textualColumn
+      IsLocked: true
+      Properties:
+        FieldDisplayName: ="Type"
+        FieldName: ="TransactionTypeText"
+        FieldType: ="s"
+        Order: =1
+        Width: =80
+  - Trans_DocumentColumn:
+      Control: TableDataField@1.5.0
+      Variant: textualColumn
+      IsLocked: true
+      Properties:
+        FieldDisplayName: ="Document"
+        FieldName: ="cr7bb_documentnumber"
+        FieldType: ="s"
+        Order: =2
+        Width: =120
+  - Trans_DateColumn:
+      Control: TableDataField@1.5.0
+      Variant: textualColumn
+      IsLocked: true
+      Properties:
+        FieldDisplayName: ="Date"
+        FieldName: ="cr7bb_documentdate"
+        FieldType: ="d"
+        Order: =3
+        Width: =100
+  - Trans_DaysColumn:
+      Control: TableDataField@1.5.0
+      Variant: textualColumn
+      IsLocked: true
+      Properties:
+        FieldDisplayName: ="Days"
+        FieldName: ="cr7bb_daycount"
+        FieldType: ="n"
+        Order: =4
+        Width: =80
+  - Trans_AmountColumn:
+      Control: TableDataField@1.5.0
+      Variant: textualColumn
+      IsLocked: true
+      Properties:
+        FieldDisplayName: ="Amount"
+        FieldName: ="cr7bb_amountlocalcurrency"
+        FieldType: ="c"
+        Order: =5
+        Width: =120
+  - Trans_ProcessedColumn:
+      Control: TableDataField@1.5.0
+      Variant: textualColumn
+      IsLocked: true
+      Properties:
+        FieldDisplayName: ="Processed"
+        FieldName: ="cr7bb_isprocessed"
+        FieldType: ="b"
+        Order: =6
+        Width: =100

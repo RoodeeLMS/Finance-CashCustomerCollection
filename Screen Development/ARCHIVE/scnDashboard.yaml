@@ -1,0 +1,92 @@
+Screens:
+  scnDashboard:
+    Properties:
+      LoadingSpinnerColor: =RGBA(56, 96, 178, 1)
+      OnVisible: |
+        =UpdateContext({currentScreen:"Dashboard"});
+        Set(_showMenu,false);
+        UpdateContext({currentMode:"Chart"});
+    Children:
+      - DashboardMainContainer:
+          Control: GroupContainer@1.3.0
+          Variant: ManualLayout
+          Properties:
+            DropShadow: =DropShadow.Regular
+            Height: =Parent.Height
+            Width: =Parent.Width
+          Children:
+            - DashboardContent:
+                Control: GroupContainer@1.3.0
+                Variant: AutoLayout
+                Properties:
+                  DropShadow: =DropShadow.Regular
+                  Fill: =RGBA(214, 221, 224, 1)
+                  Height: =Parent.Height-85
+                  LayoutDirection: =LayoutDirection.Vertical
+                  LayoutGap: =20
+                  LayoutOverflowY: =LayoutOverflow.Scroll
+                  PaddingBottom: =20
+                  PaddingLeft: =20
+                  PaddingRight: =20
+                  PaddingTop: =20
+                  RadiusBottomLeft: =10
+                  RadiusBottomRight: =10
+                  RadiusTopLeft: =10
+                  RadiusTopRight: =10
+                  Width: =If(App.ActiveScreen.Size>=ScreenSize.ExtraLarge,Parent.Width-270,Parent.Width-20)
+                  X: =If(App.ActiveScreen.Size>=ScreenSize.ExtraLarge,260,10)
+                  Y: =75
+            - DashboardNavigationMenu:
+                Control: CanvasComponent
+                ComponentName: NavigationMenu
+                Properties:
+                  Fill: =RGBA(255, 255, 255, 0.5)
+                  Height: =Parent.Height-70
+                  Visible: =If(App.ActiveScreen.Size>=ScreenSize.ExtraLarge||_showMenu,true,false)
+                  Width: =260
+                  Y: =70
+                  navItems: =Navigation
+                  navSelected: =currentScreen
+      - DashboardHeader:
+          Control: GroupContainer@1.3.0
+          Variant: AutoLayout
+          Properties:
+            DropShadow: =DropShadow.Regular
+            Fill: =LookUp(Navigation, name = currentScreen, color)
+            Height: =55
+            LayoutAlignItems: =LayoutAlignItems.Center
+            LayoutDirection: =LayoutDirection.Horizontal
+            PaddingLeft: =15
+            RadiusBottomLeft: =8
+            RadiusBottomRight: =8
+            RadiusTopLeft: =8
+            RadiusTopRight: =8
+            Width: =Parent.Width-20
+            X: =10
+            Y: =10
+          Children:
+            - DashboardMenuIcon:
+                Control: Classic/Icon@2.5.0
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =RGBA(255, 255, 255, 1)
+                  Height: =50
+                  Icon: =Icon.Hamburger
+                  OnSelect: =Set(_showMenu,!_showMenu);
+                  PaddingBottom: =10
+                  PaddingLeft: =10
+                  PaddingRight: =10
+                  PaddingTop: =10
+                  Width: =50
+            - DashboardTitle:
+                Control: Text@0.0.51
+                Properties:
+                  Font: =Font.Lato
+                  FontColor: =Color.White
+                  Height: =50
+                  PaddingLeft: =20
+                  Size: =25
+                  Text: =currentScreen
+                  VerticalAlign: =VerticalAlign.Middle
+                  Weight: ='TextCanvas.Weight'.Medium
+                  Width: =240

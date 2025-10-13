@@ -1,0 +1,613 @@
+Screens:
+  scnEmailApproval:
+    Properties:
+      Fill: =RGBA(243, 242, 241, 1)
+      LoadingSpinnerColor: =RGBA(0, 101, 161, 1)
+      OnVisible: |-
+        =// Batch local variables with UpdateContext
+        UpdateContext({
+            currentScreen: "Email Approval",
+            _showMenu: false,
+            _filterDate: Today(),
+            _showPreview: false,
+            _selectedEmail: Blank(),
+            _refreshTrigger: true,
+            _isLoading: true
+        });
+
+        // Set auto-approve to true (Phase 1: all emails auto-selected)
+        Set(gblAutoApprove, true);
+
+        /* Load draft emails for today */
+        ClearCollect(
+            colDraftEmails,
+            SortByColumns(
+                Filter(
+                    '[THFinanceCashCollection]Emaillogs',
+                    'Process Date' = _filterDate &&
+                    ('Send Status' = 'Send Status Choice'.Pending ||
+                     'Send Status' = 'Send Status Choice'.Approved)
+                ),
+                "cr7bb_maxdaycount", SortOrder.Descending,
+                "cr7bb_totalamount", SortOrder.Descending
+            )
+        );
+
+        /* Initialize selection collection */
+        Clear(colSelectedEmails);
+
+        /* Auto-select all if Phase 1 */
+        If(
+            gblAutoApprove,
+            ClearCollect(colSelectedEmails, colDraftEmails)
+        );
+
+        UpdateContext({_isLoading: false});
+    Children:
+      - EmailApprv_Container:
+          Control: GroupContainer@1.3.0
+          Variant: ManualLayout
+          Properties:
+            DropShadow: =DropShadow.None
+            Height: =Parent.Height
+            Width: =Parent.Width
+          Children:
+            - EmailApprv_Header:
+                Control: GroupContainer@1.3.0
+                Variant: AutoLayout
+                Properties:
+                  DropShadow: =DropShadow.Regular
+                  Fill: =RGBA(0, 101, 161, 1)
+                  Height: =55
+                  LayoutAlignItems: =LayoutAlignItems.Center
+                  LayoutDirection: =LayoutDirection.Horizontal
+                  PaddingLeft: =15
+                  RadiusBottomLeft: =8
+                  RadiusBottomRight: =8
+                  RadiusTopLeft: =8
+                  RadiusTopRight: =8
+                  Width: =Parent.Width - 20
+                  X: =10
+                  Y: =10
+                Children:
+                  - EmailApprv_MenuIcon:
+                      Control: Classic/Icon@2.5.0
+                      Properties:
+                        Color: =RGBA(255, 255, 255, 1)
+                        Height: =50
+                        Icon: =Icon.Hamburger
+                        OnSelect: |-
+                          =UpdateContext({_showMenu: !_showMenu})
+                        PaddingBottom: =10
+                        PaddingLeft: =10
+                        PaddingRight: =10
+                        PaddingTop: =10
+                        Width: =50
+                  - EmailApprv_HeaderTitle:
+                      Control: Text@0.0.51
+                      Properties:
+                        Font: =Font.Lato
+                        FontColor: =Color.White
+                        Height: =50
+                        PaddingLeft: =20
+                        Size: =25
+                        Text: ="Email Approval & Send"
+                        VerticalAlign: =VerticalAlign.Middle
+                        Weight: ='TextCanvas.Weight'.Medium
+                        Width: =Parent.Width - EmailApprv_MenuIcon.Width - 40
+            - EmailApprv_FilterBar:
+                Control: GroupContainer@1.3.0
+                Variant: AutoLayout
+                Properties:
+                  Fill: =RGBA(245, 245, 245, 1)
+                  Height: =60
+                  LayoutAlignItems: =LayoutAlignItems.Center
+                  LayoutDirection: =LayoutDirection.Horizontal
+                  LayoutGap: =15
+                  PaddingLeft: =15
+                  PaddingRight: =15
+                  Width: =Parent.Width - 20
+                  X: =10
+                  Y: =75
+                Children:
+                  - EmailApprv_DateLabel:
+                      Control: Text@0.0.51
+                      Properties:
+                        Font: =Font.Lato
+                        FontColor: =RGBA(0, 0, 0, 1)
+                        Height: =40
+                        Text: |-
+                          ="Date: "
+                        VerticalAlign: =VerticalAlign.Middle
+                        Weight: ='TextCanvas.Weight'.Semibold
+                        Width: =50
+                  - EmailApprv_DatePicker:
+                      Control: DatePicker@0.0.46
+                      Properties:
+                        BasePaletteColor: =RGBA(0, 101, 161, 1)
+                        Height: =40
+                        SelectedDate: =_filterDate
+                        Width: =150
+                  - EmailApprv_CountLabel:
+                      Control: Text@0.0.51
+                      Properties:
+                        Font: =Font.Lato
+                        FontColor: =RGBA(100, 100, 100, 1)
+                        Height: =40
+                        Text: |-
+                          ="Customers: " & CountRows(colDraftEmails) & " Pending"
+                        VerticalAlign: =VerticalAlign.Middle
+                        Weight: ='TextCanvas.Weight'.Regular
+                        Width: =200
+                  - EmailApprv_RefreshBtn:
+                      Control: Button@0.0.45
+                      Properties:
+                        BasePaletteColor: =RGBA(0, 101, 161, 1)
+                        Height: =35
+                        Icon: ="Sync"
+                        OnSelect: |-
+                          =UpdateContext({_isLoading: true});
+                          ClearCollect(
+                              colDraftEmails,
+                              SortByColumns(
+                                  Filter(
+                                      '[THFinanceCashCollection]Emaillogs',
+                                      'Process Date' = _filterDate &&
+                                      ('Send Status' = 'Send Status Choice'.Pending ||
+                                       'Send Status' = 'Send Status Choice'.Approved)
+                                  ),
+                                  "cr7bb_maxdaycount", SortOrder.Descending,
+                                  "cr7bb_totalamount", SortOrder.Descending
+                              )
+                          );
+                          UpdateContext({
+                              _refreshTrigger: !_refreshTrigger,
+                              _isLoading: false
+                          });
+                          Notify("Data refreshed successfully", NotificationType.Success);
+                        Text: ="Refresh"
+                        Width: =120
+                  - EmailApprv_AutoApproveLabel:
+                      Control: Text@0.0.51
+                      Properties:
+                        Font: =Font.Lato
+                        FontColor: =RGBA(0, 0, 0, 1)
+                        Height: =40
+                        Text: |-
+                          ="Auto-Approve: "
+                        VerticalAlign: =VerticalAlign.Middle
+                        Weight: ='TextCanvas.Weight'.Semibold
+                        Width: =110
+                  - EmailApprv_AutoApproveToggle:
+                      Control: Toggle@1.1.5
+                      Properties:
+                        BasePaletteColor: =RGBA(0, 101, 161, 1)
+                        Checked: =gblAutoApprove
+                        Height: =32
+                        OnCheck: |-
+                          =Set(gblAutoApprove, true);
+                          ClearCollect(colSelectedEmails, colDraftEmails);
+                        OnUncheck: |-
+                          =Set(gblAutoApprove, false);
+                          Clear(colSelectedEmails);
+                        Width: =60
+            - EmailApprv_Content:
+                Control: GroupContainer@1.3.0
+                Variant: ManualLayout
+                Properties:
+                  DropShadow: =DropShadow.Regular
+                  Fill: =RGBA(255, 255, 255, 1)
+                  Height: =Parent.Height - 205
+                  RadiusBottomLeft: =10
+                  RadiusBottomRight: =10
+                  RadiusTopLeft: =10
+                  RadiusTopRight: =10
+                  Width: =Parent.Width - 20
+                  X: =10
+                  Y: =145
+                Children:
+                  - EmailApprv_DraftGallery:
+                      Control: Gallery@2.15.0
+                      Variant: BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0
+                      Properties:
+                        Height: =Parent.Height - 20
+                        Items: |-
+                          =If(
+                              _refreshTrigger || !_refreshTrigger,
+                              SortByColumns(
+                                  Filter(
+                                      '[THFinanceCashCollection]Emaillogs',
+                                      'Process Date' = _filterDate &&
+                                      ('Send Status' = 'Send Status Choice'.Pending ||
+                                       'Send Status' = 'Send Status Choice'.Approved)
+                                  ),
+                                  "cr7bb_maxdaycount", SortOrder.Descending,
+                                  "cr7bb_totalamount", SortOrder.Descending
+                              )
+                          )
+                        TemplatePadding: =5
+                        TemplateSize: =120
+                        Width: =(Parent.Width / 2) - 20
+                        X: =10
+                        Y: =10
+                      Children:
+                        - EmailCard:
+                            Control: GroupContainer@1.3.0
+                            Variant: AutoLayout
+                            Properties:
+                              Fill: =RGBA(250, 250, 250, 1)
+                              Height: =120
+                              LayoutDirection: =LayoutDirection.Vertical
+                              LayoutGap: =5
+                              PaddingBottom: =10
+                              PaddingLeft: =15
+                              PaddingRight: =15
+                              PaddingTop: =10
+                              RadiusBottomLeft: =8
+                              RadiusBottomRight: =8
+                              RadiusTopLeft: =8
+                              RadiusTopRight: =8
+                              Width: =Parent.TemplateWidth - 10
+                            Children:
+                              - EmailCard_CustomerName:
+                                  Control: Text@0.0.51
+                                  Properties:
+                                    AutoHeight: =true
+                                    Font: =Font.Lato
+                                    FontColor: =RGBA(0, 0, 0, 1)
+                                    Size: =16
+                                    Text: |-
+                                      =LookUp(
+                                          '[THFinanceCashCollection]Customers',
+                                          cr7bb_customerid = ThisItem.cr7bb_customer
+                                      ).cr7bb_customercode & " - " &
+                                      LookUp(
+                                          '[THFinanceCashCollection]Customers',
+                                          cr7bb_customerid = ThisItem.cr7bb_customer
+                                      ).cr7bb_customername
+                                    Weight: ='TextCanvas.Weight'.Semibold
+                                    Width: =Parent.Width - 30
+                              - EmailCard_Amount:
+                                  Control: Text@0.0.51
+                                  Properties:
+                                    AutoHeight: =true
+                                    Font: =Font.Lato
+                                    FontColor: =RGBA(100, 100, 100, 1)
+                                    Text: |-
+                                      ="Amount: " & Text(ThisItem.'Total Amount', "$#,##0.00") & " THB"
+                                    Width: =Parent.Width - 30
+                              - EmailCard_Transactions:
+                                  Control: Text@0.0.51
+                                  Properties:
+                                    AutoHeight: =true
+                                    Font: =Font.Lato
+                                    FontColor: =RGBA(100, 100, 100, 1)
+                                    Text: |-
+                                      ="Transactions: " & Text(ThisItem.'Transaction Count') & " DNs"
+                                    Width: =Parent.Width - 30
+                              - EmailCard_Template:
+                                  Control: Text@0.0.51
+                                  Properties:
+                                    AutoHeight: =true
+                                    Font: =Font.Lato
+                                    FontColor: =RGBA(100, 100, 100, 1)
+                                    Text: |-
+                                      ="Template: " & Text(ThisItem.'Email Template') & " (Day " & Text(ThisItem.'Max Day Count') & ")"
+                                    Width: =Parent.Width - 30
+                              - EmailCard_ViewBtn:
+                                  Control: Button@0.0.45
+                                  Properties:
+                                    BasePaletteColor: =RGBA(0, 101, 161, 1)
+                                    OnSelect: |-
+                                      =UpdateContext({
+                                          _selectedEmail: ThisItem,
+                                          _showPreview: true
+                                      });
+                                    Text: ="Preview"
+                                    Width: =100
+                  - EmailApprv_PreviewPanel:
+                      Control: GroupContainer@1.3.0
+                      Variant: AutoLayout
+                      Properties:
+                        DropShadow: =DropShadow.None
+                        Fill: =RGBA(255, 255, 255, 1)
+                        Height: =Parent.Height - 20
+                        LayoutDirection: =LayoutDirection.Vertical
+                        LayoutGap: =10
+                        LayoutOverflowY: =LayoutOverflow.Scroll
+                        PaddingBottom: =15
+                        PaddingLeft: =15
+                        PaddingRight: =15
+                        PaddingTop: =15
+                        Visible: =!IsBlank(_selectedEmail)
+                        Width: =(Parent.Width / 2) - 20
+                        X: =(Parent.Width / 2) + 10
+                        Y: =10
+                      Children:
+                        - Preview_Title:
+                            Control: Text@0.0.51
+                            Properties:
+                              AutoHeight: =true
+                              Font: =Font.Lato
+                              FontColor: =RGBA(0, 0, 0, 1)
+                              Size: =18
+                              Text: ="Email Preview"
+                              Weight: ='TextCanvas.Weight'.Bold
+                              Width: =Parent.Width - 30
+                        - Preview_ToLabel:
+                            Control: Text@0.0.51
+                            Properties:
+                              AutoHeight: =true
+                              Font: =Font.Lato
+                              FontColor: =RGBA(100, 100, 100, 1)
+                              Text: |-
+                                ="To: " & _selectedEmail.'Recipient Emails'
+                              Width: =Parent.Width - 30
+                        - Preview_CCLabel:
+                            Control: Text@0.0.51
+                            Properties:
+                              AutoHeight: =true
+                              Font: =Font.Lato
+                              FontColor: =RGBA(100, 100, 100, 1)
+                              Text: |-
+                                ="CC: " & _selectedEmail.'CC Emails'
+                              Width: =Parent.Width - 30
+                        - Preview_SubjectLabel:
+                            Control: Text@0.0.51
+                            Properties:
+                              AutoHeight: =true
+                              Font: =Font.Lato
+                              FontColor: =RGBA(0, 0, 0, 1)
+                              Text: |-
+                                ="Subject: " & _selectedEmail.'Email Subject'
+                              Weight: ='TextCanvas.Weight'.Semibold
+                              Width: =Parent.Width - 30
+                        - Preview_TemplateLabel:
+                            Control: Text@0.0.51
+                            Properties:
+                              AutoHeight: =true
+                              Font: =Font.Lato
+                              FontColor: =RGBA(100, 100, 100, 1)
+                              Text: |-
+                                ="Template: " & Text(_selectedEmail.'Email Template') & " (Day " & Text(_selectedEmail.'Max Day Count') & ")"
+                              Width: =Parent.Width - 30
+                        - Preview_Divider:
+                            Control: Rectangle@2.3.0
+                            Properties:
+                              Fill: =RGBA(200, 200, 200, 1)
+                              Height: =1
+                              Width: =Parent.Width - 30
+                        - Preview_TransactionsTitle:
+                            Control: Text@0.0.51
+                            Properties:
+                              AutoHeight: =true
+                              Font: =Font.Lato
+                              FontColor: =RGBA(0, 0, 0, 1)
+                              Size: =16
+                              Text: ="Transaction Details"
+                              Weight: ='TextCanvas.Weight'.Bold
+                              Width: =Parent.Width - 30
+                        - Preview_TransactionsGallery:
+                            Control: Gallery@2.15.0
+                            Variant: Vertical
+                            Properties:
+                              Height: =Min(300, CountRows(colTransactionDetails) * 60)
+                              Items: |-
+                                =Filter(
+                                    '[THFinanceCashCollection]Transactions',
+                                    cr7bb_customer = _selectedEmail.cr7bb_customer &&
+                                    cr7bb_processdate = _selectedEmail.'Process Date'
+                                )
+                              TemplateSize: =60
+                              Width: =Parent.Width - 30
+                            Children:
+                              - TransRow:
+                                  Control: GroupContainer@1.3.0
+                                  Variant: AutoLayout
+                                  Properties:
+                                    DropShadow: =DropShadow.None
+                                    Fill: =RGBA(250, 250, 250, 1)
+                                    LayoutDirection: =LayoutDirection.Horizontal
+                                    LayoutGap: =10
+                                    PaddingBottom: =5
+                                    PaddingLeft: =10
+                                    PaddingRight: =10
+                                    PaddingTop: =5
+                                    Width: =Parent.TemplateWidth - 10
+                                  Children:
+                                    - Trans_DocNumber:
+                                        Control: Text@0.0.51
+                                        Properties:
+                                          AutoHeight: =true
+                                          Font: =Font.Lato
+                                          FontColor: =RGBA(0, 0, 0, 1)
+                                          Size: =12
+                                          Text: =ThisItem.cr7bb_documentnumber
+                                          VerticalAlign: =VerticalAlign.Middle
+                                          Weight: ='TextCanvas.Weight'.Semibold
+                                          Width: =100
+                                    - Trans_Amount:
+                                        Control: Text@0.0.51
+                                        Properties:
+                                          AutoHeight: =true
+                                          Font: =Font.Lato
+                                          FontColor: |-
+                                            =If(
+                                                ThisItem.cr7bb_amountlocalcurrency < 0,
+                                                RGBA(0, 120, 215, 1),
+                                                RGBA(191, 25, 34, 1)
+                                            )
+                                          Size: =12
+                                          Text: =Text(ThisItem.cr7bb_amountlocalcurrency, "$#,##0.00")
+                                          VerticalAlign: =VerticalAlign.Middle
+                                          Weight: ='TextCanvas.Weight'.Regular
+                                          Width: =100
+                                    - Trans_DayCount:
+                                        Control: Text@0.0.51
+                                        Properties:
+                                          AutoHeight: =true
+                                          Font: =Font.Lato
+                                          FontColor: =RGBA(100, 100, 100, 1)
+                                          Size: =12
+                                          Text: ="Day " & Text(ThisItem.cr7bb_daycount)
+                                          VerticalAlign: =VerticalAlign.Middle
+                                          Weight: ='TextCanvas.Weight'.Regular
+                                          Width: =60
+                        - Preview_TotalAmountLabel:
+                            Control: Text@0.0.51
+                            Properties:
+                              AutoHeight: =true
+                              Font: =Font.Lato
+                              FontColor: =RGBA(0, 0, 0, 1)
+                              Size: =16
+                              Text: |-
+                                ="Total Amount: " & Text(_selectedEmail.'Total Amount', "$#,##0.00") & " THB"
+                              Weight: ='TextCanvas.Weight'.Bold
+                              Width: =Parent.Width - 30
+                        - Preview_QRCodeLabel:
+                            Control: Text@0.0.51
+                            Properties:
+                              AutoHeight: =true
+                              Font: =Font.Lato
+                              FontColor: =RGBA(100, 100, 100, 1)
+                              Text: |-
+                                =If(
+                                    _selectedEmail.'QR Code Included',
+                                    "QR Code: Included",
+                                    "QR Code: Not Available"
+                                )
+                              Visible: =!IsBlank(_selectedEmail)
+                              Width: =Parent.Width - 30
+            - EmailApprv_ActionBar:
+                Control: GroupContainer@1.3.0
+                Variant: AutoLayout
+                Properties:
+                  Fill: =RGBA(245, 245, 245, 1)
+                  Height: =60
+                  LayoutAlignItems: =LayoutAlignItems.Center
+                  LayoutDirection: =LayoutDirection.Horizontal
+                  LayoutGap: =15
+                  LayoutJustifyContent: =LayoutJustifyContent.SpaceBetween
+                  PaddingLeft: =15
+                  PaddingRight: =15
+                  Width: =Parent.Width - 20
+                  X: =10
+                  Y: =Parent.Height - 70
+                Children:
+                  - ActionBar_SummaryLabel:
+                      Control: Text@0.0.51
+                      Properties:
+                        Font: =Font.Lato
+                        FontColor: =RGBA(0, 0, 0, 1)
+                        Height: =40
+                        Text: |-
+                          ="Selected: " & CountRows(colSelectedEmails) & " emails | Total Amount: " & Text(Sum(colSelectedEmails, 'Total Amount'), "$#,##0.00") & " THB"
+                        VerticalAlign: =VerticalAlign.Middle
+                        Weight: ='TextCanvas.Weight'.Semibold
+                        Width: =400
+                  - ActionBar_ButtonContainer:
+                      Control: GroupContainer@1.3.0
+                      Variant: AutoLayout
+                      Properties:
+                        DropShadow: =DropShadow.None
+                        LayoutAlignItems: =LayoutAlignItems.Center
+                        LayoutDirection: =LayoutDirection.Horizontal
+                        LayoutGap: =10
+                        LayoutMinHeight: =40
+                        LayoutMinWidth: =100
+                      Children:
+                        - ActionBar_ExcludeBtn:
+                            Control: Button@0.0.45
+                            Properties:
+                              BasePaletteColor: =RGBA(128, 128, 128, 1)
+                              DisplayMode: |-
+                                =If(
+                                    CountRows(colSelectedEmails) > 0,
+                                    DisplayMode.Edit,
+                                    DisplayMode.Disabled
+                                )
+                              Height: =40
+                              Icon: ="Cancel"
+                              OnSelect: |-
+                                =If(
+                                    CountRows(colSelectedEmails) = 0,
+                                    Notify("No emails selected", NotificationType.Warning);
+                                    Exit()
+                                );
+                                ForAll(
+                                    colSelectedEmails,
+                                    Patch(
+                                        '[THFinanceCashCollection]Emaillogs',
+                                        LookUp(
+                                            '[THFinanceCashCollection]Emaillogs',
+                                            cr7bb_emaillogid = colSelectedEmails[@cr7bb_emaillogid]
+                                        ),
+                                        {
+                                            'Send Status': 'Send Status Choice'.Failed,
+                                            'Error Message': "Manually excluded by AR team"
+                                        }
+                                    )
+                                );
+                                Notify("Excluded " & CountRows(colSelectedEmails) & " emails", NotificationType.Success);
+                                Clear(colSelectedEmails);
+                                UpdateContext({_refreshTrigger: !_refreshTrigger});
+                              Text: ="Exclude Selected"
+                              Width: =160
+                        - ActionBar_SendBtn:
+                            Control: Button@0.0.45
+                            Properties:
+                              BasePaletteColor: =RGBA(0, 101, 161, 1)
+                              DisplayMode: |-
+                                =If(
+                                    CountRows(colSelectedEmails) > 0 || gblAutoApprove,
+                                    DisplayMode.Edit,
+                                    DisplayMode.Disabled
+                                )
+                              Height: =40
+                              Icon: ="Send"
+                              OnSelect: |-
+                                =If(
+                                    gblAutoApprove,
+                                    ClearCollect(
+                                        colSelectedEmails,
+                                        Filter(
+                                            colDraftEmails,
+                                            'Send Status' = 'Send Status Choice'.Pending
+                                        )
+                                    )
+                                );
+                                If(
+                                    CountRows(colSelectedEmails) = 0,
+                                    Notify("No emails to approve", NotificationType.Warning);
+                                    Exit()
+                                );
+                                ForAll(
+                                    colSelectedEmails,
+                                    Patch(
+                                        '[THFinanceCashCollection]Emaillogs',
+                                        LookUp(
+                                            '[THFinanceCashCollection]Emaillogs',
+                                            cr7bb_emaillogid = colSelectedEmails[@cr7bb_emaillogid]
+                                        ),
+                                        {'Send Status': 'Send Status Choice'.Approved}
+                                    )
+                                );
+                                Notify(
+                                    "Approved " & CountRows(colSelectedEmails) & " emails for sending. Power Automate will send within 5 minutes.",
+                                    NotificationType.Success
+                                );
+                                Clear(colSelectedEmails);
+                                UpdateContext({_refreshTrigger: !_refreshTrigger});
+                              Text: ="Send Approved Emails"
+                              Width: =200
+            - EmailApprv_NavigationMenu:
+                Control: CanvasComponent
+                ComponentName: NavigationMenu
+                Properties:
+                  Fill: =RGBA(255, 255, 255, 0.5)
+                  Height: =Parent.Height - 70
+                  Visible: =If(_showMenu, true, false)
+                  Width: =260
+                  Y: =70
+                  navItems: =Navigation
+                  navSelected: =currentScreen
