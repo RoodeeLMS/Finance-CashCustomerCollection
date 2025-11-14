@@ -5,17 +5,15 @@ Screens:
       LoadingSpinnerColor: =RGBA(0, 101, 161, 1)
       OnVisible: |-
         =// Initialize navigation and menu
-        UpdateContext({
-            currentScreen: "Daily Control Center",
-            _showMenu: false,
-            _refreshTrigger: false,
-            _showDatePicker: false
-        });
+        Set(_showMenu, false);
+        Set(_refreshTrigger, false);
+        Set(_showDatePicker, false);
+        UpdateContext({currentScreen: "Daily Control Center"});
 
         // Initialize selected date to today if not set
         If(
             IsBlank(_selectedDate),
-            UpdateContext({_selectedDate: Today()})
+            Set(_selectedDate, Today())
         );
 
         // Refresh data sources (initial load only)
@@ -57,8 +55,7 @@ Screens:
                         Color: =RGBA(255, 255, 255, 1)
                         Height: =50
                         Icon: =Icon.Hamburger
-                        OnSelect: |-
-                                =UpdateContext({_showMenu: !_showMenu})
+                        OnSelect: =Set(_showMenu, !_showMenu)
                         PaddingBottom: =10
                         PaddingLeft: =10
                         PaddingRight: =10
@@ -140,8 +137,7 @@ Screens:
                                     BasePaletteColor: =RGBA(0, 101, 161, 1)
                                     Height: =36
                                     Icon: ="Refresh"
-                                    OnSelect: |-
-                                      =UpdateContext({_refreshTrigger: !_refreshTrigger})
+                                    OnSelect: =Set(_refreshTrigger, !_refreshTrigger)
                                     Text: ="↻ Refresh"
                                     Width: =120
                         - DCC_DateNavigationRow:
@@ -164,8 +160,7 @@ Screens:
                                     Font: =Font.Lato
                                     FontColor: =RGBA(100, 100, 100, 1)
                                     Height: =40
-                                    Text: |-
-                                      ="View Date:"
+                                    Text: ="View Date:"
                                     VerticalAlign: =VerticalAlign.Middle
                                     Weight: ='TextCanvas.Weight'.Semibold
                                     Width: =100
@@ -175,10 +170,8 @@ Screens:
                                     BasePaletteColor: =RGBA(0, 101, 161, 1)
                                     Height: =40
                                     OnSelect: |-
-                                      =UpdateContext({
-                                          _selectedDate: DateAdd(_selectedDate, -1, TimeUnit.Days),
-                                          _refreshTrigger: !_refreshTrigger
-                                      })
+                                      =Set(_selectedDate, DateAdd(_selectedDate, -1, TimeUnit.Days));
+                                      Set(_refreshTrigger, !_refreshTrigger)
                                     Text: ="◄ Previous"
                                     Width: =120
                               - DCC_DateDisplay:
@@ -202,10 +195,8 @@ Screens:
                                     DisplayMode: =If(_selectedDate >= Today(), DisplayMode.Disabled, DisplayMode.Edit)
                                     Height: =40
                                     OnSelect: |-
-                                      =UpdateContext({
-                                          _selectedDate: DateAdd(_selectedDate, 1, TimeUnit.Days),
-                                          _refreshTrigger: !_refreshTrigger
-                                      })
+                                      =Set(_selectedDate, DateAdd(_selectedDate, 1, TimeUnit.Days));
+                                      Set(_refreshTrigger, !_refreshTrigger)
                                     Text: ="Next ►"
                                     Width: =120
                               - DCC_TodayButton:
@@ -214,10 +205,8 @@ Screens:
                                     BasePaletteColor: =If(_selectedDate = Today(), RGBA(16, 124, 16, 1), RGBA(0, 101, 161, 1))
                                     Height: =40
                                     OnSelect: |-
-                                      =UpdateContext({
-                                          _selectedDate: Today(),
-                                          _refreshTrigger: !_refreshTrigger
-                                      })
+                                      =Set(_selectedDate, Today());
+                                      Set(_refreshTrigger, !_refreshTrigger)
                                     Text: ="Today"
                                     Width: =100
                               - DCC_PickDateButton:
@@ -225,8 +214,7 @@ Screens:
                                   Properties:
                                     BasePaletteColor: =RGBA(100, 81, 61, 1)
                                     Height: =40
-                                    OnSelect: |-
-                                      =UpdateContext({_showDatePicker: !_showDatePicker})
+                                    OnSelect: =Set(_showDatePicker, !_showDatePicker)
                                     Text: |-
                                       ="📅 Pick Date"
                                     Width: =120
@@ -846,8 +834,7 @@ Screens:
                                         Properties:
                                           BasePaletteColor: =RGBA(128, 128, 128, 1)
                                           Height: =40
-                                          OnSelect: |-
-                                            =UpdateContext({_showDatePicker: false})
+                                          OnSelect: =Set(_showDatePicker, false)
                                           Text: ="Cancel"
                                           Width: =100
                                     - DCC_DatePickerSelectButton:
@@ -856,11 +843,9 @@ Screens:
                                           BasePaletteColor: =RGBA(0, 101, 161, 1)
                                           Height: =40
                                           OnSelect: |-
-                                            =UpdateContext({
-                                                _selectedDate: DCC_DatePickerControl.SelectedDate,
-                                                _showDatePicker: false,
-                                                _refreshTrigger: !_refreshTrigger
-                                            })
+                                            =Set(_selectedDate, DCC_DatePickerControl.SelectedDate);
+                                            Set(_showDatePicker, false);
+                                            Set(_refreshTrigger, !_refreshTrigger)
                                           Text: ="Select Date"
                                           Width: =120
             - DCC_NavigationMenu:

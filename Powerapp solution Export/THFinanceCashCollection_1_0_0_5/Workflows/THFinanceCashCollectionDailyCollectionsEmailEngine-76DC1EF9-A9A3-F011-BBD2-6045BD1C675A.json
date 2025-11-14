@@ -1,0 +1,1045 @@
+{
+  "properties": {
+    "connectionReferences": {
+      "shared_commondataserviceforapps": {
+        "api": {
+          "name": "shared_commondataserviceforapps"
+        },
+        "connection": {
+          "connectionReferenceLogicalName": "new_sharedcommondataserviceforapps_a8869"
+        },
+        "runtimeSource": "embedded"
+      },
+      "shared_office365": {
+        "api": {
+          "name": "shared_office365"
+        },
+        "connection": {
+          "connectionReferenceLogicalName": "new_sharedoffice365_d17df"
+        },
+        "runtimeSource": "embedded"
+      },
+      "shared_office365users": {
+        "api": {
+          "name": "shared_office365users"
+        },
+        "connection": {
+          "connectionReferenceLogicalName": "new_sharedoffice365users_6b112"
+        },
+        "runtimeSource": "embedded"
+      },
+      "shared_sharepointonline": {
+        "api": {
+          "name": "shared_sharepointonline"
+        },
+        "connection": {
+          "connectionReferenceLogicalName": "new_sharedsharepointonline_48143"
+        },
+        "runtimeSource": "embedded"
+      }
+    },
+    "definition": {
+      "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+      "contentVersion": "1.0.0.0",
+      "parameters": {
+        "$authentication": {
+          "defaultValue": {},
+          "type": "SecureObject"
+        },
+        "$connections": {
+          "defaultValue": {},
+          "type": "Object"
+        },
+        "System Notification Email (nc_SystemNotificationEmail)": {
+          "defaultValue": "Nick.Chamnong@th.nestle.com",
+          "type": "String",
+          "metadata": {
+            "schemaName": "nc_SystemNotificationEmail"
+          }
+        }
+      },
+      "triggers": {
+        "Recurrence": {
+          "type": "Recurrence",
+          "recurrence": {
+            "frequency": "Day",
+            "interval": 1,
+            "timeZone": "SE Asia Standard Time",
+            "schedule": {
+              "hours": [
+                "13"
+              ],
+              "minutes": [
+                30
+              ]
+            }
+          },
+          "metadata": {
+            "operationMetadataId": "c259142f-3c41-49fe-aa29-3aefc37ef696"
+          }
+        }
+      },
+      "actions": {
+        "Initialize_varProcessDate": {
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "varProcessDate",
+                "type": "string",
+                "value": "@{formatDateTime(utcNow(), 'yyyy-MM-dd')}"
+              }
+            ]
+          },
+          "runAfter": {},
+          "metadata": {
+            "operationMetadataId": "192dc6d1-4fbe-4a9e-b705-cf60038af009"
+          }
+        },
+        "Initialize_varEmailsSent": {
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "varEmailsSent",
+                "type": "integer",
+                "value": 0
+              }
+            ]
+          },
+          "runAfter": {
+            "Set_variable_1": [
+              "SUCCEEDED"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "4d6cdaca-fc12-4b3a-a9f6-5e35eda8c4f3"
+          }
+        },
+        "Initialize_varEmailsFailed": {
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "varEmailsFailed",
+                "type": "integer",
+                "value": 0
+              }
+            ]
+          },
+          "runAfter": {
+            "Initialize_varEmailsSent": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "04819dad-16a9-4a64-a589-2e2502e5630b"
+          }
+        },
+        "Initialize_varCustomersProcessed": {
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "varCustomersProcessed",
+                "type": "integer",
+                "value": 0
+              }
+            ]
+          },
+          "runAfter": {
+            "Initialize_varEmailsFailed": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "0ce4be12-8021-4c18-9ae4-6ea2f5cddaca"
+          }
+        },
+        "Initialize_varErrorMessages": {
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "varErrorMessages",
+                "type": "array",
+                "value": []
+              }
+            ]
+          },
+          "runAfter": {
+            "Initialize_varCustomersProcessed": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "84ea5c99-c00a-4914-8004-a87382bd3d31"
+          }
+        },
+        "List_Process_Logs": {
+          "type": "OpenApiConnection",
+          "inputs": {
+            "parameters": {
+              "entityName": "cr7bb_thfinancecashcollectionprocesslogs",
+              "$filter": "cr7bb_processdate eq '@{variables('varProcessDate')}' and cr7bb_endtime ne null",
+              "$orderby": "cr7bb_endtime desc",
+              "$top": 1
+            },
+            "host": {
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+              "operationId": "ListRecords",
+              "connectionName": "shared_commondataserviceforapps"
+            }
+          },
+          "runAfter": {
+            "Initialize_varDNTotal": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "45ac206e-9635-4b82-bde4-3cc553411636"
+          }
+        },
+        "Check_Import_Completed": {
+          "type": "If",
+          "expression": {
+            "and": [
+              {
+                "equals": [
+                  "@length(outputs('Compose_Process_Logs'))",
+                  0
+                ]
+              }
+            ]
+          },
+          "actions": {
+            "Send_error_email": {
+              "type": "OpenApiConnection",
+              "inputs": {
+                "parameters": {
+                  "emailMessage/To": "Nick.Chamnong@th.nestle.com",
+                  "emailMessage/Subject": "⚠️ Collections Engine - SAP Import Not Completed",
+                  "emailMessage/Body": "<p>SAP import for @{variables('varProcessDate')} has not completed. Collections email engine cannot run.</p>",
+                  "emailMessage/Importance": "High"
+                },
+                "host": {
+                  "apiId": "/providers/Microsoft.PowerApps/apis/shared_office365",
+                  "operationId": "SendEmailV2",
+                  "connectionName": "shared_office365"
+                }
+              },
+              "metadata": {
+                "operationMetadataId": "e5bfa79c-c83d-41be-94f7-aa29244c7b34"
+              }
+            },
+            "Terminate": {
+              "type": "Terminate",
+              "inputs": {
+                "runStatus": "Failed",
+                "runError": {
+                  "message": "SAP import not completed"
+                }
+              },
+              "runAfter": {
+                "Send_error_email": [
+                  "Succeeded"
+                ]
+              },
+              "metadata": {
+                "operationMetadataId": "9a1006d2-372e-4cb0-b2da-38afdc370d48"
+              }
+            }
+          },
+          "else": {
+            "actions": {}
+          },
+          "runAfter": {
+            "Compose_Process_Logs": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "1b5d48fe-4fd7-4244-924a-2342e79b25d9"
+          }
+        },
+        "List_Transactions": {
+          "type": "OpenApiConnection",
+          "inputs": {
+            "parameters": {
+              "entityName": "cr7bb_thfinancecashcollectiontransactions",
+              "$select": "cr7bb_thfinancecashcollectiontransactionid,_cr7bb_customer_value,cr7bb_documentnumber,cr7bb_documentdate,cr7bb_amountlocalcurrency,cr7bb_daycount,cr7bb_isexcluded,cr7bb_transactiontype,cr7bb_netduedate,cr7bb_documenttype",
+              "$filter": "cr7bb_transactionprocessdate eq '@{variables('varProcessDate')}' and cr7bb_recordtype eq 676180000 and cr7bb_emailsent eq false",
+              "$top": 5000
+            },
+            "host": {
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+              "operationId": "ListRecords",
+              "connectionName": "shared_commondataserviceforapps"
+            }
+          },
+          "runAfter": {
+            "Check_Import_Completed": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "4a6d78f2-5889-4935-9d50-55c82f03dc95"
+          }
+        },
+        "Select_Customer_IDs": {
+          "type": "Select",
+          "inputs": {
+            "from": "@outputs('Compose_Transactions')",
+            "select": "@item()?['_cr7bb_customer_value']"
+          },
+          "runAfter": {
+            "Compose_Transactions": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "2ff3084c-f841-4f21-86c7-577c59938513"
+          }
+        },
+        "Get_Unique_Customers": {
+          "type": "Compose",
+          "inputs": "@union(outputs('Select_Customer_IDs')?['body'], outputs('Select_Customer_IDs')?['body'])",
+          "runAfter": {
+            "Select_Customer_IDs": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "a9603973-dad4-468b-ab17-a7b3ebd1b1f0"
+          }
+        },
+        "Apply_to_each_Customer": {
+          "type": "Foreach",
+          "foreach": "@outputs('Get_Unique_Customers')",
+          "actions": {
+            "Increment_varCustomersProcessed": {
+              "type": "IncrementVariable",
+              "inputs": {
+                "name": "varCustomersProcessed",
+                "value": 1
+              },
+              "metadata": {
+                "operationMetadataId": "b3900095-f51e-41de-94a7-33abfbb4b468"
+              }
+            },
+            "Get_Customer": {
+              "type": "OpenApiConnection",
+              "inputs": {
+                "parameters": {
+                  "entityName": "cr7bb_thfinancecashcollectioncustomers",
+                  "recordId": "@item()"
+                },
+                "host": {
+                  "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+                  "operationId": "GetItem",
+                  "connectionName": "shared_commondataserviceforapps"
+                }
+              },
+              "runAfter": {
+                "Increment_varCustomersProcessed": [
+                  "Succeeded"
+                ]
+              },
+              "metadata": {
+                "operationMetadataId": "cfa62797-d966-43b4-8d45-e8b4fe80f5ae"
+              }
+            },
+            "Filter_Customer_Transactions": {
+              "type": "Query",
+              "inputs": {
+                "from": "@outputs('Compose_Transactions')",
+                "where": "@equals(item()?['_cr7bb_customer_value'], items('Apply_to_each_Customer'))"
+              },
+              "runAfter": {
+                "Compose_Customer": [
+                  "Succeeded"
+                ]
+              },
+              "metadata": {
+                "operationMetadataId": "d84de4d2-511b-47b9-9055-ed9671870d17"
+              }
+            },
+            "Filter_Non_Excluded": {
+              "type": "Query",
+              "inputs": {
+                "from": "@body('Filter_Customer_Transactions')",
+                "where": "@equals(item()?['cr7bb_isexcluded'], false)"
+              },
+              "runAfter": {
+                "Filter_Customer_Transactions": [
+                  "Succeeded"
+                ]
+              },
+              "metadata": {
+                "operationMetadataId": "d0287e58-8237-4704-a429-50fd934b1be9"
+              }
+            },
+            "Check_All_Excluded": {
+              "type": "If",
+              "expression": {
+                "and": [
+                  {
+                    "equals": [
+                      "@length(body('Filter_Non_Excluded'))",
+                      0
+                    ]
+                  }
+                ]
+              },
+              "actions": {},
+              "else": {
+                "actions": {
+                  "Filter_CN_List": {
+                    "type": "Query",
+                    "inputs": {
+                      "from": "@body('Filter_Non_Excluded')",
+                      "where": "@less(item()?['cr7bb_amountlocalcurrency'], 0)"
+                    },
+                    "metadata": {
+                      "operationMetadataId": "07f50df3-a804-450a-aa97-0e309c13ee53"
+                    }
+                  },
+                  "Filter_DN_List": {
+                    "type": "Query",
+                    "inputs": {
+                      "from": "@body('Filter_Non_Excluded')",
+                      "where": "@greater(item()?['cr7bb_amountlocalcurrency'], 0)"
+                    },
+                    "runAfter": {
+                      "Filter_CN_List": [
+                        "Succeeded"
+                      ]
+                    },
+                    "metadata": {
+                      "operationMetadataId": "a9286053-dd67-49a5-99dc-8ecab85f77b2"
+                    }
+                  },
+                  "Compose_Net_Amount": {
+                    "type": "Compose",
+                    "inputs": "@add(variables('varCNTotal'),variables('varDNTotal'))",
+                    "runAfter": {
+                      "Apply_to_each_DN_List": [
+                        "Succeeded"
+                      ]
+                    },
+                    "metadata": {
+                      "operationMetadataId": "a7b4fdc5-faab-4463-801e-83b9fc77b15c"
+                    }
+                  },
+                  "Check_Should_Send": {
+                    "type": "If",
+                    "expression": {
+                      "and": [
+                        {
+                          "greater": [
+                            "@length(body('Filter_DN_List'))",
+                            0
+                          ]
+                        },
+                        {
+                          "greater": [
+                            "@outputs('Compose_Net_Amount')",
+                            0
+                          ]
+                        }
+                      ]
+                    },
+                    "actions": {
+                      "Compose_Template_Selection": {
+                        "type": "Compose",
+                        "inputs": "@if(lessOrEquals(outputs('Compose_Max_DayCount'), 2), 'Template_A', if(equals(outputs('Compose_Max_DayCount'), 3), 'Template_B', 'Template_C'))",
+                        "runAfter": {
+                          "Compose_Max_DayCount": [
+                            "Succeeded"
+                          ]
+                        },
+                        "metadata": {
+                          "operationMetadataId": "8a8dc00a-44b9-4961-b3a3-3bc4d8f35d4f"
+                        }
+                      },
+                      "Compose_Email_Subject": {
+                        "type": "Compose",
+                        "inputs": "@{outputs('Get_Customer')?['body/cr7bb_customercode']}, @{outputs('Get_Customer')?['body/cr7bb_customername']}, รายละเอียดบิลวันที่ @{formatDateTime(first(sort(body('Select_Document_Date'))), 'dd/MM/yyyy')} - @{formatDateTime(last(sort(body('Select_Document_Date'))), 'dd/MM/yyyy')}",
+                        "runAfter": {
+                          "Compose_Template_Selection": [
+                            "Succeeded"
+                          ]
+                        },
+                        "metadata": {
+                          "operationMetadataId": "93d72044-a58d-4dd1-bcb0-1a340c18528c"
+                        }
+                      },
+                      "Get_AR_rep": {
+                        "type": "OpenApiConnection",
+                        "inputs": {
+                          "parameters": {
+                            "id": "@outputs('Get_Customer')?['body/cr7bb_arbackupemail1']"
+                          },
+                          "host": {
+                            "apiId": "/providers/Microsoft.PowerApps/apis/shared_office365users",
+                            "operationId": "UserProfile_V2",
+                            "connectionName": "shared_office365users"
+                          }
+                        },
+                        "runAfter": {
+                          "Get_files_(properties_only)": [
+                            "Succeeded"
+                          ]
+                        },
+                        "metadata": {
+                          "operationMetadataId": "6a132c21-1603-4c28-a84f-66e40bca0774"
+                        }
+                      },
+                      "Create_Email_Log": {
+                        "type": "OpenApiConnection",
+                        "inputs": {
+                          "parameters": {
+                            "entityName": "cr7bb_thfinancecashcollectionemaillogs",
+                            "item/cr7bb_emailsubject": "@outputs('Compose_Email_Subject')",
+                            "item/cr7bb_approvalstatus": 676180000,
+                            "item/cr7bb_ccemails": "@outputs('Compose_CC_Emails')",
+                            "item/cr7bb_Customer@odata.bind": "@outputs('Get_Customer')?['body/@odata.id']",
+                            "item/cr7bb_emailtemplate": "@if(equals(outputs('Compose_Template_Selection'), 'Template_A'), 676180000, if(equals(outputs('Compose_Template_Selection'), 'Template_B'), 676180001, if(equals(outputs('Compose_Template_Selection'), 'Template_C'), 676180002, 676180003)))",
+                            "item/cr7bb_emailbodypreview": "@substring(replace(replace(replace(outputs('Compose_Email_Body'), '<[^>]+>', ''), '&nbsp;', ' '), '\n', ' '), 0, min(length(outputs('Compose_Email_Body')), 5000))",
+                            "item/cr7bb_maxdaycount": "@outputs('Compose_Max_DayCount')",
+                            "item/cr7bb_processdate": "@variables('varProcessDate')",
+                            "item/cr7bb_qrcodeincluded": "@greater(length(body('Get_files_(properties_only)')?['value']), 0)",
+                            "item/cr7bb_recipientemails": "@outputs('Compose_Recipient_Emails')",
+                            "item/cr7bb_sendstatus": 676180002,
+                            "item/cr7bb_sentdatetime": "@utcNow()",
+                            "item/cr7bb_totalamount": "@outputs('Compose_Net_Amount')",
+                            "item/cr7bb_transactioncount": "@length(body('Filter_DN_List'))"
+                          },
+                          "host": {
+                            "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+                            "operationId": "CreateRecord",
+                            "connectionName": "shared_commondataserviceforapps"
+                          }
+                        },
+                        "runAfter": {
+                          "Compose_CC_Emails": [
+                            "Succeeded"
+                          ]
+                        },
+                        "metadata": {
+                          "operationMetadataId": "30270ace-8f4e-4d83-b990-d80b3bf3ac21"
+                        }
+                      },
+                      "Update_Email_Counters": {
+                        "type": "Scope",
+                        "actions": {
+                          "Increment_EmailsSent": {
+                            "type": "IncrementVariable",
+                            "inputs": {
+                              "name": "varEmailsSent",
+                              "value": 1
+                            },
+                            "metadata": {
+                              "operationMetadataId": "216d2aa1-a1bf-4e2b-8b0a-3891fb230598"
+                            }
+                          }
+                        },
+                        "runAfter": {
+                          "Create_Email_Log": [
+                            "Succeeded"
+                          ]
+                        },
+                        "metadata": {
+                          "operationMetadataId": "eb7b2dff-f3bf-427a-8e3a-3069ba542204"
+                        }
+                      },
+                      "Log_Email_Failed": {
+                        "type": "Scope",
+                        "actions": {
+                          "Increment_EmailsFailed": {
+                            "type": "IncrementVariable",
+                            "inputs": {
+                              "name": "varEmailsFailed",
+                              "value": 1
+                            },
+                            "metadata": {
+                              "operationMetadataId": "5ef59312-22e1-4e78-b056-7b6f36be6a2d"
+                            }
+                          },
+                          "Append_Email_Error": {
+                            "type": "AppendToArrayVariable",
+                            "inputs": {
+                              "name": "varErrorMessages",
+                              "value": "Customer @{outputs('Get_Customer')?['cr7bb_customercode']}: Email processing failed"
+                            },
+                            "runAfter": {
+                              "Increment_EmailsFailed": [
+                                "Succeeded"
+                              ]
+                            },
+                            "metadata": {
+                              "operationMetadataId": "6d4d9bac-b180-4b92-ba06-cc5c60d5dbd5"
+                            }
+                          }
+                        },
+                        "runAfter": {
+                          "Create_Email_Log": [
+                            "Failed",
+                            "TimedOut"
+                          ]
+                        },
+                        "metadata": {
+                          "operationMetadataId": "dbd7b045-7ee8-4806-8a09-fc4b5448b83a"
+                        }
+                      },
+                      "Update_Transaction_Records": {
+                        "type": "Foreach",
+                        "foreach": "@body('Filter_DN_List')",
+                        "actions": {
+                          "Update_Transaction": {
+                            "type": "OpenApiConnection",
+                            "inputs": {
+                              "parameters": {
+                                "entityName": "cr7bb_thfinancecashcollectiontransactions",
+                                "recordId": "@item()?['cr7bb_thfinancecashcollectiontransactionid']",
+                                "item/cr7bb_emailsent": true,
+                                "item/cr7bb_isprocessed": true
+                              },
+                              "host": {
+                                "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+                                "operationId": "UpdateRecord",
+                                "connectionName": "shared_commondataserviceforapps"
+                              }
+                            },
+                            "metadata": {
+                              "operationMetadataId": "edf49d28-0831-430c-8ce4-e48189c0a133"
+                            }
+                          }
+                        },
+                        "runAfter": {
+                          "Update_Email_Counters": [
+                            "Succeeded"
+                          ]
+                        },
+                        "metadata": {
+                          "operationMetadataId": "82ca77fc-863e-49fe-817f-aa55c253e9cb"
+                        }
+                      },
+                      "Create_HTML_table": {
+                        "type": "Table",
+                        "inputs": {
+                          "from": "@body('Filter_DN_List')",
+                          "format": "HTML",
+                          "columns": [
+                            {
+                              "header": "เลขที่เอกสาร",
+                              "value": "@item()?['cr7bb_documentnumber']"
+                            },
+                            {
+                              "header": "วันที่เอกสาร",
+                              "value": "@item()?['cr7bb_documentdate']"
+                            },
+                            {
+                              "header": "วันครบกำหนด",
+                              "value": "@item()?['cr7bb_netduedate']"
+                            },
+                            {
+                              "header": "จำนวนวันค้าง",
+                              "value": "@item()?['cr7bb_daycount']"
+                            },
+                            {
+                              "header": "จำนวนเงิน (THB)",
+                              "value": "@item()?['cr7bb_amountlocalcurrency']"
+                            }
+                          ]
+                        },
+                        "runAfter": {
+                          "Compose_Email_Subject": [
+                            "Succeeded"
+                          ]
+                        },
+                        "metadata": {
+                          "operationMetadataId": "fb9767cb-487a-4b40-a43c-f927c7117f16"
+                        }
+                      },
+                      "Compose_Email_Body": {
+                        "type": "Compose",
+                        "inputs": "<html><body style=\"font-family: Arial, sans-serif;\"><p>เรียน คุณ @{outputs('Get_Customer')?['body/cr7bb_customername']}</p><p>ตามที่บริษัทได้ตรวจสอบยอดค้างชำระพบว่า ณ วันที่ @{formatDateTime(utcNow(), 'dd/MM/yyyy')} ท่านมียอดค้างชำระดังนี้</p>@{replace(replace(body('Create_HTML_table'), '<table>', '<table border=\"1\" cellpadding=\"5\" style=\"border-collapse: collapse\">'), '<thead>', '<thead style=\"background-color: #0078d4; color: white\">')}<p><strong>รวมยอดค้างชำระทั้งสิ้น: @{formatNumber(outputs('Compose_Net_Amount'), 'N2')} บาท</strong></p><p>กรุณาชำระเงินผ่าน PromptPay QR Code ที่แนบมาพร้อมนี้</p>@{if(equals(outputs('Compose_Template_Selection'), 'Template_B'), '<p style=\"color: #D83B01; font-weight: bold;\">⚠️ หมายเหตุ: หากไม่ชำระภายในวันที่ @{formatDateTime(addDays(utcNow(), 1), ''dd/MM/yyyy'')} ท่านจะสูญเสียสิทธิ์ส่วนลด Cash Discount</p>', '')}@{if(equals(outputs('Compose_Template_Selection'), 'Template_C'), '<p style=\"color: #A4262C; font-weight: bold;\">⚠️ การชำระล่าช้า: ท่านจะถูกเรียกเก็บค่า MI (ดอกเบี้ยเงินเฟ้อจากการชำระล่าช้า) กรุณาติดต่อ AR ทันที</p>', '')}<p>ขอบคุณค่ะ</p><p>@{coalesce(outputs('Get_AR_rep')?['displayName'], 'AR Team')}<br/>Accounts Receivable<br/>Email: @{coalesce(outputs('Get_AR_rep')?['mail'], outputs('Get_Customer')?['body/cr7bb_arbackupemail1'])}</p></body></html>",
+                        "runAfter": {
+                          "Get_AR_rep": [
+                            "Succeeded"
+                          ]
+                        },
+                        "metadata": {
+                          "operationMetadataId": "70867185-cc95-45d0-bc0d-fa50cffad9f6"
+                        }
+                      },
+                      "Compose_Recipient_Emails": {
+                        "type": "Compose",
+                        "inputs": "@join(body('Filter_Recipient_Emails'), '; ')",
+                        "runAfter": {
+                          "Filter_CC_Emails": [
+                            "Succeeded"
+                          ]
+                        },
+                        "metadata": {
+                          "operationMetadataId": "182a3f78-cf36-46c9-bf4a-9501a8eecb3b"
+                        }
+                      },
+                      "Compose_CC_Emails": {
+                        "type": "Compose",
+                        "inputs": "@join(body('Filter_CC_Emails'), '; ')",
+                        "runAfter": {
+                          "Compose_Recipient_Emails": [
+                            "Succeeded"
+                          ]
+                        },
+                        "metadata": {
+                          "operationMetadataId": "ee779185-a94c-418d-980a-a0fca86b24f6"
+                        }
+                      },
+                      "Select_Day_Counts": {
+                        "type": "Select",
+                        "inputs": {
+                          "from": "@body('Filter_DN_List')",
+                          "select": "@item()?['cr7bb_daycount']"
+                        },
+                        "metadata": {
+                          "operationMetadataId": "ef1f27e8-8164-4fad-9584-513f16f80e87"
+                        }
+                      },
+                      "Compose_Max_DayCount": {
+                        "type": "Compose",
+                        "inputs": "@if(greater(length(body('Select_Day_Counts')), 0), max(body('Select_Day_Counts')), 0)",
+                        "runAfter": {
+                          "Select_Document_Date": [
+                            "Succeeded"
+                          ]
+                        },
+                        "metadata": {
+                          "operationMetadataId": "db62643b-72a3-4668-8988-6722a21c811d"
+                        }
+                      },
+                      "Select_Document_Date": {
+                        "type": "Select",
+                        "inputs": {
+                          "from": "@body('Filter_DN_List')",
+                          "select": "@item()?['cr7bb_documentdate']"
+                        },
+                        "runAfter": {
+                          "Select_Day_Counts": [
+                            "Succeeded"
+                          ]
+                        },
+                        "metadata": {
+                          "operationMetadataId": "1e944c3a-df23-4745-b13c-fc36cb899687"
+                        }
+                      },
+                      "Compose_All_Recipient_Emails": {
+                        "type": "Compose",
+                        "inputs": "@createArray(outputs('Get_Customer')?['body/cr7bb_customeremail1'],outputs('Get_Customer')?['body/cr7bb_customeremail2'],outputs('Get_Customer')?['body/cr7bb_customeremail3'],outputs('Get_Customer')?['body/cr7bb_customeremail4'])",
+                        "runAfter": {
+                          "Compose_Email_Body": [
+                            "Succeeded"
+                          ]
+                        },
+                        "metadata": {
+                          "operationMetadataId": "00b7a1d6-404d-4b9a-8558-b67719429599"
+                        }
+                      },
+                      "Filter_Recipient_Emails": {
+                        "type": "Query",
+                        "inputs": {
+                          "from": "@outputs('Compose_All_Recipient_Emails')",
+                          "where": "@not(equals(item(), ''))"
+                        },
+                        "runAfter": {
+                          "Compose_All_CC_Emails": [
+                            "Succeeded"
+                          ]
+                        },
+                        "metadata": {
+                          "operationMetadataId": "64f244c7-0391-4e3a-a45a-ecaf92dfeada"
+                        }
+                      },
+                      "Compose_All_CC_Emails": {
+                        "type": "Compose",
+                        "inputs": "@createArray(outputs('Get_Customer')?['body/cr7bb_salesemail1'],outputs('Get_Customer')?['body/cr7bb_salesemail2'],outputs('Get_Customer')?['body/cr7bb_salesemail3'],outputs('Get_Customer')?['body/cr7bb_arbackupemail1'],outputs('Get_Customer')?['body/cr7bb_arbackupemail2'])",
+                        "runAfter": {
+                          "Compose_All_Recipient_Emails": [
+                            "Succeeded"
+                          ]
+                        },
+                        "metadata": {
+                          "operationMetadataId": "e59de726-6abd-445f-b1a8-40298092b438"
+                        }
+                      },
+                      "Filter_CC_Emails": {
+                        "type": "Query",
+                        "inputs": {
+                          "from": "@outputs('Compose_All_CC_Emails')",
+                          "where": "@not(equals(item(), ''))"
+                        },
+                        "runAfter": {
+                          "Filter_Recipient_Emails": [
+                            "Succeeded"
+                          ]
+                        },
+                        "metadata": {
+                          "operationMetadataId": "b0094c04-37a9-452a-bc31-ceed1fdac179"
+                        }
+                      },
+                      "Get_files_(properties_only)": {
+                        "type": "OpenApiConnection",
+                        "inputs": {
+                          "parameters": {
+                            "dataset": "https://nestle.sharepoint.com/teams/THFinancePowerPlatformSolutions",
+                            "table": "375efa2c-aef5-4522-b27f-5cd2749a74a8",
+                            "$filter": "FileLeafRef eq '@{outputs('Get_Customer')?['body/cr7bb_customercode']}.jpg'"
+                          },
+                          "host": {
+                            "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                            "operationId": "GetFileItems",
+                            "connectionName": "shared_sharepointonline"
+                          }
+                        },
+                        "runAfter": {
+                          "Create_HTML_table": [
+                            "Succeeded"
+                          ]
+                        },
+                        "metadata": {
+                          "operationMetadataId": "108539e0-e2bf-4947-950e-94700bb0410f"
+                        }
+                      }
+                    },
+                    "else": {
+                      "actions": {}
+                    },
+                    "runAfter": {
+                      "Compose_Net_Amount": [
+                        "Succeeded"
+                      ]
+                    },
+                    "metadata": {
+                      "operationMetadataId": "d9ea6515-9dd9-45b8-8a44-3f7782e54115"
+                    }
+                  },
+                  "Set_variable": {
+                    "type": "SetVariable",
+                    "inputs": {
+                      "name": "varCNTotal",
+                      "value": 0
+                    },
+                    "runAfter": {
+                      "Filter_DN_List": [
+                        "Succeeded"
+                      ]
+                    },
+                    "metadata": {
+                      "operationMetadataId": "3011d4fe-f0a1-4ce2-ab75-c14907bd865a"
+                    }
+                  },
+                  "Apply_to_each_CN_List": {
+                    "type": "Foreach",
+                    "foreach": "@body('Filter_CN_List')",
+                    "actions": {
+                      "Increment_variable": {
+                        "type": "IncrementVariable",
+                        "inputs": {
+                          "name": "varCNTotal",
+                          "value": "@coalesce(item()?['cr7bb_amountlocalcurrency'], 0)"
+                        },
+                        "metadata": {
+                          "operationMetadataId": "c0f80769-e31b-45f0-baeb-6f30bd90cc17"
+                        }
+                      }
+                    },
+                    "runAfter": {
+                      "Set_variable_2": [
+                        "Succeeded"
+                      ]
+                    },
+                    "metadata": {
+                      "operationMetadataId": "aacec211-2c6e-4065-b060-76fc3abc5cfa"
+                    }
+                  },
+                  "Set_variable_2": {
+                    "type": "SetVariable",
+                    "inputs": {
+                      "name": "varDNTotal",
+                      "value": 0
+                    },
+                    "runAfter": {
+                      "Set_variable": [
+                        "Succeeded"
+                      ]
+                    },
+                    "metadata": {
+                      "operationMetadataId": "30e4929f-a958-490a-b1f4-23119cbfbfbe"
+                    }
+                  },
+                  "Apply_to_each_DN_List": {
+                    "type": "Foreach",
+                    "foreach": "@body('Filter_DN_List')",
+                    "actions": {
+                      "Increment_variable_2": {
+                        "type": "IncrementVariable",
+                        "inputs": {
+                          "name": "varDNTotal",
+                          "value": "@coalesce(item()?['cr7bb_amountlocalcurrency'], 0)"
+                        },
+                        "metadata": {
+                          "operationMetadataId": "05f9c477-399d-467f-9bf8-532055c7e191"
+                        }
+                      }
+                    },
+                    "runAfter": {
+                      "Apply_to_each_CN_List": [
+                        "Succeeded"
+                      ]
+                    },
+                    "metadata": {
+                      "operationMetadataId": "3b920365-d751-41dc-bd1e-7f3f2892141b"
+                    }
+                  }
+                }
+              },
+              "runAfter": {
+                "Filter_Non_Excluded": [
+                  "Succeeded"
+                ]
+              },
+              "metadata": {
+                "operationMetadataId": "b028a01d-2fad-4992-8a4f-bd29735f8241"
+              }
+            },
+            "Compose_Customer": {
+              "type": "Compose",
+              "inputs": "@body('Get_Customer')",
+              "runAfter": {
+                "Get_Customer": [
+                  "Succeeded"
+                ]
+              },
+              "metadata": {
+                "operationMetadataId": "1f38a0a7-823e-4d19-ab2c-38c621f8d20b"
+              }
+            }
+          },
+          "runAfter": {
+            "Get_Unique_Customers": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "64721959-734c-4aa7-bbac-d85e2b797a83"
+          }
+        },
+        "Send_Summary_Email_to_AR": {
+          "type": "OpenApiConnection",
+          "inputs": {
+            "parameters": {
+              "emailMessage/To": "@parameters('System Notification Email (nc_SystemNotificationEmail)')",
+              "emailMessage/Subject": "Collections Summary @{variables('varProcessDate')} - @{if(greater(variables('varEmailsFailed'), 0), '⚠️ Errors', '✅ Success')}",
+              "emailMessage/Body": "<!DOCTYPE html>\n<html>\n<head>\n    <style>\n        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }\n        .header { background-color: #0065A1; color: white; padding: 20px; }\n        .content { padding: 20px; }\n        .stats { background-color: #f5f5f5; padding: 15px; border-radius: 5px; margin: 20px 0; }\n        .stat-item { margin: 10px 0; }\n        .error-section { background-color: #fff3cd; border-left: 4px solid #D42939; padding: 15px; margin: 20px 0; }\n        .success { color: #28a745; font-weight: bold; }\n        .error { color: #D42939; font-weight: bold; }\n    </style>\n</head>\n<body>\n    <div class=\"header\">\n        <h2>Daily Collections Email Summary</h2>\n    </div>\n    \n    <div class=\"content\">\n        <div class=\"stats\">\n            <h3>Processing Statistics</h3>\n            <div class=\"stat-item\">📅 <strong>Process Date:</strong> @{formatDateTime(variables('varProcessDate'), 'dd/MM/yyyy')}</div>\n            <div class=\"stat-item\">👥 <strong>Customers Processed:</strong> @{variables('varCustomersProcessed')}</div>\n            <div class=\"stat-item\">✅ <strong>Emails Sent:</strong> <span class=\"success\">@{variables('varEmailsSent')}</span></div>\n            <div class=\"stat-item\">❌ <strong>Emails Failed:</strong> <span class=\"error\">@{variables('varEmailsFailed')}</span></div>\n        </div>\n        \n        @{if(greater(variables('varEmailsFailed'), 0), \n          '<div class=\"error-section\"><h3>⚠️ Error Details</h3><p>Please check Power Automate run history for detailed error messages.</p></div>', \n          '<div class=\"success\"><h3>✅ All emails processed successfully!</h3></div>')}\n        \n        <p style=\"margin-top: 30px;\">\n            <a href=\"https://make.powerapps.com\" style=\"background-color: #0065A1; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;\">View Details in Power Automate</a>\n        </p>\n    </div>\n</body>\n</html>",
+              "emailMessage/Importance": "@{if(greater(variables('varEmailsFailed'), 0), 'High', 'Normal')}"
+            },
+            "host": {
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_office365",
+              "operationId": "SendEmailV2",
+              "connectionName": "shared_office365"
+            }
+          },
+          "runAfter": {
+            "Apply_to_each_Customer": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "0a7dd620-4bad-4d24-b8cc-95a61cb9f048"
+          }
+        },
+        "Compose_Process_Logs": {
+          "type": "Compose",
+          "inputs": "@outputs('List_Process_Logs')?['body/value']",
+          "runAfter": {
+            "List_Process_Logs": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "060066a0-e729-43c1-a26a-42d86a1aadd8"
+          }
+        },
+        "Compose_Transactions": {
+          "type": "Compose",
+          "inputs": "@outputs('List_Transactions')?['body/value']",
+          "runAfter": {
+            "List_Transactions": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "39bdc3bd-f3a4-48c4-a001-036bee4fc166"
+          }
+        },
+        "Initialize_varDNTotal": {
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "varDNTotal",
+                "type": "float",
+                "value": 0
+              }
+            ]
+          },
+          "runAfter": {
+            "Initialize_varCNTotal": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "02178cf7-4c13-4f10-9ace-fae00dec9df7"
+          }
+        },
+        "Initialize_varCNTotal": {
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "varCNTotal",
+                "type": "float",
+                "value": 0
+              }
+            ]
+          },
+          "runAfter": {
+            "Initialize_varErrorMessages": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "a6773b82-b41f-438a-83ad-a36e2f94d348"
+          }
+        },
+        "Set_variable_1": {
+          "type": "SetVariable",
+          "inputs": {
+            "name": "varProcessDate",
+            "value": "2025-10-30"
+          },
+          "runAfter": {
+            "Initialize_varProcessDate": [
+              "Succeeded"
+            ]
+          }
+        }
+      },
+      "outputs": {}
+    },
+    "templateName": null
+  },
+  "schemaVersion": "1.0.0.0"
+}

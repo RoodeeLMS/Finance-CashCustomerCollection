@@ -86,7 +86,7 @@ This schema implements **Option 2: Database-driven** approach for customer data 
 | `nc_processdate` | Date | Yes | Date of SAP extract |
 | `nc_processbatch` | Text(50) | Yes | Unique batch identifier for each file import |
 | `nc_rownumber` | Whole Number | Yes | Original CSV row number for debugging |
-| `nc_isprocessed` | Yes/No | Yes | Included in email processing |
+| `nc_isprocessed` | Yes/No | Yes | Transaction has been processed by FIFO engine (manual override possible) |
 | `nc_emailsent` | Yes/No | Yes | Email sent for this transaction |
 | `nc_parentcustomeramount` | Currency | No | Customer total from summary row (for validation) |
 
@@ -101,9 +101,10 @@ This schema implements **Option 2: Database-driven** approach for customer data 
 - `nc_isexcluded` = true if text field contains exclusion keywords (Transaction type only)
 - `nc_daycount` uses `nc_arrearsdays` for new transactions, historical tracking for existing
 - `nc_processbatch` format: "YYYYMMDD_HHMMSS_filename" for unique identification
-- Default `nc_isprocessed` = false
+- Default `nc_isprocessed` = false (can be manually updated by AR users via Transaction screen)
 - Default `nc_emailsent` = false
 - Summary records used for data validation but not email processing
+- **`nc_isprocessed` usage**: Allows AR users to manually mark transactions as processed/unprocessed for special handling
 
 **Exclusion Keywords:**
 - "Paid"

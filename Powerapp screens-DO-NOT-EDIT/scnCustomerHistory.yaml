@@ -1,0 +1,796 @@
+Screens:
+  scnCustomerHistory:
+    Properties:
+      Fill: =RGBA(243, 242, 241, 1)
+      LoadingSpinnerColor: =RGBA(0, 101, 161, 1)
+      OnVisible: |-
+        =UpdateContext({
+            currentScreen: "Customer History",
+            _showMenu: false,
+            _selectedCustomer: Blank(),
+            _transactionTypeFilter: "All",
+            _filterDate: Today(),
+            _transactionDateRange: 30,
+            _emailDateRange: 90
+        });
+
+        ClearCollect(
+            colCustomers,
+            Sort('[THFinanceCashCollection]Customers', cr7bb_customername, SortOrder.Ascending)
+        )
+    Children:
+      - CustHistory_Container:
+          Control: GroupContainer@1.3.0
+          Variant: ManualLayout
+          Properties:
+            DropShadow: =DropShadow.None
+            Height: =Parent.Height
+            Width: =Parent.Width
+          Children:
+            - CustHistory_Header:
+                Control: GroupContainer@1.3.0
+                Variant: AutoLayout
+                Properties:
+                  DropShadow: =DropShadow.Regular
+                  Fill: =RGBA(0, 101, 161, 1)
+                  Height: =55
+                  LayoutAlignItems: =LayoutAlignItems.Center
+                  LayoutDirection: =LayoutDirection.Horizontal
+                  PaddingLeft: =15
+                  RadiusBottomLeft: =8
+                  RadiusBottomRight: =8
+                  RadiusTopLeft: =8
+                  RadiusTopRight: =8
+                  Width: =Parent.Width - 20
+                  X: =10
+                  Y: =10
+                Children:
+                  - CustHistory_MenuIcon:
+                      Control: Classic/Icon@2.5.0
+                      Properties:
+                        Color: =RGBA(255, 255, 255, 1)
+                        Height: =50
+                        Icon: =Icon.Hamburger
+                        OnSelect: |-
+                          =UpdateContext({_showMenu: !_showMenu})
+                        PaddingBottom: =10
+                        PaddingLeft: =10
+                        PaddingRight: =10
+                        PaddingTop: =10
+                        Width: =50
+                  - CustHistory_HeaderTitle:
+                      Control: Text@0.0.51
+                      Properties:
+                        Font: =Font.Lato
+                        FontColor: =Color.White
+                        Height: =50
+                        PaddingLeft: =20
+                        Size: =25
+                        Text: ="Customer History"
+                        VerticalAlign: =VerticalAlign.Middle
+                        Weight: ='TextCanvas.Weight'.Medium
+                        Width: =Parent.Width - CustHistory_MenuIcon.Width - 40
+            - CustHistory_Content:
+                Control: GroupContainer@1.3.0
+                Variant: ManualLayout
+                Properties:
+                  DropShadow: =DropShadow.Regular
+                  Fill: =RGBA(255, 255, 255, 1)
+                  Height: =Parent.Height - 85
+                  RadiusBottomLeft: =10
+                  RadiusBottomRight: =10
+                  RadiusTopLeft: =10
+                  RadiusTopRight: =10
+                  Width: =Parent.Width - 20
+                  X: =10
+                  Y: =75
+                Children:
+                  - CustHistory_CustomerSelectionPanel:
+                      Control: GroupContainer@1.3.0
+                      Variant: AutoLayout
+                      Properties:
+                        DropShadow: =DropShadow.None
+                        Fill: =RGBA(245, 245, 245, 1)
+                        Height: =90
+                        LayoutDirection: =LayoutDirection.Vertical
+                        LayoutGap: =10
+                        PaddingBottom: =15
+                        PaddingLeft: =15
+                        PaddingRight: =15
+                        PaddingTop: =15
+                        RadiusTopLeft: =10
+                        RadiusTopRight: =10
+                        Width: =Parent.Width
+                      Children:
+                        - CustHistory_SelectionRow:
+                            Control: GroupContainer@1.3.0
+                            Variant: AutoLayout
+                            Properties:
+                              DropShadow: =DropShadow.None
+                              LayoutAlignItems: =LayoutAlignItems.Center
+                              LayoutDirection: =LayoutDirection.Horizontal
+                              LayoutGap: =15
+                              LayoutMinHeight: =40
+                              LayoutMinWidth: =100
+                              Width: =Parent.Width - 30
+                            Children:
+                              - CustHistory_DateLabel:
+                                  Control: Text@0.0.51
+                                  Properties:
+                                    Font: =Font.Lato
+                                    FontColor: =RGBA(0, 0, 0, 1)
+                                    Height: =40
+                                    Text: |-
+                                      ="Date: "
+                                    VerticalAlign: =VerticalAlign.Middle
+                                    Weight: ='TextCanvas.Weight'.Semibold
+                                    Width: =50
+                              - CustHistory_DatePicker:
+                                  Control: DatePicker@0.0.46
+                                  Properties:
+                                    BasePaletteColor: =RGBA(0, 101, 161, 1)
+                                    Height: =40
+                                    OnChange: |-
+                                      =UpdateContext({
+                                          _filterDate: Self.SelectedDate
+                                      });
+                                    SelectedDate: =_filterDate
+                                    Width: =180
+                              - CustHistory_CustomerLabel:
+                                  Control: Text@0.0.51
+                                  Properties:
+                                    Font: =Font.Lato
+                                    FontColor: =RGBA(0, 0, 0, 1)
+                                    Height: =40
+                                    Text: ="Select Customer:"
+                                    VerticalAlign: =VerticalAlign.Middle
+                                    Weight: ='TextCanvas.Weight'.Semibold
+                                    Width: =120
+                              - CustHistory_CustomerCombo:
+                                  Control: ComboBox@0.0.51
+                                  Properties:
+                                    BasePaletteColor: =RGBA(0, 101, 161, 1)
+                                    DefaultSelectedItems: =[]
+                                    Height: =40
+                                    InputTextPlaceholder: ="Search customers..."
+                                    Items: =colCustomers
+                                    OnChange: |-
+                                      =UpdateContext({
+                                          _selectedCustomer: If(
+                                              CountRows(Self.SelectedItems) > 0,
+                                              First(Self.SelectedItems),
+                                              Blank()
+                                          )
+                                      });
+                                      If(
+                                          !IsBlank(_selectedCustomer),
+                                          ClearCollect(
+                                              colCustomerTransactions,
+                                              AddColumns(
+                                                  Filter(
+                                                      '[THFinanceCashCollection]Transactions',
+                                                      Customer.'[THFinanceCashCollection]Customer' = _selectedCustomer.'[THFinanceCashCollection]Customer'
+                                                  ),
+                                                  TransactionTypeText,
+                                                  If(
+                                                      cr7bb_transactiontype = 'Transaction Type Choice'.'Credit Note',
+                                                      "CN",
+                                                      If(
+                                                          cr7bb_transactiontype = 'Transaction Type Choice'.'Debit Note',
+                                                          "DN",
+                                                          ""
+                                                      )
+                                                  ),
+                                                  AmountFormatted,
+                                                  "฿" & Text(cr7bb_amountlocalcurrency, "#,##0.00")
+                                              )
+                                          );
+                                          ClearCollect(
+                                              colCustomerEmails,
+                                              AddColumns(
+                                                  Filter(
+                                                      '[THFinanceCashCollection]Emaillogs',
+                                                      Customer.'[THFinanceCashCollection]Customer' = _selectedCustomer.'[THFinanceCashCollection]Customer'
+                                                  ),
+                                                  AmountFormatted,
+                                                  "฿" & Text(cr7bb_totalamount, "#,##0.00")
+                                              )
+                                          )
+                                      )
+                                    Width: =400
+                                  Children:
+                                    - CustomerName_1:
+                                        Control: ComboBoxDataField@1.5.0
+                                        Variant: textualColumn
+                                        Properties:
+                                          FieldDisplayName: ="Customer Name"
+                                          FieldName: ="cr7bb_customername"
+                                          FieldType: ="s"
+                                          Order: =1
+                                    - CustomerCode:
+                                        Control: ComboBoxDataField@1.5.0
+                                        Variant: textualColumn
+                                        Properties:
+                                          FieldDisplayName: ="Code"
+                                          FieldName: ="cr7bb_customercode"
+                                          FieldType: ="s"
+                                          Order: =2
+                        - CustHistory_CustomerInfoRow:
+                            Control: GroupContainer@1.3.0
+                            Variant: AutoLayout
+                            Properties:
+                              DropShadow: =DropShadow.None
+                              LayoutAlignItems: =LayoutAlignItems.Center
+                              LayoutDirection: =LayoutDirection.Horizontal
+                              LayoutGap: =20
+                              LayoutMinHeight: =25
+                              LayoutMinWidth: =100
+                              Visible: =!IsBlank(_selectedCustomer)
+                              Width: =Parent.Width - 30
+                            Children:
+                              - CustHistory_CustomerNameText:
+                                  Control: Text@0.0.51
+                                  Properties:
+                                    Font: =Font.Lato
+                                    FontColor: =RGBA(0, 101, 161, 1)
+                                    Height: =25
+                                    Text: =_selectedCustomer.cr7bb_customername
+                                    VerticalAlign: =VerticalAlign.Middle
+                                    Weight: ='TextCanvas.Weight'.Bold
+                                    Width: =300
+                              - CustHistory_CustomerCodeText:
+                                  Control: Text@0.0.51
+                                  Properties:
+                                    Font: =Font.Lato
+                                    FontColor: =RGBA(100, 100, 100, 1)
+                                    Height: =25
+                                    Text: |-
+                                      ="Code: " & _selectedCustomer.cr7bb_customercode
+                                    VerticalAlign: =VerticalAlign.Middle
+                                    Width: =150
+                              - CustHistory_CustomerRegionText:
+                                  Control: Text@0.0.51
+                                  Properties:
+                                    Font: =Font.Lato
+                                    FontColor: =RGBA(100, 100, 100, 1)
+                                    Height: =25
+                                    Text: |-
+                                      ="Region: " & Text(_selectedCustomer.Region)
+                                    VerticalAlign: =VerticalAlign.Middle
+                                    Width: =150
+                  - CustHistory_TransactionSection:
+                      Control: GroupContainer@1.3.0
+                      Variant: ManualLayout
+                      Properties:
+                        DropShadow: =DropShadow.None
+                        Fill: =RGBA(255, 255, 255, 1)
+                        Height: =(Parent.Height - 100) / 2
+                        Width: =Parent.Width - 20
+                        X: =10
+                        Y: =100
+                      Children:
+                        - CustHistory_TransactionHeader:
+                            Control: GroupContainer@1.3.0
+                            Variant: AutoLayout
+                            Properties:
+                              DropShadow: =DropShadow.None
+                              Fill: =RGBA(250, 250, 250, 1)
+                              Height: =50
+                              LayoutAlignItems: =LayoutAlignItems.Center
+                              LayoutDirection: =LayoutDirection.Horizontal
+                              LayoutGap: =15
+                              LayoutJustifyContent: =LayoutJustifyContent.SpaceBetween
+                              PaddingLeft: =15
+                              PaddingRight: =15
+                              Width: =Parent.Width
+                            Children:
+                              - CustHistory_TransactionTitle:
+                                  Control: Text@0.0.51
+                                  Properties:
+                                    Font: =Font.Lato
+                                    FontColor: =RGBA(0, 0, 0, 1)
+                                    Height: =40
+                                    Size: =18
+                                    Text: ="Transaction History"
+                                    VerticalAlign: =VerticalAlign.Middle
+                                    Weight: ='TextCanvas.Weight'.Bold
+                                    Width: =200
+                              - CustHistory_TransactionFilters:
+                                  Control: GroupContainer@1.3.0
+                                  Variant: AutoLayout
+                                  Properties:
+                                    DropShadow: =DropShadow.None
+                                    LayoutAlignItems: =LayoutAlignItems.Center
+                                    LayoutDirection: =LayoutDirection.Horizontal
+                                    LayoutGap: =10
+                                    LayoutMinHeight: =40
+                                    LayoutMinWidth: =100
+                                  Children:
+                                    - CustHistory_TypeFilterLabel:
+                                        Control: Text@0.0.51
+                                        Properties:
+                                          Font: =Font.Lato
+                                          FontColor: =RGBA(100, 100, 100, 1)
+                                          Height: =35
+                                          Text: ="Type:"
+                                          VerticalAlign: =VerticalAlign.Middle
+                                          Weight: ='TextCanvas.Weight'.Semibold
+                                          Width: =50
+                                    - CustHistory_TypeFilterDropdown:
+                                        Control: DropDown@0.0.45
+                                        Properties:
+                                          DefaultSelectedItems: =["All"]
+                                          Height: =35
+                                          Items: =["All", "CN", "DN"]
+                                          OnChange: |-
+                                            =UpdateContext({
+                                                _transactionTypeFilter: Self.Selected.Value
+                                            })
+                                          Width: =100
+                                    - CustHistory_DateRangeLabel:
+                                        Control: Text@0.0.51
+                                        Properties:
+                                          Font: =Font.Lato
+                                          FontColor: =RGBA(100, 100, 100, 1)
+                                          Height: =35
+                                          Text: ="Period:"
+                                          VerticalAlign: =VerticalAlign.Middle
+                                          Visible: =false
+                                          Weight: ='TextCanvas.Weight'.Semibold
+                                          Width: =60
+                                    - CustHistory_DateRangeDropdown:
+                                        Control: DropDown@0.0.45
+                                        Properties:
+                                          DefaultSelectedItems: =["Last 30 Days"]
+                                          Height: =35
+                                          Items: =["Last 7 Days", "Last 30 Days", "Last 90 Days", "Last 180 Days", "Last 365 Days"]
+                                          OnChange: |-
+                                            =UpdateContext({
+                                                _transactionDateRange: Switch(
+                                                    Self.Selected.Value,
+                                                    "Last 7 Days", 7,
+                                                    "Last 30 Days", 30,
+                                                    "Last 90 Days", 90,
+                                                    "Last 180 Days", 180,
+                                                    "Last 365 Days", 365,
+                                                    30
+                                                )
+                                            })
+                                          Visible: =false
+                                          Width: =140
+                        - CustHistory_TransactionTable:
+                            Control: Table@1.0.278
+                            Properties:
+                              DateTimeFormat: ='PowerAppsOneGrid.DateTimeFormat'.ShortDate
+                              EnableRangeSelection: ='PowerAppsOneGrid.EnableRangeSelection'.Enable
+                              Height: =Parent.Height - 110
+                              Items: |-
+                                =If(
+                                    IsBlank(_selectedCustomer),
+                                    Blank(),
+                                    SortByColumns(
+                                        Filter(
+                                            colCustomerTransactions,
+                                            cr7bb_recordtype = 'Record Type Choice'.Transaction &&
+                                            (_transactionTypeFilter = "All" ||
+                                             (_transactionTypeFilter = "CN" && cr7bb_transactiontype = 'Transaction Type Choice'.'Credit Note') ||
+                                             (_transactionTypeFilter = "DN" && cr7bb_transactiontype = 'Transaction Type Choice'.'Debit Note')) &&
+                                            cr7bb_transactionprocessdate >= _filterDate && cr7bb_transactionprocessdate < DateAdd(_filterDate, 1, TimeUnit.Days)
+                                        ),
+                                        "cr7bb_documentdate",
+                                        SortOrder.Descending
+                                    )
+                                )
+                              ReflowBehavior: ='PowerAppsOneGrid.ReflowBehavior'.Reflow
+                              ShowAvatar: ="no"
+                              Visible: =!IsBlank(_selectedCustomer)
+                              Width: =Parent.Width - 20
+                              X: =10
+                              Y: =55
+                            Children:
+                              - Trans_TypeColumn_1:
+                                  Control: TableDataField@1.5.0
+                                  Variant: textualColumn
+                                  IsLocked: true
+                                  Properties:
+                                    FieldDisplayName: ="Type"
+                                    FieldName: ="TransactionTypeText"
+                                    FieldType: ="s"
+                                    Order: =1
+                                    Width: =80
+                              - Trans_DocumentColumn_1:
+                                  Control: TableDataField@1.5.0
+                                  Variant: textualColumn
+                                  IsLocked: true
+                                  Properties:
+                                    FieldDisplayName: ="Document"
+                                    FieldName: ="cr7bb_documentnumber"
+                                    FieldType: ="s"
+                                    Order: =2
+                                    Width: =120
+                              - Trans_DateColumn_1:
+                                  Control: TableDataField@1.5.0
+                                  Variant: textualColumn
+                                  IsLocked: true
+                                  Properties:
+                                    FieldDisplayName: ="Date"
+                                    FieldName: ="cr7bb_documentdate"
+                                    FieldType: ="d"
+                                    Order: =3
+                                    Width: =100
+                              - Trans_DaysColumn_1:
+                                  Control: TableDataField@1.5.0
+                                  Variant: textualColumn
+                                  IsLocked: true
+                                  Properties:
+                                    FieldDisplayName: ="Days"
+                                    FieldName: ="cr7bb_daycount"
+                                    FieldType: ="n"
+                                    Order: =4
+                                    Width: =80
+                              - Trans_AmountColumn_1:
+                                  Control: TableDataField@1.5.0
+                                  Variant: textualColumn
+                                  IsLocked: true
+                                  Properties:
+                                    FieldDisplayName: ="Amount"
+                                    FieldName: ="AmountFormatted"
+                                    FieldType: ="s"
+                                    Order: =5
+                                    Width: =120
+                              - Trans_ProcessedColumn_1:
+                                  Control: TableDataField@1.5.0
+                                  Variant: textualColumn
+                                  IsLocked: true
+                                  Properties:
+                                    FieldDisplayName: ="Processed"
+                                    FieldName: ="cr7bb_isprocessed"
+                                    FieldType: ="b"
+                                    Order: =6
+                                    Width: =100
+                        - CustHistory_TransactionSummary:
+                            Control: GroupContainer@1.3.0
+                            Variant: AutoLayout
+                            Properties:
+                              DropShadow: =DropShadow.None
+                              Fill: =RGBA(245, 245, 245, 1)
+                              Height: =45
+                              LayoutAlignItems: =LayoutAlignItems.Center
+                              LayoutDirection: =LayoutDirection.Horizontal
+                              LayoutGap: =30
+                              PaddingLeft: =15
+                              PaddingRight: =15
+                              Visible: =!IsBlank(_selectedCustomer)
+                              Width: =Parent.Width
+                              Y: =Parent.Height - 45
+                            Children:
+                              - CustHistory_TotalAmount:
+                                  Control: Text@0.0.51
+                                  Properties:
+                                    Font: =Font.Lato
+                                    FontColor: =RGBA(0, 0, 0, 1)
+                                    Height: =35
+                                    Size: =16
+                                    Text: |-
+                                      ="Total: ฿" & Text(
+                                          Sum(
+                                              Filter(
+                                                  colCustomerTransactions,
+                                                  cr7bb_recordtype = 'Record Type Choice'.Transaction &&
+                                                  (_transactionTypeFilter = "All" ||
+                                                   (_transactionTypeFilter = "CN" && cr7bb_transactiontype = 'Transaction Type Choice'.'Credit Note') ||
+                                                   (_transactionTypeFilter = "DN" && cr7bb_transactiontype = 'Transaction Type Choice'.'Debit Note')) &&
+                                                  cr7bb_transactionprocessdate >= _filterDate && cr7bb_transactionprocessdate < DateAdd(_filterDate, 1, TimeUnit.Days)
+                                              ),
+                                              cr7bb_amountlocalcurrency
+                                          ),
+                                          "#,##0.00"
+                                      )
+                                    VerticalAlign: =VerticalAlign.Middle
+                                    Weight: ='TextCanvas.Weight'.Bold
+                                    Width: =200
+                              - CustHistory_OutstandingAmount:
+                                  Control: Text@0.0.51
+                                  Properties:
+                                    Font: =Font.Lato
+                                    FontColor: =RGBA(191, 25, 34, 1)
+                                    Height: =35
+                                    Size: =16
+                                    Text: |-
+                                      ="Outstanding: ฿" & Text(
+                                          Sum(
+                                              Filter(
+                                                  colCustomerTransactions,
+                                                  cr7bb_recordtype = 'Record Type Choice'.Transaction &&
+                                                  (_transactionTypeFilter = "All" ||
+                                                   (_transactionTypeFilter = "CN" && cr7bb_transactiontype = 'Transaction Type Choice'.'Credit Note') ||
+                                                   (_transactionTypeFilter = "DN" && cr7bb_transactiontype = 'Transaction Type Choice'.'Debit Note')) &&
+                                                  cr7bb_transactionprocessdate >= _filterDate && cr7bb_transactionprocessdate < DateAdd(_filterDate, 1, TimeUnit.Days) &&
+                                                  !cr7bb_isprocessed
+                                              ),
+                                              cr7bb_amountlocalcurrency
+                                          ),
+                                          "#,##0.00"
+                                      )
+                                    VerticalAlign: =VerticalAlign.Middle
+                                    Weight: ='TextCanvas.Weight'.Bold
+                                    Width: =250
+                        - CustHistory_NoTransactionsMessage:
+                            Control: Text@0.0.51
+                            Properties:
+                              Align: ='TextCanvas.Align'.Center
+                              Font: =Font.Lato
+                              FontColor: =RGBA(150, 150, 150, 1)
+                              Height: =100
+                              Size: =16
+                              Text: |-
+                                =If(
+                                    IsBlank(_selectedCustomer),
+                                    "Please select a customer to view transaction history",
+                                    "No transactions found for the selected period"
+                                )
+                              VerticalAlign: =VerticalAlign.Middle
+                              Visible: |-
+                                =IsBlank(_selectedCustomer) || CountRows(
+                                    Filter(
+                                        colCustomerTransactions,
+                                        cr7bb_recordtype = 'Record Type Choice'.Transaction &&
+                                        (_transactionTypeFilter = "All" ||
+                                         (_transactionTypeFilter = "CN" && cr7bb_transactiontype = 'Transaction Type Choice'.'Credit Note') ||
+                                         (_transactionTypeFilter = "DN" && cr7bb_transactiontype = 'Transaction Type Choice'.'Debit Note')) &&
+                                        cr7bb_documentdate >= DateAdd(Today(), -_transactionDateRange, TimeUnit.Days)
+                                    )
+                                ) = 0
+                              Width: =Parent.Width
+                              Y: =(Parent.Height - Self.Height) / 2
+                  - CustHistory_EmailSection:
+                      Control: GroupContainer@1.3.0
+                      Variant: ManualLayout
+                      Properties:
+                        DropShadow: =DropShadow.None
+                        Fill: =RGBA(255, 255, 255, 1)
+                        Height: =(Parent.Height - 100) / 2 - 10
+                        Width: =Parent.Width - 20
+                        X: =10
+                        Y: =110 + (Parent.Height - 100) / 2
+                      Children:
+                        - CustHistory_EmailHeader:
+                            Control: GroupContainer@1.3.0
+                            Variant: AutoLayout
+                            Properties:
+                              DropShadow: =DropShadow.None
+                              Fill: =RGBA(250, 250, 250, 1)
+                              Height: =50
+                              LayoutAlignItems: =LayoutAlignItems.Center
+                              LayoutDirection: =LayoutDirection.Horizontal
+                              LayoutGap: =15
+                              LayoutJustifyContent: =LayoutJustifyContent.SpaceBetween
+                              PaddingLeft: =15
+                              PaddingRight: =15
+                              Width: =Parent.Width
+                            Children:
+                              - CustHistory_EmailTitle:
+                                  Control: Text@0.0.51
+                                  Properties:
+                                    Font: =Font.Lato
+                                    FontColor: =RGBA(0, 0, 0, 1)
+                                    Height: =40
+                                    Size: =18
+                                    Text: ="Email History"
+                                    VerticalAlign: =VerticalAlign.Middle
+                                    Weight: ='TextCanvas.Weight'.Bold
+                                    Width: =200
+                              - CustHistory_EmailFilters:
+                                  Control: GroupContainer@1.3.0
+                                  Variant: AutoLayout
+                                  Properties:
+                                    DropShadow: =DropShadow.None
+                                    LayoutAlignItems: =LayoutAlignItems.Center
+                                    LayoutDirection: =LayoutDirection.Horizontal
+                                    LayoutGap: =10
+                                    LayoutMinHeight: =40
+                                    LayoutMinWidth: =100
+                                  Children:
+                                    - CustHistory_EmailDateLabel:
+                                        Control: Text@0.0.51
+                                        Properties:
+                                          Font: =Font.Lato
+                                          FontColor: =RGBA(100, 100, 100, 1)
+                                          Height: =35
+                                          Text: ="Period:"
+                                          VerticalAlign: =VerticalAlign.Middle
+                                          Visible: =false
+                                          Weight: ='TextCanvas.Weight'.Semibold
+                                          Width: =60
+                                    - CustHistory_EmailDateDropdown:
+                                        Control: DropDown@0.0.45
+                                        Properties:
+                                          DefaultSelectedItems: =["Last 90 Days"]
+                                          Height: =35
+                                          Items: =["Last 30 Days", "Last 90 Days", "Last 180 Days", "Last 365 Days"]
+                                          OnChange: |-
+                                            =UpdateContext({
+                                                _emailDateRange: Switch(
+                                                    Self.Selected.Value,
+                                                    "Last 30 Days", 30,
+                                                    "Last 90 Days", 90,
+                                                    "Last 180 Days", 180,
+                                                    "Last 365 Days", 365,
+                                                    90
+                                                )
+                                            })
+                                          Visible: =false
+                                          Width: =140
+                        - CustHistory_EmailTable:
+                            Control: Table@1.0.278
+                            Properties:
+                              EnableRangeSelection: ='PowerAppsOneGrid.EnableRangeSelection'.Enable
+                              Height: =Parent.Height - 110
+                              Items: |-
+                                =If(
+                                    IsBlank(_selectedCustomer),
+                                    Blank(),
+                                    SortByColumns(
+                                        Filter(
+                                            colCustomerEmails,
+                                            cr7bb_sentdatetime >= _filterDate && cr7bb_sentdatetime < DateAdd(_filterDate, 1, TimeUnit.Days)
+                                        ),
+                                        "cr7bb_sentdatetime",
+                                        SortOrder.Descending
+                                    )
+                                )
+                              ReflowBehavior: ='PowerAppsOneGrid.ReflowBehavior'.Reflow
+                              ShowAvatar: ="no"
+                              Visible: =!IsBlank(_selectedCustomer)
+                              Width: =Parent.Width - 20
+                              X: =10
+                              Y: =55
+                            Children:
+                              - Email_DateColumn:
+                                  Control: TableDataField@1.5.0
+                                  Variant: textualColumn
+                                  IsLocked: true
+                                  Properties:
+                                    FieldDisplayName: ="Date"
+                                    FieldName: ="cr7bb_sentdatetime"
+                                    FieldType: ="dt"
+                                    Order: =1
+                                    Width: =150
+                              - Email_TemplateColumn:
+                                  Control: TableDataField@1.5.0
+                                  Variant: textualColumn
+                                  IsLocked: true
+                                  Properties:
+                                    FieldDisplayName: ="Template"
+                                    FieldName: ="cr7bb_emailtemplate"
+                                    FieldType: ="s"
+                                    Order: =2
+                                    Width: =100
+                              - Email_AmountColumn:
+                                  Control: TableDataField@1.5.0
+                                  Variant: textualColumn
+                                  IsLocked: true
+                                  Properties:
+                                    FieldDisplayName: ="Amount"
+                                    FieldName: ="AmountFormatted"
+                                    FieldType: ="s"
+                                    Order: =3
+                                    Width: =120
+                              - Email_DaysColumn:
+                                  Control: TableDataField@1.5.0
+                                  Variant: textualColumn
+                                  IsLocked: true
+                                  Properties:
+                                    FieldDisplayName: ="Max Days"
+                                    FieldName: ="cr7bb_maxdaycount"
+                                    FieldType: ="n"
+                                    Order: =4
+                                    Width: =80
+                              - Email_StatusColumn:
+                                  Control: TableDataField@1.5.0
+                                  Variant: textualColumn
+                                  IsLocked: true
+                                  Properties:
+                                    FieldDisplayName: ="Status"
+                                    FieldName: ="cr7bb_sendstatus"
+                                    FieldType: ="s"
+                                    Order: =5
+                                    Width: =100
+                        - CustHistory_EmailSummary:
+                            Control: GroupContainer@1.3.0
+                            Variant: AutoLayout
+                            Properties:
+                              DropShadow: =DropShadow.None
+                              Fill: =RGBA(245, 245, 245, 1)
+                              Height: =45
+                              LayoutAlignItems: =LayoutAlignItems.Center
+                              LayoutDirection: =LayoutDirection.Horizontal
+                              LayoutGap: =30
+                              PaddingLeft: =15
+                              PaddingRight: =15
+                              Visible: =!IsBlank(_selectedCustomer)
+                              Width: =Parent.Width
+                              Y: =Parent.Height - 45
+                            Children:
+                              - CustHistory_TotalEmails:
+                                  Control: Text@0.0.51
+                                  Properties:
+                                    Font: =Font.Lato
+                                    FontColor: =RGBA(0, 0, 0, 1)
+                                    Height: =35
+                                    Size: =16
+                                    Text: |-
+                                      ="Total Emails: " & CountRows(
+                                          Filter(
+                                              colCustomerEmails,
+                                                  cr7bb_sentdatetime >= _filterDate && cr7bb_sentdatetime < DateAdd(_filterDate, 1, TimeUnit.Days)
+                                          )
+                                      )
+                                    VerticalAlign: =VerticalAlign.Middle
+                                    Weight: ='TextCanvas.Weight'.Bold
+                                    Width: =200
+                              - CustHistory_LastEmailDate:
+                                  Control: Text@0.0.51
+                                  Properties:
+                                    Font: =Font.Lato
+                                    FontColor: =RGBA(0, 101, 161, 1)
+                                    Height: =35
+                                    Size: =16
+                                    Text: |-
+                                      =If(
+                                          CountRows(
+                                              Filter(
+                                                  colCustomerEmails,
+                                                  cr7bb_sentdatetime >= _filterDate && cr7bb_sentdatetime < DateAdd(_filterDate, 1, TimeUnit.Days)
+                                              )
+                                          ) > 0,
+                                          "Last Email: " & Text(
+                                              Max(
+                                                  Filter(
+                                                      colCustomerEmails,
+                                                  cr7bb_sentdatetime >= _filterDate && cr7bb_sentdatetime < DateAdd(_filterDate, 1, TimeUnit.Days)
+                                                  ),
+                                                  cr7bb_sentdatetime
+                                              ),
+                                              "yyyy-mm-dd hh:mm"
+                                          ),
+                                          "No emails sent"
+                                      )
+                                    VerticalAlign: =VerticalAlign.Middle
+                                    Weight: ='TextCanvas.Weight'.Semibold
+                                    Width: =250
+                        - CustHistory_NoEmailsMessage:
+                            Control: Text@0.0.51
+                            Properties:
+                              Align: ='TextCanvas.Align'.Center
+                              Font: =Font.Lato
+                              FontColor: =RGBA(150, 150, 150, 1)
+                              Height: =100
+                              Size: =16
+                              Text: |-
+                                =If(
+                                    IsBlank(_selectedCustomer),
+                                    "Please select a customer to view email history",
+                                    "No emails found for the selected period"
+                                )
+                              VerticalAlign: =VerticalAlign.Middle
+                              Visible: |-
+                                =IsBlank(_selectedCustomer) || CountRows(
+                                    Filter(
+                                        colCustomerEmails,
+                                        DateValue(cr7bb_sentdatetime) >= DateAdd(Today(), -_emailDateRange, TimeUnit.Days)
+                                    )
+                                ) = 0
+                              Width: =Parent.Width
+                              Y: =(Parent.Height - Self.Height) / 2
+            - CustHistory_NavigationMenu:
+                Control: CanvasComponent
+                ComponentName: NavigationMenu
+                Properties:
+                  Fill: =RGBA(255, 255, 255, 0.5)
+                  Height: =Parent.Height - 70
+                  Visible: =If(_showMenu, true, false)
+                  Width: =260
+                  Y: =70
+                  navItems: =Navigation
+                  navSelected: =currentScreen

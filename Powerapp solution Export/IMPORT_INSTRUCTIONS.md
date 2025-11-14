@@ -1,38 +1,97 @@
 # Solution Import Instructions
-## THFinanceCashCollection v1.0.0.3 - Complete with Business Logic
+## THFinanceCashCollection v1.0.0.5 - Complete with Updated Canvas App & All Flows
 
-**File**: `THFinanceCashCollection_1_0_0_3_Complete.zip`
+**File**: `THFinanceCashCollection_1_0_0_5.zip`
+**Updated**: November 14, 2025
 
 ---
 
 ## ✅ What's Included
 
-This solution package contains **complete, ready-to-run** Power Automate flows with all business logic implemented:
+This solution package contains **complete, production-ready** components:
 
-### Flow 1: [THFinanceCashCollection] Daily SAP Transaction Import
-- ✅ 8 variables (ProcessDate, BatchID, Counters, etc.)
-- ✅ File detection and filtering
-- ✅ Process log creation
-- ✅ Excel parsing loop
-- ✅ Customer lookup
-- ✅ Exclusion keyword checking
-- ✅ Transaction record creation
-- ✅ Error handling and logging
-- ✅ Summary email to AR team
+### 📱 Canvas App (Updated v1.0.0.5)
+**Screens Included**:
+- ✅ **scnCustomer** - Customer management & CRUD operations
+- ✅ **scnDashboard** - Daily control center & process monitoring
+- ✅ **scnCustomerHistory** - Transaction history & filtering
+- ✅ **scnEmailApproval** - Manual email approval & override
+- ✅ **scnEmailMonitor** - Email log monitoring & troubleshooting
+- ✅ **scnTransactions** - Transaction list & detail view
+- ✅ **scnRole** - Role & permission management
+- ✅ **scnCalendar** - Calendar date selection component
+- ✅ **scnUnauthorized** - Access denial screen
+- ✅ **loadingScreen** - Initial loading experience
 
-### Flow 2: [THFinanceCashCollection] Daily Collections Email Engine
-- ✅ 5 variables initialization
-- ✅ SAP import validation
-- ✅ Transaction filtering
-- ✅ Customer loop processing
-- ✅ FIFO CN/DN matching algorithm
-- ✅ Net amount calculation
-- ✅ Email template selection (A/B/C)
-- ✅ QR code attachment
-- ✅ Email sending with HTML templates
-- ✅ Email logging
-- ✅ Transaction record updates
-- ✅ AR team summary email
+**Technologies**:
+- Modern controls (Button@0.0.45, Text@0.0.51)
+- Nestlé brand compliance (colors, fonts, layouts)
+- Responsive design for web & tablet
+
+### 🔄 Power Automate Flows (6 Total)
+
+**Core Flows**:
+1. **[THFinanceCashCollection] Daily SAP Transaction Import** (788 lines)
+   - ✅ File detection & filtering
+   - ✅ Excel parsing with FIFO sequencing
+   - ✅ Customer lookup & validation
+   - ✅ Exclusion keyword checking (Paid, Partial Payment, etc.)
+   - ✅ Transaction record creation
+   - ✅ Process logging
+   - ✅ AR team summary email
+
+2. **[THFinanceCashCollection] Daily Collections Email Engine** (1044 lines)
+   - ✅ SAP import validation
+   - ✅ Transaction filtering & sorting
+   - ✅ FIFO CN/DN matching algorithm
+   - ✅ Net amount calculation
+   - ✅ Email template selection (Day 1-2, Day 3, Day 4+)
+   - ✅ QR code attachment from SharePoint
+   - ✅ HTML email composition
+   - ✅ Email logging & audit trail
+   - ✅ Transaction marking as processed
+
+**Support Flows**:
+3. **[THFinanceCashCollection] Manual SAP Upload** (788 lines)
+   - ✅ Manual file upload capability
+   - ✅ Replaces automated import for ad-hoc uploads
+
+4. **[THFinanceCashCollection] Email Sending Flow** (373 lines)
+   - ✅ Reusable email composition
+   - ✅ HTML template support
+
+5. **[THFinanceCashCollection] Manual Email Resend** (258 lines)
+   - ✅ Resend functionality from Canvas App
+   - ✅ Error recovery support
+
+6. **[THFinanceCashCollection] Customer Data Sync** (560 lines)
+   - ✅ Customer master data synchronization
+   - ✅ Data consistency maintenance
+
+### 🗄️ Dataverse Tables (7 Total)
+- ✅ `cr7bb_thfinancecashcollectioncustomer` - Customer master
+- ✅ `cr7bb_thfinancecashcollectiontransaction` - Transaction line items
+- ✅ `cr7bb_thfinancecashcollectionprocesslog` - Process execution logs
+- ✅ `cr7bb_thfinancecashcollectionemaillog` - Email audit trail
+- ✅ `cr7bb_thfinancecashcollectionrole` - Role definitions
+- ✅ `cr7bb_thfinancecashcollectionroleassignment` - User role mappings
+- ✅ `nc_thfinancecashcollectioncalendarevent` - Calendar events
+
+### ⚙️ Choice Fields (7 Total)
+- ✅ `cr7bb_approvalstatuschoice` - Approval workflow states
+- ✅ `cr7bb_emailtemplatechoice` - Template selection
+- ✅ `cr7bb_recordtypechoice` - Record categorization
+- ✅ `cr7bb_sendstatuschoice` - Send status tracking
+- ✅ `cr7bb_statuschoice` - General status
+- ✅ `cr7bb_transactiontypechoice` - Transaction categorization (CN/DN)
+- ✅ `nc_regionchoice` - Geographic regions
+
+### 🔐 Environment Variables (5 Total)
+- ✅ `nc_EmailMode` - Production/test mode toggle
+- ✅ `nc_PACurrentEnvironmentMode` - Power Automate environment setting
+- ✅ `nc_PATestNotificationEmail` - Test notification recipient
+- ✅ `nc_SystemNotificationEmail` - System notification recipient
+- ✅ `nc_TestCustomerEmail` - Test customer email
 
 ---
 
@@ -71,16 +130,16 @@ Before importing, ensure you have:
 
 1. Click **Import solution**
 2. Click **Browse**
-3. Select: `THFinanceCashCollection_1_0_0_3_Complete.zip`
+3. Select: `THFinanceCashCollection_1_0_0_5.zip`
 4. Click **Next**
 
 ### Step 3: Review Solution Details
 
 You'll see:
 - **Name**: THFinanceCashCollection
-- **Version**: 1.0.0.3
+- **Version**: 1.0.0.5
 - **Publisher**: NickChamnong
-- **Components**: 2 workflows, 6 tables, 5 choice options, 1 canvas app
+- **Components**: 6 workflows, 7 tables, 7 choice options, 1 canvas app, 5 environment variables
 
 Click **Next**
 
@@ -252,6 +311,28 @@ The SAP Import flow currently points to a specific Excel file. You need to updat
 
 ---
 
+## 📊 Solution Composition
+
+### Version History
+| Version | Date | Updates |
+|---------|------|---------|
+| v1.0.0.1 | Oct 5 | Initial setup & table structure |
+| v1.0.0.2 | Oct 8 | SAP import flow with business logic |
+| v1.0.0.3 | Oct 8 | Complete flows + email engine |
+| v1.0.0.4 | Oct 13 | Environment variables & configuration |
+| **v1.0.0.5** | **Nov 14** | **Updated Canvas App with 10 screens, modern controls, Nestlé brand compliance** |
+
+### Canvas App Improvements (v1.0.0.5)
+- **scnCustomerHistory** (NEW) - Complete transaction history with date/type filtering
+- **scnCalendar** (NEW) - Calendar date picker component
+- **scnDashboard** - Redesigned to Customer Management view
+- **scnEmailApproval** - Updated with new approval workflow
+- **scnEmailMonitor** - Enhanced email log monitoring
+- **Modern Control Versions**: Button@0.0.45, Text@0.0.51, GroupContainer@1.3.0
+- **Nestlé Brand Compliance**: RGBA colors, Lato font, proper spacing
+
+---
+
 ## 🧪 Test Scenarios
 
 ### Scenario 1: Simple Transaction Import
@@ -361,9 +442,31 @@ The solution is working correctly when:
 
 ---
 
-**Solution Version**: 1.0.0.3
-**Last Updated**: October 8, 2025
-**Package File**: THFinanceCashCollection_1_0_0_3_Complete.zip
+## 📝 Notes & Known Issues
+
+### Important Configuration
+- **Email Recipients**: Update from `Nick.Chamnong@th.nestle.com` to your AR team distribution list
+- **SharePoint Site**: Ensure path matches your environment (`https://nestle.sharepoint.com/teams/THFinancePowerPlatformSolutions`)
+- **Environment Variables**: Configure test email addresses before running in production
+
+### Known Limitations
+- QR codes are optional (process continues if not found)
+- Manual SAP upload overrides scheduled import
+- Email templates are in English (ready for localization)
+
+### Recommended Post-Import Tasks
+1. **Configure SharePoint folders** - Map to your document locations
+2. **Set up scheduled flows** - Configure daily triggers
+3. **Test with sample data** - 5-10 customer records recommended
+4. **Update branding** - Customize email templates if needed
+5. **Role setup** - Assign users to AR team role
+
+---
+
+**Solution Version**: 1.0.0.5
+**Last Updated**: November 14, 2025
+**Package File**: THFinanceCashCollection_1_0_0_5.zip
 **Status**: ✅ Ready for Import
+**Size**: 4.0 MB (Canvas App + 6 Flows + Dataverse Tables + Configuration)
 
 **Good luck with your import! 🚀**

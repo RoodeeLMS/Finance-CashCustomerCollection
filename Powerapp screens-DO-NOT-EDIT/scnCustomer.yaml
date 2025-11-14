@@ -814,7 +814,7 @@ Screens:
                                       });
                                       Refresh('[THFinanceCashCollection]Customers')
                                     Text: ="Yes, Delete"
-                                    Width: =120
+                                    Width: =150
                               - Customer_DeleteCancelBtn:
                                   Control: Button@0.0.45
                                   Properties:

@@ -26,17 +26,24 @@ This is a **documentation and planning repository**. The actual Power Platform c
 ## Project Structure
 
 ```
-├── client docs/                    # Client proposals and requirements
-├── Meeting Transcription/          # Stakeholder meeting records
+├── Documentation/
+│   ├── 01-Project-Overview/       # Project summary, timeline, status
+│   ├── 02-Database-Schema/        # Dataverse schema and field references
+│   ├── 03-Power-Automate/         # Flow documentation and guides
+│   ├── 04-Canvas-App/             # Screen development guides
+│   ├── 05-Data-Import/            # Excel parsing and import templates
+│   ├── 06-Requirements/           # Requirements validation and approach
+│   └── 07-AI-Assistant-Rules/     # AI assistant development rules
+├── client docs/                   # Client proposals and requirements
+├── Meeting Transcription/         # Stakeholder meeting records
 ├── Powerapp components-DO-NOT-EDIT/ # Exported Power Apps component definitions (READ-ONLY)
-├── Powerapp screens-DO-NOT-EDIT/   # Exported screen definitions (READ-ONLY)
-├── Powerapp solution Export/       # Solution package exports
-├── templates/                      # Documentation and Power Apps templates
-├── .cursor/rules/                  # Development rules and conventions
-├── database_schema.md             # Dataverse schema documentation
-├── development_plan.md            # 25-day development timeline
-├── project_summary.md             # Complete project overview
-└── task_assignment_matrix.md      # Team responsibilities
+├── Powerapp screens-DO-NOT-EDIT/  # Exported screen definitions (READ-ONLY)
+├── Powerapp solution Export/      # Solution package exports
+├── Screen Development/            # Active screen development workspace
+│   ├── ACTIVE/                   # Work-in-progress screens (gitignored)
+│   └── READY/                    # Reviewed, production-ready screens
+├── templates/                     # Documentation and Power Apps templates
+└── .cursor/rules/                 # Development rules and conventions
 ```
 
 ## Core Business Logic
@@ -90,9 +97,9 @@ This project follows **Nestlé Power Apps Universal Standards v1.4**. Before cre
 **Documentation Hierarchy**: Project docs override universal standards
 
 **Project-Specific Files** (Read After Universal):
-- `FIELD_NAME_REFERENCE.md` - **PRIMARY SOURCE** for field names (cr7bb_ prefix)
-- `AI_ASSISTANT_RULES_SUMMARY.md` - Project-specific rules & patterns
-- `REDESIGNED_SCREENS.md` - Screen architecture & design decisions
+- `Documentation/02-Database-Schema/FIELD_NAME_REFERENCE.md` - **PRIMARY SOURCE** for field names (cr7bb_ prefix)
+- `Documentation/07-AI-Assistant-Rules/AI_ASSISTANT_RULES_SUMMARY.md` - Project-specific rules & patterns
+- `Documentation/04-Canvas-App/REDESIGNED_SCREENS.md` - Screen architecture & design decisions
 
 ### 🚀 Development Workflow
 
@@ -183,13 +190,13 @@ Since this is a Power Platform project, traditional CLI commands don't apply. Ho
 ### Documentation Commands
 ```powershell
 # View project overview
-Get-Content project_summary.md
+Get-Content Documentation/01-Project-Overview/project_summary.md
 
 # View development timeline
-Get-Content development_plan.md
+Get-Content Documentation/01-Project-Overview/development_plan.md
 
 # Check database schema
-Get-Content database_schema.md
+Get-Content Documentation/02-Database-Schema/database_schema.md
 ```
 
 ### Power Platform Development Workflow
@@ -224,7 +231,7 @@ REQUIRED FIELDS per customer:
 
 ### Data Maintenance Strategy
 **Status**: ✅ **RESOLVED** - Database-driven approach selected
-- **Selected Option**: Database-driven using Dataverse tables (see `database_schema.md`)
+- **Selected Option**: Database-driven using Dataverse tables (see `Documentation/02-Database-Schema/database_schema.md`)
 - **Rationale**: Real-time updates, better audit trail, eliminates file corruption risks
 - **Implementation**: Customer master data stored in `nc_customers` table with role-based access
 - **Training Plan**: AR team will use Model-Driven app forms instead of Excel editing

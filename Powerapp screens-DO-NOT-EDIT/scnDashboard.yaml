@@ -1,28 +1,19 @@
 Screens:
-  scnDashboard:
+  scnCustomer:
     Properties:
       Fill: =RGBA(243, 242, 241, 1)
       LoadingSpinnerColor: =RGBA(0, 101, 161, 1)
       OnVisible: |-
-        =// Initialize navigation and menu
-        Set(_showMenu, false);
-        Set(_refreshTrigger, false);
-        Set(_showDatePicker, false);
-        UpdateContext({currentScreen: "Daily Control Center"});
-
-        // Initialize selected date to today if not set
-        If(
-            IsBlank(_selectedDate),
-            Set(_selectedDate, Today())
-        );
-
-        // Refresh data sources (initial load only)
-        Refresh('[THFinanceCashCollection]Process Logs');
-        Refresh('[THFinanceCashCollection]Emaillogs');
-        Refresh('[THFinanceCashCollection]Transactions');
-        Refresh('[THFinanceCashCollection]Customers');
+        =UpdateContext({
+            currentScreen: "Customer Management",
+            _showMenu: false,
+            _currentMode: "View",
+            _showDeleteConfirmation: false,
+            _selectedCustomer: Blank(),
+            _customerToDelete: Blank()
+        });
     Children:
-      - DCC_Container:
+      - Customer_Container:
           Control: GroupContainer@1.3.0
           Variant: ManualLayout
           Properties:
@@ -30,7 +21,7 @@ Screens:
             Height: =Parent.Height
             Width: =Parent.Width
           Children:
-            - DCC_Header:
+            - Customer_Header:
                 Control: GroupContainer@1.3.0
                 Variant: AutoLayout
                 Properties:
@@ -39,7 +30,6 @@ Screens:
                   Height: =55
                   LayoutAlignItems: =LayoutAlignItems.Center
                   LayoutDirection: =LayoutDirection.Horizontal
-                  LayoutGap: =10
                   PaddingLeft: =15
                   RadiusBottomLeft: =8
                   RadiusBottomRight: =8
@@ -49,19 +39,20 @@ Screens:
                   X: =10
                   Y: =10
                 Children:
-                  - DCC_MenuIcon:
+                  - Customer_MenuIcon:
                       Control: Classic/Icon@2.5.0
                       Properties:
                         Color: =RGBA(255, 255, 255, 1)
                         Height: =50
                         Icon: =Icon.Hamburger
-                        OnSelect: =Set(_showMenu, !_showMenu)
+                        OnSelect: |-
+                          =UpdateContext({_showMenu: !_showMenu})
                         PaddingBottom: =10
                         PaddingLeft: =10
                         PaddingRight: =10
                         PaddingTop: =10
                         Width: =50
-                  - DCC_HeaderTitle:
+                  - Customer_HeaderTitle:
                       Control: Text@0.0.51
                       Properties:
                         Font: =Font.Lato
@@ -69,786 +60,682 @@ Screens:
                         Height: =50
                         PaddingLeft: =20
                         Size: =25
-                        Text: ="Daily Control Center"
+                        Text: ="Customer Management"
                         VerticalAlign: =VerticalAlign.Middle
                         Weight: ='TextCanvas.Weight'.Medium
-                        Width: =Parent.Width - DCC_MenuIcon.Width - 40
-            - DCC_Content:
+                        Width: =Parent.Width - Customer_MenuIcon.Width - 40
+            - Customer_Content:
                 Control: GroupContainer@1.3.0
                 Variant: ManualLayout
                 Properties:
-                  DropShadow: =DropShadow.None
-                  Fill: =RGBA(243, 242, 241, 1)
-                  Height: =Parent.Height - 75
+                  DropShadow: =DropShadow.Regular
+                  Fill: =RGBA(255, 255, 255, 1)
+                  Height: =Parent.Height - 85
+                  RadiusBottomLeft: =10
+                  RadiusBottomRight: =10
+                  RadiusTopLeft: =10
+                  RadiusTopRight: =10
                   Width: =Parent.Width - 20
                   X: =10
                   Y: =75
                 Children:
-                  - DCC_DatePickerSection:
+                  - Customer_TableView:
                       Control: GroupContainer@1.3.0
-                      Variant: AutoLayout
+                      Variant: ManualLayout
                       Properties:
-                        DropShadow: =DropShadow.Regular
-                        Fill: =RGBA(255, 255, 255, 1)
-                        Height: =140
-                        LayoutDirection: =LayoutDirection.Vertical
-                        LayoutGap: =15
-                        PaddingBottom: =15
-                        PaddingLeft: =20
-                        PaddingRight: =20
-                        PaddingTop: =15
-                        RadiusBottomLeft: =10
-                        RadiusBottomRight: =10
-                        RadiusTopLeft: =10
-                        RadiusTopRight: =10
-                        Width: =Parent.Width - 20
-                        X: =10
-                        Y: =10
+                        Height: =Parent.Height
+                        Visible: =_currentMode = "View"
+                        Width: =Parent.Width
                       Children:
-                        - DCC_DatePickerTitleRow:
+                        - Customer_ActionBar:
                             Control: GroupContainer@1.3.0
                             Variant: AutoLayout
                             Properties:
-                              DropShadow: =DropShadow.None
-                              FillPortions: =0
-                              Height: =40
-                              LayoutAlignItems: =LayoutAlignItems.Center
-                              LayoutDirection: =LayoutDirection.Horizontal
-                              LayoutGap: =10
-                              LayoutJustifyContent: =LayoutJustifyContent.SpaceBetween
-                              LayoutMinHeight: =40
-                              LayoutMinWidth: =100
-                              Width: =Parent.Width - 40
-                            Children:
-                              - DCC_DatePickerTitle:
-                                  Control: Text@0.0.51
-                                  Properties:
-                                    Font: =Font.Lato
-                                    FontColor: =RGBA(0, 101, 161, 1)
-                                    Height: =40
-                                    Size: =20
-                                    Text: ="Audit Date Selection"
-                                    VerticalAlign: =VerticalAlign.Middle
-                                    Weight: ='TextCanvas.Weight'.Bold
-                                    Width: =400
-                              - DCC_RefreshButton:
-                                  Control: Button@0.0.45
-                                  Properties:
-                                    BasePaletteColor: =RGBA(0, 101, 161, 1)
-                                    Height: =36
-                                    Icon: ="Refresh"
-                                    OnSelect: =Set(_refreshTrigger, !_refreshTrigger)
-                                    Text: ="↻ Refresh"
-                                    Width: =120
-                        - DCC_DateNavigationRow:
-                            Control: GroupContainer@1.3.0
-                            Variant: AutoLayout
-                            Properties:
-                              DropShadow: =DropShadow.None
-                              FillPortions: =0
+                              Fill: =RGBA(245, 245, 245, 1)
                               Height: =50
                               LayoutAlignItems: =LayoutAlignItems.Center
                               LayoutDirection: =LayoutDirection.Horizontal
                               LayoutGap: =10
-                              LayoutMinHeight: =50
-                              LayoutMinWidth: =100
-                              Width: =Parent.Width - 40
+                              LayoutJustifyContent: =LayoutJustifyContent.End
+                              PaddingLeft: =15
+                              PaddingRight: =15
+                              RadiusTopLeft: =10
+                              RadiusTopRight: =10
+                              Width: =Parent.Width
                             Children:
-                              - DCC_ViewDateLabel:
+                              - Customer_AddBtn:
+                                  Control: Button@0.0.45
+                                  Properties:
+                                    BasePaletteColor: =RGBA(0, 101, 161, 1)
+                                    Height: =35
+                                    Icon: ="Add"
+                                    OnSelect: |-
+                                      =UpdateContext({
+                                          _currentMode: "New",
+                                          _selectedCustomer: Blank()
+                                      })
+                                    Text: ="Add"
+                                    Width: =100
+                              - Customer_EditBtn:
+                                  Control: Button@0.0.45
+                                  Properties:
+                                    BasePaletteColor: =RGBA(100, 81, 61, 1)
+                                    DisplayMode: |-
+                                      =If(
+                                          IsBlankOrError(Customer_Table.Selected),
+                                          DisplayMode.Disabled,
+                                          DisplayMode.Edit
+                                      )
+                                    Height: =35
+                                    Icon: ="Edit"
+                                    OnSelect: |-
+                                      =UpdateContext({
+                                          _currentMode: "Edit",
+                                          _selectedCustomer: Customer_Table.Selected
+                                      })
+                                    Text: ="Edit"
+                                    Width: =80
+                              - Customer_DeleteBtn:
+                                  Control: Button@0.0.45
+                                  Properties:
+                                    BasePaletteColor: =RGBA(191, 25, 34, 1)
+                                    DisplayMode: |-
+                                      =If(
+                                          IsBlankOrError(Customer_Table.Selected),
+                                          DisplayMode.Disabled,
+                                          DisplayMode.Edit
+                                      )
+                                    Height: =35
+                                    Icon: ="Delete"
+                                    OnSelect: |-
+                                      =UpdateContext({
+                                          _customerToDelete: Customer_Table.Selected,
+                                          _showDeleteConfirmation: true
+                                      })
+                                    Text: ="Delete"
+                                    Width: =90
+                        - Customer_Table:
+                            Control: Table@1.0.278
+                            Properties:
+                              DateTimeFormat: ='PowerAppsOneGrid.DateTimeFormat'.ShortDate
+                              EnableRangeSelection: ='PowerAppsOneGrid.EnableRangeSelection'.Enable
+                              Height: =Parent.Height - 60
+                              Items: ='[THFinanceCashCollection]Customers'
+                              ReflowBehavior: ='PowerAppsOneGrid.ReflowBehavior'.Reflow
+                              ShowAvatar: ="no"
+                              Width: =Parent.Width - 20
+                              X: =10
+                              Y: =55
+                            Children:
+                              - Customer Code1:
+                                  Control: TableDataField@1.5.0
+                                  Variant: textualColumn
+                                  IsLocked: true
+                                  Properties:
+                                    FieldDisplayName: ="Customer Code"
+                                    FieldName: ="cr7bb_customercode"
+                                    FieldType: ="s"
+                                    Order: =1
+                              - Customer Name1:
+                                  Control: TableDataField@1.5.0
+                                  Variant: textualColumn
+                                  IsLocked: true
+                                  Properties:
+                                    FieldDisplayName: ="Customer Name"
+                                    FieldName: ="cr7bb_customername"
+                                    FieldType: ="s"
+                                    Order: =2
+                              - Region1:
+                                  Control: TableDataField@1.5.0
+                                  Variant: textualColumn
+                                  IsLocked: true
+                                  Properties:
+                                    FieldDisplayName: ="Region"
+                                    FieldName: ="nc_region"
+                                    FieldType: ="l"
+                                    Order: =3
+                              - Customer Email 11:
+                                  Control: TableDataField@1.5.0
+                                  Variant: textualColumn
+                                  IsLocked: true
+                                  Properties:
+                                    FieldDisplayName: ="Customer Email 1"
+                                    FieldName: ="cr7bb_customeremail1"
+                                    FieldType: ="s"
+                                    Order: =4
+                              - QR Code Available1:
+                                  Control: TableDataField@1.5.0
+                                  Variant: textualColumn
+                                  IsLocked: true
+                                  Properties:
+                                    FieldDisplayName: ="QR Code Available"
+                                    FieldName: ="cr7bb_qrcodeavailable"
+                                    FieldType: ="l"
+                                    Order: =5
+                              - Sales Email 11:
+                                  Control: TableDataField@1.5.0
+                                  Variant: textualColumn
+                                  IsLocked: true
+                                  Properties:
+                                    FieldDisplayName: ="Sales Email 1"
+                                    FieldName: ="cr7bb_salesemail1"
+                                    FieldType: ="s"
+                                    Order: =6
+                              - AR Backup Email 11:
+                                  Control: TableDataField@1.5.0
+                                  Variant: textualColumn
+                                  IsLocked: true
+                                  Properties:
+                                    FieldDisplayName: ="AR Backup Email 1"
+                                    FieldName: ="cr7bb_arbackupemail1"
+                                    FieldType: ="s"
+                                    Order: =7
+                  - Customer_FormView:
+                      Control: GroupContainer@1.3.0
+                      Variant: ManualLayout
+                      Properties:
+                        Height: =Parent.Height
+                        Visible: =_currentMode = "New" || _currentMode = "Edit"
+                        Width: =Parent.Width
+                      Children:
+                        - Customer_FormContainer:
+                            Control: GroupContainer@1.3.0
+                            Variant: AutoLayout
+                            Properties:
+                              Height: =Parent.Height - 50
+                              LayoutDirection: =LayoutDirection.Vertical
+                              LayoutGap: =15
+                              LayoutOverflowY: =LayoutOverflow.Scroll
+                              PaddingLeft: =20
+                              PaddingRight: =20
+                              PaddingTop: =20
+                              Width: =Parent.Width
+                            Children:
+                              - Customer_Form_Title:
+                                  Control: Text@0.0.51
+                                  Properties:
+                                    Font: =Font.Lato
+                                    FontColor: =RGBA(0, 0, 0, 1)
+                                    Height: =30
+                                    Size: =18
+                                    Text: |-
+                                      =If(
+                                          _currentMode = "New",
+                                          "Add New Customer",
+                                          "Edit Customer"
+                                      )
+                                    Weight: ='TextCanvas.Weight'.Bold
+                                    Width: =Parent.Width - 40
+                              - Customer_Form_BasicSection:
                                   Control: Text@0.0.51
                                   Properties:
                                     Font: =Font.Lato
                                     FontColor: =RGBA(100, 100, 100, 1)
-                                    Height: =40
-                                    Text: ="View Date:"
-                                    VerticalAlign: =VerticalAlign.Middle
-                                    Weight: ='TextCanvas.Weight'.Semibold
-                                    Width: =100
-                              - DCC_PreviousDayButton:
-                                  Control: Button@0.0.45
-                                  Properties:
-                                    BasePaletteColor: =RGBA(0, 101, 161, 1)
-                                    Height: =40
-                                    OnSelect: |-
-                                      =Set(_selectedDate, DateAdd(_selectedDate, -1, TimeUnit.Days));
-                                      Set(_refreshTrigger, !_refreshTrigger)
-                                    Text: ="◄ Previous"
-                                    Width: =120
-                              - DCC_DateDisplay:
-                                  Control: Text@0.0.51
-                                  Properties:
-                                    Align: ='TextCanvas.Align'.Center
-                                    Fill: =RGBA(243, 242, 241, 1)
-                                    Font: =Font.Lato
-                                    FontColor: =RGBA(0, 0, 0, 1)
-                                    Height: =40
-                                    PaddingLeft: =10
-                                    PaddingRight: =10
-                                    Text: =Text(_selectedDate, "[$-th-TH]dd/mm/yyyy") & If(_selectedDate = Today(), " (Today)", "")
-                                    VerticalAlign: =VerticalAlign.Middle
-                                    Weight: ='TextCanvas.Weight'.Semibold
-                                    Width: =180
-                              - DCC_NextDayButton:
-                                  Control: Button@0.0.45
-                                  Properties:
-                                    BasePaletteColor: =RGBA(0, 101, 161, 1)
-                                    DisplayMode: =If(_selectedDate >= Today(), DisplayMode.Disabled, DisplayMode.Edit)
-                                    Height: =40
-                                    OnSelect: |-
-                                      =Set(_selectedDate, DateAdd(_selectedDate, 1, TimeUnit.Days));
-                                      Set(_refreshTrigger, !_refreshTrigger)
-                                    Text: ="Next ►"
-                                    Width: =120
-                              - DCC_TodayButton:
-                                  Control: Button@0.0.45
-                                  Properties:
-                                    BasePaletteColor: =If(_selectedDate = Today(), RGBA(16, 124, 16, 1), RGBA(0, 101, 161, 1))
-                                    Height: =40
-                                    OnSelect: |-
-                                      =Set(_selectedDate, Today());
-                                      Set(_refreshTrigger, !_refreshTrigger)
-                                    Text: ="Today"
-                                    Width: =100
-                              - DCC_PickDateButton:
-                                  Control: Button@0.0.45
-                                  Properties:
-                                    BasePaletteColor: =RGBA(100, 81, 61, 1)
-                                    Height: =40
-                                    OnSelect: =Set(_showDatePicker, !_showDatePicker)
-                                    Text: |-
-                                      ="📅 Pick Date"
-                                    Width: =120
-                  - DCC_MainScrollContainer:
-                      Control: GroupContainer@1.3.0
-                      Variant: AutoLayout
-                      Properties:
-                        DropShadow: =DropShadow.None
-                        Fill: =RGBA(243, 242, 241, 1)
-                        Height: =Parent.Height - 170
-                        LayoutDirection: =LayoutDirection.Vertical
-                        LayoutGap: =24
-                        LayoutOverflowY: =LayoutOverflow.Scroll
-                        PaddingBottom: =20
-                        Width: =Parent.Width - 20
-                        X: =10
-                        Y: =160
-                      Children:
-                        - DCC_SystemStatusCard:
-                            Control: GroupContainer@1.3.0
-                            Variant: AutoLayout
-                            Properties:
-                              Fill: =RGBA(255, 255, 255, 1)
-                              FillPortions: =0
-                              Height: =220
-                              LayoutDirection: =LayoutDirection.Vertical
-                              LayoutGap: =15
-                              LayoutMinHeight: =220
-                              LayoutMinWidth: =200
-                              PaddingBottom: =15
-                              PaddingLeft: =20
-                              PaddingRight: =20
-                              PaddingTop: =15
-                              RadiusBottomLeft: =10
-                              RadiusBottomRight: =10
-                              RadiusTopLeft: =10
-                              RadiusTopRight: =10
-                              Width: =Parent.Width - 20
-                            Children:
-                              - DCC_StatusCardHeader:
-                                  Control: Text@0.0.51
-                                  Properties:
-                                    Font: =Font.Lato
-                                    FontColor: =RGBA(0, 101, 161, 1)
-                                    Height: =30
-                                    Size: =16
-                                    Text: ="System Status - " & Text(_selectedDate, "[$-th-TH]dd/mm/yyyy")
-                                    VerticalAlign: =VerticalAlign.Middle
-                                    Weight: ='TextCanvas.Weight'.Semibold
-                                    Width: =Parent.Width - 40
-                              - DCC_StatusPanelsRow:
-                                  Control: GroupContainer@1.3.0
-                                  Variant: AutoLayout
-                                  Properties:
-                                    DropShadow: =DropShadow.None
-                                    FillPortions: =0
-                                    Height: =150
-                                    LayoutDirection: =LayoutDirection.Horizontal
-                                    LayoutGap: =20
-                                    LayoutJustifyContent: =LayoutJustifyContent.SpaceBetween
-                                    LayoutMinHeight: =150
-                                    LayoutMinWidth: =200
-                                    Width: =Parent.Width - 40
-                                  Children:
-                                    - DCC_SAPImportPanel:
-                                        Control: GroupContainer@1.3.0
-                                        Variant: AutoLayout
-                                        Properties:
-                                          DropShadow: =DropShadow.None
-                                          LayoutAlignItems: =LayoutAlignItems.Center
-                                          LayoutDirection: =LayoutDirection.Vertical
-                                          LayoutGap: =10
-                                          LayoutJustifyContent: =LayoutJustifyContent.Center
-                                          LayoutMinHeight: =150
-                                          LayoutMinWidth: =200
-                                        Children:
-                                          - DCC_SAPIcon:
-                                              Control: Classic/Icon@2.5.0
-                                              Properties:
-                                                Color: |-
-                                                  =With(
-                                                      {
-                                                          _trigger: _refreshTrigger,
-                                                          _log: First(Filter('[THFinanceCashCollection]Process Logs', cr7bb_processdate = Text(_selectedDate, "yyyy-mm-dd")))
-                                                      },
-                                                      If(
-                                                          !IsBlank(_log) && _log.cr7bb_status = "Completed",
-                                                          RGBA(16, 124, 16, 1),
-                                                          If(
-                                                              !IsBlank(_log) && _log.cr7bb_status = "Failed",
-                                                              RGBA(168, 0, 0, 1),
-                                                              RGBA(96, 94, 92, 1)
-                                                          )
-                                                      )
-                                                  )
-                                                Icon: |-
-                                                  =With(
-                                                      {
-                                                          _trigger: _refreshTrigger,
-                                                          _log: First(Filter('[THFinanceCashCollection]Process Logs', cr7bb_processdate = Text(_selectedDate, "yyyy-mm-dd")))
-                                                      },
-                                                      If(
-                                                          !IsBlank(_log) && _log.cr7bb_status = "Completed",
-                                                          Icon.CheckBadge,
-                                                          If(
-                                                              !IsBlank(_log) && _log.cr7bb_status = "Failed",
-                                                              Icon.CancelBadge,
-                                                              Icon.Clock
-                                                          )
-                                                      )
-                                                  )
-                                          - DCC_SAPTitle:
-                                              Control: Text@0.0.51
-                                              Properties:
-                                                Align: ='TextCanvas.Align'.Center
-                                                Font: =Font.Lato
-                                                FontColor: =RGBA(0, 0, 0, 1)
-                                                Height: =25
-                                                Text: ="SAP Import"
-                                                VerticalAlign: =VerticalAlign.Middle
-                                                Weight: ='TextCanvas.Weight'.Bold
-                                                Width: =150
-                                          - DCC_SAPStatus:
-                                              Control: Text@0.0.51
-                                              Properties:
-                                                Align: ='TextCanvas.Align'.Center
-                                                AutoHeight: =true
-                                                Font: =Font.Lato
-                                                FontColor: =RGBA(100, 100, 100, 1)
-                                                Size: =12
-                                                Text: |-
-                                                  =With(
-                                                      {
-                                                          _trigger: _refreshTrigger,
-                                                          _log: First(Filter('[THFinanceCashCollection]Process Logs', cr7bb_processdate = Text(_selectedDate, "yyyy-mm-dd")))
-                                                      },
-                                                      If(
-                                                          IsBlank(_log),
-                                                          "No run recorded",
-                                                          _log.cr7bb_status & " at " & Text(DateTimeValue(_log.cr7bb_processdate), "[$-th-TH]hh:mm")
-                                                      )
-                                                  )
-                                                Width: =200
-                                          - DCC_SAPRecordCount:
-                                              Control: Text@0.0.51
-                                              Properties:
-                                                Align: ='TextCanvas.Align'.Center
-                                                AutoHeight: =true
-                                                Font: =Font.Lato
-                                                FontColor: =RGBA(100, 100, 100, 1)
-                                                Size: =12
-                                                Text: |-
-                                                  =With(
-                                                      {
-                                                          _trigger: _refreshTrigger,
-                                                          _log: First(Filter('[THFinanceCashCollection]Process Logs', cr7bb_processdate = Text(_selectedDate, "yyyy-mm-dd")))
-                                                      },
-                                                      If(
-                                                          !IsBlank(_log),
-                                                          _log.cr7bb_transactionsprocessed & " transactions processed",
-                                                          ""
-                                                      )
-                                                  )
-                                                Width: =200
-                                    - DCC_EmailEnginePanel:
-                                        Control: GroupContainer@1.3.0
-                                        Variant: AutoLayout
-                                        Properties:
-                                          DropShadow: =DropShadow.None
-                                          LayoutAlignItems: =LayoutAlignItems.Center
-                                          LayoutDirection: =LayoutDirection.Vertical
-                                          LayoutGap: =10
-                                          LayoutJustifyContent: =LayoutJustifyContent.Center
-                                          LayoutMinHeight: =150
-                                          LayoutMinWidth: =200
-                                        Children:
-                                          - DCC_EmailIcon:
-                                              Control: Classic/Icon@2.5.0
-                                              Properties:
-                                                Color: |-
-                                                  =With(
-                                                      {
-                                                          _trigger: _refreshTrigger,
-                                                          _sent: CountRows(Filter('[THFinanceCashCollection]Emaillogs', DateValue(cr7bb_sentdatetime) = _selectedDate && cr7bb_sendstatus = 'Send Status Choice'.Success)),
-                                                          _failed: CountRows(Filter('[THFinanceCashCollection]Emaillogs', DateValue(cr7bb_sentdatetime) = _selectedDate && cr7bb_sendstatus = 'Send Status Choice'.Failed))
-                                                      },
-                                                      If(
-                                                          _sent > 0 && _failed = 0,
-                                                          RGBA(16, 124, 16, 1),
-                                                          If(
-                                                              _failed > 0,
-                                                              RGBA(255, 185, 0, 1),
-                                                              RGBA(96, 94, 92, 1)
-                                                          )
-                                                      )
-                                                  )
-                                                Icon: |-
-                                                  =With(
-                                                      {
-                                                          _trigger: _refreshTrigger,
-                                                          _sent: CountRows(Filter('[THFinanceCashCollection]Emaillogs', DateValue(cr7bb_sentdatetime) = _selectedDate && cr7bb_sendstatus = 'Send Status Choice'.Success)),
-                                                          _failed: CountRows(Filter('[THFinanceCashCollection]Emaillogs', DateValue(cr7bb_sentdatetime) = _selectedDate && cr7bb_sendstatus = 'Send Status Choice'.Failed))
-                                                      },
-                                                      If(
-                                                          _sent > 0 && _failed = 0,
-                                                          Icon.CheckBadge,
-                                                          If(
-                                                              _failed > 0,
-                                                              Icon.Warning,
-                                                              Icon.Clock
-                                                          )
-                                                      )
-                                                  )
-                                          - DCC_EmailTitle:
-                                              Control: Text@0.0.51
-                                              Properties:
-                                                Align: ='TextCanvas.Align'.Center
-                                                Font: =Font.Lato
-                                                FontColor: =RGBA(0, 0, 0, 1)
-                                                Height: =25
-                                                Text: |-
-                                                  ="📧 Email Engine"
-                                                VerticalAlign: =VerticalAlign.Middle
-                                                Weight: ='TextCanvas.Weight'.Bold
-                                                Width: =150
-                                          - DCC_EmailStatus:
-                                              Control: Text@0.0.51
-                                              Properties:
-                                                Align: ='TextCanvas.Align'.Center
-                                                AutoHeight: =true
-                                                Font: =Font.Lato
-                                                FontColor: =RGBA(100, 100, 100, 1)
-                                                Size: =12
-                                                Text: |-
-                                                  =With(
-                                                      {
-                                                          _trigger: _refreshTrigger,
-                                                          _sent: CountRows(Filter('[THFinanceCashCollection]Emaillogs', DateValue(cr7bb_sentdatetime) = _selectedDate && cr7bb_sendstatus = 'Send Status Choice'.Success)),
-                                                          _failed: CountRows(Filter('[THFinanceCashCollection]Emaillogs', DateValue(cr7bb_sentdatetime) = _selectedDate && cr7bb_sendstatus = 'Send Status Choice'.Failed))
-                                                      },
-                                                      If(
-                                                          _sent = 0 && _failed = 0,
-                                                          "No emails sent",
-                                                          _sent & " sent, " & _failed & " failed"
-                                                      )
-                                                  )
-                                                Width: =200
-                                          - DCC_EmailSkipped:
-                                              Control: Text@0.0.51
-                                              Properties:
-                                                Align: ='TextCanvas.Align'.Center
-                                                AutoHeight: =true
-                                                Font: =Font.Lato
-                                                FontColor: =RGBA(100, 100, 100, 1)
-                                                Size: =12
-                                                Text: |-
-                                                  =With(
-                                                      {
-                                                          _trigger: _refreshTrigger,
-                                                          _skipped: CountRows(Filter('[THFinanceCashCollection]Emaillogs', DateValue(cr7bb_sentdatetime) = _selectedDate && cr7bb_sendstatus = 'Send Status Choice'.Pending))
-                                                      },
-                                                      If(
-                                                          _skipped > 0,
-                                                          _skipped & " customers skipped (CN > DN)",
-                                                          ""
-                                                      )
-                                                  )
-                                                Width: =200
-                        - DCC_QuickActionsCard:
-                            Control: GroupContainer@1.3.0
-                            Variant: AutoLayout
-                            Properties:
-                              Fill: =RGBA(255, 255, 255, 1)
-                              FillPortions: =0
-                              Height: =140
-                              LayoutDirection: =LayoutDirection.Vertical
-                              LayoutGap: =15
-                              LayoutMinHeight: =140
-                              LayoutMinWidth: =200
-                              PaddingBottom: =15
-                              PaddingLeft: =20
-                              PaddingRight: =20
-                              PaddingTop: =15
-                              RadiusBottomLeft: =10
-                              RadiusBottomRight: =10
-                              RadiusTopLeft: =10
-                              RadiusTopRight: =10
-                              Width: =Parent.Width - 20
-                            Children:
-                              - DCC_QuickActionsHeader:
-                                  Control: Text@0.0.51
-                                  Properties:
-                                    Font: =Font.Lato
-                                    FontColor: =RGBA(0, 101, 161, 1)
-                                    Height: =30
-                                    Size: =16
-                                    Text: ="Quick Actions"
-                                    VerticalAlign: =VerticalAlign.Middle
-                                    Weight: ='TextCanvas.Weight'.Semibold
-                                    Width: =Parent.Width - 40
-                              - DCC_QuickActionsButtonsRow:
-                                  Control: GroupContainer@1.3.0
-                                  Variant: AutoLayout
-                                  Properties:
-                                    DropShadow: =DropShadow.None
-                                    FillPortions: =0
-                                    Height: =70
-                                    LayoutDirection: =LayoutDirection.Horizontal
-                                    LayoutGap: =10
-                                    LayoutMinHeight: =70
-                                    LayoutMinWidth: =200
-                                    LayoutWrap: =true
-                                    Width: =Parent.Width - 40
-                                  Children:
-                                    - DCC_ReviewEmailsButton:
-                                        Control: Button@0.0.45
-                                        Properties:
-                                          BasePaletteColor: =RGBA(0, 101, 161, 1)
-                                          Height: =40
-                                          OnSelect: |-
-                                            =Set(gblFilterDate, _selectedDate);
-                                            Navigate(scnEmailMonitor)
-                                          Text: |-
-                                            ="📧 Review Emails"
-                                          Width: =150
-                                    - DCC_FailedEmailsButton:
-                                        Control: Button@0.0.45
-                                        Properties:
-                                          BasePaletteColor: |-
-                                            =With(
-                                                {
-                                                    _trigger: _refreshTrigger,
-                                                    _failed: CountRows(Filter('[THFinanceCashCollection]Emaillogs', DateValue(cr7bb_sentdatetime) = _selectedDate && cr7bb_sendstatus = 'Send Status Choice'.Failed))
-                                                },
-                                                If(_failed > 0, RGBA(168, 0, 0, 1), RGBA(200, 198, 196, 1))
-                                            )
-                                          DisplayMode: |-
-                                            =With(
-                                                {
-                                                    _trigger: _refreshTrigger,
-                                                    _failed: CountRows(Filter('[THFinanceCashCollection]Emaillogs', DateValue(cr7bb_sentdatetime) = _selectedDate && cr7bb_sendstatus = 'Send Status Choice'.Failed))
-                                                },
-                                                If(_failed > 0, DisplayMode.Edit, DisplayMode.Disabled)
-                                            )
-                                          Height: =40
-                                          OnSelect: |-
-                                            =Set(gblFilterDate, _selectedDate);
-                                            Set(gblEmailStatusFilter, "Failed");
-                                            Navigate(scnEmailMonitor)
-                                          Text: |-
-                                            =With(
-                                                {
-                                                    _trigger: _refreshTrigger,
-                                                    _failed: CountRows(Filter('[THFinanceCashCollection]Emaillogs', DateValue(cr7bb_sentdatetime) = _selectedDate && cr7bb_sendstatus = 'Send Status Choice'.Failed))
-                                                },
-                                                "⚠️ Failed (" & _failed & ")"
-                                            )
-                                          Width: =150
-                                    - DCC_CustomersButton:
-                                        Control: Button@0.0.45
-                                        Properties:
-                                          BasePaletteColor: =RGBA(100, 81, 61, 1)
-                                          Height: =40
-                                          OnSelect: =Navigate(scnCustomer)
-                                          Text: |-
-                                            ="🔍 Customers"
-                                          Width: =150
-                                    - DCC_TransactionsButton:
-                                        Control: Button@0.0.45
-                                        Properties:
-                                          BasePaletteColor: =RGBA(0, 101, 161, 1)
-                                          Height: =40
-                                          OnSelect: |-
-                                            =Set(gblFilterDate, _selectedDate);
-                                            Navigate(scnTransactions)
-                                          Text: |-
-                                            ="📊 Transactions"
-                                          Width: =150
-                                    - DCC_ExportButton:
-                                        Control: Button@0.0.45
-                                        Properties:
-                                          BasePaletteColor: =RGBA(100, 81, 61, 1)
-                                          Height: =40
-                                          OnSelect: =Notify("Export functionality coming soon", NotificationType.Information)
-                                          Text: |-
-                                            ="📄 Export Report"
-                                          Width: =150
-                        - DCC_ActivitySummaryCard:
-                            Control: GroupContainer@1.3.0
-                            Variant: AutoLayout
-                            Properties:
-                              Fill: =RGBA(255, 255, 255, 1)
-                              FillPortions: =0
-                              Height: =450
-                              LayoutDirection: =LayoutDirection.Vertical
-                              LayoutGap: =15
-                              LayoutMinHeight: =450
-                              LayoutMinWidth: =200
-                              PaddingBottom: =15
-                              PaddingLeft: =20
-                              PaddingRight: =20
-                              PaddingTop: =15
-                              RadiusBottomLeft: =10
-                              RadiusBottomRight: =10
-                              RadiusTopLeft: =10
-                              RadiusTopRight: =10
-                              Width: =Parent.Width - 20
-                            Children:
-                              - DCC_ActivityHeader:
-                                  Control: Text@0.0.51
-                                  Properties:
-                                    Font: =Font.Lato
-                                    FontColor: =RGBA(0, 101, 161, 1)
-                                    Height: =30
-                                    Size: =16
-                                    Text: |-
-                                      =With(
-                                          {
-                                              _trigger: _refreshTrigger,
-                                              _count: CountRows(Filter('[THFinanceCashCollection]Emaillogs', DateValue(cr7bb_sentdatetime) = _selectedDate))
-                                          },
-                                          "Activity - " & Text(_selectedDate, "[$-th-TH]dd/mm/yyyy") & " (" & _count & " emails)"
-                                      )
-                                    VerticalAlign: =VerticalAlign.Middle
-                                    Weight: ='TextCanvas.Weight'.Semibold
-                                    Width: =Parent.Width - 40
-                              - DCC_ActivityGallery:
-                                  Control: Gallery@2.15.0
-                                  Variant: Vertical
-                                  Properties:
-                                    Height: =350
-                                    Items: |-
-                                      =If(
-                                          _refreshTrigger || !_refreshTrigger,
-                                          FirstN(
-                                              Sort(
-                                                  Filter(
-                                                      '[THFinanceCashCollection]Emaillogs',
-                                                      DateValue(cr7bb_sentdatetime) = _selectedDate
-                                                  ),
-                                                  cr7bb_sentdatetime,
-                                                  SortOrder.Descending
-                                              ),
-                                              10
-                                          )
-                                      )
-                                    TemplatePadding: =0
-                                    TemplateSize: =70
-                                    Width: =Parent.Width - 40
-                                  Children:
-                                    - DCC_GalleryItemContainer:
-                                        Control: GroupContainer@1.3.0
-                                        Variant: AutoLayout
-                                        Properties:
-                                          DropShadow: =DropShadow.None
-                                          Fill: =If(Mod(ThisItem.Value, 2) = 0, RGBA(250, 250, 250, 1), RGBA(255, 255, 255, 1))
-                                          Height: =70
-                                          LayoutAlignItems: =LayoutAlignItems.Center
-                                          LayoutDirection: =LayoutDirection.Horizontal
-                                          LayoutGap: =15
-                                          PaddingBottom: =10
-                                          PaddingLeft: =15
-                                          PaddingRight: =15
-                                          PaddingTop: =10
-                                          Width: =Parent.TemplateWidth
-                                        Children:
-                                          - DCC_ActivityIcon:
-                                              Control: Classic/Icon@2.5.0
-                                              Properties:
-                                                Color: |-
-                                                  =If(
-                                                      ThisItem.cr7bb_sendstatus = 'Send Status Choice'.Success,
-                                                      RGBA(16, 124, 16, 1),
-                                                      If(
-                                                          ThisItem.cr7bb_sendstatus = 'Send Status Choice'.Failed,
-                                                          RGBA(168, 0, 0, 1),
-                                                          RGBA(96, 94, 92, 1)
-                                                      )
-                                                  )
-                                                Height: =40
-                                                Icon: |-
-                                                  =If(
-                                                      ThisItem.cr7bb_sendstatus = 'Send Status Choice'.Success,
-                                                      Icon.CheckBadge,
-                                                      If(
-                                                          ThisItem.cr7bb_sendstatus = 'Send Status Choice'.Failed,
-                                                          Icon.Warning,
-                                                          Icon.Send
-                                                      )
-                                                  )
-                                                Width: =40
-                                          - DCC_ActivityDetailsContainer:
-                                              Control: GroupContainer@1.3.0
-                                              Variant: AutoLayout
-                                              Properties:
-                                                DropShadow: =DropShadow.None
-                                                LayoutDirection: =LayoutDirection.Vertical
-                                                LayoutGap: =5
-                                                LayoutMinHeight: =50
-                                                LayoutMinWidth: =100
-                                              Children:
-                                                - DCC_ActivityText:
-                                                    Control: Text@0.0.51
-                                                    Properties:
-                                                      AutoHeight: =true
-                                                      Font: =Font.Lato
-                                                      FontColor: =RGBA(0, 0, 0, 1)
-                                                      Size: =13
-                                                      Text: ="Email " & Text(ThisItem.cr7bb_sendstatus) & " to " & ThisItem.Customer.'[THFinanceCashCollection]Customer'
-                                                      Weight: ='TextCanvas.Weight'.Semibold
-                                                      Width: =400
-                                                - DCC_ActivityTimestamp:
-                                                    Control: Text@0.0.51
-                                                    Properties:
-                                                      AutoHeight: =true
-                                                      Font: =Font.Lato
-                                                      FontColor: =RGBA(100, 100, 100, 1)
-                                                      Size: =11
-                                                      Text: =Text(ThisItem.cr7bb_sentdatetime, "[$-th-TH]hh:mm:ss")
-                                                      Width: =400
-                                          - DCC_ActivityStatusBadge:
-                                              Control: Text@0.0.51
-                                              Properties:
-                                                Align: ='TextCanvas.Align'.Center
-                                                Font: =Font.Lato
-                                                FontColor: |-
-                                                  =If(
-                                                      ThisItem.cr7bb_sendstatus = 'Send Status Choice'.Success,
-                                                      RGBA(16, 124, 16, 1),
-                                                      If(
-                                                          ThisItem.cr7bb_sendstatus = 'Send Status Choice'.Failed,
-                                                          RGBA(168, 0, 0, 1),
-                                                          RGBA(96, 94, 92, 1)
-                                                      )
-                                                  )
-                                                Height: =50
-                                                Size: =12
-                                                Text: =Text(ThisItem.cr7bb_sendstatus)
-                                                VerticalAlign: =VerticalAlign.Middle
-                                                Weight: ='TextCanvas.Weight'.Semibold
-                                                Width: =100
-                                          - DCC_ActivityViewButton:
-                                              Control: Button@0.0.45
-                                              Properties:
-                                                BasePaletteColor: =RGBA(0, 101, 161, 1)
-                                                Height: =36
-                                                OnSelect: |-
-                                                  =Set(gblSelectedEmail, ThisItem);
-                                                  Navigate(scnEmailMonitor)
-                                                Text: ="View"
-                                                Width: =80
-                  - DCC_DatePickerOverlay:
-                      Control: GroupContainer@1.3.0
-                      Variant: ManualLayout
-                      Properties:
-                        DropShadow: =DropShadow.None
-                        Fill: =RGBA(0, 0, 0, 0.5)
-                        Height: =Parent.Height
-                        Visible: =_showDatePicker
-                        Width: =Parent.Width
-                      Children:
-                        - DCC_DatePickerModal:
-                            Control: GroupContainer@1.3.0
-                            Variant: AutoLayout
-                            Properties:
-                              DropShadow: =DropShadow.Regular
-                              Fill: =RGBA(255, 255, 255, 1)
-                              Height: =450
-                              LayoutDirection: =LayoutDirection.Vertical
-                              LayoutGap: =20
-                              PaddingBottom: =30
-                              PaddingLeft: =30
-                              PaddingRight: =30
-                              PaddingTop: =30
-                              RadiusBottomLeft: =10
-                              RadiusBottomRight: =10
-                              RadiusTopLeft: =10
-                              RadiusTopRight: =10
-                              Width: =400
-                              X: =(Parent.Width - 400) / 2
-                              Y: =(Parent.Height - 450) / 2
-                            Children:
-                              - DCC_DatePickerModalTitle:
-                                  Control: Text@0.0.51
-                                  Properties:
-                                    Font: =Font.Lato
-                                    FontColor: =RGBA(0, 101, 161, 1)
-                                    Height: =40
-                                    Size: =20
-                                    Text: ="Select Audit Date"
-                                    VerticalAlign: =VerticalAlign.Middle
+                                    Height: =25
+                                    Text: ="Basic Information"
                                     Weight: ='TextCanvas.Weight'.Bold
-                                    Width: =340
-                              - DCC_DatePickerControl:
-                                  Control: DatePicker@0.0.46
+                                    Width: =Parent.Width - 40
+                              - Customer_Form_CustomerCodeLabel:
+                                  Control: Text@0.0.51
+                                  Properties:
+                                    Font: =Font.Lato
+                                    FontColor: =RGBA(100, 100, 100, 1)
+                                    Height: =25
+                                    Text: |-
+                                      ="Customer Code: *"
+                                    Weight: ='TextCanvas.Weight'.Semibold
+                                    Width: =Parent.Width - 40
+                              - Customer_Form_CustomerCodeInput:
+                                  Control: TextInput@0.0.54
                                   Properties:
                                     BasePaletteColor: =RGBA(0, 101, 161, 1)
-                                    Height: =280
-                                    SelectedDate: =_selectedDate
-                                    Width: =340
-                              - DCC_DatePickerModalButtons:
-                                  Control: GroupContainer@1.3.0
-                                  Variant: AutoLayout
+                                    DisplayMode: |-
+                                      =If(
+                                          _currentMode = "Edit",
+                                          DisplayMode.View,
+                                          DisplayMode.Edit
+                                      )
+                                    Height: =40
+                                    Value: |-
+                                      =If(
+                                          _currentMode = "Edit",
+                                          _selectedCustomer.cr7bb_customercode,
+                                          ""
+                                      )
+                                    Width: =Parent.Width - 40
+                              - Customer_Form_CustomerNameLabel:
+                                  Control: Text@0.0.51
                                   Properties:
-                                    DropShadow: =DropShadow.None
-                                    FillPortions: =0
-                                    Height: =50
-                                    LayoutDirection: =LayoutDirection.Horizontal
-                                    LayoutGap: =15
-                                    LayoutJustifyContent: =LayoutJustifyContent.End
-                                    LayoutMinHeight: =50
-                                    LayoutMinWidth: =100
-                                    Width: =340
-                                  Children:
-                                    - DCC_DatePickerCancelButton:
-                                        Control: Button@0.0.45
-                                        Properties:
-                                          BasePaletteColor: =RGBA(128, 128, 128, 1)
-                                          Height: =40
-                                          OnSelect: =Set(_showDatePicker, false)
-                                          Text: ="Cancel"
-                                          Width: =100
-                                    - DCC_DatePickerSelectButton:
-                                        Control: Button@0.0.45
-                                        Properties:
-                                          BasePaletteColor: =RGBA(0, 101, 161, 1)
-                                          Height: =40
-                                          OnSelect: |-
-                                            =Set(_selectedDate, DCC_DatePickerControl.SelectedDate);
-                                            Set(_showDatePicker, false);
-                                            Set(_refreshTrigger, !_refreshTrigger)
-                                          Text: ="Select Date"
-                                          Width: =120
-            - DCC_NavigationMenu:
+                                    Font: =Font.Lato
+                                    FontColor: =RGBA(100, 100, 100, 1)
+                                    Height: =25
+                                    Text: |-
+                                      ="Customer Name: *"
+                                    Weight: ='TextCanvas.Weight'.Semibold
+                                    Width: =Parent.Width - 40
+                              - Customer_Form_CustomerNameInput:
+                                  Control: TextInput@0.0.54
+                                  Properties:
+                                    BasePaletteColor: =RGBA(0, 101, 161, 1)
+                                    Height: =40
+                                    Value: |-
+                                      =If(
+                                          _currentMode = "Edit",
+                                          _selectedCustomer.cr7bb_customername,
+                                          ""
+                                      )
+                                    Width: =Parent.Width - 40
+                              - Customer_Form_RegionLabel:
+                                  Control: Text@0.0.51
+                                  Properties:
+                                    Font: =Font.Lato
+                                    FontColor: =RGBA(100, 100, 100, 1)
+                                    Height: =25
+                                    Text: |-
+                                      ="Region: *"
+                                    Weight: ='TextCanvas.Weight'.Semibold
+                                    Width: =Parent.Width - 40
+                              - Customer_Form_RegionDropdown:
+                                  Control: ComboBox@0.0.51
+                                  Properties:
+                                    BasePaletteColor: =RGBA(0, 101, 161, 1)
+                                    DefaultSelectedItems: |-
+                                      =If(
+                                          _currentMode = "Edit" && !IsBlank(_selectedCustomer),
+                                          [_selectedCustomer.Region]
+                                      )
+                                    Height: =40
+                                    Items: =Choices('Region Choice')
+                                    Width: =Parent.Width - 40
+                              - Customer_Form_EmailSection:
+                                  Control: Text@0.0.51
+                                  Properties:
+                                    Font: =Font.Lato
+                                    FontColor: =RGBA(100, 100, 100, 1)
+                                    Height: =25
+                                    Text: ="Customer Emails"
+                                    Weight: ='TextCanvas.Weight'.Bold
+                                    Width: =Parent.Width - 40
+                              - Customer_Form_CustomerEmail1Label:
+                                  Control: Text@0.0.51
+                                  Properties:
+                                    Font: =Font.Lato
+                                    FontColor: =RGBA(100, 100, 100, 1)
+                                    Height: =25
+                                    Text: |-
+                                      ="Customer Email 1: *"
+                                    Weight: ='TextCanvas.Weight'.Semibold
+                                    Width: =Parent.Width - 40
+                              - Customer_Form_CustomerEmail1Input:
+                                  Control: TextInput@0.0.54
+                                  Properties:
+                                    BasePaletteColor: =RGBA(0, 101, 161, 1)
+                                    Height: =40
+                                    Value: |-
+                                      =If(
+                                          _currentMode = "Edit",
+                                          _selectedCustomer.cr7bb_customeremail1,
+                                          ""
+                                      )
+                                    Width: =Parent.Width - 40
+                              - Customer_Form_CustomerEmail2Label:
+                                  Control: Text@0.0.51
+                                  Properties:
+                                    Font: =Font.Lato
+                                    FontColor: =RGBA(100, 100, 100, 1)
+                                    Height: =25
+                                    Text: ="Customer Email 2:"
+                                    Weight: ='TextCanvas.Weight'.Semibold
+                                    Width: =Parent.Width - 40
+                              - Customer_Form_CustomerEmail2Input:
+                                  Control: TextInput@0.0.54
+                                  Properties:
+                                    BasePaletteColor: =RGBA(0, 101, 161, 1)
+                                    Height: =40
+                                    Value: |-
+                                      =If(
+                                          _currentMode = "Edit",
+                                          _selectedCustomer.cr7bb_customeremail2,
+                                          ""
+                                      )
+                                    Width: =Parent.Width - 40
+                              - Customer_Form_CustomerEmail3Label:
+                                  Control: Text@0.0.51
+                                  Properties:
+                                    Font: =Font.Lato
+                                    FontColor: =RGBA(100, 100, 100, 1)
+                                    Height: =25
+                                    Text: ="Customer Email 3:"
+                                    Weight: ='TextCanvas.Weight'.Semibold
+                                    Width: =Parent.Width - 40
+                              - Customer_Form_CustomerEmail3Input:
+                                  Control: TextInput@0.0.54
+                                  Properties:
+                                    BasePaletteColor: =RGBA(0, 101, 161, 1)
+                                    Height: =40
+                                    Value: |-
+                                      =If(
+                                          _currentMode = "Edit",
+                                          _selectedCustomer.cr7bb_customeremail3,
+                                          ""
+                                      )
+                                    Width: =Parent.Width - 40
+                              - Customer_Form_CustomerEmail4Label:
+                                  Control: Text@0.0.51
+                                  Properties:
+                                    Font: =Font.Lato
+                                    FontColor: =RGBA(100, 100, 100, 1)
+                                    Height: =25
+                                    Text: ="Customer Email 4:"
+                                    Weight: ='TextCanvas.Weight'.Semibold
+                                    Width: =Parent.Width - 40
+                              - Customer_Form_CustomerEmail4Input:
+                                  Control: TextInput@0.0.54
+                                  Properties:
+                                    BasePaletteColor: =RGBA(0, 101, 161, 1)
+                                    Height: =40
+                                    Value: |-
+                                      =If(
+                                          _currentMode = "Edit",
+                                          _selectedCustomer.cr7bb_customeremail4,
+                                          ""
+                                      )
+                                    Width: =Parent.Width - 40
+                              - Customer_Form_SalesSection:
+                                  Control: Text@0.0.51
+                                  Properties:
+                                    Font: =Font.Lato
+                                    FontColor: =RGBA(100, 100, 100, 1)
+                                    Height: =25
+                                    Text: ="Sales Team Emails"
+                                    Weight: ='TextCanvas.Weight'.Bold
+                                    Width: =Parent.Width - 40
+                              - Customer_Form_SalesEmail1Label:
+                                  Control: Text@0.0.51
+                                  Properties:
+                                    Font: =Font.Lato
+                                    FontColor: =RGBA(100, 100, 100, 1)
+                                    Height: =25
+                                    Text: |-
+                                      ="Sales Email 1: *"
+                                    Weight: ='TextCanvas.Weight'.Semibold
+                                    Width: =Parent.Width - 40
+                              - Customer_Form_SalesEmail1Input:
+                                  Control: TextInput@0.0.54
+                                  Properties:
+                                    BasePaletteColor: =RGBA(0, 101, 161, 1)
+                                    Height: =40
+                                    Value: |-
+                                      =If(
+                                          _currentMode = "Edit",
+                                          _selectedCustomer.cr7bb_salesemail1,
+                                          ""
+                                      )
+                                    Width: =Parent.Width - 40
+                              - Customer_Form_SalesEmail2Label:
+                                  Control: Text@0.0.51
+                                  Properties:
+                                    Font: =Font.Lato
+                                    FontColor: =RGBA(100, 100, 100, 1)
+                                    Height: =25
+                                    Text: ="Sales Email 2:"
+                                    Weight: ='TextCanvas.Weight'.Semibold
+                                    Width: =Parent.Width - 40
+                              - Customer_Form_SalesEmail2Input:
+                                  Control: TextInput@0.0.54
+                                  Properties:
+                                    BasePaletteColor: =RGBA(0, 101, 161, 1)
+                                    Height: =40
+                                    Value: |-
+                                      =If(
+                                          _currentMode = "Edit",
+                                          _selectedCustomer.cr7bb_salesemail2,
+                                          ""
+                                      )
+                                    Width: =Parent.Width - 40
+                              - Customer_Form_SalesEmail3Label:
+                                  Control: Text@0.0.51
+                                  Properties:
+                                    Font: =Font.Lato
+                                    FontColor: =RGBA(100, 100, 100, 1)
+                                    Height: =25
+                                    Text: ="Sales Email 3:"
+                                    Weight: ='TextCanvas.Weight'.Semibold
+                                    Width: =Parent.Width - 40
+                              - Customer_Form_SalesEmail3Input:
+                                  Control: TextInput@0.0.54
+                                  Properties:
+                                    BasePaletteColor: =RGBA(0, 101, 161, 1)
+                                    Height: =40
+                                    Value: |-
+                                      =If(
+                                          _currentMode = "Edit",
+                                          _selectedCustomer.cr7bb_salesemail3,
+                                          ""
+                                      )
+                                    Width: =Parent.Width - 40
+                              - Customer_Form_SalesEmail4Label:
+                                  Control: Text@0.0.51
+                                  Properties:
+                                    Font: =Font.Lato
+                                    FontColor: =RGBA(100, 100, 100, 1)
+                                    Height: =25
+                                    Text: ="Sales Email 4:"
+                                    Weight: ='TextCanvas.Weight'.Semibold
+                                    Width: =Parent.Width - 40
+                              - Customer_Form_SalesEmail4Input:
+                                  Control: TextInput@0.0.54
+                                  Properties:
+                                    BasePaletteColor: =RGBA(0, 101, 161, 1)
+                                    Height: =40
+                                    Value: |-
+                                      =If(
+                                          _currentMode = "Edit",
+                                          _selectedCustomer.cr7bb_salesemail4,
+                                          ""
+                                      )
+                                    Width: =Parent.Width - 40
+                              - Customer_Form_SalesEmail5Label:
+                                  Control: Text@0.0.51
+                                  Properties:
+                                    Font: =Font.Lato
+                                    FontColor: =RGBA(100, 100, 100, 1)
+                                    Height: =25
+                                    Text: ="Sales Email 5:"
+                                    Weight: ='TextCanvas.Weight'.Semibold
+                                    Width: =Parent.Width - 40
+                              - Customer_Form_SalesEmail5Input:
+                                  Control: TextInput@0.0.54
+                                  Properties:
+                                    BasePaletteColor: =RGBA(0, 101, 161, 1)
+                                    Height: =40
+                                    Value: |-
+                                      =If(
+                                          _currentMode = "Edit",
+                                          _selectedCustomer.cr7bb_salesemail5,
+                                          ""
+                                      )
+                                    Width: =Parent.Width - 40
+                              - Customer_Form_ARSection:
+                                  Control: Text@0.0.51
+                                  Properties:
+                                    Font: =Font.Lato
+                                    FontColor: =RGBA(100, 100, 100, 1)
+                                    Height: =25
+                                    Text: ="AR Backup Emails"
+                                    Weight: ='TextCanvas.Weight'.Bold
+                                    Width: =Parent.Width - 40
+                              - Customer_Form_ARBackupEmail1Label:
+                                  Control: Text@0.0.51
+                                  Properties:
+                                    Font: =Font.Lato
+                                    FontColor: =RGBA(100, 100, 100, 1)
+                                    Height: =25
+                                    Text: |-
+                                      ="AR Backup Email 1: *"
+                                    Weight: ='TextCanvas.Weight'.Semibold
+                                    Width: =Parent.Width - 40
+                              - Customer_Form_ARBackupEmail1Input:
+                                  Control: TextInput@0.0.54
+                                  Properties:
+                                    BasePaletteColor: =RGBA(0, 101, 161, 1)
+                                    Height: =40
+                                    Value: |-
+                                      =If(
+                                          _currentMode = "Edit",
+                                          _selectedCustomer.cr7bb_arbackupemail1,
+                                          ""
+                                      )
+                                    Width: =Parent.Width - 40
+                              - Customer_Form_ARBackupEmail2Label:
+                                  Control: Text@0.0.51
+                                  Properties:
+                                    Font: =Font.Lato
+                                    FontColor: =RGBA(100, 100, 100, 1)
+                                    Height: =25
+                                    Text: ="AR Backup Email 2:"
+                                    Weight: ='TextCanvas.Weight'.Semibold
+                                    Width: =Parent.Width - 40
+                              - Customer_Form_ARBackupEmail2Input:
+                                  Control: TextInput@0.0.54
+                                  Properties:
+                                    BasePaletteColor: =RGBA(0, 101, 161, 1)
+                                    Height: =40
+                                    Value: |-
+                                      =If(
+                                          _currentMode = "Edit",
+                                          _selectedCustomer.cr7bb_arbackupemail2,
+                                          ""
+                                      )
+                                    Width: =Parent.Width - 40
+                              - Customer_Form_ARBackupEmail3Label:
+                                  Control: Text@0.0.51
+                                  Properties:
+                                    Font: =Font.Lato
+                                    FontColor: =RGBA(100, 100, 100, 1)
+                                    Height: =25
+                                    Text: ="AR Backup Email 3:"
+                                    Weight: ='TextCanvas.Weight'.Semibold
+                                    Width: =Parent.Width - 40
+                              - Customer_Form_ARBackupEmail3Input:
+                                  Control: TextInput@0.0.54
+                                  Properties:
+                                    BasePaletteColor: =RGBA(0, 101, 161, 1)
+                                    Height: =40
+                                    Value: |-
+                                      =If(
+                                          _currentMode = "Edit",
+                                          _selectedCustomer.cr7bb_arbackupemail3,
+                                          ""
+                                      )
+                                    Width: =Parent.Width - 40
+                              - Customer_Form_ARBackupEmail4Label:
+                                  Control: Text@0.0.51
+                                  Properties:
+                                    Font: =Font.Lato
+                                    FontColor: =RGBA(100, 100, 100, 1)
+                                    Height: =25
+                                    Text: ="AR Backup Email 4:"
+                                    Weight: ='TextCanvas.Weight'.Semibold
+                                    Width: =Parent.Width - 40
+                              - Customer_Form_ARBackupEmail4Input:
+                                  Control: TextInput@0.0.54
+                                  Properties:
+                                    BasePaletteColor: =RGBA(0, 101, 161, 1)
+                                    Height: =40
+                                    Value: |-
+                                      =If(
+                                          _currentMode = "Edit",
+                                          _selectedCustomer.cr7bb_arbackupemail4,
+                                          ""
+                                      )
+                                    Width: =Parent.Width - 40
+                        - Customer_FormActionBar:
+                            Control: GroupContainer@1.3.0
+                            Variant: AutoLayout
+                            Properties:
+                              Fill: =RGBA(245, 245, 245, 1)
+                              Height: =50
+                              LayoutAlignItems: =LayoutAlignItems.Center
+                              LayoutDirection: =LayoutDirection.Horizontal
+                              LayoutGap: =10
+                              LayoutJustifyContent: =LayoutJustifyContent.End
+                              PaddingRight: =15
+                              Width: =Parent.Width
+                              Y: =Parent.Height - Self.Height
+                            Children:
+                              - Customer_Form_SaveBtn:
+                                  Control: Button@0.0.45
+                                  Properties:
+                                    BasePaletteColor: =RGBA(0, 101, 161, 1)
+                                    Height: =35
+                                    Icon: ="Save"
+                                    OnSelect: |-
+                                      =If(
+                                          _currentMode = "New",
+                                          Patch(
+                                              '[THFinanceCashCollection]Customers',
+                                              Defaults('[THFinanceCashCollection]Customers'),
+                                              {
+                                                  cr7bb_customercode: Customer_Form_CustomerCodeInput.Value,
+                                                  cr7bb_customername: Customer_Form_CustomerNameInput.Value,
+                                                  Region: Customer_Form_RegionDropdown.Selected.Value,
+                                                  cr7bb_customeremail1: Customer_Form_CustomerEmail1Input.Value,
+                                                  cr7bb_customeremail2: Customer_Form_CustomerEmail2Input.Value,
+                                                  cr7bb_customeremail3: Customer_Form_CustomerEmail3Input.Value,
+                                                  cr7bb_customeremail4: Customer_Form_CustomerEmail4Input.Value,
+                                                  cr7bb_salesemail1: Customer_Form_SalesEmail1Input.Value,
+                                                  cr7bb_salesemail2: Customer_Form_SalesEmail2Input.Value,
+                                                  cr7bb_salesemail3: Customer_Form_SalesEmail3Input.Value,
+                                                  cr7bb_salesemail4: Customer_Form_SalesEmail4Input.Value,
+                                                  cr7bb_salesemail5: Customer_Form_SalesEmail5Input.Value,
+                                                  cr7bb_arbackupemail1: Customer_Form_ARBackupEmail1Input.Value,
+                                                  cr7bb_arbackupemail2: Customer_Form_ARBackupEmail2Input.Value,
+                                                  cr7bb_arbackupemail3: Customer_Form_ARBackupEmail3Input.Value,
+                                                  cr7bb_arbackupemail4: Customer_Form_ARBackupEmail4Input.Value
+                                              }
+                                          ),
+                                          Patch(
+                                              '[THFinanceCashCollection]Customers',
+                                              _selectedCustomer,
+                                              {
+                                                  cr7bb_customername: Customer_Form_CustomerNameInput.Value,
+                                                  Region: Customer_Form_RegionDropdown.Selected.Value,
+                                                  cr7bb_customeremail1: Customer_Form_CustomerEmail1Input.Value,
+                                                  cr7bb_customeremail2: Customer_Form_CustomerEmail2Input.Value,
+                                                  cr7bb_customeremail3: Customer_Form_CustomerEmail3Input.Value,
+                                                  cr7bb_customeremail4: Customer_Form_CustomerEmail4Input.Value,
+                                                  cr7bb_salesemail1: Customer_Form_SalesEmail1Input.Value,
+                                                  cr7bb_salesemail2: Customer_Form_SalesEmail2Input.Value,
+                                                  cr7bb_salesemail3: Customer_Form_SalesEmail3Input.Value,
+                                                  cr7bb_salesemail4: Customer_Form_SalesEmail4Input.Value,
+                                                  cr7bb_salesemail5: Customer_Form_SalesEmail5Input.Value,
+                                                  cr7bb_arbackupemail1: Customer_Form_ARBackupEmail1Input.Value,
+                                                  cr7bb_arbackupemail2: Customer_Form_ARBackupEmail2Input.Value,
+                                                  cr7bb_arbackupemail3: Customer_Form_ARBackupEmail3Input.Value,
+                                                  cr7bb_arbackupemail4: Customer_Form_ARBackupEmail4Input.Value
+                                              }
+                                          )
+                                      );
+                                      If(
+                                          IsEmpty(Errors('[THFinanceCashCollection]Customers')),
+                                          Notify("Customer saved successfully", NotificationType.Success);
+                                          UpdateContext({_currentMode: "View"}),
+                                          Notify("Error saving customer: " & First(Errors('[THFinanceCashCollection]Customers')).Message, NotificationType.Error)
+                                      )
+                                    Text: =If(_currentMode = "New", "Add", "Save")
+                                    Width: =90
+                              - Customer_Form_CancelBtn:
+                                  Control: Button@0.0.45
+                                  Properties:
+                                    BasePaletteColor: =RGBA(100, 100, 100, 1)
+                                    Height: =35
+                                    Icon: ="Cancel"
+                                    OnSelect: |-
+                                      =UpdateContext({_currentMode: "View"})
+                                    Text: ="Cancel"
+                                    Width: =90
+            - Customer_NavigationMenu:
                 Control: CanvasComponent
                 ComponentName: NavigationMenu
                 Properties:
@@ -859,3 +746,85 @@ Screens:
                   Y: =70
                   navItems: =Navigation
                   navSelected: =currentScreen
+            - Customer_DeleteConfirmationOverlay:
+                Control: GroupContainer@1.3.0
+                Variant: ManualLayout
+                Properties:
+                  Fill: =RGBA(0, 0, 0, 0.5)
+                  Height: =Parent.Height
+                  Visible: =_showDeleteConfirmation
+                  Width: =Parent.Width
+                Children:
+                  - Customer_DeleteConfirmationBox:
+                      Control: GroupContainer@1.3.0
+                      Variant: AutoLayout
+                      Properties:
+                        DropShadow: =DropShadow.Regular
+                        Fill: =RGBA(255, 255, 255, 1)
+                        LayoutDirection: =LayoutDirection.Vertical
+                        LayoutGap: =20
+                        PaddingBottom: =20
+                        PaddingLeft: =20
+                        PaddingRight: =20
+                        PaddingTop: =20
+                        RadiusBottomLeft: =10
+                        RadiusBottomRight: =10
+                        RadiusTopLeft: =10
+                        RadiusTopRight: =10
+                        Width: =400
+                        X: =(Parent.Width - Self.Width) / 2
+                        Y: =(Parent.Height - Self.Height) / 2
+                      Children:
+                        - Customer_DeleteConfirmationText:
+                            Control: Text@0.0.51
+                            Properties:
+                              Font: =Font.Lato
+                              FontColor: =RGBA(0, 0, 0, 1)
+                              Height: =80
+                              Size: =16
+                              Text: |-
+                                ="Are you sure you want to delete '" & _customerToDelete.cr7bb_customername & "' (Code: " & _customerToDelete.cr7bb_customercode & ")?"
+                              VerticalAlign: =VerticalAlign.Top
+                              Weight: ='TextCanvas.Weight'.Semibold
+                              Width: =360
+                        - Customer_DeleteConfirmationButtons:
+                            Control: GroupContainer@1.3.0
+                            Variant: AutoLayout
+                            Properties:
+                              DropShadow: =DropShadow.None
+                              LayoutDirection: =LayoutDirection.Horizontal
+                              LayoutGap: =10
+                              LayoutJustifyContent: =LayoutJustifyContent.End
+                              LayoutMinHeight: =40
+                              LayoutMinWidth: =100
+                              Width: =360
+                            Children:
+                              - Customer_DeleteConfirmBtn:
+                                  Control: Button@0.0.45
+                                  Properties:
+                                    BasePaletteColor: =RGBA(191, 25, 34, 1)
+                                    Height: =35
+                                    Icon: ="Delete"
+                                    OnSelect: |-
+                                      =Remove('[THFinanceCashCollection]Customers', _customerToDelete);
+                                      Notify("Customer deleted successfully", NotificationType.Success);
+                                      UpdateContext({
+                                          _showDeleteConfirmation: false,
+                                          _customerToDelete: Blank()
+                                      });
+                                      Refresh('[THFinanceCashCollection]Customers')
+                                    Text: ="Yes, Delete"
+                                    Width: =150
+                              - Customer_DeleteCancelBtn:
+                                  Control: Button@0.0.45
+                                  Properties:
+                                    BasePaletteColor: =RGBA(100, 100, 100, 1)
+                                    Height: =35
+                                    Icon: ="Cancel"
+                                    OnSelect: |-
+                                      =UpdateContext({
+                                          _showDeleteConfirmation: false,
+                                          _customerToDelete: Blank()
+                                      })
+                                    Text: ="Cancel"
+                                    Width: =90

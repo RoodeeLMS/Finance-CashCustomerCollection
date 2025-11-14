@@ -3,29 +3,21 @@ Screens:
     Properties:
       Fill: =RGBA(243, 242, 241, 1)
       LoadingSpinnerColor: =RGBA(0, 101, 161, 1)
-      OnVisible: |-
-        =UpdateContext({currentScreen: "Transaction Management"});
-        Set(_showMenu, false);
-        Set(_selectedCustomer, Blank());
-        Set(_dateFrom, DateAdd(Today(), -30, TimeUnit.Days));
-        Set(_dateTo, Today());
-        Set(_typeFilter, "All");
-        Set(_statusFilter, "All");
+      OnVisible: |
+        =// Batch local variables with UpdateContext
+        UpdateContext({
+            currentScreen: "Transactions",
+            _showMenu: false,
+            _selectedCustomer: Blank(),
+            _dateTo: Today(),
+            _typeFilter: "All",
+            _statusFilter: "All"
+        });
 
-        /* Load customers for filter dropdown */
+        // Load customers for filter dropdown
         ClearCollect(
             colCustomers,
             Sort('[THFinanceCashCollection]Customers', cr7bb_customername, SortOrder.Ascending)
-        );
-
-        /* Load all transactions */
-        ClearCollect(
-            colTransactions,
-            SortByColumns(
-                '[THFinanceCashCollection]Transactions',
-                "cr7bb_documentdate",
-                SortOrder.Ascending
-            )
         );
     Children:
       - Trans_Container:
@@ -60,7 +52,8 @@ Screens:
                         Color: =RGBA(255, 255, 255, 1)
                         Height: =50
                         Icon: =Icon.Hamburger
-                        OnSelect: =Set(_showMenu, !_showMenu)
+                        OnSelect: |-
+                          =UpdateContext({_showMenu: !_showMenu})
                         PaddingBottom: =10
                         PaddingLeft: =10
                         PaddingRight: =10
@@ -140,14 +133,14 @@ Screens:
                                     InputTextPlaceholder: ="All Customers"
                                     Items: =colCustomers
                                     OnChange: |-
-                                      =Set(
-                                          _selectedCustomer,
+                                      =UpdateContext({
+                                          _selectedCustomer: 
                                           If(
                                               CountRows(Self.SelectedItems) > 0,
                                               First(Self.SelectedItems),
                                               Blank()
                                           )
-                                      )
+                                      });
                                     Width: =300
                                   Children:
                                     - CustomerName:
@@ -174,7 +167,10 @@ Screens:
                                     DefaultSelectedItems: =["All"]
                                     Height: =40
                                     Items: =["All", "CN", "DN"]
-                                    OnChange: =Set(_typeFilter, Self.Selected.Value)
+                                    OnChange: |-
+                                      =UpdateContext({
+                                          _typeFilter: Self.Selected.Value
+                                      });
                                     Width: =120
                               - Trans_StatusLabel:
                                   Control: Text@0.0.51
@@ -192,7 +188,10 @@ Screens:
                                     DefaultSelectedItems: =["All"]
                                     Height: =40
                                     Items: =["All", "Processed", "Unprocessed"]
-                                    OnChange: =Set(_statusFilter, Self.Selected.Value)
+                                    OnChange: |-
+                                      =UpdateContext({
+                                          _statusFilter: Self.Selected.Value
+                                      });
                                     Width: =140
                         - Trans_FilterRow2:
                             Control: GroupContainer@1.3.0
@@ -212,34 +211,20 @@ Screens:
                                     Font: =Font.Lato
                                     FontColor: =RGBA(0, 0, 0, 1)
                                     Height: =40
-                                    Text: ="Date Range:"
+                                    Text: ="Process Date:"
                                     VerticalAlign: =VerticalAlign.Middle
                                     Weight: ='TextCanvas.Weight'.Semibold
                                     Width: =100
-                              - Trans_DateFrom:
-                                  Control: DatePicker@0.0.46
-                                  Properties:
-                                    Height: =40
-                                    OnChange: =Set(_dateFrom, Self.SelectedDate)
-                                    SelectedDate: =_dateFrom
-                                    Width: =150
-                              - Trans_DateToLabel:
-                                  Control: Text@0.0.51
-                                  Properties:
-                                    Font: =Font.Lato
-                                    FontColor: =RGBA(0, 0, 0, 1)
-                                    Height: =40
-                                    Text: ="to"
-                                    VerticalAlign: =VerticalAlign.Middle
-                                    Weight: ='TextCanvas.Weight'.Regular
-                                    Width: =30
                               - Trans_DateTo:
                                   Control: DatePicker@0.0.46
                                   Properties:
                                     Height: =40
-                                    OnChange: =Set(_dateTo, Self.SelectedDate)
+                                    OnChange: |-
+                                      =UpdateContext({
+                                          _dateTo: Self.SelectedDate
+                                      });
                                     SelectedDate: =_dateTo
-                                    Width: =150
+                                    Width: =180
                         - Trans_FilterRow3:
                             Control: GroupContainer@1.3.0
                             Variant: AutoLayout
@@ -253,35 +238,21 @@ Screens:
                               LayoutMinWidth: =100
                               Width: =Parent.Width - 30
                             Children:
-                              - Trans_ApplyBtn:
-                                  Control: Button@0.0.45
+                              - Trans_FilterInfo:
+                                  Control: Text@0.0.51
                                   Properties:
-                                    BasePaletteColor: =RGBA(0, 101, 161, 1)
+                                    Font: =Font.Lato
+                                    FontColor: =RGBA(100, 100, 100, 1)
                                     Height: =35
-                                    Icon: ="Filter"
-                                    OnSelect: |-
-                                      =ClearCollect(
-                                          colTransactions,
-                                          SortByColumns(
-                                              Filter(
-                                                  '[THFinanceCashCollection]Transactions',
-                                                  (IsBlank(_selectedCustomer) || Customer.'[THFinanceCashCollection]Customer' = _selectedCustomer.'[THFinanceCashCollection]Customer') &&
-                                                  cr7bb_documentdate >= _dateFrom &&
-                                                  cr7bb_documentdate <= _dateTo &&
-                                                  (_typeFilter = "All" ||
-                                                   (_typeFilter = "CN" && cr7bb_transactiontype = 'Transaction Type Choice'.'Credit Note') ||
-                                                   (_typeFilter = "DN" && cr7bb_transactiontype = 'Transaction Type Choice'.'Debit Note')) &&
-                                                  (_statusFilter = "All" ||
-                                                   (_statusFilter = "Processed" && cr7bb_isprocessed = true) ||
-                                                   (_statusFilter = "Unprocessed" && cr7bb_isprocessed = false))
-                                              ),
-                                              "cr7bb_documentdate",
-                                              SortOrder.Ascending
-                                          )
-                                      );
-                                      Notify("Filters applied", NotificationType.Success)
-                                    Text: ="Apply Filters"
-                                    Width: =150
+                                    Text: |-
+                                      ="Records: " & CountRows(Filter(Trans_Gallery.AllItems,
+                                          (_typeFilter = "All" ||
+                                              (_typeFilter = "CN" && cr7bb_transactiontype = 'Transaction Type Choice'.'Credit Note') ||
+                                              (_typeFilter = "DN" && cr7bb_transactiontype = 'Transaction Type Choice'.'Debit Note'))
+                                      ))
+                                    VerticalAlign: =VerticalAlign.Middle
+                                    Weight: ='TextCanvas.Weight'.Regular
+                                    Width: =250
                               - Trans_TotalLabel:
                                   Control: Text@0.0.51
                                   Properties:
@@ -290,7 +261,16 @@ Screens:
                                     Height: =35
                                     Size: =16
                                     Text: |-
-                                      ="Total: ฿" & Text(Sum(colTransactions, cr7bb_amountlocalcurrency), "#,##0.00")
+                                      ="Total: ฿" & Text(
+                                          Sum(Filter(Trans_Gallery.AllItems,
+                                              (_typeFilter = "All" ||
+                                                  (_typeFilter = "CN" && cr7bb_transactiontype = 'Transaction Type Choice'.'Credit Note') ||
+                                                  (_typeFilter = "DN" && cr7bb_transactiontype = 'Transaction Type Choice'.'Debit Note'))
+                                          ),
+                                              cr7bb_amountlocalcurrency
+                                          ),
+                                          "#,##0.00"
+                                      )
                                     VerticalAlign: =VerticalAlign.Middle
                                     Weight: ='TextCanvas.Weight'.Bold
                                     Width: =300
@@ -331,9 +311,9 @@ Screens:
                                       )
                                     Height: =35
                                     Icon: ="CheckmarkCircle"
-                                    OnSelect: |-
+                                    OnSelect: |
                                       =ForAll(
-                                          Trans_Table.SelectedItems,
+                                          DropColumns(Trans_Table.SelectedItems, TransactionTypeText, AmountFormatted),
                                           Patch(
                                               '[THFinanceCashCollection]Transactions',
                                               ThisRecord,
@@ -344,28 +324,8 @@ Screens:
                                           CountRows(Trans_Table.SelectedItems) & " transactions marked as processed",
                                           NotificationType.Success
                                       );
-                                      /* Refresh data */
-                                      ClearCollect(
-                                          colTransactions,
-                                          SortByColumns(
-                                              Filter(
-                                                  '[THFinanceCashCollection]Transactions',
-                                                  (IsBlank(_selectedCustomer) || Customer.'[THFinanceCashCollection]Customer' = _selectedCustomer.'[THFinanceCashCollection]Customer') &&
-                                                  cr7bb_documentdate >= _dateFrom &&
-                                                  cr7bb_documentdate <= _dateTo &&
-                                                  (_typeFilter = "All" ||
-                                                   (_typeFilter = "CN" && cr7bb_transactiontype = 'Transaction Type Choice'.'Credit Note') ||
-                                                   (_typeFilter = "DN" && cr7bb_transactiontype = 'Transaction Type Choice'.'Debit Note')) &&
-                                                  (_statusFilter = "All" ||
-                                                   (_statusFilter = "Processed" && cr7bb_isprocessed = true) ||
-                                                   (_statusFilter = "Unprocessed" && cr7bb_isprocessed = false))
-                                              ),
-                                              "cr7bb_documentdate",
-                                              SortOrder.Ascending
-                                          )
-                                      )
                                     Text: ="Mark Processed"
-                                    Width: =150
+                                    Width: =170
                               - Trans_ExportBtn:
                                   Control: Button@0.0.45
                                   Properties:
@@ -375,11 +335,57 @@ Screens:
                                     OnSelect: =Notify("Export functionality not yet implemented", NotificationType.Information)
                                     Text: ="Export to Excel"
                                     Width: =150
+                        - Trans_Gallery:
+                            Control: Gallery@2.15.0
+                            Variant: Vertical
+                            Properties:
+                              BorderColor: =RGBA(0, 18, 107, 1)
+                              Height: =106
+                              Items: |+
+                                =With({
+                                    FilterTable: 
+                                        Filter(
+                                            '[THFinanceCashCollection]Transactions',
+                                            (IsBlank(_selectedCustomer) || Customer.'[THFinanceCashCollection]Customer' = _selectedCustomer.'[THFinanceCashCollection]Customer') &&
+                                            cr7bb_transactionprocessdate >= _dateTo && cr7bb_transactionprocessdate < DateAdd(_dateTo, 1, TimeUnit.Days) &&
+                                            (_statusFilter = "All" ||
+                                                (_statusFilter = "Processed" && cr7bb_isprocessed = true) ||
+                                                (_statusFilter = "Unprocessed" && cr7bb_isprocessed = false))
+                                        )
+                                    },
+                                    SortByColumns(
+                                        AddColumns(
+                                            FilterTable,
+                                            TransactionTypeText,
+                                            If(
+                                                cr7bb_transactiontype = 'Transaction Type Choice'.'Credit Note',
+                                                "CN",
+                                                If(
+                                                    cr7bb_transactiontype = 'Transaction Type Choice'.'Debit Note',
+                                                    "DN",
+                                                    ""
+                                                )
+                                            ),
+                                            AmountFormatted,
+                                            "฿" & Text(cr7bb_amountlocalcurrency, "#,##0.00")
+                                        ),
+                                        "cr7bb_documentdate",
+                                        SortOrder.Ascending
+                                    )
+                                )
+
+                              Visible: =false
+                              Width: =604
                         - Trans_Table:
                             Control: Table@1.0.278
                             Properties:
                               Height: =Parent.Height - 60
-                              Items: =colTransactions
+                              Items: |-
+                                =Filter(Trans_Gallery.AllItems,
+                                    (_typeFilter = "All" ||
+                                        (_typeFilter = "CN" && cr7bb_transactiontype = 'Transaction Type Choice'.'Credit Note') ||
+                                        (_typeFilter = "DN" && cr7bb_transactiontype = 'Transaction Type Choice'.'Debit Note'))
+                                )
                               Width: =Parent.Width
                               Y: =50
                             Children:
@@ -389,7 +395,7 @@ Screens:
                                   IsLocked: true
                                   Properties:
                                     FieldDisplayName: ="Type"
-                                    FieldName: ="cr7bb_transactiontype"
+                                    FieldName: ="TransactionTypeText"
                                     FieldType: ="s"
                                     Order: =1
                               - Trans_DocumentColumn:
@@ -425,9 +431,10 @@ Screens:
                                   IsLocked: true
                                   Properties:
                                     FieldDisplayName: ="Amount"
-                                    FieldName: ="cr7bb_amountlocalcurrency"
-                                    FieldType: ="c"
+                                    FieldName: ="AmountFormatted"
+                                    FieldType: ="s"
                                     Order: =5
+                                    Width: =120
                               - Trans_NoteColumn:
                                   Control: TableDataField@1.5.0
                                   Variant: textualColumn
@@ -520,8 +527,7 @@ Screens:
                                     Height: =25
                                     Text: |-
                                       ="CN Total: ฿" & Text(
-                                          Sum(
-                                              Filter(colTransactions, cr7bb_transactiontype = 'Transaction Type Choice'.'Credit Note'),
+                                          Sum(Filter(Trans_Gallery.AllItems, cr7bb_transactiontype = 'Transaction Type Choice'.'Credit Note'),
                                               cr7bb_amountlocalcurrency
                                           ),
                                           "#,##0.00"
@@ -537,8 +543,7 @@ Screens:
                                     Height: =25
                                     Text: |-
                                       ="DN Total: ฿" & Text(
-                                          Sum(
-                                              Filter(colTransactions, cr7bb_transactiontype = 'Transaction Type Choice'.'Debit Note'),
+                                          Sum(Filter(Trans_Gallery.AllItems, cr7bb_transactiontype = 'Transaction Type Choice'.'Debit Note'),
                                               cr7bb_amountlocalcurrency
                                           ),
                                           "#,##0.00"
@@ -574,7 +579,12 @@ Screens:
                               Height: =30
                               Size: =16
                               Text: |-
-                                ="Net Owed: ฿" & Text(Sum(colTransactions, cr7bb_amountlocalcurrency), "#,##0.00")
+                                ="Net Owed: ฿" & Text(
+                                    Sum(Trans_Gallery.AllItems,
+                                        cr7bb_amountlocalcurrency
+                                    ),
+                                    "#,##0.00"
+                                )
                               VerticalAlign: =VerticalAlign.Middle
                               Weight: ='TextCanvas.Weight'.Bold
                               Width: =Parent.Width - 30

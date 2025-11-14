@@ -1,110 +1,155 @@
-# Screen Development - ACTIVE Folder
+# Screen Development/ACTIVE
 
-**Purpose**: Work-in-progress screens and screen description files ready for implementation
-
-**Last Updated**: 2025-01-10
+**This is the active development workspace for Canvas App screens.**
 
 ---
 
-## 📋 Screen Description Files (Ready for Creator Subagent)
+## 📁 Directory Structure
 
-| Screen | Description File | Status | Template | Priority |
-|--------|------------------|--------|----------|----------|
-| **loadingScreen** | `loadingScreen-description.md` | ✅ Ready | Custom | **HIGH** |
-| **scnDashboard** | `scnDashboard_CREATION_BRIEF.md` | ✅ Ready | template-basic-screen.yaml | **HIGH** |
-| **scnUnauthorized** | `scnUnauthorized-description.md` | ✅ Ready | Custom | **HIGH** |
-| **scnCustomer** | `scnCustomer-description.md` | ✅ Ready | template-basic-screen.yaml | MEDIUM |
-| **scnTransactions** | `scnTransactions-description.md` | ✅ Ready | template-basic-screen.yaml | MEDIUM |
-| **scnSettings** | `scnSettings-description.md` | ✅ Ready | template-basic-screen.yaml | LOW |
-| **scnRole** | `scnRole-description.md` | ✅ Ready | template-table-view.yaml | LOW |
-
----
-
-## 🔄 Usage Workflow
-
-### For Main Agent (Claude Code)
-
-**When user requests screen creation:**
-
-1. **Check if description file exists** in this folder
-2. **If YES**:
-   - Ask user to review the description file
-   - Get user approval
-   - Invoke powerapp-screen-creator subagent with:
-     ```
-     "Read and implement: Screen Development/ACTIVE/[screenName]-description.md"
-     ```
-3. **If NO**:
-   - Read template: `~/.claude/powerapp-standards/screen-templates/screen-description-template.md`
-   - Read comprehensive design: `Documentation/COMPREHENSIVE_APP_DESIGN.md`
-   - Gather requirements from user
-   - Create description file in this folder
-   - Go to step 2
-
-### For Users (Manual Testing)
-
-1. **Review** description file mockup and specifications
-2. **Approve** for implementation
-3. After subagent creates YAML file:
-   - Use `/quick-check [screenName].yaml` for fast validation (10-30 sec)
-   - OR say "review [screenName]" for comprehensive review (2-3 min)
-4. **Fix** any critical errors found
-5. **Copy** YAML content and paste into Power Apps Studio
-6. **Test** in Power Apps Studio
-7. If approved, **move** to `Screen Development/READY/` folder
-
----
-
-## 📊 Development Priority
-
-### Phase 1: Core Screens (HIGH Priority) ✅ COMPLETE
-1. ✅ **loadingScreen** - Entry point (READY)
-2. ✅ **scnDashboard** - Main operational screen (READY)
-3. ✅ **scnUnauthorized** - Access denied (READY)
-
-### Phase 2: Operational Screens (MEDIUM Priority) ✅ COMPLETE
-4. ✅ **scnCustomer** - Customer management (READY)
-5. ✅ **scnTransactions** - Transaction review (READY)
-
-### Phase 3: Admin Screens (LOW Priority) ✅ COMPLETE
-6. ✅ **scnSettings** - Configuration (READY)
-7. ✅ **scnRole** - User management (READY)
-
----
-
-## 🎉 ALL SCREEN DESCRIPTIONS COMPLETE! (7 of 7)
-
-All screen description files have been created and are ready for the powerapp-screen-creator subagent.
-
----
-
-## 📝 Quick Commands
-
-**Check screen syntax**:
 ```
-/quick-check Screen Development/ACTIVE/[screenName].yaml
+ACTIVE/
+├── loadingScreen.yaml                    # Loading screen (production)
+├── scnDashboard.yaml                     # Dashboard screen (production)
+├── scnEmailApproval.yaml                 # Email approval (production)
+├── scnEmailMonitor.yaml                  # Email monitor (production)
+├── scnTransactions.yaml                  # Transactions screen (production)
+├── scnCustomerHistory.yaml               # Customer history (production)
+├── descriptions/                         # Screen requirement specifications
+│   ├── scnCustomer-description.md
+│   ├── scnCustomerHistory-description.md
+│   ├── scnDashboard-description.md
+│   ├── scnEmailApproval-description.md
+│   ├── scnEmailMonitor-description.md
+│   ├── scnRole-description.md
+│   ├── scnSettings-description.md
+│   ├── scnTransactions-description.md
+│   └── scnUnauthorized-description.md
+└── CLEANUP_STATE_V1_0_0_5.md             # Cleanup documentation
 ```
 
-**Full screen review**:
-```
-review [screenName]
-```
+---
 
-**Create description file** (for remaining 4 screens):
-- Read: `~/.claude/powerapp-standards/screen-templates/screen-description-template.md`
-- Read: `Documentation/COMPREHENSIVE_APP_DESIGN.md`
-- Write: `Screen Development/ACTIVE/[screenName]-description.md`
+## 🔄 Development Workflow
+
+### 1. Start with Requirements
+- Read or create `descriptions/scnMyScreen-description.md`
+- Defines all controls, formulas, and behavior
+- Used by screen creator subagent
+
+### 2. Create/Edit Screen
+- Work in `ACTIVE/scnMyScreen.yaml`
+- Use description as specification
+- Follow Nestlé Power Apps standards
+
+### 3. Validate During Development
+```bash
+/quick-check "Screen Development/ACTIVE/scnMyScreen.yaml"
+```
+Quick syntax check (10-30 sec, critical errors only)
+
+### 4. Full Review When Ready
+```bash
+/review-powerapp-screen "Screen Development/ACTIVE/scnMyScreen.yaml"
+```
+Comprehensive check (2-3 min, all standards)
+
+### 5. Export to Production
+- Open Power Apps Studio
+- Export screen → `Powerapp screens-DO-NOT-EDIT/scnMyScreen.yaml`
+- This becomes the official source
+
+### 6. Commit Changes
+- Commit description files to git
+- Commit approved exports to `Powerapp screens-DO-NOT-EDIT/`
+- Working files in ACTIVE are temporary
 
 ---
 
-## Git Status
+## ✅ Current Production Screens
 
-**Folder Status**: Optional `.gitignore`
-- Description files: **COMMIT** (persistent documentation)
-- YAML files: **GITIGNORE** (work-in-progress, paste into Power Apps Studio)
+All screens in this directory match `Powerapp screens-DO-NOT-EDIT/` (production versions):
+
+| Screen | Status | Purpose |
+|--------|--------|---------|
+| `loadingScreen.yaml` | ✅ Production | Initial loading experience |
+| `scnDashboard.yaml` | ✅ Production | AR Control Center dashboard |
+| `scnCustomerHistory.yaml` | ✅ Production | Transaction history viewer |
+| `scnEmailApproval.yaml` | ✅ Production | Email approval workflow |
+| `scnEmailMonitor.yaml` | ✅ Production | Email log monitoring |
+| `scnTransactions.yaml` | ✅ Production | Transaction list & details |
 
 ---
 
-**Last Updated**: 2025-01-10
-**Created By**: Claude Code Assistant
-**Project**: Finance Cash Customer Collection - Nestlé Thailand
+## 📝 Description Files
+
+Each screen has a description file in `descriptions/` that documents:
+- **Purpose** - What the screen does
+- **Data Source** - Which Dataverse tables/SharePoint lists
+- **Controls** - List of all UI controls with properties
+- **Formulas** - Key PowerFx expressions
+- **Navigation** - How user navigates to/from screen
+- **Styling** - Colors, fonts, layout rules
+- **Behavior** - User interactions and business logic
+
+**Why Keep Both?**
+- YAML file: Actual implementation
+- Description file: Requirements & documentation
+- Both are git-tracked for version history
+
+---
+
+## 🚀 Quick Start for New Development
+
+### Option 1: Create from Template
+```
+1. Create description file from template
+2. Get user approval
+3. Use /create-screen command to generate implementation
+4. Review and export
+```
+
+### Option 2: Edit Existing Screen
+```
+1. Find relevant YAML file
+2. Update in ACTIVE/
+3. Run /quick-check for validation
+4. Export from Power Apps Studio
+```
+
+---
+
+## ⚠️ Important Rules
+
+- ✅ **DO**: Work in ACTIVE for development
+- ✅ **DO**: Update description files for changes
+- ✅ **DO**: Export to `Powerapp screens-DO-NOT-EDIT/` when complete
+- ✅ **DO**: Use `/quick-check` during development
+- ✅ **DO**: Commit description files to git
+
+- ❌ **DON'T**: Commit unfinished YAML from ACTIVE
+- ❌ **DON'T**: Ignore validation warnings
+- ❌ **DON'T**: Skip the description file requirement
+- ❌ **DON'T**: Manually edit `Powerapp screens-DO-NOT-EDIT/` (export only)
+
+---
+
+## 📚 Resources
+
+- **Nestlé Standards**: `~/.claude/powerapp-standards/`
+- **Project Rules**: `CLAUDE.md` (root)
+- **Solution Guide**: `Powerapp solution Export/IMPORT_INSTRUCTIONS.md`
+- **Database Schema**: `Documentation/02-Database-Schema/FIELD_NAME_REFERENCE.md`
+- **Cleanup Notes**: `CLEANUP_STATE_V1_0_0_5.md`
+
+---
+
+## 🎯 Current Status
+
+**State**: v1.0.0.5 - Production Ready
+**Last Updated**: November 14, 2025
+**Solution Version**: Ready for import and deployment
+
+✅ All screens production-ready
+✅ All descriptions current
+✅ Development workflow optimized
+✅ Ready for next development cycle

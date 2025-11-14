@@ -4,16 +4,24 @@ Screens:
       Fill: =RGBA(243, 242, 241, 1)
       LoadingSpinnerColor: =RGBA(0, 101, 161, 1)
       OnVisible: |-
-        =UpdateContext({currentScreen: "Email Monitor"});
-        Set(_showMenu, false);
-        Set(_filterDate, If(!IsBlank(gblFilterDate), gblFilterDate, Today()));
-        Set(_statusFilter, If(!IsBlank(gblEmailStatusFilter), gblEmailStatusFilter, "All"));
-        Set(_selectedCustomer, Blank());
-        Set(_selectedEmail, If(!IsBlank(gblSelectedEmail), gblSelectedEmail, Blank()));
-        Set(_refreshTrigger, false);
+        =// Batch local variables with UpdateContext
+        UpdateContext({
+            currentScreen: "Email Monitor",
+            _showMenu: false,
+            _showConfirmation: false,
+            _confirmMessage: "",
+            _confirmAction: "",
+            _filterDate: If(!IsBlank(gblFilterDate), gblFilterDate, Today()),
+            _statusFilter: If(!IsBlank(gblEmailStatusFilter), gblEmailStatusFilter, "All"),
+            _selectedCustomer: Blank(),
+            _selectedEmail: If(!IsBlank(gblSelectedEmail), gblSelectedEmail, Blank()),
+            _refreshTrigger: false
+        });
+
+        // Data operations
         ClearCollect(
             colCustomers,
-            Sort('[THFinanceCashCollection]Customers', cr7bb_customername, SortOrder.Ascending)
+            Sort('[THFinanceCashCollection]Customers', 'Customer Name', SortOrder.Ascending)
         );
     Children:
       - EmailMon_Container:
@@ -48,7 +56,8 @@ Screens:
                         Color: =RGBA(255, 255, 255, 1)
                         Height: =50
                         Icon: =Icon.Hamburger
-                        OnSelect: =Set(_showMenu, !_showMenu)
+                        OnSelect: |-
+                          =UpdateContext({_showMenu: !_showMenu})
                         PaddingBottom: =10
                         PaddingLeft: =10
                         PaddingRight: =10
@@ -125,7 +134,10 @@ Screens:
                                   Properties:
                                     BasePaletteColor: =RGBA(0, 101, 161, 1)
                                     Height: =40
-                                    OnChange: =Set(_filterDate, Self.SelectedDate)
+                                    OnChange: |-
+                                      =UpdateContext({
+                                          _filterDate: Self.SelectedDate
+                                      });
                                     SelectedDate: =_filterDate
                                     Width: =180
                               - EmailMon_StatusLabel:
@@ -152,10 +164,11 @@ Screens:
                                     InputTextPlaceholder: ="Select status..."
                                     Items: =["All", "Success", "Failed", "Pending"]
                                     OnChange: |-
-                                      =Set(_statusFilter,
-                                          If(CountRows(Self.SelectedItems) > 0,
+                                      =UpdateContext({
+                                          _statusFilter: If(CountRows(Self.SelectedItems) > 0,
                                              First(Self.SelectedItems).Value,
-                                             "All"))
+                                             "All")
+                                      });
                                     Width: =180
                         - EmailMon_FilterRow2:
                             Control: GroupContainer@1.3.0
@@ -183,14 +196,16 @@ Screens:
                                   Control: ComboBox@0.0.51
                                   Properties:
                                     BasePaletteColor: =RGBA(0, 101, 161, 1)
+                                    DefaultSelectedItems: =_selectedCustomer
                                     Height: =40
                                     InputTextPlaceholder: ="Search customer..."
                                     Items: =colCustomers
                                     OnChange: |-
-                                      =Set(_selectedCustomer,
-                                          If(CountRows(Self.SelectedItems) > 0,
+                                      =UpdateContext({
+                                          _selectedCustomer: If(CountRows(Self.SelectedItems) > 0,
                                              First(Self.SelectedItems),
-                                             Blank()))
+                                             Blank())
+                                      });
                                     Width: =280
                                   Children:
                                     - EmailMon_CustomerName:
@@ -208,21 +223,27 @@ Screens:
                                     Height: =35
                                     Icon: ="Cancel"
                                     OnSelect: |-
-                                      =Set(_filterDate, Today());
-                                      Set(_statusFilter, "All");
-                                      Set(_selectedCustomer, Blank());
-                                      Set(_refreshTrigger, !_refreshTrigger);
+                                      =UpdateContext({
+                                          _filterDate: If(!IsBlank(gblFilterDate), gblFilterDate, Today()),
+                                          _statusFilter: If(!IsBlank(gblEmailStatusFilter), gblEmailStatusFilter, "All"),
+                                          _selectedCustomer: Blank(),
+                                          _refreshTrigger: !_refreshTrigger
+                                      });
+                                      Reset(EmailMon_CustomerCombo)
                                     Text: ="Clear Filters"
-                                    Width: =120
+                                    Width: =150
                               - EmailMon_ApplyBtn:
                                   Control: Button@0.0.45
                                   Properties:
                                     BasePaletteColor: =RGBA(0, 101, 161, 1)
                                     Height: =35
                                     Icon: ="Search"
-                                    OnSelect: =Set(_refreshTrigger, !_refreshTrigger)
+                                    OnSelect: |-
+                                      =UpdateContext({
+                                          _refreshTrigger: !_refreshTrigger
+                                      });
                                     Text: ="Apply Filters"
-                                    Width: =120
+                                    Width: =150
                               - EmailMon_ResultCount:
                                   Control: Text@0.0.51
                                   Properties:
@@ -250,19 +271,22 @@ Screens:
                               SortByColumns(
                                   Filter(
                                       '[THFinanceCashCollection]Emaillogs',
-                                      DateValue(cr7bb_sentdatetime) = _filterDate &&
+                                      'Sent Date Time' >= _filterDate && 'Sent Date Time' < DateAdd(_filterDate, 1, TimeUnit.Days) &&
                                       (_statusFilter = "All" ||
-                                       (_statusFilter = "Success" && cr7bb_sendstatus = 'Send Status Choice'.Success) ||
-                                       (_statusFilter = "Failed" && cr7bb_sendstatus = 'Send Status Choice'.Failed) ||
-                                       (_statusFilter = "Pending" && cr7bb_sendstatus = 'Send Status Choice'.Pending)) &&
+                                       (_statusFilter = "Success" && 'Send Status' = 'Send Status Choice'.Success) ||
+                                       (_statusFilter = "Failed" && 'Send Status' = 'Send Status Choice'.Failed) ||
+                                       (_statusFilter = "Pending" && 'Send Status' = 'Send Status Choice'.Pending)) &&
                                       (IsBlank(_selectedCustomer) ||
-                                       cr7bb_customer = _selectedCustomer.cr7bb_customerid)
+                                       Customer.'[THFinanceCashCollection]Customer' = _selectedCustomer.'[THFinanceCashCollection]Customer')
                                   ),
                                   "cr7bb_sentdatetime",
                                   SortOrder.Descending
                               )
                           )
-                        OnSelect: =Set(_selectedEmail, ThisItem)
+                        OnSelect: |-
+                          =UpdateContext({
+                              _selectedEmail: ThisItem
+                          });
                         TemplateSize: =70
                         Width: =Parent.Width - 20
                         X: =10
@@ -274,7 +298,7 @@ Screens:
                             Properties:
                               Fill: |-
                                 =If(
-                                    !IsBlank(_selectedEmail) && ThisItem.cr7bb_thfinancecashcollectionemaillogid = _selectedEmail.cr7bb_thfinancecashcollectionemaillogid,
+                                    !IsBlank(_selectedEmail) && ThisItem.'[THFinanceCashCollection]Emaillog' = _selectedEmail.'[THFinanceCashCollection]Emaillog',
                                     RGBA(0, 101, 161, 0.1),
                                     RGBA(255, 255, 255, 1)
                                 )
@@ -297,18 +321,18 @@ Screens:
                                   Properties:
                                     Color: |-
                                       =If(
-                                          ThisItem.cr7bb_sendstatus = 'Send Status Choice'.Success,
+                                          ThisItem.'Send Status' = 'Send Status Choice'.Success,
                                           RGBA(16, 124, 16, 1),
-                                          If(ThisItem.cr7bb_sendstatus = 'Send Status Choice'.Failed,
+                                          If(ThisItem.'Send Status' = 'Send Status Choice'.Failed,
                                              RGBA(168, 0, 0, 1),
                                              RGBA(96, 94, 92, 1))
                                       )
                                     Height: =40
                                     Icon: |-
                                       =If(
-                                          ThisItem.cr7bb_sendstatus = 'Send Status Choice'.Success,
+                                          ThisItem.'Send Status' = 'Send Status Choice'.Success,
                                           Icon.CheckBadge,
-                                          If(ThisItem.cr7bb_sendstatus = 'Send Status Choice'.Failed,
+                                          If(ThisItem.'Send Status' = 'Send Status Choice'.Failed,
                                              Icon.Warning,
                                              Icon.Clock)
                                       )
@@ -329,7 +353,7 @@ Screens:
                                           Font: =Font.Lato
                                           FontColor: =RGBA(0, 0, 0, 1)
                                           Height: =20
-                                          Text: =Text(ThisItem.cr7bb_sentdatetime, "dd/mm/yyyy hh:mm")
+                                          Text: =Text(ThisItem.'Sent Date Time', "dd/mm/yyyy hh:mm")
                                           Weight: ='TextCanvas.Weight'.Semibold
                                           Width: =Parent.Width
                                     - EmailMon_CardCustomer:
@@ -341,9 +365,9 @@ Screens:
                                           Size: =12
                                           Text: |-
                                             =If(
-                                                IsBlank(ThisItem.cr7bb_customer),
+                                                IsBlank(ThisItem.Customer),
                                                 "Unknown Customer",
-                                                LookUp('[THFinanceCashCollection]Customers', cr7bb_customerid = ThisItem.cr7bb_customer).cr7bb_customername
+                                                LookUp('[THFinanceCashCollection]Customers', '[THFinanceCashCollection]Customer' = ThisItem.Customer.'[THFinanceCashCollection]Customer').'Customer Name'
                                             )
                                           Width: =Parent.Width
                               - EmailMon_CardStatus:
@@ -353,11 +377,13 @@ Screens:
                                     DropShadow: =DropShadow.None
                                     Fill: |-
                                       =If(
-                                          ThisItem.cr7bb_sendstatus = 'Send Status Choice'.Success,
+                                          ThisItem.'Send Status' = 'Send Status Choice'.Success,
                                           RGBA(16, 124, 16, 0.1),
-                                          If(ThisItem.cr7bb_sendstatus = 'Send Status Choice'.Failed,
+                                          If(ThisItem.'Send Status' = 'Send Status Choice'.Failed,
                                              RGBA(168, 0, 0, 0.1),
-                                             RGBA(96, 94, 92, 0.1))
+                                             If(ThisItem.'Send Status' = 'Send Status Choice'.Approved,
+                                              RGBA(16, 16, 255, 0.2),
+                                              RGBA(96, 94, 92, 0.1)))
                                       )
                                     FillPortions: =0
                                     LayoutAlignItems: =LayoutAlignItems.Center
@@ -375,9 +401,9 @@ Screens:
                                           Font: =Font.Lato
                                           FontColor: |-
                                             =If(
-                                                ThisItem.cr7bb_sendstatus = 'Send Status Choice'.Success,
+                                                ThisItem.'Send Status' = 'Send Status Choice'.Success,
                                                 RGBA(16, 124, 16, 1),
-                                                If(ThisItem.cr7bb_sendstatus = 'Send Status Choice'.Failed,
+                                                If(ThisItem.'Send Status' = 'Send Status Choice'.Failed,
                                                    RGBA(168, 0, 0, 1),
                                                    RGBA(96, 94, 92, 1))
                                             )
@@ -385,11 +411,13 @@ Screens:
                                           Size: =12
                                           Text: |-
                                             =If(
-                                                ThisItem.cr7bb_sendstatus = 'Send Status Choice'.Success,
+                                                ThisItem.'Send Status' = 'Send Status Choice'.Success,
                                                 "Success",
-                                                If(ThisItem.cr7bb_sendstatus = 'Send Status Choice'.Failed,
+                                                If(ThisItem.'Send Status' = 'Send Status Choice'.Failed,
                                                    "Failed",
-                                                   "Pending")
+                                                    If(ThisItem.'Send Status' = 'Send Status Choice'.Approved,
+                                                    "Approved",
+                                                    "Pending"))
                                             )
                                           VerticalAlign: =VerticalAlign.Middle
                                           Weight: ='TextCanvas.Weight'.Semibold
@@ -399,7 +427,7 @@ Screens:
                                     Font: =Font.Lato
                                     FontColor: =RGBA(0, 0, 0, 1)
                                     Height: =40
-                                    Text: =Text(ThisItem.cr7bb_totalamount, "฿#,##0.00")
+                                    Text: =Text(ThisItem.'Total Amount', "฿#,##0.00")
                                     VerticalAlign: =VerticalAlign.Middle
                                     Weight: ='TextCanvas.Weight'.Semibold
                                     Width: =120
@@ -432,9 +460,9 @@ Screens:
                               Size: =16
                               Text: |-
                                 ="Email Details: " & If(
-                                    IsBlank(_selectedEmail.cr7bb_customer),
+                                    IsBlank(_selectedEmail.Customer),
                                     "Unknown Customer",
-                                    LookUp('[THFinanceCashCollection]Customers', cr7bb_customerid = _selectedEmail.cr7bb_customer).cr7bb_customername
+                                    _selectedEmail.Customer.'Customer Name'
                                 )
                               Weight: ='TextCanvas.Weight'.Bold
                               Width: =Parent.Width - 30
@@ -462,7 +490,7 @@ Screens:
                                     FontColor: =RGBA(0, 0, 0, 1)
                                     Size: =13
                                     Text: |-
-                                      ="To: " & _selectedEmail.cr7bb_recipientemails
+                                      ="To: " & _selectedEmail.'Recipient Emails'
                                     Width: =Parent.Width
                               - EmailMon_PreviewCC:
                                   Control: Text@0.0.51
@@ -472,7 +500,7 @@ Screens:
                                     FontColor: =RGBA(0, 0, 0, 1)
                                     Size: =13
                                     Text: |-
-                                      ="CC: " & _selectedEmail.cr7bb_ccemails
+                                      ="CC: " & _selectedEmail.'CC Emails'
                                     Width: =Parent.Width
                               - EmailMon_PreviewSubject:
                                   Control: Text@0.0.51
@@ -482,7 +510,7 @@ Screens:
                                     FontColor: =RGBA(0, 0, 0, 1)
                                     Size: =13
                                     Text: |-
-                                      ="Subject: " & _selectedEmail.cr7bb_emailsubject
+                                      ="Subject: " & _selectedEmail.'Email Subject'
                                     Weight: ='TextCanvas.Weight'.Semibold
                                     Width: =Parent.Width
                               - EmailMon_PreviewSentInfo:
@@ -493,10 +521,10 @@ Screens:
                                     FontColor: =RGBA(100, 100, 100, 1)
                                     Size: =12
                                     Text: |-
-                                      ="Sent: " & Text(_selectedEmail.cr7bb_sentdatetime, "dd/mm/yyyy hh:mm:ss") & " | Status: " & If(
-                                          _selectedEmail.cr7bb_sendstatus = 'Send Status Choice'.Success,
+                                      ="Sent: " & Text(_selectedEmail.'Sent Date Time', "dd/mm/yyyy hh:mm:ss") & " | Status: " & If(
+                                          _selectedEmail.'Send Status' = 'Send Status Choice'.Success,
                                           "Success",
-                                          If(_selectedEmail.cr7bb_sendstatus = 'Send Status Choice'.Failed,
+                                          If(_selectedEmail.'Send Status' = 'Send Status Choice'.Failed,
                                              "Failed",
                                              "Pending")
                                       )
@@ -510,11 +538,11 @@ Screens:
                                     Size: =13
                                     Text: |-
                                       =If(
-                                          !IsBlank(_selectedEmail.cr7bb_errormessage),
-                                          "Error: " & _selectedEmail.cr7bb_errormessage,
+                                          !IsBlank(_selectedEmail.'Error Message'),
+                                          "Error: " & _selectedEmail.'Error Message',
                                           ""
                                       )
-                                    Visible: =!IsBlank(_selectedEmail.cr7bb_errormessage)
+                                    Visible: =!IsBlank(_selectedEmail.'Error Message')
                                     Weight: ='TextCanvas.Weight'.Semibold
                                     Width: =Parent.Width
                         - EmailMon_PreviewActions:
@@ -535,21 +563,20 @@ Screens:
                                     BasePaletteColor: =RGBA(0, 101, 161, 1)
                                     DisplayMode: |-
                                       =If(
-                                          _selectedEmail.cr7bb_sendstatus = 'Send Status Choice'.Failed,
+                                          _selectedEmail.'Send Status' = 'Send Status Choice'.Failed,
                                           DisplayMode.Edit,
                                           DisplayMode.Disabled
                                       )
                                     Height: =35
                                     Icon: ="Mail"
                                     OnSelect: |-
-                                      =If(
-                                          Confirm("Resend email to " & LookUp('[THFinanceCashCollection]Customers', cr7bb_customerid = _selectedEmail.cr7bb_customer).cr7bb_customername & "?"),
-                                          Notify("Email resend initiated. Check status in a few minutes.", NotificationType.Information);
-                                          Set(_selectedEmail, Blank());
-                                          Set(_refreshTrigger, !_refreshTrigger)
-                                      )
+                                      =UpdateContext({
+                                          _showConfirmation: true,
+                                          _confirmMessage: "Resend email to " & _selectedEmail.Customer.'Customer Name' & "?",
+                                          _confirmAction: "Resend email"
+                                      });
                                     Text: ="Resend Email"
-                                    Width: =135
+                                    Width: =150
                               - EmailMon_ExportBtn:
                                   Control: Button@0.0.45
                                   Properties:
@@ -558,7 +585,7 @@ Screens:
                                     Icon: ="Download"
                                     OnSelect: =Notify("Export functionality coming soon", NotificationType.Information)
                                     Text: ="Export Log"
-                                    Width: =120
+                                    Width: =150
                               - EmailMon_DeleteBtn:
                                   Control: Button@0.0.45
                                   Properties:
@@ -566,15 +593,13 @@ Screens:
                                     Height: =35
                                     Icon: ="Delete"
                                     OnSelect: |-
-                                      =If(
-                                          Confirm("Delete this email log? This action cannot be undone."),
-                                          Remove('[THFinanceCashCollection]Emaillogs', _selectedEmail);
-                                          Notify("Email log deleted", NotificationType.Warning);
-                                          Set(_selectedEmail, Blank());
-                                          Set(_refreshTrigger, !_refreshTrigger)
-                                      )
+                                      =UpdateContext({
+                                          _showConfirmation: true,
+                                          _confirmMessage: "Delete this email log? This action cannot be undone.",
+                                          _confirmAction: "Delete this email log"
+                                      });
                                     Text: ="Delete"
-                                    Visible: =gblUserRole = "Admin"
+                                    Visible: =gblIsAdmin
                                     Width: =90
             - EmailMon_NavigationMenu:
                 Control: CanvasComponent
@@ -587,3 +612,98 @@ Screens:
                   Y: =70
                   navItems: =Navigation
                   navSelected: =currentScreen
+            - EmailMon_ConfirmationOverlay:
+                Control: GroupContainer@1.3.0
+                Variant: ManualLayout
+                Properties:
+                  Fill: =RGBA(0, 0, 0, 0.5)
+                  Height: =Parent.Height
+                  Visible: =_showConfirmation
+                  Width: =Parent.Width
+                Children:
+                  - ConfirmationBox_1:
+                      Control: GroupContainer@1.3.0
+                      Variant: AutoLayout
+                      Properties:
+                        DropShadow: =DropShadow.Regular
+                        Fill: =RGBA(255, 255, 255, 1)
+                        LayoutDirection: =LayoutDirection.Vertical
+                        LayoutGap: =20
+                        PaddingBottom: =20
+                        PaddingLeft: =20
+                        PaddingRight: =20
+                        PaddingTop: =20
+                        RadiusBottomLeft: =10
+                        RadiusBottomRight: =10
+                        RadiusTopLeft: =10
+                        RadiusTopRight: =10
+                        Width: =400
+                        X: =(Parent.Width - Self.Width) / 2
+                        Y: =(Parent.Height - Self.Height) / 2
+                      Children:
+                        - ConfirmationText_1:
+                            Control: Text@0.0.51
+                            Properties:
+                              Font: =Font.Lato
+                              FontColor: =RGBA(0, 0, 0, 1)
+                              Height: =100
+                              Size: =16
+                              Text: =_confirmMessage
+                              VerticalAlign: =VerticalAlign.Top
+                              Weight: ='TextCanvas.Weight'.Semibold
+                              Width: =360
+                        - ConfirmationButtons_1:
+                            Control: GroupContainer@1.3.0
+                            Variant: AutoLayout
+                            Properties:
+                              DropShadow: =DropShadow.None
+                              LayoutDirection: =LayoutDirection.Horizontal
+                              LayoutGap: =10
+                              LayoutJustifyContent: =LayoutJustifyContent.End
+                              LayoutMinHeight: =35
+                              LayoutMinWidth: =100
+                              Width: =360
+                            Children:
+                              - ConfirmBtn_1:
+                                  Control: Button@0.0.45
+                                  Properties:
+                                    BasePaletteColor: =RGBA(5, 102, 178, 1)
+                                    Height: =35
+                                    Icon: ="Checkmark"
+                                    OnSelect: |-
+                                      =Switch(
+                                          _confirmAction,
+                                          "Delete this email log", 
+                                              Remove('[THFinanceCashCollection]Emaillogs', _selectedEmail);
+                                              Notify("Email log deleted", NotificationType.Warning);
+                                              UpdateContext({
+                                                  _selectedEmail: Blank(),
+                                                  _refreshTrigger: !_refreshTrigger
+                                              });
+                                          ,
+                                          "Resend email", 
+                                              Notify("Email resend initiated. Check status in a few minutes.", NotificationType.Information);
+                                              UpdateContext({
+                                                  _selectedEmail: Blank(),
+                                                  _refreshTrigger: !_refreshTrigger
+                                              });
+                                          ,
+                                          Blank()
+                                      );
+                                      UpdateContext({
+                                          _showConfirmation: false
+                                      });
+                                    Text: ="OK"
+                                    Width: =120
+                              - CancelBtn_1:
+                                  Control: Button@0.0.45
+                                  Properties:
+                                    BasePaletteColor: =RGBA(100, 100, 100, 1)
+                                    Height: =35
+                                    Icon: ="Cancel"
+                                    OnSelect: |-
+                                      =UpdateContext({
+                                          _showConfirmation: false
+                                      })
+                                    Text: ="Cancel"
+                                    Width: =90

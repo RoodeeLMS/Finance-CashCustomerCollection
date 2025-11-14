@@ -1,0 +1,789 @@
+{
+  "properties": {
+    "connectionReferences": {
+      "shared_sharepointonline-1": {
+        "runtimeSource": "embedded",
+        "connection": {
+          "connectionReferenceLogicalName": "new_sharedsharepointonline_3ea07"
+        },
+        "api": {
+          "name": "shared_sharepointonline"
+        }
+      },
+      "shared_commondataserviceforapps-1": {
+        "runtimeSource": "embedded",
+        "connection": {
+          "connectionReferenceLogicalName": "new_sharedcommondataserviceforapps_1501b"
+        },
+        "api": {
+          "name": "shared_commondataserviceforapps"
+        }
+      },
+      "shared_office365-1": {
+        "runtimeSource": "embedded",
+        "connection": {
+          "connectionReferenceLogicalName": "new_sharedoffice365_d374d"
+        },
+        "api": {
+          "name": "shared_office365"
+        }
+      },
+      "shared_sharepointonline-2": {
+        "runtimeSource": "embedded",
+        "connection": {
+          "connectionReferenceLogicalName": "new_sharedsharepointonline_e6d86"
+        },
+        "api": {
+          "name": "shared_sharepointonline"
+        }
+      },
+      "shared_sharepointonline": {
+        "runtimeSource": "embedded",
+        "connection": {
+          "connectionReferenceLogicalName": "new_sharedsharepointonline_48143"
+        },
+        "api": {
+          "name": "shared_sharepointonline"
+        }
+      },
+      "shared_excelonlinebusiness": {
+        "runtimeSource": "embedded",
+        "connection": {
+          "connectionReferenceLogicalName": "nc_sharedexcelonlinebusiness_67d04"
+        },
+        "api": {
+          "name": "shared_excelonlinebusiness"
+        }
+      }
+    },
+    "definition": {
+      "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+      "contentVersion": "1.0.0.0",
+      "parameters": {
+        "$connections": {
+          "defaultValue": {},
+          "type": "Object"
+        },
+        "$authentication": {
+          "defaultValue": {},
+          "type": "SecureObject"
+        },
+        "System Notification Email (nc_SystemNotificationEmail)": {
+          "defaultValue": "Nick.Chamnong@th.nestle.com",
+          "type": "String",
+          "metadata": {
+            "schemaName": "nc_SystemNotificationEmail"
+          }
+        }
+      },
+      "triggers": {
+        "Recurrence": {
+          "recurrence": {
+            "frequency": "Day",
+            "interval": 1,
+            "timeZone": "SE Asia Standard Time",
+            "schedule": {
+              "hours": [
+                "8"
+              ],
+              "minutes": [
+                0
+              ]
+            }
+          },
+          "metadata": {
+            "operationMetadataId": "b203eaca-549d-4e7b-a781-b1e494e77377"
+          },
+          "type": "Recurrence"
+        }
+      },
+      "actions": {
+        "Initialize_varProcessDate": {
+          "runAfter": {},
+          "metadata": {
+            "operationMetadataId": "5c146933-9345-4e1f-8506-756822c4405b"
+          },
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "varProcessDate",
+                "type": "string",
+                "value": "@{formatDateTime(utcNow(), 'yyyy-MM-dd')}"
+              }
+            ]
+          }
+        },
+        "Initialize_varBatchID": {
+          "runAfter": {
+            "Initialize_varProcessDate": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "74b8b639-6f0a-4464-b18c-45bf4bfded52"
+          },
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "varBatchID",
+                "type": "string",
+                "value": "@{formatDateTime(utcNow(), 'yyyyMMdd_HHmmss')}"
+              }
+            ]
+          }
+        },
+        "Initialize_varRowCounter": {
+          "runAfter": {
+            "Initialize_varBatchID": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "357da4bc-ac0a-4ff2-aaba-38f17c6a13e0"
+          },
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "varRowCounter",
+                "type": "integer",
+                "value": 0
+              }
+            ]
+          }
+        },
+        "Initialize_varErrorCount": {
+          "runAfter": {
+            "Initialize_varRowCounter": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "b275fe6d-1716-432e-a3ee-6de5607e4007"
+          },
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "varErrorCount",
+                "type": "integer",
+                "value": 0
+              }
+            ]
+          }
+        },
+        "Initialize_varTransactionCount": {
+          "runAfter": {
+            "Initialize_varErrorCount": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "8707cdf5-88f4-4018-b8b4-7906f40d2fe6"
+          },
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "varTransactionCount",
+                "type": "integer",
+                "value": 0
+              }
+            ]
+          }
+        },
+        "Initialize_varProcessLogID": {
+          "runAfter": {
+            "Initialize_varTransactionCount": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "e8085083-8bc7-4330-a6a6-cecfaf29f87f"
+          },
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "varProcessLogID",
+                "type": "string"
+              }
+            ]
+          }
+        },
+        "Initialize_varErrorMessages": {
+          "runAfter": {
+            "Initialize_varProcessLogID": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "5f52201c-832c-4b4b-92c7-3295b6a80e29"
+          },
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "varErrorMessages",
+                "type": "array",
+                "value": []
+              }
+            ]
+          }
+        },
+        "Initialize_varFileName": {
+          "runAfter": {
+            "Initialize_varErrorMessages": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "9328baa0-8131-4632-8f01-436452b90d70"
+          },
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "varFileName",
+                "type": "string"
+              }
+            ]
+          }
+        },
+        "Initialize_varSourceFilePath": {
+          "runAfter": {
+            "Initialize_varFileName": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+          },
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "varSourceFilePath",
+                "type": "string"
+              }
+            ]
+          }
+        },
+        "Get_files_(properties_only)": {
+          "runAfter": {
+            "Get_folders_(properties_only)": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "36869fab-da36-428c-93e7-1917d78039e3"
+          },
+          "type": "OpenApiConnection",
+          "inputs": {
+            "host": {
+              "connectionName": "shared_sharepointonline-1",
+              "operationId": "GetFileItems",
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+            },
+            "parameters": {
+              "dataset": "https://nestle.sharepoint.com/teams/THFinancePowerPlatformSolutions",
+              "table": "375efa2c-aef5-4522-b27f-5cd2749a74a8",
+              "folderPath": "@first(outputs('Get_folders_(properties_only)')?['body/value'])?['{FullPath}']",
+              "viewScopeOption": "RecursiveAll",
+              "$filter": "Created ge '@{addDays(utcNow(), -1)}'",
+              "$orderby": "Created desc",
+              "$top": 1
+            },
+            "authentication": "@parameters('$authentication')"
+          }
+        },
+        "Set_varFileName": {
+          "runAfter": {
+            "Get_files_(properties_only)": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "c1fc2b19-d83b-4a03-bdfb-5c6f6af027a4"
+          },
+          "type": "SetVariable",
+          "inputs": {
+            "name": "varFileName",
+            "value": "@{first(outputs('Get_files_(properties_only)')?['body/value'])?['{Name}']}"
+          }
+        },
+        "Set_varSourceFilePath": {
+          "runAfter": {
+            "Set_varFileName": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "b2c3d4e5-f6a7-8901-bcde-f12345678901"
+          },
+          "type": "SetVariable",
+          "inputs": {
+            "name": "varSourceFilePath",
+            "value": "@{first(outputs('Get_files_(properties_only)')?['body/value'])?['{Path}']}"
+          }
+        },
+        "Condition_Check_File_Already_Processed": {
+          "actions": {
+            "Terminate_Already_Processed": {
+              "runAfter": {},
+              "metadata": {
+                "operationMetadataId": "67626527-45cc-45cb-bd83-d73a1ecf0f62"
+              },
+              "type": "Terminate",
+              "inputs": {
+                "runStatus": "Succeeded"
+              }
+            }
+          },
+          "runAfter": {
+            "Set_varSourceFilePath": [
+              "Succeeded"
+            ]
+          },
+          "expression": {
+            "contains": [
+              "@variables('varFileName')",
+              "_Processed"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "53c8d625-b273-4369-9716-04a75531cfa3"
+          },
+          "type": "If"
+        },
+        "Create_Process_Log": {
+          "runAfter": {
+            "Condition_Check_File_Already_Processed": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "67c17423-5488-452b-94a5-4023c95902ed"
+          },
+          "type": "OpenApiConnection",
+          "inputs": {
+            "host": {
+              "connectionName": "shared_commondataserviceforapps-1",
+              "operationId": "CreateRecord",
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps"
+            },
+            "parameters": {
+              "entityName": "cr7bb_thfinancecashcollectionprocesslogs",
+              "item/cr7bb_processdate": "@variables('varProcessDate')",
+              "item/cr7bb_emailsfailed": 0,
+              "item/cr7bb_emailssent": 0,
+              "item/cr7bb_processedby": "@{workflow()?['run']?['name']}",
+              "item/cr7bb_sapfilename": "@variables('varFileName')",
+              "item/cr7bb_sourcefilepath": "@variables('varSourceFilePath')",
+              "item/cr7bb_starttime": "@utcNow()",
+              "item/cr7bb_status": 676180000,
+              "item/cr7bb_totalcustomers": 0,
+              "item/cr7bb_transactionsexcluded": 0,
+              "item/cr7bb_transactionsprocessed": 0
+            },
+            "authentication": "@parameters('$authentication')"
+          }
+        },
+        "Set_varProcessLogID": {
+          "runAfter": {
+            "Create_Process_Log": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "fb6a98ef-cff8-48d0-bb24-a0ce246971c1"
+          },
+          "type": "SetVariable",
+          "inputs": {
+            "name": "varProcessLogID",
+            "value": "@outputs('Create_Process_Log')?['body/cr7bb_thfinancecashcollectionprocesslogid']"
+          }
+        },
+        "Apply_to_each_row": {
+          "foreach": "@json(body('Run_script_ConvertToJSON')?['result'])",
+          "actions": {
+            "Increment_varRowCounter": {
+              "runAfter": {},
+              "metadata": {
+                "operationMetadataId": "1716b984-380f-4812-a5e0-822eddf39628"
+              },
+              "type": "IncrementVariable",
+              "inputs": {
+                "name": "varRowCounter",
+                "value": 1
+              }
+            },
+            "Check_if_Summary_Row": {
+              "actions": {
+                "Compose_Summary": {
+                  "runAfter": {},
+                  "metadata": {
+                    "operationMetadataId": "5a831f50-3ee6-4519-8e3d-4d2893909a3c"
+                  },
+                  "type": "Compose",
+                  "inputs": {
+                    "type": "summary",
+                    "account": "@{items('Apply_to_each_row')?['Account']}",
+                    "amount": "@{items('Apply_to_each_row')?['AmountInLocalCurrency']}"
+                  }
+                }
+              },
+              "runAfter": {
+                "Increment_varRowCounter": [
+                  "Succeeded"
+                ]
+              },
+              "else": {
+                "actions": {
+                  "Compose_isExcluded": {
+                    "runAfter": {},
+                    "metadata": {
+                      "operationMetadataId": "55188850-088d-4c60-88a6-998c70535774"
+                    },
+                    "type": "Compose",
+                    "inputs": "@or(contains(toLower(coalesce(items('Apply_to_each_row')?['Text'], '')), 'paid'), contains(toLower(coalesce(items('Apply_to_each_row')?['Text'], '')), 'partial payment'), contains(toLower(coalesce(items('Apply_to_each_row')?['Text'], '')), 'exclude'), contains(coalesce(items('Apply_to_each_row')?['Text'], ''), 'รักษาตลาด'), contains(toLower(coalesce(items('Apply_to_each_row')?['Text'], '')), 'bill credit 30 days'))"
+                  },
+                  "Compose_ParsedAmount": {
+                    "runAfter": {
+                      "Compose_isExcluded": [
+                        "Succeeded"
+                      ]
+                    },
+                    "metadata": {
+                      "operationMetadataId": "63d70b16-c806-4f21-b955-bc407f6b40ef"
+                    },
+                    "type": "Compose",
+                    "inputs": "@float(replace(replace(string(items('Apply_to_each_row')?['AmountInLocalCurrency']), ',', ''), '\"', ''))"
+                  },
+                  "Compose_TransactionType": {
+                    "runAfter": {
+                      "Compose_ParsedAmount": [
+                        "Succeeded"
+                      ]
+                    },
+                    "metadata": {
+                      "operationMetadataId": "24739764-603b-4370-b29a-7d6a2bdc196d"
+                    },
+                    "type": "Compose",
+                    "inputs": "@if(less(outputs('Compose_ParsedAmount'), 0), 676180000, 676180001)"
+                  },
+                  "Create_transaction": {
+                    "runAfter": {
+                      "Compose_TransactionType": [
+                        "Succeeded"
+                      ]
+                    },
+                    "metadata": {
+                      "operationMetadataId": "18443359-600e-44ce-87f7-505db0fe94a6"
+                    },
+                    "type": "OpenApiConnection",
+                    "inputs": {
+                      "host": {
+                        "connectionName": "shared_commondataserviceforapps-1",
+                        "operationId": "CreateRecord",
+                        "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps"
+                      },
+                      "parameters": {
+                        "entityName": "cr7bb_thfinancecashcollectiontransactions",
+                        "item/cr7bb_documentnumber": "@items('Apply_to_each_row')?['DocumentNumber']",
+                        "item/cr7bb_amountlocalcurrency": "@outputs('Compose_ParsedAmount')",
+                        "item/cr7bb_arrearsdays": "@int(coalesce(items('Apply_to_each_row')?['ArrearsByNetDueDate'], 0))",
+                        "item/cr7bb_assignment": "@items('Apply_to_each_row')?['Assignment']",
+                        "item/cr7bb_Customer@odata.bind": "cr7bb_thfinancecashcollectioncustomers(cr7bb_customercode='@{items('Apply_to_each_row')?['Account']}')",
+                        "item/cr7bb_daycount": "@int(coalesce(items('Apply_to_each_row')?['ArrearsByNetDueDate'], 0))",
+                        "item/cr7bb_documentdate": "@items('Apply_to_each_row')?['DocumentDate']",
+                        "item/cr7bb_documenttype": "@items('Apply_to_each_row')?['DocumentType']",
+                        "item/cr7bb_emailsent": false,
+                        "item/cr7bb_excludereason": "@if(outputs('Compose_isExcluded'), 'Keyword found in text field', null)",
+                        "item/cr7bb_isexcluded": "@outputs('Compose_isExcluded')",
+                        "item/cr7bb_isprocessed": false,
+                        "item/cr7bb_netduedate": "@items('Apply_to_each_row')?['NetDueDate']",
+                        "item/cr7bb_processbatch": "@variables('varBatchID')",
+                        "item/cr7bb_recordtype": 676180000,
+                        "item/cr7bb_referenceinformation": "@items('Apply_to_each_row')?['Reference']",
+                        "item/cr7bb_rownumber": "@variables('varRowCounter')",
+                        "item/cr7bb_sourcefilename": "@variables('varFileName')",
+                        "item/cr7bb_sourcefilepath": "@variables('varSourceFilePath')",
+                        "item/cr7bb_textfield": "@items('Apply_to_each_row')?['Text']",
+                        "item/cr7bb_transactionprocessdate": "@variables('varProcessDate')",
+                        "item/cr7bb_transactiontype": "@outputs('Compose_TransactionType')"
+                      },
+                      "authentication": "@parameters('$authentication')"
+                    }
+                  },
+                  "Increment_varTransactionCount": {
+                    "runAfter": {
+                      "Create_transaction": [
+                        "Succeeded"
+                      ]
+                    },
+                    "metadata": {
+                      "operationMetadataId": "8de19b84-bbf9-43cb-a06d-cb1fc4b3e8c4"
+                    },
+                    "type": "IncrementVariable",
+                    "inputs": {
+                      "name": "varTransactionCount",
+                      "value": 1
+                    }
+                  },
+                  "Log_Create_Error": {
+                    "actions": {
+                      "Append_error_to_array": {
+                        "runAfter": {},
+                        "metadata": {
+                          "operationMetadataId": "949584c7-1aa0-4c03-83b1-f8d616599cff"
+                        },
+                        "type": "AppendToArrayVariable",
+                        "inputs": {
+                          "name": "varErrorMessages",
+                          "value": "Row @{variables('varRowCounter')}: Failed to create transaction - @{outputs('Create_transaction')?['error']?['message']}"
+                        }
+                      },
+                      "Increment_varErrorCount": {
+                        "runAfter": {
+                          "Append_error_to_array": [
+                            "Succeeded"
+                          ]
+                        },
+                        "metadata": {
+                          "operationMetadataId": "c72e8d73-bc4f-417b-86f4-2d862e0c2028"
+                        },
+                        "type": "IncrementVariable",
+                        "inputs": {
+                          "name": "varErrorCount",
+                          "value": 1
+                        }
+                      }
+                    },
+                    "runAfter": {
+                      "Create_transaction": [
+                        "Failed",
+                        "TimedOut"
+                      ]
+                    },
+                    "metadata": {
+                      "operationMetadataId": "e02fe103-2fd9-41e4-b209-ef851c659884"
+                    },
+                    "type": "Scope"
+                  }
+                }
+              },
+              "expression": {
+                "and": [
+                  {
+                    "equals": [
+                      "@empty(items('Apply_to_each_row')?['DocumentNumber'])",
+                      "@true"
+                    ]
+                  }
+                ]
+              },
+              "metadata": {
+                "operationMetadataId": "3defa268-b633-450a-a43e-1e93629597f9"
+              },
+              "type": "If"
+            }
+          },
+          "runAfter": {
+            "Run_script_ConvertToJSON": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "9b3c42b7-98f6-4742-9484-de570714f64e"
+          },
+          "type": "Foreach"
+        },
+        "Copy_File_with_Processed_Suffix": {
+          "runAfter": {
+            "Apply_to_each_row": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "c3d4e5f6-a7b8-9012-cdef-123456789012"
+          },
+          "type": "OpenApiConnection",
+          "inputs": {
+            "host": {
+              "connectionName": "shared_sharepointonline-1",
+              "operationId": "CopyFile",
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+            },
+            "parameters": {
+              "dataset": "https://nestle.sharepoint.com/teams/THFinancePowerPlatformSolutions",
+              "source": "@first(outputs('Get_files_(properties_only)')?['body/value'])?['{FullPath}']",
+              "destination": "@replace(first(outputs('Get_files_(properties_only)')?['body/value'])?['{FullPath}'], '.xlsx', '_Processed.xlsx')",
+              "overwrite": true
+            },
+            "authentication": "@parameters('$authentication')"
+          }
+        },
+        "Delete_Original_File": {
+          "runAfter": {
+            "Copy_File_with_Processed_Suffix": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "d4e5f6a7-b8c9-0123-def0-123456789013"
+          },
+          "type": "OpenApiConnection",
+          "inputs": {
+            "host": {
+              "connectionName": "shared_sharepointonline-1",
+              "operationId": "DeleteFile",
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+            },
+            "parameters": {
+              "dataset": "https://nestle.sharepoint.com/teams/THFinancePowerPlatformSolutions",
+              "id": "@first(outputs('Get_files_(properties_only)')?['body/value'])?['{FullPath}']"
+            },
+            "authentication": "@parameters('$authentication')"
+          }
+        },
+        "Update_Process_Log": {
+          "runAfter": {
+            "Delete_Original_File": [
+              "Succeeded",
+              "Failed",
+              "Skipped",
+              "TimedOut"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "0b5e8e24-5b12-48cf-add4-0aecd2598735"
+          },
+          "type": "OpenApiConnection",
+          "inputs": {
+            "host": {
+              "connectionName": "shared_commondataserviceforapps-1",
+              "operationId": "UpdateRecord",
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps"
+            },
+            "parameters": {
+              "entityName": "cr7bb_thfinancecashcollectionprocesslogs",
+              "recordId": "@variables('varProcessLogID')",
+              "item/cr7bb_endtime": "@utcNow()",
+              "item/cr7bb_errormessages": "@if(greater(length(join(variables('varErrorMessages'), '; ')), 0), substring(join(variables('varErrorMessages'), '; '), 0, min(length(join(variables('varErrorMessages'), '; ')), 1900)), '')",
+              "item/cr7bb_status": "@if(greater(variables('varErrorCount'), 0), 676180003, 676180001)",
+              "item/cr7bb_transactionsprocessed": "@variables('varTransactionCount')"
+            },
+            "authentication": "@parameters('$authentication')"
+          }
+        },
+        "Send_Summary_Email": {
+          "runAfter": {
+            "Update_Process_Log": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "f28d09be-79e0-448d-a3bd-bb62f3d0ba25"
+          },
+          "type": "OpenApiConnection",
+          "inputs": {
+            "host": {
+              "connectionName": "shared_office365-1",
+              "operationId": "SendEmailV2",
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_office365"
+            },
+            "parameters": {
+              "emailMessage/To": "@parameters('System Notification Email (nc_SystemNotificationEmail)')",
+              "emailMessage/Subject": "SAP Import @{variables('varProcessDate')} - @{if(greater(variables('varErrorCount'), 0), '⚠️ Errors', '✅ Success')}",
+              "emailMessage/Body": "<html><body><h2>SAP Data Import Summary</h2><p><strong>Date:</strong> @{formatDateTime(utcNow(), 'dd/MM/yyyy HH:mm')}</p><p><strong>File:</strong> @{variables('varFileName')}</p><p><strong>Batch ID:</strong> @{variables('varBatchID')}</p><h3>Statistics</h3><ul><li>Total Rows: @{variables('varRowCounter')}</li><li>Transactions Created: @{variables('varTransactionCount')}</li><li>Errors: @{variables('varErrorCount')}</li></ul>@{if(greater(variables('varErrorCount'), 0), concat('<h3 style=\"color: red;\">Errors:</h3><ul>', join(map(variables('varErrorMessages'), concat('<li>', item(), '</li>')), ''), '</ul>'), '')}<p><a href=\"https://make.powerapps.com\">View in Power Automate</a></p></body></html>",
+              "emailMessage/Importance": "@{if(greater(variables('varErrorCount'), 0), 'High', 'Normal')}"
+            },
+            "authentication": "@parameters('$authentication')"
+          }
+        },
+        "Get_SAP_file_content": {
+          "runAfter": {
+            "Set_varProcessLogID": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "d3cb8b85-4e32-4e2e-9a2c-3ed6f357c9c2"
+          },
+          "type": "OpenApiConnection",
+          "inputs": {
+            "host": {
+              "connectionName": "shared_sharepointonline-2",
+              "operationId": "GetFileContent",
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+            },
+            "parameters": {
+              "dataset": "https://nestle.sharepoint.com/teams/THFinancePowerPlatformSolutions",
+              "id": "@first(outputs('Get_files_(properties_only)')?['body/value'])?['{Identifier}']",
+              "inferContentType": true
+            },
+            "authentication": "@parameters('$authentication')"
+          }
+        },
+        "Get_folders_(properties_only)": {
+          "runAfter": {
+            "Initialize_varSourceFilePath": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "9222a3b0-c9c6-443f-a3f9-fe22456f1242"
+          },
+          "type": "OpenApiConnection",
+          "inputs": {
+            "host": {
+              "connectionName": "shared_sharepointonline",
+              "operationId": "GetFileItems",
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+            },
+            "parameters": {
+              "dataset": "https://nestle.sharepoint.com/teams/THFinancePowerPlatformSolutions",
+              "table": "375efa2c-aef5-4522-b27f-5cd2749a74a8",
+              "folderPath": "/Shared Documents/Cash Customer Collection/01-Daily-SAP-Data/Current",
+              "viewScopeOption": "Default",
+              "$orderby": "Created desc",
+              "$top": 1
+            },
+            "authentication": "@parameters('$authentication')"
+          }
+        },
+        "Run_script_ConvertToJSON": {
+          "runAfter": {
+            "Get_SAP_file_content": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "383d2f9e-14cb-484b-bb85-e03bf249d74d"
+          },
+          "type": "OpenApiConnection",
+          "inputs": {
+            "host": {
+              "connectionName": "shared_excelonlinebusiness",
+              "operationId": "RunScriptProd",
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_excelonlinebusiness"
+            },
+            "parameters": {
+              "source": "groups/02ebed5f-6782-4117-8509-f2a24646f258",
+              "drive": "b!-jBuElvcHUepxeIS8jlWyaETtSFBsJBGqCTRaDVYBTQs-l439a4iRbJ_XNJ0mnSo",
+              "file": "@first(outputs('Get_files_(properties_only)')?['body/value'])?['{Identifier}']",
+              "scriptId": "ms-officescript%3A%2F%2Fonedrive_business_itemlink%2F01SGDZ3OCR6IAMCKSAXBDKLAOVRF2N7NEV"
+            },
+            "authentication": "@parameters('$authentication')"
+          }
+        }
+      },
+      "outputs": {}
+    },
+    "templateName": ""
+  },
+  "schemaVersion": "1.0.0.0"
+}
