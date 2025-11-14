@@ -267,14 +267,14 @@ ELSE
 ```
 Subject: Payment Reminder - {CustomerName}
 Content:
-  - Polite greeting
+  - Polite greeting (เรียน)
   - Standard invoice reminder
-  - Amount owed: {NetAmount} THB
-  - QR code for payment
+  - Amount owed: {NetAmount} บาท (with thousand separator)
+  - Payment instructions (text-based)
   - Thank you
 
+Format: 1,500.00 บาท (no QR)
 Tone: Professional, standard
-No special warnings
 ```
 
 **Template B** (Day 3):
@@ -282,12 +282,13 @@ No special warnings
 Subject: Payment Reminder - Urgent {CustomerName}
 Content:
   - Standard message
-  - Amount owed: {NetAmount} THB
+  - Amount owed: {NetAmount} บาท (with thousand separator)
   - ⚠️ CASH DISCOUNT WARNING:
     "If you don't pay by {Tomorrow's Date},
      you will lose Cash Discount eligibility"
-  - QR code for payment
+  - Payment instructions (text-based)
 
+Format: 2,500.00 บาท (no QR)
 Tone: Friendly but urgent
 Emphasizes discount deadline
 ```
@@ -296,13 +297,14 @@ Emphasizes discount deadline
 ```
 Subject: URGENT: Outstanding Payment {CustomerName}
 Content:
-  - Amount owed: {NetAmount} THB
+  - Amount owed: {NetAmount} บาท (with thousand separator)
   - ⚠️ WARNING:
     "Payment is now overdue by {Days} days.
      Late fees (MI) will be applied.
      Contact AR immediately."
-  - QR code
+  - Payment instructions (text-based)
 
+Format: 10,500.00 บาท (no QR)
 Tone: Urgent, emphasizes penalties
 ```
 
@@ -312,9 +314,10 @@ Subject: Late Payment Notification - {CustomerName}
 Content:
   - Late fee notice
   - Calculation of MI charges
-  - New total with MI
+  - New total with MI (with thousand separator)
   - Urgent action required
 
+Format: 15,000.00 บาท (no QR)
 Tone: Formal, consequences emphasized
 ```
 
@@ -329,13 +332,20 @@ Content Structure:
   3. Transaction Table:
      - Document Number
      - Date
-     - Amount
-     - Balance
-  4. Total Due: {NetAmount} in bold
+     - Amount (formatted: 1,000.50 บาท)
+     - Balance (formatted: 2,500.00 บาท)
+  4. Total Due: {NetAmount} บาท in bold (with thousand separator)
   5. Payment Instructions:
-     - PromptPay QR Code attachment
+     - Text-based (no QR code)
+     - Banking details
   6. Template-specific Warning (if applicable)
   7. Footer: AR team signature
+
+Amount Formatting:
+  - Format: 1,000.50 บาท
+  - Thousand separator: comma (,)
+  - Decimal places: 2 (.00)
+  - Currency text: "บาท" (no ฿ symbol)
 
 Styling:
   - Font: Arial, sans-serif
@@ -346,20 +356,22 @@ Styling:
 
 #### Step 10: QR Code Attachment
 ```
-Process:
-  1. Look in SharePoint /03-QR-Codes/ folder
-  2. Search for file: {CustomerCode}.jpg
-     Example: 198609.jpg
-  3. If found:
-     - Attach to email
-     - Include in HTML image tag
-  4. If not found:
-     - Log warning
-     - Continue without attachment
-     - Email sends successfully
+⚠️ UPDATED: QR codes are NOT retrieved or shown
 
-Note: QR codes are OPTIONAL
-If missing, email still sends with text-based payment instructions
+Process:
+  1. DO NOT retrieve QR codes from SharePoint
+  2. DO NOT attach files to email
+  3. DO NOT reference QR code in email body
+  4. Email sends WITHOUT any QR code
+
+Payment Instructions:
+  - Use text-based banking details
+  - Reference PromptPay (general, not QR)
+  - Include banking account information
+  - Standard payment instructions in Thai
+
+Note: This reduces email complexity
+Email sends quickly without file lookup
 ```
 
 #### Step 11: Email Sending
