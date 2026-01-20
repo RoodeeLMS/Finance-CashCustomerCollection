@@ -35,32 +35,45 @@ graph TD
 
 **Objective**: Determine if customer owes money after applying credits against debits in chronological order
 
+> **IMPORTANT UPDATE (2026-01-14)**: The FIFO logic below has been superseded by the **STOP logic** clarified by the client. See `Flow_StepByStep_FIFO_EmailEngine.md` for the correct implementation.
+
+**Client Clarification**: When applying CN in FIFO order, if the next CN would make total CN exceed total DN, **STOP completely**. Do NOT skip to check the next CN.
+
 ```javascript
-// Pseudocode
+// CORRECT Pseudocode (FIFO with STOP)
 CN_List = Filter(Transactions, Amount < 0, IsExcluded = false)
 DN_List = Filter(Transactions, Amount > 0, IsExcluded = false)
 
-Sort(CN_List by DocumentDate ASC)  // FIFO
-Sort(DN_List by DocumentDate ASC)  // FIFO
+Sort(CN_List by DocumentDate ASC)  // FIFO - oldest first
+Sort(DN_List by DocumentDate ASC)  // FIFO - oldest first
 
-CN_Total = Sum(CN_List)  // Negative number
 DN_Total = Sum(DN_List)  // Positive number
+AppliedCN_Total = 0      // Running total (will be negative)
 
-Net_Amount = DN_Total + CN_Total  // Adding negative CN to positive DN
+For each CN in CN_List (FIFO order):
+    Potential_Total = Abs(AppliedCN_Total) + Abs(CN.Amount)
+
+    If (Potential_Total <= DN_Total):
+        AppliedCN_Total += CN.Amount  // Apply this CN
+    Else:
+        BREAK  // STOP - don't check remaining CNs
+
+Remaining_Amount = DN_Total + AppliedCN_Total
 
 if (DN_List.Count = 0) {
     // No bills to pay - skip customer
     Send = false
-} else if (Net_Amount > 0) {
+} else if (Remaining_Amount > 0) {
     // Customer owes money - send email
     Send = true
-    AmountDue = Net_Amount
-    Include_Transactions = DN_List where not fully credited
+    AmountDue = Remaining_Amount
 } else {
-    // Credits exceed debits - skip customer
+    // Credits covered all debits - skip customer
     Send = false
 }
 ```
+
+**See**: `Documentation/03-Power-Automate/Flow_StepByStep_FIFO_EmailEngine.md` for step-by-step implementation
 
 ---
 

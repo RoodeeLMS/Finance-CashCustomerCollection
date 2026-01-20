@@ -145,9 +145,23 @@ ThisItem.Customer.'[THFinanceCashCollection]Customer'  # To get GUID for lookup
 | Process Date | `cr7bb_processdate` | **Text (Primary Name)** | Yes |
 | Start Time | `cr7bb_starttime` | DateTime | Yes |
 | End Time | `cr7bb_endtime` | DateTime | No |
+| Status | `cr7bb_status` | Choice | Yes |
+| Process Type | `cr7bb_processtype` | Text (50) | No |
+| Summary | `cr7bb_summary` | Multiline Text (2000) | No |
 | Transactions Processed | `cr7bb_transactionsprocessed` | Whole Number | Yes |
 | Transactions Excluded | `cr7bb_transactionsexcluded` | Whole Number | Yes |
 | Emails Failed | `cr7bb_emailsfailed` | Whole Number | Yes |
+
+**Status Choice Values:**
+- Running
+- Completed
+- Failed
+
+**Process Type Values (Text):**
+- `DailySync` - Daily transaction sync from Power BI
+- `WorkingDayGeneration` - Initial/regenerate WorkingDayCalendar
+- `WorkingDayRecalc` - Recalculate after holiday change
+- `EmailSend` - Email sending process
 
 **⚠️ CRITICAL - Process Date is TEXT, not Date:**
 ```yaml
