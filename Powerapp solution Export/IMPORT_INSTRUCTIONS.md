@@ -1,8 +1,8 @@
 # Solution Import Instructions
-## THFinanceCashCollection v1.0.0.5 - Complete with Updated Canvas App & All Flows
+## THFinanceCashCollection v1.0.0.10 - Complete with Working Day Calendar & QR Availability Check
 
-**File**: `THFinanceCashCollection_1_0_0_5.zip`
-**Updated**: November 14, 2025
+**File**: `THFinanceCashCollection_1_0_0_10` (unmanaged folder)
+**Updated**: January 26, 2026
 
 ---
 
@@ -10,16 +10,15 @@
 
 This solution package contains **complete, production-ready** components:
 
-### 📱 Canvas App (Updated v1.0.0.5)
+### 📱 Canvas App (Updated v1.0.0.10)
 **Screens Included**:
-- ✅ **scnCustomer** - Customer management & CRUD operations
+- ✅ **scnCustomer** - Customer management, CRUD, QR availability check
 - ✅ **scnDashboard** - Daily control center & process monitoring
 - ✅ **scnCustomerHistory** - Transaction history & filtering
 - ✅ **scnEmailApproval** - Manual email approval & override
-- ✅ **scnEmailMonitor** - Email log monitoring & troubleshooting
-- ✅ **scnTransactions** - Transaction list & detail view
+- ✅ **scnTransactions** - Transaction list, FIFO calculation preview
 - ✅ **scnRole** - Role & permission management
-- ✅ **scnCalendar** - Calendar date selection component
+- ✅ **scnCalendar** - Holiday/calendar management
 - ✅ **scnUnauthorized** - Access denial screen
 - ✅ **loadingScreen** - Initial loading experience
 
@@ -28,54 +27,80 @@ This solution package contains **complete, production-ready** components:
 - Nestlé brand compliance (colors, fonts, layouts)
 - Responsive design for web & tablet
 
-### 🔄 Power Automate Flows (6 Total)
+### 🔄 Power Automate Flows (11 Total)
 
 **Core Flows**:
-1. **[THFinanceCashCollection] Daily SAP Transaction Import** (788 lines)
+1. **[THFinanceCashCollection] Daily SAP Transaction Import**
    - ✅ File detection & filtering
    - ✅ Excel parsing with FIFO sequencing
    - ✅ Customer lookup & validation
    - ✅ Exclusion keyword checking (Paid, Partial Payment, etc.)
    - ✅ Transaction record creation
+   - ✅ Working Day Number (WDN) calculation for Day Count
    - ✅ Process logging
    - ✅ AR team summary email
 
-2. **[THFinanceCashCollection] Daily Collections Email Engine** (1044 lines)
+2. **[THFinanceCashCollection] Daily SAP Transaction Import (Extended)**
+   - ✅ Extended version with additional processing options
+
+3. **[THFinanceCashCollection] Daily Collections Email Engine**
    - ✅ SAP import validation
    - ✅ Transaction filtering & sorting
    - ✅ FIFO CN/DN matching algorithm
    - ✅ Net amount calculation
-   - ✅ Email template selection (Day 1-2, Day 3, Day 4+)
+   - ✅ Email template selection (Day 1-2, Day 3, Day 4+, MI)
    - ✅ QR code attachment from SharePoint
    - ✅ HTML email composition
    - ✅ Email logging & audit trail
    - ✅ Transaction marking as processed
 
 **Support Flows**:
-3. **[THFinanceCashCollection] Manual SAP Upload** (788 lines)
+4. **[THFinanceCashCollection] Manual SAP Upload**
    - ✅ Manual file upload capability
    - ✅ Replaces automated import for ad-hoc uploads
 
-4. **[THFinanceCashCollection] Email Sending Flow** (373 lines)
+5. **[THFinanceCashCollection] Email Sending Flow**
    - ✅ Reusable email composition
    - ✅ HTML template support
 
-5. **[THFinanceCashCollection] Manual Email Resend** (258 lines)
+6. **[THFinanceCashCollection] Manual Email Resend**
    - ✅ Resend functionality from Canvas App
    - ✅ Error recovery support
 
-6. **[THFinanceCashCollection] Customer Data Sync** (560 lines)
+7. **[THFinanceCashCollection] Customer Data Sync**
    - ✅ Customer master data synchronization
    - ✅ Data consistency maintenance
 
-### 🗄️ Dataverse Tables (7 Total)
-- ✅ `cr7bb_thfinancecashcollectioncustomer` - Customer master
+**🆕 New in v1.0.0.10 - Working Day Calendar**:
+8. **[THFinance] Generate Working Day Calendar**
+   - ✅ Generates WorkingDayCalendar table entries
+   - ✅ Excludes weekends (Sat/Sun) and holidays
+   - ✅ Assigns sequential Working Day Numbers (WDN)
+   - ✅ Used for accurate arrear day calculation
+
+9. **[THFinance] RecalculateWDN (PowerApps)**
+   - ✅ Wrapper flow callable from Canvas App
+   - ✅ Triggers calendar regeneration after holiday changes
+
+**🆕 New in v1.0.0.10 - QR Code Management**:
+10. **[THFinance] Check QR Availability**
+    - ✅ Scans SharePoint for QR code files
+    - ✅ Updates `cr7bb_qrcodeavailable` field on Customers
+    - ✅ Concurrent processing (20 parallel)
+
+11. **[THFinance] CheckQRAvailability (PowerApps)**
+    - ✅ Wrapper flow callable from Canvas App
+    - ✅ Returns status and count to caller
+
+### 🗄️ Dataverse Tables (8 Total)
+- ✅ `cr7bb_thfinancecashcollectioncustomer` - Customer master (+ QR availability field)
 - ✅ `cr7bb_thfinancecashcollectiontransaction` - Transaction line items
 - ✅ `cr7bb_thfinancecashcollectionprocesslog` - Process execution logs
 - ✅ `cr7bb_thfinancecashcollectionemaillog` - Email audit trail
 - ✅ `cr7bb_thfinancecashcollectionrole` - Role definitions
 - ✅ `cr7bb_thfinancecashcollectionroleassignment` - User role mappings
-- ✅ `nc_thfinancecashcollectioncalendarevent` - Calendar events
+- ✅ `nc_thfinancecashcollectioncalendarevent` - Calendar events (holidays)
+- 🆕 `nc_thfinancecashcollectionworkingdaycalendar` - Working Day Calendar (WDN lookup)
 
 ### ⚙️ Choice Fields (7 Total)
 - ✅ `cr7bb_approvalstatuschoice` - Approval workflow states
@@ -130,16 +155,16 @@ Before importing, ensure you have:
 
 1. Click **Import solution**
 2. Click **Browse**
-3. Select: `THFinanceCashCollection_1_0_0_5.zip`
+3. Select: `THFinanceCashCollection_1_0_0_10 (folder)`
 4. Click **Next**
 
 ### Step 3: Review Solution Details
 
 You'll see:
 - **Name**: THFinanceCashCollection
-- **Version**: 1.0.0.5
+- **Version**: 1.0.0.10
 - **Publisher**: NickChamnong
-- **Components**: 6 workflows, 7 tables, 7 choice options, 1 canvas app, 5 environment variables
+- **Components**: 11 workflows, 8 tables, 7 choice options, 1 canvas app, 5 environment variables
 
 Click **Next**
 
@@ -320,9 +345,9 @@ The SAP Import flow currently points to a specific Excel file. You need to updat
 | v1.0.0.2 | Oct 8 | SAP import flow with business logic |
 | v1.0.0.3 | Oct 8 | Complete flows + email engine |
 | v1.0.0.4 | Oct 13 | Environment variables & configuration |
-| **v1.0.0.5** | **Nov 14** | **Updated Canvas App with 10 screens, modern controls, Nestlé brand compliance** |
+| **v1.0.0.10** | **Nov 14** | **Updated Canvas App with 10 screens, modern controls, Nestlé brand compliance** |
 
-### Canvas App Improvements (v1.0.0.5)
+### Canvas App Improvements (v1.0.0.10)
 - **scnCustomerHistory** (NEW) - Complete transaction history with date/type filtering
 - **scnCalendar** (NEW) - Calendar date picker component
 - **scnDashboard** - Redesigned to Customer Management view
@@ -463,9 +488,9 @@ The solution is working correctly when:
 
 ---
 
-**Solution Version**: 1.0.0.5
+**Solution Version**: 1.0.0.10
 **Last Updated**: November 14, 2025
-**Package File**: THFinanceCashCollection_1_0_0_5.zip
+**Package File**: THFinanceCashCollection_1_0_0_10 (folder)
 **Status**: ✅ Ready for Import
 **Size**: 4.0 MB (Canvas App + 6 Flows + Dataverse Tables + Configuration)
 

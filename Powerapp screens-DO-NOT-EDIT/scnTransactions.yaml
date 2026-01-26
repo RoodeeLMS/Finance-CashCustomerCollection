@@ -21,7 +21,7 @@ Screens:
         );
     Children:
       - Trans_Container:
-          Control: GroupContainer@1.3.0
+          Control: GroupContainer@1.4.0
           Variant: ManualLayout
           Properties:
             DropShadow: =DropShadow.None
@@ -29,7 +29,7 @@ Screens:
             Width: =Parent.Width
           Children:
             - Trans_Header:
-                Control: GroupContainer@1.3.0
+                Control: GroupContainer@1.4.0
                 Variant: AutoLayout
                 Properties:
                   DropShadow: =DropShadow.Regular
@@ -52,6 +52,8 @@ Screens:
                         Color: =RGBA(255, 255, 255, 1)
                         Height: =50
                         Icon: =Icon.Hamburger
+                        LayoutMaxHeight: =
+                        LayoutMaxWidth: =
                         OnSelect: |-
                           =UpdateContext({_showMenu: !_showMenu})
                         PaddingBottom: =10
@@ -65,6 +67,8 @@ Screens:
                         Font: =Font.Lato
                         FontColor: =Color.White
                         Height: =50
+                        LayoutMaxHeight: =
+                        LayoutMaxWidth: =
                         PaddingLeft: =20
                         Size: =25
                         Text: ="Transaction Management"
@@ -72,7 +76,7 @@ Screens:
                         Weight: ='TextCanvas.Weight'.Medium
                         Width: =Parent.Width - Trans_MenuIcon.Width - 40
             - Trans_Content:
-                Control: GroupContainer@1.3.0
+                Control: GroupContainer@1.4.0
                 Variant: ManualLayout
                 Properties:
                   DropShadow: =DropShadow.Regular
@@ -87,14 +91,13 @@ Screens:
                   Y: =75
                 Children:
                   - Trans_FilterSection:
-                      Control: GroupContainer@1.3.0
+                      Control: GroupContainer@1.4.0
                       Variant: AutoLayout
                       Properties:
                         DropShadow: =DropShadow.None
                         Fill: =RGBA(245, 245, 245, 1)
-                        Height: =140
+                        Height: =100
                         LayoutDirection: =LayoutDirection.Vertical
-                        LayoutGap: =10
                         PaddingBottom: =10
                         PaddingLeft: =15
                         PaddingRight: =15
@@ -104,13 +107,17 @@ Screens:
                         Width: =Parent.Width
                       Children:
                         - Trans_FilterRow1:
-                            Control: GroupContainer@1.3.0
+                            Control: GroupContainer@1.4.0
                             Variant: AutoLayout
                             Properties:
                               DropShadow: =DropShadow.None
+                              FillPortions: =0
+                              Height: =30
                               LayoutAlignItems: =LayoutAlignItems.Center
                               LayoutDirection: =LayoutDirection.Horizontal
                               LayoutGap: =10
+                              LayoutMaxHeight: =
+                              LayoutMaxWidth: =
                               LayoutMinHeight: =40
                               LayoutMinWidth: =100
                               Width: =Parent.Width - 30
@@ -121,6 +128,8 @@ Screens:
                                     Font: =Font.Lato
                                     FontColor: =RGBA(0, 0, 0, 1)
                                     Height: =40
+                                    LayoutMaxHeight: =
+                                    LayoutMaxWidth: =
                                     Text: ="Customer:"
                                     VerticalAlign: =VerticalAlign.Middle
                                     Weight: ='TextCanvas.Weight'.Semibold
@@ -132,6 +141,8 @@ Screens:
                                     Height: =40
                                     InputTextPlaceholder: ="All Customers"
                                     Items: =colCustomers
+                                    LayoutMaxHeight: =
+                                    LayoutMaxWidth: =
                                     OnChange: |-
                                       =UpdateContext({
                                           _selectedCustomer: 
@@ -157,6 +168,8 @@ Screens:
                                     Font: =Font.Lato
                                     FontColor: =RGBA(0, 0, 0, 1)
                                     Height: =40
+                                    LayoutMaxHeight: =
+                                    LayoutMaxWidth: =
                                     Text: ="Type:"
                                     VerticalAlign: =VerticalAlign.Middle
                                     Weight: ='TextCanvas.Weight'.Semibold
@@ -167,6 +180,8 @@ Screens:
                                     DefaultSelectedItems: =["All"]
                                     Height: =40
                                     Items: =["All", "CN", "DN"]
+                                    LayoutMaxHeight: =
+                                    LayoutMaxWidth: =
                                     OnChange: |-
                                       =UpdateContext({
                                           _typeFilter: Self.Selected.Value
@@ -178,6 +193,8 @@ Screens:
                                     Font: =Font.Lato
                                     FontColor: =RGBA(0, 0, 0, 1)
                                     Height: =40
+                                    LayoutMaxHeight: =
+                                    LayoutMaxWidth: =
                                     Text: ="Status:"
                                     VerticalAlign: =VerticalAlign.Middle
                                     Weight: ='TextCanvas.Weight'.Semibold
@@ -188,19 +205,25 @@ Screens:
                                     DefaultSelectedItems: =["All"]
                                     Height: =40
                                     Items: =["All", "Processed", "Unprocessed"]
+                                    LayoutMaxHeight: =
+                                    LayoutMaxWidth: =
                                     OnChange: |-
                                       =UpdateContext({
                                           _statusFilter: Self.Selected.Value
                                       });
                                     Width: =140
                         - Trans_FilterRow2:
-                            Control: GroupContainer@1.3.0
+                            Control: GroupContainer@1.4.0
                             Variant: AutoLayout
                             Properties:
                               DropShadow: =DropShadow.None
+                              FillPortions: =0
+                              Height: =30
                               LayoutAlignItems: =LayoutAlignItems.Center
                               LayoutDirection: =LayoutDirection.Horizontal
                               LayoutGap: =10
+                              LayoutMaxHeight: =
+                              LayoutMaxWidth: =
                               LayoutMinHeight: =40
                               LayoutMinWidth: =100
                               Width: =Parent.Width - 30
@@ -211,6 +234,8 @@ Screens:
                                     Font: =Font.Lato
                                     FontColor: =RGBA(0, 0, 0, 1)
                                     Height: =40
+                                    LayoutMaxHeight: =
+                                    LayoutMaxWidth: =
                                     Text: ="Process Date:"
                                     VerticalAlign: =VerticalAlign.Middle
                                     Weight: ='TextCanvas.Weight'.Semibold
@@ -219,6 +244,8 @@ Screens:
                                   Control: DatePicker@0.0.46
                                   Properties:
                                     Height: =40
+                                    LayoutMaxHeight: =
+                                    LayoutMaxWidth: =
                                     OnChange: |-
                                       =UpdateContext({
                                           _dateTo: Self.SelectedDate
@@ -226,14 +253,18 @@ Screens:
                                     SelectedDate: =_dateTo
                                     Width: =180
                         - Trans_FilterRow3:
-                            Control: GroupContainer@1.3.0
+                            Control: GroupContainer@1.4.0
                             Variant: AutoLayout
                             Properties:
                               DropShadow: =DropShadow.None
+                              FillPortions: =0
+                              Height: =30
                               LayoutAlignItems: =LayoutAlignItems.Center
                               LayoutDirection: =LayoutDirection.Horizontal
                               LayoutGap: =10
                               LayoutJustifyContent: =LayoutJustifyContent.SpaceBetween
+                              LayoutMaxHeight: =
+                              LayoutMaxWidth: =
                               LayoutMinHeight: =40
                               LayoutMinWidth: =100
                               Width: =Parent.Width - 30
@@ -244,11 +275,13 @@ Screens:
                                     Font: =Font.Lato
                                     FontColor: =RGBA(100, 100, 100, 1)
                                     Height: =35
+                                    LayoutMaxHeight: =
+                                    LayoutMaxWidth: =
                                     Text: |-
                                       ="Records: " & CountRows(Filter(Trans_Gallery.AllItems,
                                           (_typeFilter = "All" ||
-                                              (_typeFilter = "CN" && cr7bb_transactiontype = 'Transaction Type Choice'.'Credit Note') ||
-                                              (_typeFilter = "DN" && cr7bb_transactiontype = 'Transaction Type Choice'.'Debit Note'))
+                                              (_typeFilter = "CN" && 'Amount (Local Currency)' < 0) ||
+                                              (_typeFilter = "DN" && 'Amount (Local Currency)' > 0))
                                       ))
                                     VerticalAlign: =VerticalAlign.Middle
                                     Weight: ='TextCanvas.Weight'.Regular
@@ -259,15 +292,17 @@ Screens:
                                     Font: =Font.Lato
                                     FontColor: =RGBA(0, 0, 0, 1)
                                     Height: =35
+                                    LayoutMaxHeight: =
+                                    LayoutMaxWidth: =
                                     Size: =16
                                     Text: |-
                                       ="Total: ฿" & Text(
                                           Sum(Filter(Trans_Gallery.AllItems,
                                               (_typeFilter = "All" ||
-                                                  (_typeFilter = "CN" && cr7bb_transactiontype = 'Transaction Type Choice'.'Credit Note') ||
-                                                  (_typeFilter = "DN" && cr7bb_transactiontype = 'Transaction Type Choice'.'Debit Note'))
+                                                  (_typeFilter = "CN" && 'Amount (Local Currency)' < 0) ||
+                                                  (_typeFilter = "DN" && 'Amount (Local Currency)' > 0))
                                           ),
-                                              cr7bb_amountlocalcurrency
+                                              'Amount (Local Currency)'
                                           ),
                                           "#,##0.00"
                                       )
@@ -275,82 +310,33 @@ Screens:
                                     Weight: ='TextCanvas.Weight'.Bold
                                     Width: =300
                   - Trans_TableSection:
-                      Control: GroupContainer@1.3.0
+                      Control: GroupContainer@1.4.0
                       Variant: ManualLayout
                       Properties:
                         DropShadow: =DropShadow.None
                         Fill: =RGBA(255, 255, 255, 1)
-                        Height: =Parent.Height - 460
+                        Height: |
+                          =Parent.Height - 270
                         Width: =Parent.Width - 20
                         X: =10
-                        Y: =150
+                        Y: =100
                       Children:
-                        - Trans_ActionBar:
-                            Control: GroupContainer@1.3.0
-                            Variant: AutoLayout
-                            Properties:
-                              DropShadow: =DropShadow.None
-                              Fill: =RGBA(250, 250, 250, 1)
-                              Height: =50
-                              LayoutAlignItems: =LayoutAlignItems.Center
-                              LayoutDirection: =LayoutDirection.Horizontal
-                              LayoutGap: =10
-                              PaddingLeft: =15
-                              PaddingRight: =15
-                              Width: =Parent.Width
-                            Children:
-                              - Trans_MarkProcessedBtn:
-                                  Control: Button@0.0.45
-                                  Properties:
-                                    BasePaletteColor: =RGBA(0, 101, 161, 1)
-                                    DisplayMode: |-
-                                      =If(
-                                          CountRows(Trans_Table.SelectedItems) = 0,
-                                          DisplayMode.Disabled,
-                                          DisplayMode.Edit
-                                      )
-                                    Height: =35
-                                    Icon: ="CheckmarkCircle"
-                                    OnSelect: |
-                                      =ForAll(
-                                          DropColumns(Trans_Table.SelectedItems, TransactionTypeText, AmountFormatted),
-                                          Patch(
-                                              '[THFinanceCashCollection]Transactions',
-                                              ThisRecord,
-                                              {cr7bb_isprocessed: true}
-                                          )
-                                      );
-                                      Notify(
-                                          CountRows(Trans_Table.SelectedItems) & " transactions marked as processed",
-                                          NotificationType.Success
-                                      );
-                                    Text: ="Mark Processed"
-                                    Width: =170
-                              - Trans_ExportBtn:
-                                  Control: Button@0.0.45
-                                  Properties:
-                                    BasePaletteColor: =RGBA(100, 81, 61, 1)
-                                    Height: =35
-                                    Icon: ="DocumentAdd"
-                                    OnSelect: =Notify("Export functionality not yet implemented", NotificationType.Information)
-                                    Text: ="Export to Excel"
-                                    Width: =150
                         - Trans_Gallery:
                             Control: Gallery@2.15.0
                             Variant: Vertical
                             Properties:
                               BorderColor: =RGBA(0, 18, 107, 1)
-                              Height: =106
+                              Height: =88
                               Items: |+
                                 =With({
                                     FilterTable: 
                                         Filter(
                                             '[THFinanceCashCollection]Transactions',
                                             (IsBlank(_selectedCustomer) || Customer.'[THFinanceCashCollection]Customer' = _selectedCustomer.'[THFinanceCashCollection]Customer') &&
-                                            cr7bb_transactionprocessdate >= _dateTo && cr7bb_transactionprocessdate < DateAdd(_dateTo, 1, TimeUnit.Days) &&
+                                            'Transaction Process Date' >= _dateTo && 'Transaction Process Date' < DateAdd(_dateTo, 1, TimeUnit.Days) &&
                                             (_statusFilter = "All" ||
-                                                (_statusFilter = "Processed" && cr7bb_isprocessed = true) ||
-                                                (_statusFilter = "Unprocessed" && cr7bb_isprocessed = false))
+                                                (_statusFilter = "Processed" && 'Is Processed' = true) ||
+                                                (_statusFilter = "Unprocessed" && 'Is Processed' = false))
                                         )
                                     },
                                     SortByColumns(
@@ -358,16 +344,16 @@ Screens:
                                             FilterTable,
                                             TransactionTypeText,
                                             If(
-                                                cr7bb_transactiontype = 'Transaction Type Choice'.'Credit Note',
+                                                'Amount (Local Currency)' < 0,
                                                 "CN",
                                                 If(
-                                                    cr7bb_transactiontype = 'Transaction Type Choice'.'Debit Note',
+                                                    'Amount (Local Currency)' > 0,
                                                     "DN",
                                                     ""
                                                 )
                                             ),
                                             AmountFormatted,
-                                            "฿" & Text(cr7bb_amountlocalcurrency, "#,##0.00")
+                                            "฿" & Text('Amount (Local Currency)', "#,##0.00")
                                         ),
                                         "cr7bb_documentdate",
                                         SortOrder.Ascending
@@ -375,47 +361,75 @@ Screens:
                                 )
 
                               Visible: =false
-                              Width: =604
+                              Width: =589
                         - Trans_Table:
                             Control: Table@1.0.278
                             Properties:
-                              Height: =Parent.Height - 60
+                              Height: =Parent.Height
                               Items: |-
                                 =Filter(Trans_Gallery.AllItems,
                                     (_typeFilter = "All" ||
-                                        (_typeFilter = "CN" && cr7bb_transactiontype = 'Transaction Type Choice'.'Credit Note') ||
-                                        (_typeFilter = "DN" && cr7bb_transactiontype = 'Transaction Type Choice'.'Debit Note'))
+                                        (_typeFilter = "CN" && 'Amount (Local Currency)' < 0) ||
+                                        (_typeFilter = "DN" && 'Amount (Local Currency)' > 0))
                                 )
                               Width: =Parent.Width
-                              Y: =50
                             Children:
                               - Trans_TypeColumn:
                                   Control: TableDataField@1.5.0
                                   Variant: textualColumn
                                   IsLocked: true
                                   Properties:
+                                    CanGrow: =false
                                     FieldDisplayName: ="Type"
                                     FieldName: ="TransactionTypeText"
                                     FieldType: ="s"
                                     Order: =1
+                                    Width: =70
                               - Trans_DocumentColumn:
                                   Control: TableDataField@1.5.0
                                   Variant: textualColumn
                                   IsLocked: true
                                   Properties:
-                                    FieldDisplayName: ="Document"
+                                    CanGrow: =false
+                                    FieldDisplayName: ="Document
                                     FieldName: ="cr7bb_documentnumber"
                                     FieldType: ="s"
+                                    HeaderText: ="Document"
                                     Order: =2
+                                    Width: =120
+                              - Trans_AssignmentColumn:
+                                  Control: TableDataField@1.5.0
+                                  Variant: textualColumn
+                                  IsLocked: true
+                                  Properties:
+                                    CanGrow: =false
+                                    FieldDisplayName: ="Assignment"
+                                    FieldName: ="cr7bb_assignment"
+                                    FieldType: ="s"
+                                    Order: =3
+                                    Width: =120
+                              - Trans_DocTypeColumn:
+                                  Control: TableDataField@1.5.0
+                                  Variant: textualColumn
+                                  IsLocked: true
+                                  Properties:
+                                    CanGrow: =false
+                                    FieldDisplayName: ="Doc Type"
+                                    FieldName: ="cr7bb_documenttype"
+                                    FieldType: ="s"
+                                    Order: =4
+                                    Width: =100
                               - Trans_DateColumn:
                                   Control: TableDataField@1.5.0
                                   Variant: textualColumn
                                   IsLocked: true
                                   Properties:
-                                    FieldDisplayName: ="Date"
+                                    CanGrow: =false
+                                    FieldDisplayName: ="Doc Date"
                                     FieldName: ="cr7bb_documentdate"
                                     FieldType: ="d"
-                                    Order: =3
+                                    Order: =5
+                                    Width: =110
                               - Trans_DaysColumn:
                                   Control: TableDataField@1.5.0
                                   Variant: textualColumn
@@ -424,17 +438,19 @@ Screens:
                                     FieldDisplayName: ="Days"
                                     FieldName: ="cr7bb_daycount"
                                     FieldType: ="n"
-                                    Order: =4
+                                    Order: =6
+                                    Width: =70
                               - Trans_AmountColumn:
                                   Control: TableDataField@1.5.0
                                   Variant: textualColumn
                                   IsLocked: true
                                   Properties:
-                                    FieldDisplayName: ="Amount"
+                                    CanGrow: =false
+                                    FieldDisplayName: ="Amount (THB)"
                                     FieldName: ="AmountFormatted"
                                     FieldType: ="s"
-                                    Order: =5
-                                    Width: =120
+                                    Order: =7
+                                    Width: =140
                               - Trans_NoteColumn:
                                   Control: TableDataField@1.5.0
                                   Variant: textualColumn
@@ -443,42 +459,33 @@ Screens:
                                     FieldDisplayName: ="Note"
                                     FieldName: ="cr7bb_textfield"
                                     FieldType: ="s"
-                                    Order: =6
-                              - Trans_ProcessedColumn:
-                                  Control: TableDataField@1.5.0
-                                  Variant: textualColumn
-                                  IsLocked: true
-                                  Properties:
-                                    FieldDisplayName: ="Processed"
-                                    FieldName: ="cr7bb_isprocessed"
-                                    FieldType: ="b"
-                                    Order: =7
+                                    Order: =9
                   - Trans_FIFOPreview:
-                      Control: GroupContainer@1.3.0
+                      Control: GroupContainer@1.4.0
                       Variant: AutoLayout
                       Properties:
                         Fill: =RGBA(255, 255, 255, 1)
-                        Height: =280
+                        Height: =160
                         LayoutDirection: =LayoutDirection.Vertical
-                        LayoutGap: =10
-                        PaddingBottom: =15
                         PaddingLeft: =15
                         PaddingRight: =15
-                        PaddingTop: =15
                         RadiusBottomLeft: =8
                         RadiusBottomRight: =8
                         RadiusTopLeft: =8
                         RadiusTopRight: =8
                         Width: =Parent.Width - 20
                         X: =10
-                        Y: =Parent.Height - 290
+                        Y: |
+                          =Parent.Height - 165
                       Children:
                         - Trans_FIFOTitle:
                             Control: Text@0.0.51
                             Properties:
                               Font: =Font.Lato
-                              FontColor: =RGBA(0, 0, 0, 1)
-                              Height: =30
+                              FontColor: =RGBA(0, 101, 161, 1)
+                              Height: =28
+                              LayoutMaxHeight: =
+                              LayoutMaxWidth: =
                               Size: =16
                               Text: ="FIFO Calculation Preview"
                               VerticalAlign: =VerticalAlign.Middle
@@ -489,104 +496,293 @@ Screens:
                             Properties:
                               Font: =Font.Lato
                               FontColor: =RGBA(0, 0, 0, 1)
-                              Height: =25
+                              Height: =22
+                              LayoutMaxHeight: =
+                              LayoutMaxWidth: =
                               Text: |-
                                 =If(
                                     IsBlank(_selectedCustomer),
-                                    "Customer: All customers selected",
-                                    "Customer: " & _selectedCustomer.cr7bb_customername
+                                    "Customer: Select a customer to see FIFO calculation",
+                                    "Customer: " & _selectedCustomer.cr7bb_customercode & " - " & _selectedCustomer.cr7bb_customername
                                 )
                               VerticalAlign: =VerticalAlign.Middle
                               Weight: ='TextCanvas.Weight'.Semibold
                               Width: =Parent.Width - 30
                         - Trans_FIFOSummary:
-                            Control: GroupContainer@1.3.0
+                            Control: GroupContainer@1.4.0
                             Variant: AutoLayout
                             Properties:
                               DropShadow: =DropShadow.None
                               Fill: =RGBA(245, 245, 245, 1)
+                              FillPortions: =0
+                              Height: =40
                               LayoutDirection: =LayoutDirection.Horizontal
-                              LayoutGap: =20
-                              LayoutMinHeight: =40
+                              LayoutGap: =15
+                              LayoutJustifyContent: =LayoutJustifyContent.SpaceBetween
+                              LayoutMaxHeight: =
+                              LayoutMaxWidth: =
+                              LayoutMinHeight: =50
                               LayoutMinWidth: =100
-                              PaddingBottom: =10
+                              PaddingBottom: =8
                               PaddingLeft: =10
                               PaddingRight: =10
-                              PaddingTop: =10
+                              PaddingTop: =8
                               RadiusBottomLeft: =5
                               RadiusBottomRight: =5
                               RadiusTopLeft: =5
                               RadiusTopRight: =5
                               Width: =Parent.Width - 30
                             Children:
-                              - Trans_CNTotal:
-                                  Control: Text@0.0.51
-                                  Properties:
-                                    Font: =Font.Lato
-                                    FontColor: =RGBA(0, 128, 0, 1)
-                                    Height: =25
-                                    Text: |-
-                                      ="CN Total: ฿" & Text(
-                                          Sum(Filter(Trans_Gallery.AllItems, cr7bb_transactiontype = 'Transaction Type Choice'.'Credit Note'),
-                                              cr7bb_amountlocalcurrency
-                                          ),
-                                          "#,##0.00"
-                                      )
-                                    VerticalAlign: =VerticalAlign.Middle
-                                    Weight: ='TextCanvas.Weight'.Semibold
-                                    Width: =200
                               - Trans_DNTotal:
                                   Control: Text@0.0.51
                                   Properties:
+                                    FillPortions: =1
                                     Font: =Font.Lato
                                     FontColor: =RGBA(191, 25, 34, 1)
-                                    Height: =25
+                                    Height: =35
+                                    LayoutMaxHeight: =
+                                    LayoutMaxWidth: =
                                     Text: |-
-                                      ="DN Total: ฿" & Text(
-                                          Sum(Filter(Trans_Gallery.AllItems, cr7bb_transactiontype = 'Transaction Type Choice'.'Debit Note'),
-                                              cr7bb_amountlocalcurrency
-                                          ),
-                                          "#,##0.00"
+                                      =// DN Total - only calculate when customer selected
+                                      If(IsBlank(_selectedCustomer),
+                                          "DN Total: -",
+                                          With(
+                                              {
+                                                  transactions: Filter('[THFinanceCashCollection]Transactions',
+                                                      Customer.'[THFinanceCashCollection]Customer' = _selectedCustomer.'[THFinanceCashCollection]Customer' &&
+                                                      'Transaction Process Date' >= _dateTo && 'Transaction Process Date' < DateAdd(_dateTo, 1, TimeUnit.Days) &&
+                                                      cr7bb_amountlocalcurrency > 0)
+                                              },
+                                              "DN Total: ฿" & Text(
+                                                  Coalesce(Sum(transactions, cr7bb_amountlocalcurrency), 0),
+                                                  "#,##0.00"
+                                              )
+                                          )
+                                      )
+                                    VerticalAlign: =VerticalAlign.Top
+                                    Weight: ='TextCanvas.Weight'.Bold
+                                    Width: =180
+                              - Trans_AppliedCN:
+                                  Control: Text@0.0.51
+                                  Properties:
+                                    FillPortions: =1
+                                    Font: =Font.Lato
+                                    FontColor: =RGBA(0, 128, 0, 1)
+                                    Height: =35
+                                    LayoutMaxHeight: =
+                                    LayoutMaxWidth: =
+                                    Text: |-
+                                      =// Applied CN (capped at DN Total per FIFO logic)
+                                      If(IsBlank(_selectedCustomer),
+                                          "Applied CN: -",
+                                          With(
+                                              {
+                                                  baseFilter: Filter('[THFinanceCashCollection]Transactions',
+                                                      Customer.'[THFinanceCashCollection]Customer' = _selectedCustomer.'[THFinanceCashCollection]Customer' &&
+                                                      'Transaction Process Date' >= _dateTo && 'Transaction Process Date' < DateAdd(_dateTo, 1, TimeUnit.Days))
+                                              },
+                                              With(
+                                                  {
+                                                      dnTotal: Coalesce(Sum(Filter(baseFilter, cr7bb_amountlocalcurrency > 0), cr7bb_amountlocalcurrency), 0),
+                                                      cnTotal: Coalesce(Sum(Filter(baseFilter, cr7bb_amountlocalcurrency < 0), cr7bb_amountlocalcurrency), 0)
+                                                  },
+                                                  // Applied CN = If no CN, show 0. Otherwise cap at DN total
+                                                  "Applied CN: ฿" & Text(
+                                                      If(cnTotal = 0, 0, Max(cnTotal, -dnTotal)),
+                                                      "#,##0.00"
+                                                  )
+                                              )
+                                          )
+                                      )
+                                    VerticalAlign: =VerticalAlign.Top
+                                    Weight: ='TextCanvas.Weight'.Bold
+                                    Width: =180
+                              - Trans_NetAmount:
+                                  Control: Text@0.0.51
+                                  Properties:
+                                    FillPortions: =1
+                                    Font: =Font.Lato
+                                    FontColor: =RGBA(0, 0, 0, 1)
+                                    Height: =35
+                                    LayoutMaxHeight: =
+                                    LayoutMaxWidth: =
+                                    Text: |-
+                                      =// Net Amount = DN Total + Applied CN (FIFO logic)
+                                      If(IsBlank(_selectedCustomer),
+                                          "Net Owed: -",
+                                          With(
+                                              {
+                                                  baseFilter: Filter('[THFinanceCashCollection]Transactions',
+                                                      Customer.'[THFinanceCashCollection]Customer' = _selectedCustomer.'[THFinanceCashCollection]Customer' &&
+                                                      'Transaction Process Date' >= _dateTo && 'Transaction Process Date' < DateAdd(_dateTo, 1, TimeUnit.Days))
+                                              },
+                                              With(
+                                                  {
+                                                      dnTotal: Coalesce(Sum(Filter(baseFilter, cr7bb_amountlocalcurrency > 0), cr7bb_amountlocalcurrency), 0),
+                                                      cnTotal: Coalesce(Sum(Filter(baseFilter, cr7bb_amountlocalcurrency < 0), cr7bb_amountlocalcurrency), 0)
+                                                  },
+                                                  With(
+                                                      {
+                                                          appliedCN: If(cnTotal = 0, 0, Max(cnTotal, -dnTotal)),
+                                                          netOwed: dnTotal + If(cnTotal = 0, 0, Max(cnTotal, -dnTotal))
+                                                      },
+                                                      "Net Owed: ฿" & Text(Max(0, netOwed), "#,##0.00")
+                                                  )
+                                              )
+                                          )
+                                      )
+                                    VerticalAlign: =VerticalAlign.Top
+                                    Weight: ='TextCanvas.Weight'.Bold
+                                    Width: =180
+                        - Trans_DayCountRow:
+                            Control: GroupContainer@1.4.0
+                            Variant: AutoLayout
+                            Properties:
+                              DropShadow: =DropShadow.None
+                              Fill: =RGBA(255, 248, 240, 1)
+                              FillPortions: =0
+                              Height: =30
+                              LayoutDirection: =LayoutDirection.Horizontal
+                              LayoutGap: =20
+                              LayoutMaxHeight: =
+                              LayoutMaxWidth: =
+                              LayoutMinHeight: =35
+                              LayoutMinWidth: =100
+                              PaddingBottom: =5
+                              PaddingLeft: =10
+                              PaddingRight: =10
+                              PaddingTop: =5
+                              RadiusBottomLeft: =5
+                              RadiusBottomRight: =5
+                              RadiusTopLeft: =5
+                              RadiusTopRight: =5
+                              Width: =Parent.Width - 30
+                            Children:
+                              - Trans_MaxDayCount:
+                                  Control: Text@0.0.51
+                                  Properties:
+                                    Font: =Font.Lato
+                                    FontColor: |-
+                                      =// Color based on day count severity
+                                      If(IsBlank(_selectedCustomer),
+                                          RGBA(100, 100, 100, 1),
+                                          With(
+                                              {
+                                                  dnTransactions: Filter('[THFinanceCashCollection]Transactions',
+                                                      Customer.'[THFinanceCashCollection]Customer' = _selectedCustomer.'[THFinanceCashCollection]Customer' &&
+                                                      'Transaction Process Date' >= _dateTo && 'Transaction Process Date' < DateAdd(_dateTo, 1, TimeUnit.Days) &&
+                                                      cr7bb_amountlocalcurrency > 0)
+                                              },
+                                              With(
+                                                  {maxDays: Coalesce(Max(dnTransactions, cr7bb_daycount), 0)},
+                                                  If(maxDays >= 4, RGBA(191, 25, 34, 1),
+                                                     maxDays = 3, RGBA(255, 140, 0, 1),
+                                                     RGBA(0, 128, 0, 1))
+                                              )
+                                          )
+                                      )
+                                    Height: =25
+                                    LayoutMaxHeight: =
+                                    LayoutMaxWidth: =
+                                    Text: |-
+                                      =// Max day count from non-excluded DN transactions
+                                      If(IsBlank(_selectedCustomer),
+                                          "Max Day Count: -",
+                                          With(
+                                              {
+                                                  dnTransactions: Filter('[THFinanceCashCollection]Transactions',
+                                                      Customer.'[THFinanceCashCollection]Customer' = _selectedCustomer.'[THFinanceCashCollection]Customer' &&
+                                                      'Transaction Process Date' >= _dateTo && 'Transaction Process Date' < DateAdd(_dateTo, 1, TimeUnit.Days) &&
+                                                      cr7bb_amountlocalcurrency > 0)
+                                              },
+                                              With(
+                                                  {maxDays: Max(dnTransactions, cr7bb_daycount)},
+                                                  "Max Day Count: " & If(IsBlank(maxDays), "N/A", Text(maxDays))
+                                              )
+                                          )
+                                      )
+                                    VerticalAlign: =VerticalAlign.Middle
+                                    Weight: ='TextCanvas.Weight'.Bold
+                                    Width: =180
+                              - Trans_TemplateIndicator:
+                                  Control: Text@0.0.51
+                                  Properties:
+                                    Font: =Font.Lato
+                                    FontColor: =RGBA(0, 0, 0, 1)
+                                    Height: =25
+                                    LayoutMaxHeight: =
+                                    LayoutMaxWidth: =
+                                    Text: |-
+                                      =// Template selection based on flow logic
+                                      If(IsBlank(_selectedCustomer),
+                                          "Template: -",
+                                          With(
+                                              {
+                                                  dnTransactions: Filter('[THFinanceCashCollection]Transactions',
+                                                      Customer.'[THFinanceCashCollection]Customer' = _selectedCustomer.'[THFinanceCashCollection]Customer' &&
+                                                      'Transaction Process Date' >= _dateTo && 'Transaction Process Date' < DateAdd(_dateTo, 1, TimeUnit.Days) &&
+                                                      cr7bb_amountlocalcurrency > 0)
+                                              },
+                                              With(
+                                                  {
+                                                      maxDays: Coalesce(Max(dnTransactions, cr7bb_daycount), 0),
+                                                      hasMI: CountRows(Filter(dnTransactions, cr7bb_documenttype = "MI")) > 0
+                                                  },
+                                                  "Template: " &
+                                                  If(hasMI, "D (MI)",
+                                                     maxDays >= 4, "C (Late fees)",
+                                                     maxDays = 3, "B (Warning)",
+                                                     "A (Standard)")
+                                              )
+                                          )
                                       )
                                     VerticalAlign: =VerticalAlign.Middle
                                     Weight: ='TextCanvas.Weight'.Semibold
-                                    Width: =200
+                                    Width: =250
                         - Trans_FIFOLogic:
                             Control: Text@0.0.51
                             Properties:
                               AutoHeight: =true
                               Font: =Font.Lato
-                              FontColor: =RGBA(0, 0, 0, 1)
-                              Size: =13
+                              FontColor: =RGBA(100, 100, 100, 1)
+                              LayoutMaxHeight: =
+                              LayoutMaxWidth: =
+                              Size: =11
                               Text: |-
                                 =If(
                                     IsBlank(_selectedCustomer),
-                                    "Select a customer from the filter above to see FIFO calculation details.",
-                                    "FIFO Application:" & Char(10) &
-                                    "1. Sort CN and DN by document date (oldest first)" & Char(10) &
-                                    "2. Apply CN to DN until CN exhausted" & Char(10) &
-                                    "3. Calculate remaining DN balances" & Char(10) &
-                                    "4. Determine max day count for template selection"
+                                    "Select a customer to preview FIFO calculation.",
+                                    "FIFO Logic: Sort by document date (oldest first) → " &
+                                    "Apply CN credits to DN debits until exhausted → " &
+                                    "Net = DN + Applied CN → " &
+                                    "Template based on max day count"
                                 )
                               VerticalAlign: =VerticalAlign.Top
                               Weight: ='TextCanvas.Weight'.Regular
                               Width: =Parent.Width - 30
-                        - Trans_NetOwed:
+                        - Trans_ExcludedInfo:
                             Control: Text@0.0.51
                             Properties:
                               Font: =Font.Lato
-                              FontColor: =RGBA(0, 0, 0, 1)
-                              Height: =30
-                              Size: =16
+                              FontColor: =RGBA(150, 150, 150, 1)
+                              Height: =20
+                              LayoutMaxHeight: =
+                              LayoutMaxWidth: =
+                              Size: =11
                               Text: |-
-                                ="Net Owed: ฿" & Text(
-                                    Sum(Trans_Gallery.AllItems,
-                                        cr7bb_amountlocalcurrency
-                                    ),
-                                    "#,##0.00"
+                                =If(IsBlank(_selectedCustomer),
+                                    "",
+                                    With(
+                                        {
+                                            totalCount: CountRows(Filter('[THFinanceCashCollection]Transactions',
+                                                Customer.'[THFinanceCashCollection]Customer' = _selectedCustomer.'[THFinanceCashCollection]Customer' &&
+                                                'Transaction Process Date' >= _dateTo && 'Transaction Process Date' < DateAdd(_dateTo, 1, TimeUnit.Days)))
+                                        },
+                                        totalCount & " transactions included in calculation"
+                                    )
                                 )
                               VerticalAlign: =VerticalAlign.Middle
-                              Weight: ='TextCanvas.Weight'.Bold
+                              Weight: ='TextCanvas.Weight'.Regular
                               Width: =Parent.Width - 30
             - Trans_NavigationMenu:
                 Control: CanvasComponent
