@@ -20,12 +20,13 @@ This document contains the **ACTUAL field names used in production**. These diff
 |--------------|------------|------|----------|
 | Customer Code | `cr7bb_customercode` | Text(20) | Yes |
 | Customer Name | `cr7bb_customername` | Text(255) | Yes |
-| Region | `cr7bb_Region` | Choice | Yes |
+| Region | `nc_region` | Choice | Yes |
 
 **⚠️ Special Note on Region:**
-- **Display name** (for Table FieldName): `cr7bb_Region` (capital R)
-- **Logical name** (for Patch operations): `Region` (no prefix)
+- **Logical name**: `nc_region` (different publisher prefix than other fields)
+- **Display name** (for Patch operations): `Region`
 - **Items source**: `Choices('Region Choice')`
+- **Note**: This field uses `nc_` prefix, NOT `cr7bb_` like other fields
 
 ### Customer Email Addresses
 | Display Name | Field Name | Type | Required |
@@ -83,7 +84,7 @@ This document contains the **ACTUAL field names used in production**. These diff
 | Is Excluded | `cr7bb_isexcluded` | Yes/No | Yes |
 | Exclude Reason | `cr7bb_excludereason` | Text(100) | No |
 | Day Count | `cr7bb_daycount` | Whole Number | Conditional* |
-| Process Date | `cr7bb_processdate` | Date | Yes |
+| Transaction Process Date | `cr7bb_transactionprocessdate` | Date | Yes |
 | Process Batch | `cr7bb_processbatch` | Text(50) | Yes |
 | Row Number | `cr7bb_rownumber` | Whole Number | Yes |
 | Is Processed | `cr7bb_isprocessed` | Yes/No | Yes |
@@ -113,17 +114,60 @@ This document contains the **ACTUAL field names used in production**. These diff
 | Customer | `cr7bb_customer` | Lookup | Yes |
 | Process Date | `cr7bb_processdate` | DateTime | Yes |
 | Email Subject | `cr7bb_emailsubject` | Text(500) | Yes |
+| Email Body Preview | `cr7bb_emailbodypreview` | Multiline Text | Yes |
 | Total Amount | `cr7bb_totalamount` | Currency | Yes |
+| Approval Status | `cr7bb_approvalstatus` | Choice | Yes |
 | Send Status | `cr7bb_sendstatus` | Choice | Yes |
-| Sent Date Time | `cr7bb_sentdatetime` | DateTime | Yes |
+| Sent Date Time | `cr7bb_sentdatetime` | DateTime | No |
 | Recipient Emails | `cr7bb_recipientemails` | Text | Yes |
 | CC Emails | `cr7bb_ccemails` | Text | Yes |
 | Max Day Count | `cr7bb_maxdaycount` | Whole Number | Yes |
+| Email Template | `cr7bb_emailtemplate` | Text | Yes |
+| QR Code Included | `cr7bb_qrcodeincluded` | Yes/No | Yes |
 | Error Message | `cr7bb_errormessage` | Text | No |
 
-**⚠️ Choice Fields:**
-- **Send Status** (`cr7bb_sendstatus`): Use `'Send Status Choice'.Success` or similar
-  - Global choice name: `cr7bb_sendstatuschoice`
+**⚠️ Choice Fields and Values:**
+
+**Approval Status** (`cr7bb_approvalstatus`):
+| Value | Label | Numeric |
+|-------|-------|---------|
+| `ApprovalStatusChoice.Pending` | Pending | 676180000 |
+| `ApprovalStatusChoice.Approved` | Approved | 676180001 |
+| `ApprovalStatusChoice.Rejected` | Rejected | 676180002 |
+
+**Send Status** (`cr7bb_sendstatus`):
+| Value | Label | Numeric |
+|-------|-------|---------|
+| `'Send Status Choice'.Success` | Success | 676180000 |
+| `'Send Status Choice'.Failed` | Failed | 676180001 |
+| `'Send Status Choice'.Pending` | Pending | 676180002 |
+
+**⚠️ Important Flow Behavior:**
+- Email Engine creates EmailLogs with **ApprovalStatus = Approved** (auto-approved)
+- Email Engine creates EmailLogs with **SendStatus = Pending** (waiting for send)
+- Email Sending Flow updates **SendStatus** to Success/Failed after send attempt
+
+**⚠️ CRITICAL - EmailLog Process Date is DateTime:**
+```yaml
+# ❌ WRONG - Causes "Incompatible types for comparison" warning (DateTime vs Text)
+Filter('[THFinanceCashCollection]Emaillogs', cr7bb_processdate = Text(Today(), "yyyy-mm-dd"))
+
+# ✅ CORRECT - Use DateTime range comparison (delegable)
+Filter('[THFinanceCashCollection]Emaillogs',
+    cr7bb_processdate >= Today() && cr7bb_processdate < DateAdd(Today(), 1, TimeUnit.Days))
+
+# ✅ CORRECT - With variable
+Filter('[THFinanceCashCollection]Emaillogs',
+    cr7bb_processdate >= _selectedDate && cr7bb_processdate < DateAdd(_selectedDate, 1, TimeUnit.Days))
+```
+
+**⚠️ DIFFERENT TYPES - Same Field Name, Different Tables:**
+| Table | Field | Type | Comparison Pattern |
+|-------|-------|------|-------------------|
+| EmailLogs | `cr7bb_processdate` | **DateTime** | `>= _date && < DateAdd(_date, 1, Days)` |
+| ProcessLogs | `cr7bb_processdate` | **Text** | `= Text(_date, "yyyy-mm-dd")` |
+
+**Note:** This is different from **ProcessLog.cr7bb_processdate** which is TEXT type!
 
 **⚠️ Lookup Field Access Pattern:**
 ```yaml
@@ -152,10 +196,22 @@ ThisItem.Customer.'[THFinanceCashCollection]Customer'  # To get GUID for lookup
 | Transactions Excluded | `cr7bb_transactionsexcluded` | Whole Number | Yes |
 | Emails Failed | `cr7bb_emailsfailed` | Whole Number | Yes |
 
-**Status Choice Values:**
-- Running
-- Completed
-- Failed
+**Status Choice Values** (`'Status Choice'`):
+| Value | Label | Numeric |
+|-------|-------|---------|
+| `'Status Choice'.Running` | Running | 676180000 |
+| `'Status Choice'.Completed` | Completed | 676180001 |
+| `'Status Choice'.Failed` | Failed | 676180002 |
+| `'Status Choice'.'Completed with errors'` | Completed with errors | 676180003 |
+
+**⚠️ CRITICAL - Use Choice Comparison, NOT String:**
+```yaml
+# ❌ WRONG - Causes "Incompatible types for comparison" warning
+If(_processLog.cr7bb_status = "Completed", ...)
+
+# ✅ CORRECT - Use choice reference
+If(_processLog.cr7bb_status = 'Status Choice'.Completed, ...)
+```
 
 **Process Type Values (Text):**
 - `DailySync` - Daily transaction sync from Power BI
@@ -190,8 +246,8 @@ Children:
       Control: TableDataField@1.5.0
       Properties:
         FieldDisplayName: ="Region"
-        FieldName: ="cr7bb_Region"  # Capital R
-        FieldType: ="E"
+        FieldName: ="nc_region"  # Different prefix than other fields
+        FieldType: ="l"
 ```
 
 ### Filter/Sort Operations
@@ -266,18 +322,52 @@ Before writing any Power Apps code:
 
 ---
 
+## ⚠️ Lookup Field Comparison Pattern
+
+When comparing Dataverse lookup fields in Filter operations, you must dereference to the table GUID.
+
+**❌ WRONG** (comparing lookup objects directly):
+```yaml
+Filter(
+    '[THFinanceCashCollection]Transactions',
+    Customer = _selectedEmail.Customer
+)
+# Error: Incompatible types for comparison
+```
+
+**✅ CORRECT** (dereference to table GUID):
+```yaml
+Filter(
+    '[THFinanceCashCollection]Transactions',
+    Customer.'[THFinanceCashCollection]Customer' = _selectedEmail.Customer.'[THFinanceCashCollection]Customer'
+)
+```
+
+**Pattern**: `LookupField.'[SolutionPrefix]TableName'`
+
+**Examples**:
+- `Customer.'[THFinanceCashCollection]Customer'` - Customer lookup
+- `Transaction.'[THFinanceCashCollection]Transaction'` - Transaction lookup
+
+**Key Points**:
+- Both sides of comparison must use same dereference syntax
+- Table name is singular (matches Dataverse logical name)
+- This returns the GUID for comparison
+
+---
+
 ## Common Mistakes to Avoid
 
-❌ **WRONG** (using placeholder names from database_schema.md):
+❌ **WRONG** (using incorrect field names):
 ```yaml
 FieldName: ="nc_customercode"
-nc_region: CustomerFormRegion.Selected
+cr7bb_region: CustomerFormRegion.Selected
 ```
 
 ✅ **CORRECT** (using actual production names):
 ```yaml
 FieldName: ="cr7bb_customercode"
-Region: CustomerFormRegion.Selected.Value
+Region: CustomerFormRegion.Selected.Value  # Region uses nc_region logical name
 ```
 
 ---

@@ -1,0 +1,294 @@
+# FBL5N Automation
+
+  Meeting started: 11/19/2025, 1:59:51 PM
+  Duration: 22 minutes
+  Participants: Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal, Chamnong,Nick,TH-Bangkok,Information Technology, Kumar,Naveen,IN-Bangalore,IT Analytics Data & Integration, Nithijarernariya,Russarin,TH-Bangkok,Information Technology, Panich,Jarukit,TH-Bangkok,Accounts Receivable, Velu,Kandakumar,IN-Bangalore,IT Finance & Legal
+
+  [View original transcript](https://app.tactiq.io/api/2/u/m/r/lnqYVZ8hlvgqdAT9JISp?o=txt)
+
+    
+
+  
+
+  
+    ## Highlights
+
+    > 03:42 Kumar,Naveen,IN-Bangalore,IT Analytics Data & Integration: No, no. But why will the SharePoint power automate can? Can connect with any of the market endpoint also right? Can connect with any of the market endpoint Because with SharePoint the issue is that somebody has to maintain this one OK all the time and the moment you automate this process. OK, so in order to write a file to the SharePoint, an oath has to be activated here.
+> 04:16 Kumar,Naveen,IN-Bangalore,IT Analytics Data & Integration: So then it will create an issue.
+> 13:47 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: OK. And then the last time when I talked to shamik, he said that if we have the new customer number because this is the the customer item, right? So when if there is a new customer number, we have to list the ticket to add the customer number into the job, right?
+> 14:45 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: Yeah, we have the list of the customer and probably we will have the movement. But if even if not that often, but we will have to movement like every. Probably Probably I Probably I don't have to do customer. We have to add into the customer account here. OK. So just the question is that when we have the new customer number, yeah, we have to raise a ticket, right?
+> 16:28 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: OK. That will handle that. To remove the ticket. Yes, correct. Yes, yes, that's right. So let's say that if we have this item out that outstanding today and tomorrow still outstanding, that record still show in BOT 5.
+
+  ## Transcript
+
+  00:00 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: High สิคะ
+00:01 Chamnong,Nick,TH-Bangkok,Information Technology: ฮ
+00:02 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: OK OK. Yeah.
+00:06 Velu,Kandakumar,IN-Bangalore,IT Finance & Legal: Hey yeah basically dalita. Yeah, I think you already had a call with shamek, OK.
+00:09 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: Sure. Yes, yes, already with shamik.
+00:12 Velu,Kandakumar,IN-Bangalore,IT Finance & Legal: So we have So we have NAV So we have Navin, who is the expert from the BSA side.
+00:15 Chamnong,Nick,TH-Bangkok,Information Technology: Please open.
+00:17 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: EE OK.
+00:19 Velu,Kandakumar,IN-Bangalore,IT Finance & Legal: So in brief, if you can tell what is the scope you need, not explain in detail, but exactly we know you're going to take a download, then what are you going to do further with that? I can just explain.
+00:31 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: Sure. No more. You want to walk through or I can. Let me do that. OK. So OK. So actually the concept is that we will download the customer live item and then locate it in the SharePoint.
+00:44 Velu,Kandakumar,IN-Bangalore,IT Finance & Legal: Mm-hmm.
+00:47 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: Yeah, and yeah, the SharePoint. So since the five UP download daily right? So that will be the the fight every day. So the plan is that we would like to have the file breakdown by month, the year, year, year end, month. Yes, and this is the example of the file that that the team that the business they manually download from the FBL 5N right. So you will see that this is this is just the FBL, FBL fight in. However when they try to download from the FBL 5.
+01:11 Velu,Kandakumar,IN-Bangalore,IT Finance & Legal: Mm.
+01:20 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: Ish, right? So let me open up this one. So this So this is the format that we get from the FBL 5H It doesn't look it. It doesn't look look like proper like in. It doesn't look in in order. However I confirm with Shamik, he said that actually the the the T code work fine, but probably the format of the Excel or something that that's why we see the we we see the we see the the information like this and this. Is not a big problem, but actually this is something that we would like to get the final file.
+01:53 Velu,Kandakumar,IN-Bangalore,IT Finance & Legal: Mm-hmm.
+01:57 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: Right. Yeah, in like in, in, in this table. After that, after that, the five will be download to the power app. This is the schedule time that we plan. Actually we can set this solid solid timeline that the e-mail from the power app will be sent out no later than 8:00 AM. So we step back. What the what the Sep should be executed file. So we set at about 7:00 AM, but it could be fixable from 7:00 to 7:30. So after that five, we'll place as a SharePoint and then the power app will load the file to generate the e-mail.
+02:28 Velu,Kandakumar,IN-Bangalore,IT Finance & Legal: Yep.
+02:34 Kumar,Naveen,IN-Bangalore,IT Analytics Data & Integration: So Power app will read the file from the SharePoint. You need to say.
+02:37 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: Yes, lead to five from the chamoy. Yeah, connection connect. Is that right? It will read the file from the SharePoint or it will download the file from the SharePoint into the power app. I'm not sure.
+02:48 Chamnong,Nick,TH-Bangkok,Information Technology: It read files from a SharePoint and then generate the data with role account to it and then we process it to the data was e-mail and then we send the. Our automate we send the e-mail, yeah.
+03:02 Kumar,Naveen,IN-Bangalore,IT Analytics Data & Integration: OK. So how you are planning to load the file into the SharePoint first from the SAP side?
+03:07 Chamnong,Nick,TH-Bangkok,Information Technology: From.
+03:10 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: From, from, from, from the we, we plan to set the schedule job to load the flight to load the flight from SEV to SharePoint, but we want it to be automate.
+03:10 Chamnong,Nick,TH-Bangkok,Information Technology: What?
+03:20 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: I'm not sure about the the solution to do so. This is what what what we would like to. We would like to consult with you We would like to consult with you. How? How could we have defy? Please at the SharePoint. Please at the SharePoint
+03:33 Kumar,Naveen,IN-Bangalore,IT Analytics Data & Integration: See the plan.
+03:34 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: Yeah, we. I think we can download the file into the folder, but we need the file moving from the folder into the SharePoint.
+03:42 Kumar,Naveen,IN-Bangalore,IT Analytics Data & Integration: No, no. But why will the SharePoint power automate can? Can connect with any of the market endpoint also right? Can connect with any of the market endpoint Because with SharePoint the issue is that somebody has to maintain this one OK all the time and the moment you automate this process. OK, so in order to write a file to the SharePoint, an oath has to be activated here.
+03:59 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: Mm-hmm.
+04:07 Kumar,Naveen,IN-Bangalore,IT Analytics Data & Integration: And if someone and it's like they will try to, they will verify the site everyone year. If somebody does not verify during that time then the site will be deleted.
+04:15 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: Mm-hmm.
+04:16 Kumar,Naveen,IN-Bangalore,IT Analytics Data & Integration: So then it will create an issue.
+04:18 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: So are are you saying it that? Are you saying that we want we will download the file into the share folder and have the power app rethink the file from the SharePoint share folder instead of the SharePoint clone?
+04:29 Kumar,Naveen,IN-Bangalore,IT Analytics Data & Integration: Correct, correct. Yeah, yeah, yeah.
+04:33 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: Is that possible that we use a share folder instead or is that any limitation that that that we can that we have to use the SharePoint?
+04:40 Chamnong,Nick,TH-Bangkok,Information Technology: Where where does a share folder located again?
+04:44 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: Do you have to example now we We do have to example of the shared folder because our developer actually is not Nestle employee, so I'm not sure if he has access or we have to grant access to specific share folder for him.
+04:58 Kumar,Naveen,IN-Bangalore,IT Analytics Data & Integration: So you can take help from any of the highlight endpoint, right?
+04:59 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: Yeah Yeah.
+05:04 Kumar,Naveen,IN-Bangalore,IT Analytics Data & Integration: Thailand market market server will be there.
+05:05 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: Yes.
+05:05 Velu,Kandakumar,IN-Bangalore,IT Finance & Legal: The local IT. Your local IT somebody is there from your itit.
+05:08 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: Uh. Uh. Alright. No miss, I'm at IT. No me
+05:12 Velu,Kandakumar,IN-Bangalore,IT Finance & Legal: Pure it who handles user IDs? No, no, no, it doesn't. Technology like who handle servers and desktops for you on the market side. Who's your IT FRM?
+05:14 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: Yeah, but.
+05:19 Kumar,Naveen,IN-Bangalore,IT Analytics Data & Integration: The servers that come.
+05:26 Chamnong,Nick,TH-Bangkok,Information Technology: If you worried about the maintain been maintained of the SharePoint site itself, I I look after that site anyway. So because the site will be used by multiple apps anyway. Is that what you're concerned about Is that what you're concerned about?
+05:42 Kumar,Naveen,IN-Bangalore,IT Analytics Data & Integration: No, no, the site cannot be link for each and every app. That endpoint has to be activated. OK. It's not like that. Once one application activate, it's another will consume using the same credentials. That's not allowed in SLA.
+05:58 Velu,Kandakumar,IN-Bangalore,IT Finance & Legal: You must be having LH servers there, right?
+06:02 Chamnong,Nick,TH-Bangkok,Information Technology: I'm not sure.
+06:06 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: But but actually we we have other application that also pick up the file from directly from from the SharePoint. So I think that's why the developer prefer to have the the file from like the same source of the same source like the format of the SharePoint not not the share folder but. Uh.
+06:29 Kumar,Naveen,IN-Bangalore,IT Analytics Data & Integration: I I got this market end point for the Thailand market. So just have a look at this.
+06:30 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: So. Yep.
+06:34 Velu,Kandakumar,IN-Bangalore,IT Finance & Legal: There will be something definitely all your interfaces with SAP, the downloads or order processing from the customer service side. They will all be using this server.
+06:47 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: Yep, let me share this. Probably this is the folder that that example that I have for the the team information. This is a shared folder right in the.
+07:01 Kumar,Naveen,IN-Bangalore,IT Analytics Data & Integration: No, no, this is your local one, right? OneDrive for individual, yeah.
+07:04 Velu,Kandakumar,IN-Bangalore,IT Finance & Legal: Yeah. This is a local 1.
+07:06 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: Actually this is yeah, this the local. So what? What what we have to do? I probably I because I saved the. That's why it's showing OneDrive. OK. I don't have then.
+07:20 Velu,Kandakumar,IN-Bangalore,IT Finance & Legal: So Naveen has put it on the chat. The server name he has put there.
+07:25 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: OK.
+07:27 Velu,Kandakumar,IN-Bangalore,IT Finance & Legal: So your IT team will know about the server.
+07:30 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: IT IT team like the platform IT or who in the IT.
+07:34 Velu,Kandakumar,IN-Bangalore,IT Finance & Legal: Yes, yes.
+07:36 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: Ah.
+07:37 Kumar,Naveen,IN-Bangalore,IT Analytics Data & Integration: Thing is, will be there right in the SharePoint. I don't mean like how you people are planning for the housekeeping and all these things.
+07:39 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: Oh.
+07:44 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: So So what is?
+07:44 Kumar,Naveen,IN-Bangalore,IT Analytics Data & Integration: 8.
+07:46 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: What is the limitation that we have to fight in in into the SharePoint instead of the inside of the share folder?
+07:51 Kumar,Naveen,IN-Bangalore,IT Analytics Data & Integration: The point is simple means like somebody has to recertify the keep on recertifying the certified time and again OK.
+07:58 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: Yeah, but but that one if that one is not the conserve, we could do that.
+08:02 Kumar,Naveen,IN-Bangalore,IT Analytics Data & Integration: And then how you're going to archive the data from the SharePoint?
+08:03 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: So. Hmm.
+08:10 Chamnong,Nick,TH-Bangkok,Information Technology: Well, do we need to do that? Like do we need to just like delete every five year or something?
+08:18 Kumar,Naveen,IN-Bangalore,IT Analytics Data & Integration: Don't know the Don't know the market has to take a call from there, right? Because the data cannot be. Because it's finance data, right?
+08:24 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: Yes, so so so so if.
+08:24 Velu,Kandakumar,IN-Bangalore,IT Finance & Legal: Yeah, it's a huge data is big, right?
+08:27 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: Yeah. So, so if we have the attention, yeah, the lead engine guideline to delete information every every five or ten year according to the retention guideline and is that OK?
+08:27 Velu,Kandakumar,IN-Bangalore,IT Finance & Legal: It's huge data every day.
+08:39 Kumar,Naveen,IN-Bangalore,IT Analytics Data & Integration: No, that's fine. That's fine. That's fine. So all you have to do is that you will have to create a. It's like a set point site which you have created. OK, ask Microsoft Team 360 team to.
+08:49 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: Yes. Mm-hmm.
+08:54 Kumar,Naveen,IN-Bangalore,IT Analytics Data & Integration: Enable the auth endpoint here. Make it API enabled so that any middleware can place a file there. Then it can be automated.
+09:02 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: And it will be OK. So so this one I have I have to do or or KK your team could do for us?
+09:04 Kumar,Naveen,IN-Bangalore,IT Analytics Data & Integration: Yeah Yeah.
+09:13 Velu,Kandakumar,IN-Bangalore,IT Finance & Legal: No, this is not a functional thing.
+09:13 Kumar,Naveen,IN-Bangalore,IT Analytics Data & Integration: Set.
+09:16 Velu,Kandakumar,IN-Bangalore,IT Finance & Legal: Your IT team a lot to do. I mean, as I told nobody is there.
+09:16 Kumar,Naveen,IN-Bangalore,IT Analytics Data & Integration: Somebody should be the functional owner for this particular site.
+09:20 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: OK.
+09:20 Kumar,Naveen,IN-Bangalore,IT Analytics Data & Integration: I don't know who's.
+09:21 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: So you OK, can you provide the instruction and then I will connect with the with the local IT.
+09:23 Kumar,Naveen,IN-Bangalore,IT Analytics Data & Integration: Yeah, I can provide that. Yeah, I can provide all this information. Yeah. Yeah, like.
+09:29 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: OK, so so that I understand that that would be two step right. The first step it will be your team to download the file and place it in the.
+09:42 Kumar,Naveen,IN-Bangalore,IT Analytics Data & Integration: SoC SoC means like SAP, bad jobs will be there which will keep on downloading the files to the G data path on ASAP server itself.
+09:46 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: Eh. OK. OK.
+09:51 Kumar,Naveen,IN-Bangalore,IT Analytics Data & Integration: OK. Then what will happen that with the help of a middleware, OK the file will be picked from those G data paths from the SAP system.
+09:56 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: And you.
+09:59 Kumar,Naveen,IN-Bangalore,IT Analytics Data & Integration: And it will be transferred to the SharePoint so these are
+10:01 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: OK.
+10:04 Kumar,Naveen,IN-Bangalore,IT Analytics Data & Integration: Is there two way processor two like processor?
+10:06 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: And and do you know that in in like the SharePoint? Because we could split in the year end month or it will be set up in in one folder?
+10:11 Kumar,Naveen,IN-Bangalore,IT Analytics Data & Integration: No means like in one folder. We can put it there and then. Or maybe it means like each year you can. Will have to dynamically. We'll have to see means like if we can dynamically decide that folder or not. Otherwise everything will be placed in a single folder.
+10:31 Chamnong,Nick,TH-Bangkok,Information Technology: Yeah, we can work with that.
+10:34 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: OK.
+10:34 Chamnong,Nick,TH-Bangkok,Information Technology: No problem.
+10:34 Kumar,Naveen,IN-Bangalore,IT Analytics Data & Integration: Yeah, Nick's coming in.
+10:36 Chamnong,Nick,TH-Bangkok,Information Technology: Yeah, yeah, we we can. We can if it's, if if you can put it in the monthly folder that that's would be great.
+10:43 Kumar,Naveen,IN-Bangalore,IT Analytics Data & Integration: Uh-huh. Uh, huh.
+10:44 Chamnong,Nick,TH-Bangkok,Information Technology: But if you can, we we can work with that.
+10:45 Kumar,Naveen,IN-Bangalore,IT Analytics Data & Integration: OK, OK, OK, OK, alright.
+10:49 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: OK, so you can go ahead to create the the Sep job schedule job to to run. Defy Defy. And if you want the layout, the layout of the file or the selection you just let me know and then please let me know the instruction to connect the file from the. That, that, that folder and into the SharePoint and then I will I will work from from that, yeah.
+11:15 Kumar,Naveen,IN-Bangalore,IT Analytics Data & Integration: All right, yeah.
+11:17 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: OK OK. And do you know how long?
+11:18 Velu,Kandakumar,IN-Bangalore,IT Finance & Legal: Yeah, variant. You can create one chalita or variant. You can create one. What formats that you want? That same variant? We will put it in the batch job.
+11:23 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: 1. OK. I I will ask the business to provide you the the variance. So you want us to share you the file it it could be look like this or you want us to? Like the the the layout, I mean like the layout. How could you? You want us to give you information?
+11:41 Velu,Kandakumar,IN-Bangalore,IT Finance & Legal: No, no. Basically you try that layout and see what file it is. Whatever format is coming the final layout we will use it in the badge up.
+11:51 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: OK. So so we will share you the five with the final layout then.
+11:56 Velu,Kandakumar,IN-Bangalore,IT Finance & Legal: Yeah, yeah. Whichever format is OK. That layout you there with us, which we can put it in the.
+12:02 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: OK. OK. And is, is the the personal layout you you can look from that or we have to download and then give you the file because I I think the the business already create create the layout but but we could not sit as the public layout. Can we share the the layout name?
+12:20 Velu,Kandakumar,IN-Bangalore,IT Finance & Legal: OK. No problem. That layout, that layout and that particular variant OK if the output is OK for you, then the same one we will.
+12:25 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: OK. Yep.
+12:31 Velu,Kandakumar,IN-Bangalore,IT Finance & Legal: Use it in the badge.
+12:37 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: OK OK. So so I will have this net to provide you the layout then.
+12:44 Kumar,Naveen,IN-Bangalore,IT Analytics Data & Integration: Just if you can let me know the site address, SharePoint address if you can send me that one.
+12:45 Velu,Kandakumar,IN-Bangalore,IT Finance & Legal: Yeah Yeah, yeah.
+12:51 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: Also, the side of the SharePoint right, OK this one I will.
+12:53 Kumar,Naveen,IN-Bangalore,IT Analytics Data & Integration: Yeah, yeah, yeah, that will be needed.
+13:00 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: OK, this one. And this is a the share part then and.
+13:05 Kumar,Naveen,IN-Bangalore,IT Analytics Data & Integration: All tokens.
+13:09 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: I think that's all I think that's all. And so last question. So how long the job could be set up? And also the connection to the SharePoint is that estimate timeline.
+13:25 Velu,Kandakumar,IN-Bangalore,IT Finance & Legal: And 1st is to check your layout OK. We'll have to run it.
+13:31 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: We have.
+13:31 Velu,Kandakumar,IN-Bangalore,IT Finance & Legal: Maybe we ought to check the badge up and is giving the correct output. Yes, simultaneously, of course, Naveen can also. But then he allowed raise an enhancement, which we'll have to face to Naveen's team.
+13:47 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: OK. And then the last time when I talked to shamik, he said that if we have the new customer number because this is the the customer item, right? So when if there is a new customer number, we have to list the ticket to add the customer number into the job, right?
+14:04 Velu,Kandakumar,IN-Bangalore,IT Finance & Legal: No, no, that's not your your bad job. That's what your variant should already pick for all customers, right? Irrespective of new customers.
+14:10 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: No, not all the customer we have. We yeah, we we have to set of the customer that that we want the job to run.
+14:18 Velu,Kandakumar,IN-Bangalore,IT Finance & Legal: So you want only a specific list of customers. So you want only a
+14:20 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: Let me.
+14:21 Velu,Kandakumar,IN-Bangalore,IT Finance & Legal: The job should be running, not for all.
+14:22 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: Not for all. Yeah, and. And even even for all when we have the new customer, we have to. To provide to to list the customer again or it will be. Pick up all the customer under the company code. Pick up all the customer under the
+14:39 Velu,Kandakumar,IN-Bangalore,IT Finance & Legal: Yeah that's Yeah, that's what I don't know how your variant looks.
+14:40 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: But but yeah.
+14:41 Velu,Kandakumar,IN-Bangalore,IT Finance & Legal: We have to re check your variant is not using any customer list. Then it should pick for all.
+14:45 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: Yeah, we have the list of the customer and probably we will have the movement. But if even if not that often, but we will have to movement like every. Probably Probably I Probably I don't have to do customer. We have to add into the customer account here. OK. So just the question is that when we have the new customer number, yeah, we have to raise a ticket, right?
+15:07 Velu,Kandakumar,IN-Bangalore,IT Finance & Legal: But OK. Yeah, if you have a fixed number in the customer, then you'll have to raise tickets to change it. If you run it need for all the customers in this company code, then I don't think you ought to change, right?
+15:13 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: OK. OK. I confirm that I confirm that we I confirm that we don't need all the customer right, just a specific number, is that correct?
+15:27 Panich,Jarukit,TH-Bangkok,Accounts Receivable: Yep.
+15:27 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: Yeah, we need a specific number. So yeah, we will.
+15:31 Velu,Kandakumar,IN-Bangalore,IT Finance & Legal: Then in that case, yeah. For adding them, you'll have to raise tickets to add a new customer.
+15:31 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: So we will provide, yeah, OK. OK. OK. So so. So at at the starting point, we will provide the the list of the final customer number, the company code and then.
+15:37 Velu,Kandakumar,IN-Bangalore,IT Finance & Legal: To change that variant.
+15:47 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: Uh, the layout of the the the the display layout of OK, OK.
+15:52 Velu,Kandakumar,IN-Bangalore,IT Finance & Legal: Yeah, basically, yes. All whatever you want and this one you are running a day on a daily basis, is it?
+15:57 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: Daily basis every seven.
+15:59 Velu,Kandakumar,IN-Bangalore,IT Finance & Legal: How is?
+16:00 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: E every morning. 7:00 AM.
+16:02 Velu,Kandakumar,IN-Bangalore,IT Finance & Legal: So every morning you'll run the open items.
+16:02 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: Yeah.
+16:04 Velu,Kandakumar,IN-Bangalore,IT Finance & Legal: Is it or? What is it?
+16:06 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: Yeah, every morning. Land open item every morning.
+16:10 Velu,Kandakumar,IN-Bangalore,IT Finance & Legal: So is there a possibility of a duplicate?
+16:12 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: Just only the weekday.
+16:13 Velu,Kandakumar,IN-Bangalore,IT Finance & Legal: Is there a possibility of for duplicate whatever yesterday, so open will still run again today also?
+16:15 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: Oh. Yes, that is a yes. Yes, that, that, that, that, yeah, that would be the duplicate record but but but the power app will handle that, Yep.
+16:23 Velu,Kandakumar,IN-Bangalore,IT Finance & Legal: Then. OK. OK, fine. So basically every day you will run all open items every day, right?
+16:28 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: OK. That will handle that. To remove the ticket. Yes, correct. Yes, yes, that's right. So let's say that if we have this item out that outstanding today and tomorrow still outstanding, that record still show in BOT 5.
+16:40 Velu,Kandakumar,IN-Bangalore,IT Finance & Legal: Yeah, yeah.
+16:42 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: Yeah, yeah, started expectation.
+16:42 Velu,Kandakumar,IN-Bangalore,IT Finance & Legal: OK, so that you'll handle at your end, OK.
+16:45 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: Yeah, yes. Yeah, we will handle the deprecation. OK. Yep.
+16:46 Velu,Kandakumar,IN-Bangalore,IT Finance & Legal: Then it is simple only. Every The everyday of open items we run this job. The everyday of open items we run this job
+16:50 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: Yes, so if you.
+16:51 Velu,Kandakumar,IN-Bangalore,IT Finance & Legal: Only thing is you decide whether you want to run it for all customers or if it for a specific customer. If it is for all customers, then you don't have to do any changes if it for any specific customer then this variant has to be changed whenever you.
+16:56 Kumar,Naveen,IN-Bangalore,IT Analytics Data & Integration: Call custom Call customer.
+16:57 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: Just.
+17:03 Velu,Kandakumar,IN-Bangalore,IT Finance & Legal: Want to add new customers?
+17:05 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: OK, it confirmed will be the specific customer number, not all. OK. Yeah. OK.
+17:09 Velu,Kandakumar,IN-Bangalore,IT Finance & Legal: Yeah yeah then Yeah, yeah. Then Then you'll have to change every time. But what is difficulty? I mean, there's the specific customer number of customers, two lists comparing to all the customers. Why is it you don't want it for all customers?
+17:18 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: Because. Because the power app this will be handled just only the the cache customer, the customer that pay that pay by cash. Because the power app So we will have to, yeah, specific run that's only the cache customer not not the financing credit and and and and other type of customer.
+17:28 Velu,Kandakumar,IN-Bangalore,IT Finance & Legal: Mm-hmm. Yeah, I understand. Is that number of customers? I mean if it's total 100 customers, how much are your guest customers average?
+17:39 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: The wrench. No, no, no can do. You know how. How we look how, how, how many?
+17:49 Panich,Jarukit,TH-Bangkok,Accounts Receivable: 80 80 and 90.
+17:50 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: About hundred? Yeah, about hundred a hundred.
+17:52 Panich,Jarukit,TH-Bangkok,Accounts Receivable: Maybe yeah Maybe. Yeah, about.
+17:54 Velu,Kandakumar,IN-Bangalore,IT Finance & Legal: Now out of the total customers, what is your total customers and what is this list?
+17:58 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: Total total bin Panda has someone more? Than Than pan
+18:03 Panich,Jarukit,TH-Bangkok,Accounts Receivable: 1000.
+18:03 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: Than pan. I'll send. The total customer this is 10% The total customer, this is 10%. Yep.
+18:08 Velu,Kandakumar,IN-Bangalore,IT Finance & Legal: OK. But do you want only to be run for 100 customers?
+18:11 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: Yes, correct. That's only the cash customer, OK?
+18:12 Chamnong,Nick,TH-Bangkok,Information Technology: Yes.
+18:13 Velu,Kandakumar,IN-Bangalore,IT Finance & Legal: OK, OK.
+18:15 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: OK
+18:15 Velu,Kandakumar,IN-Bangalore,IT Finance & Legal: No problem
+18:16 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: OK so.
+18:16 Velu,Kandakumar,IN-Bangalore,IT Finance & Legal: No problem then only thing is, yeah, you will have to keep maintaining the list. Otherwise, automatically it will not run for the new customers, right?
+18:22 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: Yep, Yep. Yeah, we are. We already informed the business and they are aware that until the new customer number added into the job, then we have to do the manual generate the e-mail.
+18:33 Velu,Kandakumar,IN-Bangalore,IT Finance & Legal: And how frequently you add new customers, how frequently new customers are added in the system.
+18:38 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: From from what I we talk is is not probably feel every field every three months or something because it's not only the new customer but the customer with the cache.
+18:45 Velu,Kandakumar,IN-Bangalore,IT Finance & Legal: OK.
+18:47 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: Cache type, so it's not that often.
+18:49 Velu,Kandakumar,IN-Bangalore,IT Finance & Legal: Yeah. Yeah, yeah, yeah, yeah.
+18:51 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: Yeah, probably like every few months. It depends. But but but not that often. Yep.
+18:55 Velu,Kandakumar,IN-Bangalore,IT Finance & Legal: OK.
+18:56 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: OK
+18:57 Velu,Kandakumar,IN-Bangalore,IT Finance & Legal: So definitely around two months in two months, right?
+18:59 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: OK. Yeah, yeah. That, that, that from the record from from this is a record data that we have every two or three months.
+19:05 Velu,Kandakumar,IN-Bangalore,IT Finance & Legal: OK, then it is still manageable.
+19:05 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: OK. I hope so. Yep. Manageable. Hopefully. Yep, I thought why we will see. Yeah. I thought we will see whether we can do the range that probably this is something that we can talk. Yeah.
+19:11 Kumar,Naveen,IN-Bangalore,IT Analytics Data & Integration: How big will be the file?
+19:17 Velu,Kandakumar,IN-Bangalore,IT Finance & Legal: What what is your you're running it manually right You're running it manually, right? You're running it manually right
+19:22 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: Today. Yeah, today they do manually.
+19:24 Velu,Kandakumar,IN-Bangalore,IT Finance & Legal: For these customers today, what is the size of the file?
+19:24 Kumar,Naveen,IN-Bangalore,IT Analytics Data & Integration: Stop the fight.
+19:25 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: The size of the file. If we see this this one, this is the file that they they mock up from today.
+19:25 Velu,Kandakumar,IN-Bangalore,IT Finance & Legal: What is the size of the file?
+19:33 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: I don't know how to let me check.
+19:41 Kumar,Naveen,IN-Bangalore,IT Analytics Data & Integration: How many records? Most probably comes per file.
+19:45 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: OK. Let me check now.
+19:47 Kumar,Naveen,IN-Bangalore,IT Analytics Data & Integration: That'll give you a fair idea exactly what would be the size. At least from the SAP side, we can check, right, OK.
+19:52 Velu,Kandakumar,IN-Bangalore,IT Finance & Legal: Around 1000 lines.
+19:54 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: Arau arout 55500. Yeah, 500 lie probably less than that because this is including a total the subtotal line that we that we don't want in the final file.
+19:55 Velu,Kandakumar,IN-Bangalore,IT Finance & Legal: 10,000 lines, 500 lines. OK then it's OK.
+19:57 Kumar,Naveen,IN-Bangalore,IT Analytics Data & Integration: OK, OK, OK. OK. That's OK then, Sir.
+20:05 Chamnong,Nick,TH-Bangkok,Information Technology: I I
+20:05 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: OK.
+20:05 Chamnong,Nick,TH-Bangkok,Information Technology: I I I think it usually 7800.
+20:08 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: 07800 07800.
+20:08 Chamnong,Nick,TH-Bangkok,Information Technology: Yeah, would be more, yeah.
+20:09 Velu,Kandakumar,IN-Bangalore,IT Finance & Legal: OK. So around thousand maximum 1000 lines, right?
+20:12 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: Yes, yes. Should not be more than more than 1000. Yeah, OK.
+20:16 Velu,Kandakumar,IN-Bangalore,IT Finance & Legal: OK. And this one you will use FBL 5H right?
+20:20 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: I'm sorry. Can you say again?
+20:23 Velu,Kandakumar,IN-Bangalore,IT Finance & Legal: No, you'll be using FBL 5 HD code.
+20:26 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: T code FBL 5 yes correct FBL 5.
+20:31 Velu,Kandakumar,IN-Bangalore,IT Finance & Legal: 5H or N.
+20:33 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: Usually we use NFBL 5 N to download this one, but from what you recommend, last time you set up we should use the FBL 5H. Yeah, but yeah, so.
+20:45 Velu,Kandakumar,IN-Bangalore,IT Finance & Legal: Yeah Yeah, there you have a choice to choose a folder, but here. OK. Anyway, it'll be in our be the program which choose the folder to save, right?
+20:46 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: We, we. OK. So if we can use APL 5 N so it it. Yeah. Is this OK as well?
+20:54 Velu,Kandakumar,IN-Bangalore,IT Finance & Legal: Fine, you can use.
+21:00 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: We will so We will. So if we are fine, it's OK, right?
+21:01 Velu,Kandakumar,IN-Bangalore,IT Finance & Legal: Whichever you feel is OK. Yeah, whichever is you feel that is fine. But then with the final format, what suits you? That variant you share with us the layout as well as the variant.
+21:12 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: OK, OK.
+21:13 Velu,Kandakumar,IN-Bangalore,IT Finance & Legal: We will We will put it in the badjob.
+21:15 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: OK. Sure. We will do that. Yep. OK.
+21:22 Velu,Kandakumar,IN-Bangalore,IT Finance & Legal: OK.
+21:23 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: That's all.
+21:24 Velu,Kandakumar,IN-Bangalore,IT Finance & Legal: So we will start the process.
+21:25 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: And if anything else, thank you.
+21:26 Velu,Kandakumar,IN-Bangalore,IT Finance & Legal: We will raise an enhancement first, OK?
+21:28 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: OK.
+21:29 Velu,Kandakumar,IN-Bangalore,IT Finance & Legal: We will.
+21:30 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: Yeah. And then just let me know that, yeah, let me know the instruction to to do the the integration from the SEV folder to the SharePoint and so that we can do the parallel, OK.
+21:30 Velu,Kandakumar,IN-Bangalore,IT Finance & Legal: There we will, both of us will work.
+21:41 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: That's all. Thank you everyone.
+21:43 Kumar,Naveen,IN-Bangalore,IT Analytics Data & Integration: To run.
+21:44 Chamnong,Nick,TH-Bangkok,Information Technology: Thank you.
+21:45 Kumar,Naveen,IN-Bangalore,IT Analytics Data & Integration: But.
+21:45 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: Navin, anything else that you want from us?
+21:46 Velu,Kandakumar,IN-Bangalore,IT Finance & Legal: Thank you.
+21:48 Kumar,Naveen,IN-Bangalore,IT Analytics Data & Integration: No. Means like once I get that SRC OK which is needed by the W 360, I will give it to you because I don't think so.
+21:49 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: OK.
+21:56 Kumar,Naveen,IN-Bangalore,IT Analytics Data & Integration: You will have to fill few details there regarding your site.
+21:58 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: OK. OK, OK. Thank you.
+22:02 Kumar,Naveen,IN-Bangalore,IT Analytics Data & Integration: OK. Yeah.
+22:04 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: And if we if I have any question on on that process, I will reach out to you. OK. Thank you.
+22:04 Kumar,Naveen,IN-Bangalore,IT Analytics Data & Integration: Yeah, yeah, yeah, definitely. We'll have to bring together, yeah.
+22:08 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: Thank you very much. OK. Bye bye.
+22:12 Velu,Kandakumar,IN-Bangalore,IT Finance & Legal: Thank you. Bye.
+22:14 Chamnong,Nick,TH-Bangkok,Information Technology: Thank you.
+  

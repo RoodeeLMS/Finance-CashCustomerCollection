@@ -1,36 +1,69 @@
+# scnDashboard.yaml - AR Daily Operations Dashboard
+# Version: 2.5
+# Created: 2026-01-21
+# Description: Primary screen for AR team to monitor flow execution, track outstanding amounts,
+#              track email status, and identify high-priority overdue customers.
+#
+# Data Sources:
+#   - [THFinanceCashCollection]Process Logs (SAP Import status)
+#   - [THFinanceCashCollection]Emaillogs (Email records with approval/send status)
+#
+# CRITICAL NOTES:
+#   - ProcessLog cr7bb_processdate is TEXT type (format: "yyyy-mm-dd")
+#   - EmailLog date comparison: cr7bb_processdate >= _selectedDate && cr7bb_processdate < DateAdd(_selectedDate, 1, TimeUnit.Days)
+#   - Choice fields: 'Send Status Choice'.Success, .Failed, .Pending
+
 Screens:
   scnDashboard:
     Properties:
       Fill: =RGBA(243, 242, 241, 1)
       LoadingSpinnerColor: =RGBA(0, 101, 161, 1)
       OnVisible: |-
-        =// Initialize navigation and menu
-        Set(_showMenu, false);
-        Set(_refreshTrigger, false);
+        =Set(_showMenu, false);
         Set(_showDatePicker, false);
         UpdateContext({currentScreen: "Daily Control Center"});
 
-        // Initialize selected date to today if not set
-        If(
-            IsBlank(_selectedDate),
-            Set(_selectedDate, Today())
-        );
+        /* Set date if not already set */
+        If(IsBlank(_selectedDate), Set(_selectedDate, Today()));
 
-        // Refresh data sources (initial load only)
+        /* Refresh data */
         Refresh('[THFinanceCashCollection]Process Logs');
         Refresh('[THFinanceCashCollection]Emaillogs');
-        Refresh('[THFinanceCashCollection]Transactions');
-        Refresh('[THFinanceCashCollection]Customers');
+
+        /* Cache ProcessLog for selected date */
+        Set(_processLog,
+            First(Filter('[THFinanceCashCollection]Process Logs',
+                cr7bb_processdate = Text(_selectedDate, "yyyy-mm-dd"))));
+
+        /* Cache email stats */
+        ClearCollect(colTodayEmails,
+            Filter('[THFinanceCashCollection]Emaillogs',
+                cr7bb_processdate >= _selectedDate && cr7bb_processdate < DateAdd(_selectedDate, 1, TimeUnit.Days)));
+
+        /* Calculate stats */
+        Set(_emailCount, CountRows(colTodayEmails));
+        Set(_totalOutstanding, Sum(colTodayEmails, cr7bb_totalamount));
+        Set(_day12Count, CountRows(Filter(colTodayEmails, cr7bb_maxdaycount <= 2)));
+        Set(_day3Count, CountRows(Filter(colTodayEmails, cr7bb_maxdaycount = 3)));
+        Set(_day4PlusCount, CountRows(Filter(colTodayEmails, cr7bb_maxdaycount >= 4)));
+        Set(_sentCount, CountRows(Filter(colTodayEmails, cr7bb_sendstatus = 'Send Status Choice'.Success)));
+        Set(_failedCount, CountRows(Filter(colTodayEmails, cr7bb_sendstatus = 'Send Status Choice'.Failed)));
+        Set(_pendingCount, CountRows(Filter(colTodayEmails, cr7bb_sendstatus = 'Send Status Choice'.Pending)));
     Children:
-      - DCC_Container:
+      - Dash_Container:
           Control: GroupContainer@1.3.0
           Variant: ManualLayout
           Properties:
             DropShadow: =DropShadow.None
             Height: =Parent.Height
+            LayoutMinHeight: =100
+            LayoutMinWidth: =100
             Width: =Parent.Width
           Children:
-            - DCC_Header:
+            # ============================================
+            # HEADER
+            # ============================================
+            - Dash_Header:
                 Control: GroupContainer@1.3.0
                 Variant: AutoLayout
                 Properties:
@@ -40,7 +73,11 @@ Screens:
                   LayoutAlignItems: =LayoutAlignItems.Center
                   LayoutDirection: =LayoutDirection.Horizontal
                   LayoutGap: =10
+                  LayoutJustifyContent: =LayoutJustifyContent.SpaceBetween
+                  LayoutMinHeight: =55
+                  LayoutMinWidth: =100
                   PaddingLeft: =15
+                  PaddingRight: =15
                   RadiusBottomLeft: =8
                   RadiusBottomRight: =8
                   RadiusTopLeft: =8
@@ -49,7 +86,7 @@ Screens:
                   X: =10
                   Y: =10
                 Children:
-                  - DCC_MenuIcon:
+                  - Dash_MenuIcon:
                       Control: Classic/Icon@2.5.0
                       Properties:
                         Color: =RGBA(255, 255, 255, 1)
@@ -61,51 +98,922 @@ Screens:
                         PaddingRight: =10
                         PaddingTop: =10
                         Width: =50
-                  - DCC_HeaderTitle:
+                  - Dash_HeaderTitle:
                       Control: Text@0.0.51
                       Properties:
+                        FillPortions: =1
                         Font: =Font.Lato
                         FontColor: =Color.White
                         Height: =50
-                        PaddingLeft: =20
-                        Size: =25
+                        Size: =24
                         Text: ="Daily Control Center"
                         VerticalAlign: =VerticalAlign.Middle
                         Weight: ='TextCanvas.Weight'.Medium
-                        Width: =Parent.Width - DCC_MenuIcon.Width - 40
-            - DCC_Content:
+                  - Dash_RefreshBtn:
+                      Control: Button@0.0.45
+                      Properties:
+                        Appearance: ='ButtonCanvas.Appearance'.Primary
+                        BasePaletteColor: =RGBA(255, 255, 255, 0.2)
+                        FillPortions: =0
+                        Height: =40
+                        Icon: ="Sync"
+                        OnSelect: |-
+                          =Refresh('[THFinanceCashCollection]Process Logs');
+                          Refresh('[THFinanceCashCollection]Emaillogs');
+                          Set(_processLog,
+                              First(Filter('[THFinanceCashCollection]Process Logs',
+                                  cr7bb_processdate = Text(_selectedDate, "yyyy-mm-dd"))));
+                          ClearCollect(colTodayEmails,
+                              Filter('[THFinanceCashCollection]Emaillogs',
+                                  cr7bb_processdate >= _selectedDate && cr7bb_processdate < DateAdd(_selectedDate, 1, TimeUnit.Days)));
+                          Set(_emailCount, CountRows(colTodayEmails));
+                          Set(_totalOutstanding, Sum(colTodayEmails, cr7bb_totalamount));
+                          Set(_day12Count, CountRows(Filter(colTodayEmails, cr7bb_maxdaycount <= 2)));
+                          Set(_day3Count, CountRows(Filter(colTodayEmails, cr7bb_maxdaycount = 3)));
+                          Set(_day4PlusCount, CountRows(Filter(colTodayEmails, cr7bb_maxdaycount >= 4)));
+                          Set(_sentCount, CountRows(Filter(colTodayEmails, cr7bb_sendstatus = 'Send Status Choice'.Success)));
+                          Set(_failedCount, CountRows(Filter(colTodayEmails, cr7bb_sendstatus = 'Send Status Choice'.Failed)));
+                          Set(_pendingCount, CountRows(Filter(colTodayEmails, cr7bb_sendstatus = 'Send Status Choice'.Pending)));
+                          Notify("Data refreshed", NotificationType.Success);
+                        Text: ="Refresh"
+                        Width: =100
+
+            # ============================================
+            # DATE NAVIGATION BAR
+            # ============================================
+            - Dash_DateNav:
                 Control: GroupContainer@1.3.0
-                Variant: ManualLayout
+                Variant: AutoLayout
                 Properties:
-                  DropShadow: =DropShadow.None
-                  Fill: =RGBA(243, 242, 241, 1)
-                  Height: =Parent.Height - 75
+                  DropShadow: =DropShadow.Light
+                  Fill: =RGBA(255, 255, 255, 1)
+                  Height: =50
+                  LayoutAlignItems: =LayoutAlignItems.Center
+                  LayoutDirection: =LayoutDirection.Horizontal
+                  LayoutGap: =10
+                  LayoutJustifyContent: =LayoutJustifyContent.Center
+                  LayoutMinHeight: =50
+                  LayoutMinWidth: =100
+                  PaddingLeft: =15
+                  PaddingRight: =15
+                  RadiusBottomLeft: =8
+                  RadiusBottomRight: =8
+                  RadiusTopLeft: =8
+                  RadiusTopRight: =8
                   Width: =Parent.Width - 20
                   X: =10
                   Y: =75
                 Children:
-                  - DCC_DatePickerSection:
+                  - Dash_PrevBtn:
+                      Control: Button@0.0.45
+                      Properties:
+                        BasePaletteColor: =RGBA(100, 100, 100, 1)
+                        FillPortions: =0
+                        Height: =35
+                        OnSelect: |-
+                          =Set(_selectedDate, DateAdd(_selectedDate, -1, TimeUnit.Days));
+                          Set(_processLog,
+                              First(Filter('[THFinanceCashCollection]Process Logs',
+                                  cr7bb_processdate = Text(_selectedDate, "yyyy-mm-dd"))));
+                          ClearCollect(colTodayEmails,
+                              Filter('[THFinanceCashCollection]Emaillogs',
+                                  cr7bb_processdate >= _selectedDate && cr7bb_processdate < DateAdd(_selectedDate, 1, TimeUnit.Days)));
+                          Set(_emailCount, CountRows(colTodayEmails));
+                          Set(_totalOutstanding, Sum(colTodayEmails, cr7bb_totalamount));
+                          Set(_day12Count, CountRows(Filter(colTodayEmails, cr7bb_maxdaycount <= 2)));
+                          Set(_day3Count, CountRows(Filter(colTodayEmails, cr7bb_maxdaycount = 3)));
+                          Set(_day4PlusCount, CountRows(Filter(colTodayEmails, cr7bb_maxdaycount >= 4)));
+                          Set(_sentCount, CountRows(Filter(colTodayEmails, cr7bb_sendstatus = 'Send Status Choice'.Success)));
+                          Set(_failedCount, CountRows(Filter(colTodayEmails, cr7bb_sendstatus = 'Send Status Choice'.Failed)));
+                          Set(_pendingCount, CountRows(Filter(colTodayEmails, cr7bb_sendstatus = 'Send Status Choice'.Pending)));
+                        Text: ="< Prev"
+                        Width: =80
+                  - Dash_DateDisplay:
+                      Control: Text@0.0.51
+                      Properties:
+                        Align: ='TextCanvas.Align'.Center
+                        FillPortions: =1
+                        Font: =Font.Lato
+                        FontColor: =RGBA(0, 101, 161, 1)
+                        Height: =35
+                        Size: =16
+                        Text: |-
+                          =Text(_selectedDate, "dd/mm/yyyy") & If(_selectedDate = Today(), " (Today)", "")
+                        VerticalAlign: =VerticalAlign.Middle
+                        Weight: ='TextCanvas.Weight'.Semibold
+                  - Dash_NextBtn:
+                      Control: Button@0.0.45
+                      Properties:
+                        BasePaletteColor: =RGBA(100, 100, 100, 1)
+                        FillPortions: =0
+                        Height: =35
+                        OnSelect: |-
+                          =Set(_selectedDate, DateAdd(_selectedDate, 1, TimeUnit.Days));
+                          Set(_processLog,
+                              First(Filter('[THFinanceCashCollection]Process Logs',
+                                  cr7bb_processdate = Text(_selectedDate, "yyyy-mm-dd"))));
+                          ClearCollect(colTodayEmails,
+                              Filter('[THFinanceCashCollection]Emaillogs',
+                                  cr7bb_processdate >= _selectedDate && cr7bb_processdate < DateAdd(_selectedDate, 1, TimeUnit.Days)));
+                          Set(_emailCount, CountRows(colTodayEmails));
+                          Set(_totalOutstanding, Sum(colTodayEmails, cr7bb_totalamount));
+                          Set(_day12Count, CountRows(Filter(colTodayEmails, cr7bb_maxdaycount <= 2)));
+                          Set(_day3Count, CountRows(Filter(colTodayEmails, cr7bb_maxdaycount = 3)));
+                          Set(_day4PlusCount, CountRows(Filter(colTodayEmails, cr7bb_maxdaycount >= 4)));
+                          Set(_sentCount, CountRows(Filter(colTodayEmails, cr7bb_sendstatus = 'Send Status Choice'.Success)));
+                          Set(_failedCount, CountRows(Filter(colTodayEmails, cr7bb_sendstatus = 'Send Status Choice'.Failed)));
+                          Set(_pendingCount, CountRows(Filter(colTodayEmails, cr7bb_sendstatus = 'Send Status Choice'.Pending)));
+                        Text: ="Next >"
+                        Width: =80
+                  - Dash_TodayBtn:
+                      Control: Button@0.0.45
+                      Properties:
+                        BasePaletteColor: =RGBA(0, 101, 161, 1)
+                        FillPortions: =0
+                        Height: =35
+                        OnSelect: |-
+                          =Set(_selectedDate, Today());
+                          Set(_processLog,
+                              First(Filter('[THFinanceCashCollection]Process Logs',
+                                  cr7bb_processdate = Text(_selectedDate, "yyyy-mm-dd"))));
+                          ClearCollect(colTodayEmails,
+                              Filter('[THFinanceCashCollection]Emaillogs',
+                                  cr7bb_processdate >= _selectedDate && cr7bb_processdate < DateAdd(_selectedDate, 1, TimeUnit.Days)));
+                          Set(_emailCount, CountRows(colTodayEmails));
+                          Set(_totalOutstanding, Sum(colTodayEmails, cr7bb_totalamount));
+                          Set(_day12Count, CountRows(Filter(colTodayEmails, cr7bb_maxdaycount <= 2)));
+                          Set(_day3Count, CountRows(Filter(colTodayEmails, cr7bb_maxdaycount = 3)));
+                          Set(_day4PlusCount, CountRows(Filter(colTodayEmails, cr7bb_maxdaycount >= 4)));
+                          Set(_sentCount, CountRows(Filter(colTodayEmails, cr7bb_sendstatus = 'Send Status Choice'.Success)));
+                          Set(_failedCount, CountRows(Filter(colTodayEmails, cr7bb_sendstatus = 'Send Status Choice'.Failed)));
+                          Set(_pendingCount, CountRows(Filter(colTodayEmails, cr7bb_sendstatus = 'Send Status Choice'.Pending)));
+                        Text: ="Today"
+                        Width: =80
+                  - Dash_PickBtn:
+                      Control: Button@0.0.45
+                      Properties:
+                        BasePaletteColor: =RGBA(100, 81, 61, 1)
+                        FillPortions: =0
+                        Height: =35
+                        OnSelect: =Set(_showDatePicker, true)
+                        Text: ="Pick"
+                        Width: =70
+
+            # ============================================
+            # MAIN CONTENT (SCROLLABLE)
+            # ============================================
+            - Dash_Content:
+                Control: GroupContainer@1.3.0
+                Variant: AutoLayout
+                Properties:
+                  DropShadow: =DropShadow.None
+                  Fill: =RGBA(243, 242, 241, 1)
+                  Height: =Parent.Height - 145
+                  LayoutDirection: =LayoutDirection.Vertical
+                  LayoutGap: =15
+                  LayoutMinHeight: =100
+                  LayoutMinWidth: =100
+                  LayoutOverflowY: =LayoutOverflow.Scroll
+                  PaddingBottom: =20
+                  PaddingLeft: =10
+                  PaddingRight: =10
+                  PaddingTop: =15
+                  Width: =Parent.Width
+                  Y: =135
+                Children:
+                  # ============================================
+                  # SAP IMPORT + EMAIL GENERATION ROW
+                  # ============================================
+                  - Dash_StatusRow:
+                      Control: GroupContainer@1.3.0
+                      Variant: AutoLayout
+                      Properties:
+                        DropShadow: =DropShadow.None
+                        FillPortions: =0
+                        Height: =130
+                        LayoutDirection: =LayoutDirection.Horizontal
+                        LayoutGap: =15
+                        LayoutMinHeight: =130
+                        LayoutMinWidth: =100
+                        Width: =Parent.Width - 20
+                      Children:
+                        # SAP Import Panel
+                        - Dash_SAPPanel:
+                            Control: GroupContainer@1.3.0
+                            Variant: AutoLayout
+                            Properties:
+                              DropShadow: =DropShadow.Regular
+                              Fill: =RGBA(255, 255, 255, 1)
+                              FillPortions: =1
+                              LayoutDirection: =LayoutDirection.Vertical
+                              LayoutGap: =8
+                              LayoutMinHeight: =100
+                              LayoutMinWidth: =100
+                              PaddingBottom: =15
+                              PaddingLeft: =15
+                              PaddingRight: =15
+                              PaddingTop: =15
+                              RadiusBottomLeft: =10
+                              RadiusBottomRight: =10
+                              RadiusTopLeft: =10
+                              RadiusTopRight: =10
+                            Children:
+                              - Dash_SAPHeader:
+                                  Control: GroupContainer@1.3.0
+                                  Variant: AutoLayout
+                                  Properties:
+                                    DropShadow: =DropShadow.None
+                                    FillPortions: =0
+                                    Height: =25
+                                    LayoutAlignItems: =LayoutAlignItems.Center
+                                    LayoutDirection: =LayoutDirection.Horizontal
+                                    LayoutGap: =8
+                                    LayoutMinHeight: =25
+                                    LayoutMinWidth: =100
+                                    Width: =Parent.Width - 30
+                                  Children:
+                                    - Dash_SAPIcon:
+                                        Control: Classic/Icon@2.5.0
+                                        Properties:
+                                          Color: =RGBA(0, 101, 161, 1)
+                                          Height: =24
+                                          Icon: =Icon.Download
+                                          Width: =24
+                                    - Dash_SAPTitle:
+                                        Control: Text@0.0.51
+                                        Properties:
+                                          FillPortions: =1
+                                          Font: =Font.Lato
+                                          FontColor: =RGBA(0, 101, 161, 1)
+                                          Height: =25
+                                          Size: =14
+                                          Text: ="SAP IMPORT"
+                                          VerticalAlign: =VerticalAlign.Middle
+                                          Weight: ='TextCanvas.Weight'.Semibold
+                              - Dash_SAPStatus:
+                                  Control: GroupContainer@1.3.0
+                                  Variant: AutoLayout
+                                  Properties:
+                                    DropShadow: =DropShadow.None
+                                    FillPortions: =0
+                                    Height: =22
+                                    LayoutAlignItems: =LayoutAlignItems.Center
+                                    LayoutDirection: =LayoutDirection.Horizontal
+                                    LayoutGap: =5
+                                    LayoutMinHeight: =22
+                                    LayoutMinWidth: =100
+                                    Width: =Parent.Width - 30
+                                  Children:
+                                    - Dash_SAPStatusIcon:
+                                        Control: Classic/Icon@2.5.0
+                                        Properties:
+                                          Color: |-
+                                            =If(IsBlank(_processLog), RGBA(128, 128, 128, 1),
+                                              If(_processLog.cr7bb_status = 'Status Choice'.Completed, RGBA(16, 124, 16, 1),
+                                              If(_processLog.cr7bb_status = 'Status Choice'.Running, RGBA(255, 185, 0, 1),
+                                              RGBA(168, 0, 0, 1))))
+                                          Height: =20
+                                          Icon: |-
+                                            =If(IsBlank(_processLog), Icon.Clock,
+                                              If(_processLog.cr7bb_status = 'Status Choice'.Completed, Icon.CheckBadge,
+                                              If(_processLog.cr7bb_status = 'Status Choice'.Running, Icon.Clock,
+                                              Icon.CancelBadge)))
+                                          Width: =20
+                                    - Dash_SAPStatusText:
+                                        Control: Text@0.0.51
+                                        Properties:
+                                          FillPortions: =1
+                                          Font: =Font.Lato
+                                          FontColor: =RGBA(100, 100, 100, 1)
+                                          Height: =22
+                                          Size: =12
+                                          Text: |-
+                                            =If(IsBlank(_processLog), "Not started",
+                                              If(_processLog.cr7bb_status = 'Status Choice'.Completed, "Completed " & Text(_processLog.cr7bb_endtime, "hh:mm"),
+                                              If(_processLog.cr7bb_status = 'Status Choice'.Running, "Running...",
+                                              "Failed")))
+                                          VerticalAlign: =VerticalAlign.Middle
+                              - Dash_SAPStats:
+                                  Control: GroupContainer@1.3.0
+                                  Variant: AutoLayout
+                                  Properties:
+                                    DropShadow: =DropShadow.None
+                                    FillPortions: =1
+                                    LayoutDirection: =LayoutDirection.Vertical
+                                    LayoutGap: =3
+                                    LayoutMinHeight: =40
+                                    LayoutMinWidth: =100
+                                    Width: =Parent.Width - 30
+                                  Children:
+                                    - Dash_SAPTransCount:
+                                        Control: Text@0.0.51
+                                        Properties:
+                                          Font: =Font.Lato
+                                          FontColor: =RGBA(50, 50, 50, 1)
+                                          Height: =20
+                                          Size: =13
+                                          Text: |-
+                                            ="Transactions: " & If(IsBlank(_processLog), "-", Text(_processLog.cr7bb_transactionsprocessed))
+                                          VerticalAlign: =VerticalAlign.Middle
+                                          Width: =Parent.Width - 30
+                                    - Dash_SAPExcluded:
+                                        Control: Text@0.0.51
+                                        Properties:
+                                          Font: =Font.Lato
+                                          FontColor: =RGBA(100, 100, 100, 1)
+                                          Height: =20
+                                          Size: =12
+                                          Text: |-
+                                            ="Excluded: " & If(IsBlank(_processLog), "-", Text(_processLog.cr7bb_transactionsexcluded))
+                                          VerticalAlign: =VerticalAlign.Middle
+                                          Width: =Parent.Width - 30
+
+                        # Email Generation Panel
+                        - Dash_EmailGenPanel:
+                            Control: GroupContainer@1.3.0
+                            Variant: AutoLayout
+                            Properties:
+                              DropShadow: =DropShadow.Regular
+                              Fill: =RGBA(255, 255, 255, 1)
+                              FillPortions: =1
+                              LayoutDirection: =LayoutDirection.Vertical
+                              LayoutGap: =8
+                              LayoutMinHeight: =100
+                              LayoutMinWidth: =100
+                              PaddingBottom: =15
+                              PaddingLeft: =15
+                              PaddingRight: =15
+                              PaddingTop: =15
+                              RadiusBottomLeft: =10
+                              RadiusBottomRight: =10
+                              RadiusTopLeft: =10
+                              RadiusTopRight: =10
+                            Children:
+                              - Dash_EmailGenHeader:
+                                  Control: GroupContainer@1.3.0
+                                  Variant: AutoLayout
+                                  Properties:
+                                    DropShadow: =DropShadow.None
+                                    FillPortions: =0
+                                    Height: =25
+                                    LayoutAlignItems: =LayoutAlignItems.Center
+                                    LayoutDirection: =LayoutDirection.Horizontal
+                                    LayoutGap: =8
+                                    LayoutMinHeight: =25
+                                    LayoutMinWidth: =100
+                                    Width: =Parent.Width - 30
+                                  Children:
+                                    - Dash_EmailGenIcon:
+                                        Control: Classic/Icon@2.5.0
+                                        Properties:
+                                          Color: =RGBA(0, 101, 161, 1)
+                                          Height: =24
+                                          Icon: =Icon.Mail
+                                          Width: =24
+                                    - Dash_EmailGenTitle:
+                                        Control: Text@0.0.51
+                                        Properties:
+                                          FillPortions: =1
+                                          Font: =Font.Lato
+                                          FontColor: =RGBA(0, 101, 161, 1)
+                                          Height: =25
+                                          Size: =14
+                                          Text: ="EMAIL GENERATION"
+                                          VerticalAlign: =VerticalAlign.Middle
+                                          Weight: ='TextCanvas.Weight'.Semibold
+                              - Dash_EmailGenStatus:
+                                  Control: GroupContainer@1.3.0
+                                  Variant: AutoLayout
+                                  Properties:
+                                    DropShadow: =DropShadow.None
+                                    FillPortions: =0
+                                    Height: =22
+                                    LayoutAlignItems: =LayoutAlignItems.Center
+                                    LayoutDirection: =LayoutDirection.Horizontal
+                                    LayoutGap: =5
+                                    LayoutMinHeight: =22
+                                    LayoutMinWidth: =100
+                                    Width: =Parent.Width - 30
+                                  Children:
+                                    - Dash_EmailGenStatusIcon:
+                                        Control: Classic/Icon@2.5.0
+                                        Properties:
+                                          Color: =If(_emailCount > 0, RGBA(16, 124, 16, 1), RGBA(128, 128, 128, 1))
+                                          Height: =20
+                                          Icon: =If(_emailCount > 0, Icon.CheckBadge, Icon.Clock)
+                                          Width: =20
+                                    - Dash_EmailGenStatusText:
+                                        Control: Text@0.0.51
+                                        Properties:
+                                          FillPortions: =1
+                                          Font: =Font.Lato
+                                          FontColor: =RGBA(100, 100, 100, 1)
+                                          Height: =22
+                                          Size: =12
+                                          Text: =If(_emailCount > 0, "Completed", "Not run")
+                                          VerticalAlign: =VerticalAlign.Middle
+                              - Dash_EmailGenStats:
+                                  Control: GroupContainer@1.3.0
+                                  Variant: AutoLayout
+                                  Properties:
+                                    DropShadow: =DropShadow.None
+                                    FillPortions: =1
+                                    LayoutDirection: =LayoutDirection.Vertical
+                                    LayoutGap: =3
+                                    LayoutMinHeight: =40
+                                    LayoutMinWidth: =100
+                                    Width: =Parent.Width - 30
+                                  Children:
+                                    - Dash_EmailGenCount:
+                                        Control: Text@0.0.51
+                                        Properties:
+                                          Font: =Font.Lato
+                                          FontColor: =RGBA(50, 50, 50, 1)
+                                          Height: =20
+                                          Size: =13
+                                          Text: |-
+                                            ="Emails Created: " & Text(_emailCount)
+                                          VerticalAlign: =VerticalAlign.Middle
+                                          Width: =Parent.Width - 30
+                                    - Dash_EmailGenCustomers:
+                                        Control: Text@0.0.51
+                                        Properties:
+                                          Font: =Font.Lato
+                                          FontColor: =RGBA(100, 100, 100, 1)
+                                          Height: =20
+                                          Size: =12
+                                          Text: |-
+                                            ="Customers: " & Text(_emailCount)
+                                          VerticalAlign: =VerticalAlign.Middle
+                                          Width: =Parent.Width - 30
+
+                  # ============================================
+                  # TODAY'S OUTSTANDING SECTION
+                  # ============================================
+                  - Dash_OutstandingPanel:
                       Control: GroupContainer@1.3.0
                       Variant: AutoLayout
                       Properties:
                         DropShadow: =DropShadow.Regular
                         Fill: =RGBA(255, 255, 255, 1)
-                        Height: =140
+                        FillPortions: =0
+                        Height: =200
                         LayoutDirection: =LayoutDirection.Vertical
-                        LayoutGap: =15
+                        LayoutGap: =12
+                        LayoutMinHeight: =200
+                        LayoutMinWidth: =100
                         PaddingBottom: =15
-                        PaddingLeft: =20
-                        PaddingRight: =20
+                        PaddingLeft: =15
+                        PaddingRight: =15
                         PaddingTop: =15
                         RadiusBottomLeft: =10
                         RadiusBottomRight: =10
                         RadiusTopLeft: =10
                         RadiusTopRight: =10
                         Width: =Parent.Width - 20
-                        X: =10
-                        Y: =10
                       Children:
-                        - DCC_DatePickerTitleRow:
+                        - Dash_OutstandingHeader:
+                            Control: GroupContainer@1.3.0
+                            Variant: AutoLayout
+                            Properties:
+                              DropShadow: =DropShadow.None
+                              FillPortions: =0
+                              Height: =25
+                              LayoutAlignItems: =LayoutAlignItems.Center
+                              LayoutDirection: =LayoutDirection.Horizontal
+                              LayoutGap: =8
+                              LayoutMinHeight: =25
+                              LayoutMinWidth: =100
+                              Width: =Parent.Width - 30
+                            Children:
+                              - Dash_OutstandingIcon:
+                                  Control: Classic/Icon@2.5.0
+                                  Properties:
+                                    Color: =RGBA(0, 101, 161, 1)
+                                    Height: =24
+                                    Icon: =Icon.Currency
+                                    Width: =24
+                              - Dash_OutstandingTitle:
+                                  Control: Text@0.0.51
+                                  Properties:
+                                    FillPortions: =1
+                                    Font: =Font.Lato
+                                    FontColor: =RGBA(0, 101, 161, 1)
+                                    Height: =25
+                                    Size: =14
+                                    Text: ="TODAY'S OUTSTANDING"
+                                    VerticalAlign: =VerticalAlign.Middle
+                                    Weight: ='TextCanvas.Weight'.Semibold
+                        - Dash_OutstandingSummary:
+                            Control: GroupContainer@1.3.0
+                            Variant: AutoLayout
+                            Properties:
+                              DropShadow: =DropShadow.None
+                              FillPortions: =0
+                              Height: =40
+                              LayoutAlignItems: =LayoutAlignItems.Center
+                              LayoutDirection: =LayoutDirection.Horizontal
+                              LayoutJustifyContent: =LayoutJustifyContent.SpaceBetween
+                              LayoutMinHeight: =40
+                              LayoutMinWidth: =100
+                              Width: =Parent.Width - 30
+                            Children:
+                              - Dash_TotalAmount:
+                                  Control: Text@0.0.51
+                                  Properties:
+                                    FillPortions: =1
+                                    Font: =Font.Lato
+                                    FontColor: =RGBA(0, 101, 161, 1)
+                                    Height: =40
+                                    Size: =28
+                                    Text: ="฿" & Text(_totalOutstanding, "#,##0")
+                                    VerticalAlign: =VerticalAlign.Middle
+                                    Weight: ='TextCanvas.Weight'.Bold
+                              - Dash_CustomerCount:
+                                  Control: Text@0.0.51
+                                  Properties:
+                                    Align: ='TextCanvas.Align'.End
+                                    FillPortions: =0
+                                    Font: =Font.Lato
+                                    FontColor: =RGBA(100, 100, 100, 1)
+                                    Height: =40
+                                    Size: =14
+                                    Text: =Text(_emailCount) & " Customers"
+                                    VerticalAlign: =VerticalAlign.Middle
+                                    Width: =120
+                        - Dash_DayCountCards:
+                            Control: GroupContainer@1.3.0
+                            Variant: AutoLayout
+                            Properties:
+                              DropShadow: =DropShadow.None
+                              FillPortions: =1
+                              LayoutDirection: =LayoutDirection.Horizontal
+                              LayoutGap: =10
+                              LayoutMinHeight: =80
+                              LayoutMinWidth: =100
+                              Width: =Parent.Width - 30
+                            Children:
+                              # Day 1-2 Card (Gray - Standard)
+                              - Dash_Day12Card:
+                                  Control: GroupContainer@1.3.0
+                                  Variant: AutoLayout
+                                  Properties:
+                                    DropShadow: =DropShadow.Light
+                                    Fill: =RGBA(128, 128, 128, 1)
+                                    FillPortions: =1
+                                    LayoutAlignItems: =LayoutAlignItems.Center
+                                    LayoutDirection: =LayoutDirection.Vertical
+                                    LayoutGap: =5
+                                    LayoutJustifyContent: =LayoutJustifyContent.Center
+                                    LayoutMinHeight: =80
+                                    LayoutMinWidth: =80
+                                    PaddingBottom: =10
+                                    PaddingLeft: =10
+                                    PaddingRight: =10
+                                    PaddingTop: =10
+                                    RadiusBottomLeft: =8
+                                    RadiusBottomRight: =8
+                                    RadiusTopLeft: =8
+                                    RadiusTopRight: =8
+                                  Children:
+                                    - Dash_Day12Label:
+                                        Control: Text@0.0.51
+                                        Properties:
+                                          Align: ='TextCanvas.Align'.Center
+                                          AutoHeight: =true
+                                          Font: =Font.Lato
+                                          FontColor: =RGBA(255, 255, 255, 1)
+                                          Size: =12
+                                          Text: ="Day 1-2"
+                                          Weight: ='TextCanvas.Weight'.Semibold
+                                          Width: =80
+                                    - Dash_Day12Count:
+                                        Control: Text@0.0.51
+                                        Properties:
+                                          Align: ='TextCanvas.Align'.Center
+                                          AutoHeight: =true
+                                          Font: =Font.Lato
+                                          FontColor: =RGBA(255, 255, 255, 1)
+                                          Size: =20
+                                          Text: =Text(_day12Count)
+                                          Weight: ='TextCanvas.Weight'.Bold
+                                          Width: =80
+                                    - Dash_Day12Status:
+                                        Control: Text@0.0.51
+                                        Properties:
+                                          Align: ='TextCanvas.Align'.Center
+                                          AutoHeight: =true
+                                          Font: =Font.Lato
+                                          FontColor: =RGBA(255, 255, 255, 0.8)
+                                          Size: =10
+                                          Text: ="Standard"
+                                          Width: =80
+                              # Day 3 Card (Amber - Warning)
+                              - Dash_Day3Card:
+                                  Control: GroupContainer@1.3.0
+                                  Variant: AutoLayout
+                                  Properties:
+                                    DropShadow: =DropShadow.Light
+                                    Fill: =RGBA(255, 185, 0, 1)
+                                    FillPortions: =1
+                                    LayoutAlignItems: =LayoutAlignItems.Center
+                                    LayoutDirection: =LayoutDirection.Vertical
+                                    LayoutGap: =5
+                                    LayoutJustifyContent: =LayoutJustifyContent.Center
+                                    LayoutMinHeight: =80
+                                    LayoutMinWidth: =80
+                                    PaddingBottom: =10
+                                    PaddingLeft: =10
+                                    PaddingRight: =10
+                                    PaddingTop: =10
+                                    RadiusBottomLeft: =8
+                                    RadiusBottomRight: =8
+                                    RadiusTopLeft: =8
+                                    RadiusTopRight: =8
+                                  Children:
+                                    - Dash_Day3Label:
+                                        Control: Text@0.0.51
+                                        Properties:
+                                          Align: ='TextCanvas.Align'.Center
+                                          AutoHeight: =true
+                                          Font: =Font.Lato
+                                          FontColor: =RGBA(255, 255, 255, 1)
+                                          Size: =12
+                                          Text: ="Day 3"
+                                          Weight: ='TextCanvas.Weight'.Semibold
+                                          Width: =80
+                                    - Dash_Day3Count:
+                                        Control: Text@0.0.51
+                                        Properties:
+                                          Align: ='TextCanvas.Align'.Center
+                                          AutoHeight: =true
+                                          Font: =Font.Lato
+                                          FontColor: =RGBA(255, 255, 255, 1)
+                                          Size: =20
+                                          Text: =Text(_day3Count)
+                                          Weight: ='TextCanvas.Weight'.Bold
+                                          Width: =80
+                                    - Dash_Day3Status:
+                                        Control: Text@0.0.51
+                                        Properties:
+                                          Align: ='TextCanvas.Align'.Center
+                                          AutoHeight: =true
+                                          Font: =Font.Lato
+                                          FontColor: =RGBA(255, 255, 255, 0.8)
+                                          Size: =10
+                                          Text: ="Warning"
+                                          Width: =80
+                              # Day 4+ Card (Red - Urgent)
+                              - Dash_Day4PlusCard:
+                                  Control: GroupContainer@1.3.0
+                                  Variant: AutoLayout
+                                  Properties:
+                                    DropShadow: =DropShadow.Light
+                                    Fill: =RGBA(168, 0, 0, 1)
+                                    FillPortions: =1
+                                    LayoutAlignItems: =LayoutAlignItems.Center
+                                    LayoutDirection: =LayoutDirection.Vertical
+                                    LayoutGap: =5
+                                    LayoutJustifyContent: =LayoutJustifyContent.Center
+                                    LayoutMinHeight: =80
+                                    LayoutMinWidth: =80
+                                    PaddingBottom: =10
+                                    PaddingLeft: =10
+                                    PaddingRight: =10
+                                    PaddingTop: =10
+                                    RadiusBottomLeft: =8
+                                    RadiusBottomRight: =8
+                                    RadiusTopLeft: =8
+                                    RadiusTopRight: =8
+                                  Children:
+                                    - Dash_Day4PlusLabel:
+                                        Control: Text@0.0.51
+                                        Properties:
+                                          Align: ='TextCanvas.Align'.Center
+                                          AutoHeight: =true
+                                          Font: =Font.Lato
+                                          FontColor: =RGBA(255, 255, 255, 1)
+                                          Size: =12
+                                          Text: ="Day 4+"
+                                          Weight: ='TextCanvas.Weight'.Semibold
+                                          Width: =80
+                                    - Dash_Day4PlusCount:
+                                        Control: Text@0.0.51
+                                        Properties:
+                                          Align: ='TextCanvas.Align'.Center
+                                          AutoHeight: =true
+                                          Font: =Font.Lato
+                                          FontColor: =RGBA(255, 255, 255, 1)
+                                          Size: =20
+                                          Text: =Text(_day4PlusCount)
+                                          Weight: ='TextCanvas.Weight'.Bold
+                                          Width: =80
+                                    - Dash_Day4PlusStatus:
+                                        Control: Text@0.0.51
+                                        Properties:
+                                          Align: ='TextCanvas.Align'.Center
+                                          AutoHeight: =true
+                                          Font: =Font.Lato
+                                          FontColor: =RGBA(255, 255, 255, 0.8)
+                                          Size: =10
+                                          Text: ="Urgent"
+                                          Width: =80
+
+                  # ============================================
+                  # EMAIL SEND STATUS SECTION
+                  # ============================================
+                  - Dash_EmailStatusPanel:
+                      Control: GroupContainer@1.3.0
+                      Variant: AutoLayout
+                      Properties:
+                        DropShadow: =DropShadow.Regular
+                        Fill: =RGBA(255, 255, 255, 1)
+                        FillPortions: =0
+                        Height: =150
+                        LayoutDirection: =LayoutDirection.Vertical
+                        LayoutGap: =12
+                        LayoutMinHeight: =150
+                        LayoutMinWidth: =100
+                        PaddingBottom: =15
+                        PaddingLeft: =15
+                        PaddingRight: =15
+                        PaddingTop: =15
+                        RadiusBottomLeft: =10
+                        RadiusBottomRight: =10
+                        RadiusTopLeft: =10
+                        RadiusTopRight: =10
+                        Width: =Parent.Width - 20
+                      Children:
+                        - Dash_EmailStatusHeader:
+                            Control: GroupContainer@1.3.0
+                            Variant: AutoLayout
+                            Properties:
+                              DropShadow: =DropShadow.None
+                              FillPortions: =0
+                              Height: =25
+                              LayoutAlignItems: =LayoutAlignItems.Center
+                              LayoutDirection: =LayoutDirection.Horizontal
+                              LayoutGap: =8
+                              LayoutMinHeight: =25
+                              LayoutMinWidth: =100
+                              Width: =Parent.Width - 30
+                            Children:
+                              - Dash_EmailStatusIcon:
+                                  Control: Classic/Icon@2.5.0
+                                  Properties:
+                                    Color: =RGBA(0, 101, 161, 1)
+                                    Height: =24
+                                    Icon: =Icon.Send
+                                    Width: =24
+                              - Dash_EmailStatusTitle:
+                                  Control: Text@0.0.51
+                                  Properties:
+                                    FillPortions: =1
+                                    Font: =Font.Lato
+                                    FontColor: =RGBA(0, 101, 161, 1)
+                                    Height: =25
+                                    Size: =14
+                                    Text: ="EMAIL SEND STATUS"
+                                    VerticalAlign: =VerticalAlign.Middle
+                                    Weight: ='TextCanvas.Weight'.Semibold
+                        - Dash_EmailStatusBadges:
+                            Control: GroupContainer@1.3.0
+                            Variant: AutoLayout
+                            Properties:
+                              DropShadow: =DropShadow.None
+                              FillPortions: =0
+                              Height: =40
+                              LayoutAlignItems: =LayoutAlignItems.Center
+                              LayoutDirection: =LayoutDirection.Horizontal
+                              LayoutGap: =15
+                              LayoutJustifyContent: =LayoutJustifyContent.Start
+                              LayoutMinHeight: =40
+                              LayoutMinWidth: =100
+                              Width: =Parent.Width - 30
+                            Children:
+                              # Sent Badge
+                              - Dash_SentBadge:
+                                  Control: GroupContainer@1.3.0
+                                  Variant: AutoLayout
+                                  Properties:
+                                    DropShadow: =DropShadow.None
+                                    Fill: =RGBA(16, 124, 16, 0.15)
+                                    FillPortions: =0
+                                    Height: =35
+                                    LayoutAlignItems: =LayoutAlignItems.Center
+                                    LayoutDirection: =LayoutDirection.Horizontal
+                                    LayoutGap: =5
+                                    LayoutMinHeight: =35
+                                    LayoutMinWidth: =50
+                                    PaddingLeft: =12
+                                    PaddingRight: =12
+                                    RadiusBottomLeft: =18
+                                    RadiusBottomRight: =18
+                                    RadiusTopLeft: =18
+                                    RadiusTopRight: =18
+                                    Width: =100
+                                  Children:
+                                    - Dash_SentIcon:
+                                        Control: Classic/Icon@2.5.0
+                                        Properties:
+                                          Color: =RGBA(16, 124, 16, 1)
+                                          Height: =18
+                                          Icon: =Icon.CheckBadge
+                                          Width: =18
+                                    - Dash_SentText:
+                                        Control: Text@0.0.51
+                                        Properties:
+                                          FillPortions: =1
+                                          Font: =Font.Lato
+                                          FontColor: =RGBA(16, 124, 16, 1)
+                                          Height: =35
+                                          Size: =13
+                                          Text: =Text(_sentCount) & " Sent"
+                                          VerticalAlign: =VerticalAlign.Middle
+                                          Weight: ='TextCanvas.Weight'.Semibold
+                              # Failed Badge
+                              - Dash_FailedBadge:
+                                  Control: GroupContainer@1.3.0
+                                  Variant: AutoLayout
+                                  Properties:
+                                    DropShadow: =DropShadow.None
+                                    Fill: =RGBA(168, 0, 0, 0.15)
+                                    FillPortions: =0
+                                    Height: =35
+                                    LayoutAlignItems: =LayoutAlignItems.Center
+                                    LayoutDirection: =LayoutDirection.Horizontal
+                                    LayoutGap: =5
+                                    LayoutMinHeight: =35
+                                    LayoutMinWidth: =50
+                                    PaddingLeft: =12
+                                    PaddingRight: =12
+                                    RadiusBottomLeft: =18
+                                    RadiusBottomRight: =18
+                                    RadiusTopLeft: =18
+                                    RadiusTopRight: =18
+                                    Visible: =_failedCount > 0
+                                    Width: =110
+                                  Children:
+                                    - Dash_FailedIcon:
+                                        Control: Classic/Icon@2.5.0
+                                        Properties:
+                                          Color: =RGBA(168, 0, 0, 1)
+                                          Height: =18
+                                          Icon: =Icon.Warning
+                                          Width: =18
+                                    - Dash_FailedText:
+                                        Control: Text@0.0.51
+                                        Properties:
+                                          FillPortions: =1
+                                          Font: =Font.Lato
+                                          FontColor: =RGBA(168, 0, 0, 1)
+                                          Height: =35
+                                          Size: =13
+                                          Text: =Text(_failedCount) & " Failed"
+                                          VerticalAlign: =VerticalAlign.Middle
+                                          Weight: ='TextCanvas.Weight'.Semibold
+                              # Pending Badge
+                              - Dash_PendingBadge:
+                                  Control: GroupContainer@1.3.0
+                                  Variant: AutoLayout
+                                  Properties:
+                                    DropShadow: =DropShadow.None
+                                    Fill: =RGBA(128, 128, 128, 0.15)
+                                    FillPortions: =0
+                                    Height: =35
+                                    LayoutAlignItems: =LayoutAlignItems.Center
+                                    LayoutDirection: =LayoutDirection.Horizontal
+                                    LayoutGap: =5
+                                    LayoutMinHeight: =35
+                                    LayoutMinWidth: =50
+                                    PaddingLeft: =12
+                                    PaddingRight: =12
+                                    RadiusBottomLeft: =18
+                                    RadiusBottomRight: =18
+                                    RadiusTopLeft: =18
+                                    RadiusTopRight: =18
+                                    Visible: =_pendingCount > 0
+                                    Width: =120
+                                  Children:
+                                    - Dash_PendingIcon:
+                                        Control: Classic/Icon@2.5.0
+                                        Properties:
+                                          Color: =RGBA(128, 128, 128, 1)
+                                          Height: =18
+                                          Icon: =Icon.Clock
+                                          Width: =18
+                                    - Dash_PendingText:
+                                        Control: Text@0.0.51
+                                        Properties:
+                                          FillPortions: =1
+                                          Font: =Font.Lato
+                                          FontColor: =RGBA(128, 128, 128, 1)
+                                          Height: =35
+                                          Size: =13
+                                          Text: =Text(_pendingCount) & " Waiting"
+                                          VerticalAlign: =VerticalAlign.Middle
+                                          Weight: ='TextCanvas.Weight'.Semibold
+                        - Dash_EmailActions:
                             Control: GroupContainer@1.3.0
                             Variant: AutoLayout
                             Properties:
@@ -115,746 +1023,386 @@ Screens:
                               LayoutAlignItems: =LayoutAlignItems.Center
                               LayoutDirection: =LayoutDirection.Horizontal
                               LayoutGap: =10
-                              LayoutJustifyContent: =LayoutJustifyContent.SpaceBetween
                               LayoutMinHeight: =40
                               LayoutMinWidth: =100
-                              Width: =Parent.Width - 40
+                              Width: =Parent.Width - 30
                             Children:
-                              - DCC_DatePickerTitle:
-                                  Control: Text@0.0.51
-                                  Properties:
-                                    Font: =Font.Lato
-                                    FontColor: =RGBA(0, 101, 161, 1)
-                                    Height: =40
-                                    Size: =20
-                                    Text: ="Audit Date Selection"
-                                    VerticalAlign: =VerticalAlign.Middle
-                                    Weight: ='TextCanvas.Weight'.Bold
-                                    Width: =400
-                              - DCC_RefreshButton:
+                              - Dash_ReviewEmailsBtn:
                                   Control: Button@0.0.45
                                   Properties:
                                     BasePaletteColor: =RGBA(0, 101, 161, 1)
-                                    Height: =36
-                                    Icon: ="Refresh"
-                                    OnSelect: =Set(_refreshTrigger, !_refreshTrigger)
-                                    Text: ="↻ Refresh"
-                                    Width: =120
-                        - DCC_DateNavigationRow:
+                                    FillPortions: =0
+                                    Height: =35
+                                    Icon: ="Mail"
+                                    OnSelect: =Navigate(scnEmailApproval, ScreenTransition.None)
+                                    Text: ="Review Emails"
+                                    Width: =150
+                              - Dash_ViewFailedBtn:
+                                  Control: Button@0.0.45
+                                  Properties:
+                                    BasePaletteColor: =RGBA(168, 0, 0, 1)
+                                    FillPortions: =0
+                                    Height: =35
+                                    Icon: ="Warning"
+                                    OnSelect: |-
+                                      =Navigate(scnEmailApproval, ScreenTransition.None, {_statusFilter: "Failed"})
+                                    Text: ="View Failed"
+                                    Visible: =_failedCount > 0
+                                    Width: =130
+
+                  # ============================================
+                  # TOP OVERDUE GALLERY (Day 4+)
+                  # ============================================
+                  - Dash_OverduePanel:
+                      Control: GroupContainer@1.3.0
+                      Variant: AutoLayout
+                      Properties:
+                        DropShadow: =DropShadow.Regular
+                        Fill: =RGBA(255, 255, 255, 1)
+                        FillPortions: =0
+                        Height: =250
+                        LayoutDirection: =LayoutDirection.Vertical
+                        LayoutGap: =10
+                        LayoutMinHeight: =250
+                        LayoutMinWidth: =100
+                        PaddingBottom: =15
+                        PaddingLeft: =15
+                        PaddingRight: =15
+                        PaddingTop: =15
+                        RadiusBottomLeft: =10
+                        RadiusBottomRight: =10
+                        RadiusTopLeft: =10
+                        RadiusTopRight: =10
+                        Width: =Parent.Width - 20
+                      Children:
+                        - Dash_OverdueHeader:
                             Control: GroupContainer@1.3.0
                             Variant: AutoLayout
                             Properties:
                               DropShadow: =DropShadow.None
                               FillPortions: =0
-                              Height: =50
+                              Height: =30
                               LayoutAlignItems: =LayoutAlignItems.Center
                               LayoutDirection: =LayoutDirection.Horizontal
-                              LayoutGap: =10
-                              LayoutMinHeight: =50
+                              LayoutJustifyContent: =LayoutJustifyContent.SpaceBetween
+                              LayoutMinHeight: =30
                               LayoutMinWidth: =100
-                              Width: =Parent.Width - 40
+                              Width: =Parent.Width - 30
                             Children:
-                              - DCC_ViewDateLabel:
-                                  Control: Text@0.0.51
+                              - Dash_OverdueHeaderLeft:
+                                  Control: GroupContainer@1.3.0
+                                  Variant: AutoLayout
                                   Properties:
-                                    Font: =Font.Lato
-                                    FontColor: =RGBA(100, 100, 100, 1)
-                                    Height: =40
-                                    Text: ="View Date:"
-                                    VerticalAlign: =VerticalAlign.Middle
-                                    Weight: ='TextCanvas.Weight'.Semibold
-                                    Width: =100
-                              - DCC_PreviousDayButton:
+                                    DropShadow: =DropShadow.None
+                                    FillPortions: =1
+                                    Height: =30
+                                    LayoutAlignItems: =LayoutAlignItems.Center
+                                    LayoutDirection: =LayoutDirection.Horizontal
+                                    LayoutGap: =8
+                                    LayoutMinHeight: =30
+                                    LayoutMinWidth: =100
+                                  Children:
+                                    - Dash_OverdueIcon:
+                                        Control: Classic/Icon@2.5.0
+                                        Properties:
+                                          Color: =RGBA(168, 0, 0, 1)
+                                          Height: =24
+                                          Icon: =Icon.Warning
+                                          Width: =24
+                                    - Dash_OverdueTitle:
+                                        Control: Text@0.0.51
+                                        Properties:
+                                          FillPortions: =1
+                                          Font: =Font.Lato
+                                          FontColor: =RGBA(168, 0, 0, 1)
+                                          Height: =30
+                                          Size: =14
+                                          Text: ="TOP OVERDUE (Day 4+)"
+                                          VerticalAlign: =VerticalAlign.Middle
+                                          Weight: ='TextCanvas.Weight'.Semibold
+                              - Dash_ViewAllBtn:
                                   Control: Button@0.0.45
                                   Properties:
-                                    BasePaletteColor: =RGBA(0, 101, 161, 1)
-                                    Height: =40
-                                    OnSelect: |-
-                                      =Set(_selectedDate, DateAdd(_selectedDate, -1, TimeUnit.Days));
-                                      Set(_refreshTrigger, !_refreshTrigger)
-                                    Text: ="◄ Previous"
-                                    Width: =120
-                              - DCC_DateDisplay:
-                                  Control: Text@0.0.51
+                                    Appearance: ='ButtonCanvas.Appearance'.Secondary
+                                    BasePaletteColor: =RGBA(100, 100, 100, 1)
+                                    FillPortions: =0
+                                    Height: =30
+                                    OnSelect: =Navigate(scnTransactions, ScreenTransition.None)
+                                    Text: ="View All"
+                                    Width: =90
+                        - Dash_OverdueGallery:
+                            Control: Gallery@2.15.0
+                            Variant: BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0
+                            Properties:
+                              BorderColor: =RGBA(0, 0, 0, 0)
+                              Height: =Parent.Height - 50
+                              Items: |-
+                                =FirstN(
+                                    SortByColumns(
+                                        Filter(colTodayEmails, cr7bb_maxdaycount >= 4),
+                                        "cr7bb_totalamount",
+                                        SortOrder.Descending
+                                    ),
+                                    3
+                                )
+                              LayoutMinHeight: =100
+                              LayoutMinWidth: =100
+                              TemplateSize: =60
+                              Width: =Parent.Width - 30
+                            Children:
+                              - Dash_OverdueCard:
+                                  Control: GroupContainer@1.3.0
+                                  Variant: AutoLayout
                                   Properties:
-                                    Align: ='TextCanvas.Align'.Center
-                                    Fill: =RGBA(243, 242, 241, 1)
-                                    Font: =Font.Lato
-                                    FontColor: =RGBA(0, 0, 0, 1)
-                                    Height: =40
+                                    DropShadow: =DropShadow.None
+                                    Fill: =RGBA(248, 248, 248, 1)
+                                    Height: =55
+                                    LayoutAlignItems: =LayoutAlignItems.Center
+                                    LayoutDirection: =LayoutDirection.Horizontal
+                                    LayoutGap: =10
+                                    LayoutMinHeight: =55
+                                    LayoutMinWidth: =100
                                     PaddingLeft: =10
                                     PaddingRight: =10
-                                    Text: =Text(_selectedDate, "[$-th-TH]dd/mm/yyyy") & If(_selectedDate = Today(), " (Today)", "")
-                                    VerticalAlign: =VerticalAlign.Middle
-                                    Weight: ='TextCanvas.Weight'.Semibold
-                                    Width: =180
-                              - DCC_NextDayButton:
-                                  Control: Button@0.0.45
-                                  Properties:
-                                    BasePaletteColor: =RGBA(0, 101, 161, 1)
-                                    DisplayMode: =If(_selectedDate >= Today(), DisplayMode.Disabled, DisplayMode.Edit)
-                                    Height: =40
-                                    OnSelect: |-
-                                      =Set(_selectedDate, DateAdd(_selectedDate, 1, TimeUnit.Days));
-                                      Set(_refreshTrigger, !_refreshTrigger)
-                                    Text: ="Next ►"
-                                    Width: =120
-                              - DCC_TodayButton:
-                                  Control: Button@0.0.45
-                                  Properties:
-                                    BasePaletteColor: =If(_selectedDate = Today(), RGBA(16, 124, 16, 1), RGBA(0, 101, 161, 1))
-                                    Height: =40
-                                    OnSelect: |-
-                                      =Set(_selectedDate, Today());
-                                      Set(_refreshTrigger, !_refreshTrigger)
-                                    Text: ="Today"
-                                    Width: =100
-                              - DCC_PickDateButton:
-                                  Control: Button@0.0.45
-                                  Properties:
-                                    BasePaletteColor: =RGBA(100, 81, 61, 1)
-                                    Height: =40
-                                    OnSelect: =Set(_showDatePicker, !_showDatePicker)
-                                    Text: |-
-                                      ="📅 Pick Date"
-                                    Width: =120
-                  - DCC_MainScrollContainer:
+                                    RadiusBottomLeft: =8
+                                    RadiusBottomRight: =8
+                                    RadiusTopLeft: =8
+                                    RadiusTopRight: =8
+                                    Width: =Parent.TemplateWidth - 10
+                                  Children:
+                                    - Dash_OverdueCustomerName:
+                                        Control: Text@0.0.51
+                                        Properties:
+                                          FillPortions: =1
+                                          Font: =Font.Lato
+                                          FontColor: =RGBA(50, 50, 50, 1)
+                                          Height: =55
+                                          Size: =13
+                                          Text: =ThisItem.Customer.'Customer Name'
+                                          VerticalAlign: =VerticalAlign.Middle
+                                          Weight: ='TextCanvas.Weight'.Semibold
+                                    - Dash_OverdueAmount:
+                                        Control: Text@0.0.51
+                                        Properties:
+                                          Align: ='TextCanvas.Align'.End
+                                          FillPortions: =0
+                                          Font: =Font.Lato
+                                          FontColor: =RGBA(168, 0, 0, 1)
+                                          Height: =55
+                                          Size: =13
+                                          Text: ="฿" & Text(ThisItem.cr7bb_totalamount, "#,##0")
+                                          VerticalAlign: =VerticalAlign.Middle
+                                          Weight: ='TextCanvas.Weight'.Bold
+                                          Width: =100
+                                    - Dash_OverdueDays:
+                                        Control: Text@0.0.51
+                                        Properties:
+                                          Align: ='TextCanvas.Align'.Center
+                                          FillPortions: =0
+                                          Font: =Font.Lato
+                                          FontColor: =RGBA(100, 100, 100, 1)
+                                          Height: =55
+                                          Size: =12
+                                          Text: =Text(ThisItem.cr7bb_maxdaycount) & " days"
+                                          VerticalAlign: =VerticalAlign.Middle
+                                          Width: =60
+                                    - Dash_OverdueViewBtn:
+                                        Control: Button@0.0.45
+                                        Properties:
+                                          BasePaletteColor: =RGBA(100, 81, 61, 1)
+                                          FillPortions: =0
+                                          Height: =30
+                                          OnSelect: |-
+                                            =Set(gblSelectedCustomer, ThisItem.Customer);
+                                            Navigate(scnCustomerHistory, ScreenTransition.None)
+                                          Text: ="View"
+                                          Width: =70
+
+                  # ============================================
+                  # QUICK ACTIONS BAR
+                  # ============================================
+                  - Dash_QuickActionsPanel:
                       Control: GroupContainer@1.3.0
                       Variant: AutoLayout
                       Properties:
-                        DropShadow: =DropShadow.None
-                        Fill: =RGBA(243, 242, 241, 1)
-                        Height: =Parent.Height - 170
+                        DropShadow: =DropShadow.Regular
+                        Fill: =RGBA(255, 255, 255, 1)
+                        FillPortions: =0
+                        Height: =80
                         LayoutDirection: =LayoutDirection.Vertical
-                        LayoutGap: =24
-                        LayoutOverflowY: =LayoutOverflow.Scroll
-                        PaddingBottom: =20
+                        LayoutGap: =10
+                        LayoutMinHeight: =80
+                        LayoutMinWidth: =100
+                        PaddingBottom: =15
+                        PaddingLeft: =15
+                        PaddingRight: =15
+                        PaddingTop: =15
+                        RadiusBottomLeft: =10
+                        RadiusBottomRight: =10
+                        RadiusTopLeft: =10
+                        RadiusTopRight: =10
                         Width: =Parent.Width - 20
-                        X: =10
-                        Y: =160
                       Children:
-                        - DCC_SystemStatusCard:
-                            Control: GroupContainer@1.3.0
-                            Variant: AutoLayout
+                        - Dash_QuickActionsTitle:
+                            Control: Text@0.0.51
                             Properties:
-                              Fill: =RGBA(255, 255, 255, 1)
                               FillPortions: =0
-                              Height: =220
-                              LayoutDirection: =LayoutDirection.Vertical
-                              LayoutGap: =15
-                              LayoutMinHeight: =220
-                              LayoutMinWidth: =200
-                              PaddingBottom: =15
-                              PaddingLeft: =20
-                              PaddingRight: =20
-                              PaddingTop: =15
-                              RadiusBottomLeft: =10
-                              RadiusBottomRight: =10
-                              RadiusTopLeft: =10
-                              RadiusTopRight: =10
-                              Width: =Parent.Width - 20
-                            Children:
-                              - DCC_StatusCardHeader:
-                                  Control: Text@0.0.51
-                                  Properties:
-                                    Font: =Font.Lato
-                                    FontColor: =RGBA(0, 101, 161, 1)
-                                    Height: =30
-                                    Size: =16
-                                    Text: ="System Status - " & Text(_selectedDate, "[$-th-TH]dd/mm/yyyy")
-                                    VerticalAlign: =VerticalAlign.Middle
-                                    Weight: ='TextCanvas.Weight'.Semibold
-                                    Width: =Parent.Width - 40
-                              - DCC_StatusPanelsRow:
-                                  Control: GroupContainer@1.3.0
-                                  Variant: AutoLayout
-                                  Properties:
-                                    DropShadow: =DropShadow.None
-                                    FillPortions: =0
-                                    Height: =150
-                                    LayoutDirection: =LayoutDirection.Horizontal
-                                    LayoutGap: =20
-                                    LayoutJustifyContent: =LayoutJustifyContent.SpaceBetween
-                                    LayoutMinHeight: =150
-                                    LayoutMinWidth: =200
-                                    Width: =Parent.Width - 40
-                                  Children:
-                                    - DCC_SAPImportPanel:
-                                        Control: GroupContainer@1.3.0
-                                        Variant: AutoLayout
-                                        Properties:
-                                          DropShadow: =DropShadow.None
-                                          LayoutAlignItems: =LayoutAlignItems.Center
-                                          LayoutDirection: =LayoutDirection.Vertical
-                                          LayoutGap: =10
-                                          LayoutJustifyContent: =LayoutJustifyContent.Center
-                                          LayoutMinHeight: =150
-                                          LayoutMinWidth: =200
-                                        Children:
-                                          - DCC_SAPIcon:
-                                              Control: Classic/Icon@2.5.0
-                                              Properties:
-                                                Color: |-
-                                                  =With(
-                                                      {
-                                                          _trigger: _refreshTrigger,
-                                                          _log: First(Filter('[THFinanceCashCollection]Process Logs', cr7bb_processdate = Text(_selectedDate, "yyyy-mm-dd")))
-                                                      },
-                                                      If(
-                                                          !IsBlank(_log) && _log.cr7bb_status = "Completed",
-                                                          RGBA(16, 124, 16, 1),
-                                                          If(
-                                                              !IsBlank(_log) && _log.cr7bb_status = "Failed",
-                                                              RGBA(168, 0, 0, 1),
-                                                              RGBA(96, 94, 92, 1)
-                                                          )
-                                                      )
-                                                  )
-                                                Icon: |-
-                                                  =With(
-                                                      {
-                                                          _trigger: _refreshTrigger,
-                                                          _log: First(Filter('[THFinanceCashCollection]Process Logs', cr7bb_processdate = Text(_selectedDate, "yyyy-mm-dd")))
-                                                      },
-                                                      If(
-                                                          !IsBlank(_log) && _log.cr7bb_status = "Completed",
-                                                          Icon.CheckBadge,
-                                                          If(
-                                                              !IsBlank(_log) && _log.cr7bb_status = "Failed",
-                                                              Icon.CancelBadge,
-                                                              Icon.Clock
-                                                          )
-                                                      )
-                                                  )
-                                          - DCC_SAPTitle:
-                                              Control: Text@0.0.51
-                                              Properties:
-                                                Align: ='TextCanvas.Align'.Center
-                                                Font: =Font.Lato
-                                                FontColor: =RGBA(0, 0, 0, 1)
-                                                Height: =25
-                                                Text: ="SAP Import"
-                                                VerticalAlign: =VerticalAlign.Middle
-                                                Weight: ='TextCanvas.Weight'.Bold
-                                                Width: =150
-                                          - DCC_SAPStatus:
-                                              Control: Text@0.0.51
-                                              Properties:
-                                                Align: ='TextCanvas.Align'.Center
-                                                AutoHeight: =true
-                                                Font: =Font.Lato
-                                                FontColor: =RGBA(100, 100, 100, 1)
-                                                Size: =12
-                                                Text: |-
-                                                  =With(
-                                                      {
-                                                          _trigger: _refreshTrigger,
-                                                          _log: First(Filter('[THFinanceCashCollection]Process Logs', cr7bb_processdate = Text(_selectedDate, "yyyy-mm-dd")))
-                                                      },
-                                                      If(
-                                                          IsBlank(_log),
-                                                          "No run recorded",
-                                                          _log.cr7bb_status & " at " & Text(DateTimeValue(_log.cr7bb_processdate), "[$-th-TH]hh:mm")
-                                                      )
-                                                  )
-                                                Width: =200
-                                          - DCC_SAPRecordCount:
-                                              Control: Text@0.0.51
-                                              Properties:
-                                                Align: ='TextCanvas.Align'.Center
-                                                AutoHeight: =true
-                                                Font: =Font.Lato
-                                                FontColor: =RGBA(100, 100, 100, 1)
-                                                Size: =12
-                                                Text: |-
-                                                  =With(
-                                                      {
-                                                          _trigger: _refreshTrigger,
-                                                          _log: First(Filter('[THFinanceCashCollection]Process Logs', cr7bb_processdate = Text(_selectedDate, "yyyy-mm-dd")))
-                                                      },
-                                                      If(
-                                                          !IsBlank(_log),
-                                                          _log.cr7bb_transactionsprocessed & " transactions processed",
-                                                          ""
-                                                      )
-                                                  )
-                                                Width: =200
-                                    - DCC_EmailEnginePanel:
-                                        Control: GroupContainer@1.3.0
-                                        Variant: AutoLayout
-                                        Properties:
-                                          DropShadow: =DropShadow.None
-                                          LayoutAlignItems: =LayoutAlignItems.Center
-                                          LayoutDirection: =LayoutDirection.Vertical
-                                          LayoutGap: =10
-                                          LayoutJustifyContent: =LayoutJustifyContent.Center
-                                          LayoutMinHeight: =150
-                                          LayoutMinWidth: =200
-                                        Children:
-                                          - DCC_EmailIcon:
-                                              Control: Classic/Icon@2.5.0
-                                              Properties:
-                                                Color: |-
-                                                  =With(
-                                                      {
-                                                          _trigger: _refreshTrigger,
-                                                          _sent: CountRows(Filter('[THFinanceCashCollection]Emaillogs', DateValue(cr7bb_sentdatetime) = _selectedDate && cr7bb_sendstatus = 'Send Status Choice'.Success)),
-                                                          _failed: CountRows(Filter('[THFinanceCashCollection]Emaillogs', DateValue(cr7bb_sentdatetime) = _selectedDate && cr7bb_sendstatus = 'Send Status Choice'.Failed))
-                                                      },
-                                                      If(
-                                                          _sent > 0 && _failed = 0,
-                                                          RGBA(16, 124, 16, 1),
-                                                          If(
-                                                              _failed > 0,
-                                                              RGBA(255, 185, 0, 1),
-                                                              RGBA(96, 94, 92, 1)
-                                                          )
-                                                      )
-                                                  )
-                                                Icon: |-
-                                                  =With(
-                                                      {
-                                                          _trigger: _refreshTrigger,
-                                                          _sent: CountRows(Filter('[THFinanceCashCollection]Emaillogs', DateValue(cr7bb_sentdatetime) = _selectedDate && cr7bb_sendstatus = 'Send Status Choice'.Success)),
-                                                          _failed: CountRows(Filter('[THFinanceCashCollection]Emaillogs', DateValue(cr7bb_sentdatetime) = _selectedDate && cr7bb_sendstatus = 'Send Status Choice'.Failed))
-                                                      },
-                                                      If(
-                                                          _sent > 0 && _failed = 0,
-                                                          Icon.CheckBadge,
-                                                          If(
-                                                              _failed > 0,
-                                                              Icon.Warning,
-                                                              Icon.Clock
-                                                          )
-                                                      )
-                                                  )
-                                          - DCC_EmailTitle:
-                                              Control: Text@0.0.51
-                                              Properties:
-                                                Align: ='TextCanvas.Align'.Center
-                                                Font: =Font.Lato
-                                                FontColor: =RGBA(0, 0, 0, 1)
-                                                Height: =25
-                                                Text: |-
-                                                  ="📧 Email Engine"
-                                                VerticalAlign: =VerticalAlign.Middle
-                                                Weight: ='TextCanvas.Weight'.Bold
-                                                Width: =150
-                                          - DCC_EmailStatus:
-                                              Control: Text@0.0.51
-                                              Properties:
-                                                Align: ='TextCanvas.Align'.Center
-                                                AutoHeight: =true
-                                                Font: =Font.Lato
-                                                FontColor: =RGBA(100, 100, 100, 1)
-                                                Size: =12
-                                                Text: |-
-                                                  =With(
-                                                      {
-                                                          _trigger: _refreshTrigger,
-                                                          _sent: CountRows(Filter('[THFinanceCashCollection]Emaillogs', DateValue(cr7bb_sentdatetime) = _selectedDate && cr7bb_sendstatus = 'Send Status Choice'.Success)),
-                                                          _failed: CountRows(Filter('[THFinanceCashCollection]Emaillogs', DateValue(cr7bb_sentdatetime) = _selectedDate && cr7bb_sendstatus = 'Send Status Choice'.Failed))
-                                                      },
-                                                      If(
-                                                          _sent = 0 && _failed = 0,
-                                                          "No emails sent",
-                                                          _sent & " sent, " & _failed & " failed"
-                                                      )
-                                                  )
-                                                Width: =200
-                                          - DCC_EmailSkipped:
-                                              Control: Text@0.0.51
-                                              Properties:
-                                                Align: ='TextCanvas.Align'.Center
-                                                AutoHeight: =true
-                                                Font: =Font.Lato
-                                                FontColor: =RGBA(100, 100, 100, 1)
-                                                Size: =12
-                                                Text: |-
-                                                  =With(
-                                                      {
-                                                          _trigger: _refreshTrigger,
-                                                          _skipped: CountRows(Filter('[THFinanceCashCollection]Emaillogs', DateValue(cr7bb_sentdatetime) = _selectedDate && cr7bb_sendstatus = 'Send Status Choice'.Pending))
-                                                      },
-                                                      If(
-                                                          _skipped > 0,
-                                                          _skipped & " customers skipped (CN > DN)",
-                                                          ""
-                                                      )
-                                                  )
-                                                Width: =200
-                        - DCC_QuickActionsCard:
+                              Font: =Font.Lato
+                              FontColor: =RGBA(100, 100, 100, 1)
+                              Height: =18
+                              Size: =12
+                              Text: ="QUICK ACTIONS"
+                              VerticalAlign: =VerticalAlign.Middle
+                              Weight: ='TextCanvas.Weight'.Semibold
+                              Width: =Parent.Width - 30
+                        - Dash_QuickActionsBtns:
                             Control: GroupContainer@1.3.0
                             Variant: AutoLayout
                             Properties:
-                              Fill: =RGBA(255, 255, 255, 1)
-                              FillPortions: =0
-                              Height: =140
-                              LayoutDirection: =LayoutDirection.Vertical
-                              LayoutGap: =15
-                              LayoutMinHeight: =140
-                              LayoutMinWidth: =200
-                              PaddingBottom: =15
-                              PaddingLeft: =20
-                              PaddingRight: =20
-                              PaddingTop: =15
-                              RadiusBottomLeft: =10
-                              RadiusBottomRight: =10
-                              RadiusTopLeft: =10
-                              RadiusTopRight: =10
-                              Width: =Parent.Width - 20
+                              DropShadow: =DropShadow.None
+                              FillPortions: =1
+                              LayoutAlignItems: =LayoutAlignItems.Center
+                              LayoutDirection: =LayoutDirection.Horizontal
+                              LayoutGap: =10
+                              LayoutMinHeight: =35
+                              LayoutMinWidth: =100
+                              Width: =Parent.Width - 30
                             Children:
-                              - DCC_QuickActionsHeader:
-                                  Control: Text@0.0.51
-                                  Properties:
-                                    Font: =Font.Lato
-                                    FontColor: =RGBA(0, 101, 161, 1)
-                                    Height: =30
-                                    Size: =16
-                                    Text: ="Quick Actions"
-                                    VerticalAlign: =VerticalAlign.Middle
-                                    Weight: ='TextCanvas.Weight'.Semibold
-                                    Width: =Parent.Width - 40
-                              - DCC_QuickActionsButtonsRow:
-                                  Control: GroupContainer@1.3.0
-                                  Variant: AutoLayout
-                                  Properties:
-                                    DropShadow: =DropShadow.None
-                                    FillPortions: =0
-                                    Height: =70
-                                    LayoutDirection: =LayoutDirection.Horizontal
-                                    LayoutGap: =10
-                                    LayoutMinHeight: =70
-                                    LayoutMinWidth: =200
-                                    LayoutWrap: =true
-                                    Width: =Parent.Width - 40
-                                  Children:
-                                    - DCC_ReviewEmailsButton:
-                                        Control: Button@0.0.45
-                                        Properties:
-                                          BasePaletteColor: =RGBA(0, 101, 161, 1)
-                                          Height: =40
-                                          OnSelect: |-
-                                            =Set(gblFilterDate, _selectedDate);
-                                            Navigate(scnEmailMonitor)
-                                          Text: |-
-                                            ="📧 Review Emails"
-                                          Width: =150
-                                    - DCC_FailedEmailsButton:
-                                        Control: Button@0.0.45
-                                        Properties:
-                                          BasePaletteColor: |-
-                                            =With(
-                                                {
-                                                    _trigger: _refreshTrigger,
-                                                    _failed: CountRows(Filter('[THFinanceCashCollection]Emaillogs', DateValue(cr7bb_sentdatetime) = _selectedDate && cr7bb_sendstatus = 'Send Status Choice'.Failed))
-                                                },
-                                                If(_failed > 0, RGBA(168, 0, 0, 1), RGBA(200, 198, 196, 1))
-                                            )
-                                          DisplayMode: |-
-                                            =With(
-                                                {
-                                                    _trigger: _refreshTrigger,
-                                                    _failed: CountRows(Filter('[THFinanceCashCollection]Emaillogs', DateValue(cr7bb_sentdatetime) = _selectedDate && cr7bb_sendstatus = 'Send Status Choice'.Failed))
-                                                },
-                                                If(_failed > 0, DisplayMode.Edit, DisplayMode.Disabled)
-                                            )
-                                          Height: =40
-                                          OnSelect: |-
-                                            =Set(gblFilterDate, _selectedDate);
-                                            Set(gblEmailStatusFilter, "Failed");
-                                            Navigate(scnEmailMonitor)
-                                          Text: |-
-                                            =With(
-                                                {
-                                                    _trigger: _refreshTrigger,
-                                                    _failed: CountRows(Filter('[THFinanceCashCollection]Emaillogs', DateValue(cr7bb_sentdatetime) = _selectedDate && cr7bb_sendstatus = 'Send Status Choice'.Failed))
-                                                },
-                                                "⚠️ Failed (" & _failed & ")"
-                                            )
-                                          Width: =150
-                                    - DCC_CustomersButton:
-                                        Control: Button@0.0.45
-                                        Properties:
-                                          BasePaletteColor: =RGBA(100, 81, 61, 1)
-                                          Height: =40
-                                          OnSelect: =Navigate(scnCustomer)
-                                          Text: |-
-                                            ="🔍 Customers"
-                                          Width: =150
-                                    - DCC_TransactionsButton:
-                                        Control: Button@0.0.45
-                                        Properties:
-                                          BasePaletteColor: =RGBA(0, 101, 161, 1)
-                                          Height: =40
-                                          OnSelect: |-
-                                            =Set(gblFilterDate, _selectedDate);
-                                            Navigate(scnTransactions)
-                                          Text: |-
-                                            ="📊 Transactions"
-                                          Width: =150
-                                    - DCC_ExportButton:
-                                        Control: Button@0.0.45
-                                        Properties:
-                                          BasePaletteColor: =RGBA(100, 81, 61, 1)
-                                          Height: =40
-                                          OnSelect: =Notify("Export functionality coming soon", NotificationType.Information)
-                                          Text: |-
-                                            ="📄 Export Report"
-                                          Width: =150
-                        - DCC_ActivitySummaryCard:
-                            Control: GroupContainer@1.3.0
-                            Variant: AutoLayout
-                            Properties:
-                              Fill: =RGBA(255, 255, 255, 1)
-                              FillPortions: =0
-                              Height: =450
-                              LayoutDirection: =LayoutDirection.Vertical
-                              LayoutGap: =15
-                              LayoutMinHeight: =450
-                              LayoutMinWidth: =200
-                              PaddingBottom: =15
-                              PaddingLeft: =20
-                              PaddingRight: =20
-                              PaddingTop: =15
-                              RadiusBottomLeft: =10
-                              RadiusBottomRight: =10
-                              RadiusTopLeft: =10
-                              RadiusTopRight: =10
-                              Width: =Parent.Width - 20
-                            Children:
-                              - DCC_ActivityHeader:
-                                  Control: Text@0.0.51
-                                  Properties:
-                                    Font: =Font.Lato
-                                    FontColor: =RGBA(0, 101, 161, 1)
-                                    Height: =30
-                                    Size: =16
-                                    Text: |-
-                                      =With(
-                                          {
-                                              _trigger: _refreshTrigger,
-                                              _count: CountRows(Filter('[THFinanceCashCollection]Emaillogs', DateValue(cr7bb_sentdatetime) = _selectedDate))
-                                          },
-                                          "Activity - " & Text(_selectedDate, "[$-th-TH]dd/mm/yyyy") & " (" & _count & " emails)"
-                                      )
-                                    VerticalAlign: =VerticalAlign.Middle
-                                    Weight: ='TextCanvas.Weight'.Semibold
-                                    Width: =Parent.Width - 40
-                              - DCC_ActivityGallery:
-                                  Control: Gallery@2.15.0
-                                  Variant: Vertical
-                                  Properties:
-                                    Height: =350
-                                    Items: |-
-                                      =If(
-                                          _refreshTrigger || !_refreshTrigger,
-                                          FirstN(
-                                              Sort(
-                                                  Filter(
-                                                      '[THFinanceCashCollection]Emaillogs',
-                                                      DateValue(cr7bb_sentdatetime) = _selectedDate
-                                                  ),
-                                                  cr7bb_sentdatetime,
-                                                  SortOrder.Descending
-                                              ),
-                                              10
-                                          )
-                                      )
-                                    TemplatePadding: =0
-                                    TemplateSize: =70
-                                    Width: =Parent.Width - 40
-                                  Children:
-                                    - DCC_GalleryItemContainer:
-                                        Control: GroupContainer@1.3.0
-                                        Variant: AutoLayout
-                                        Properties:
-                                          DropShadow: =DropShadow.None
-                                          Fill: =If(Mod(ThisItem.Value, 2) = 0, RGBA(250, 250, 250, 1), RGBA(255, 255, 255, 1))
-                                          Height: =70
-                                          LayoutAlignItems: =LayoutAlignItems.Center
-                                          LayoutDirection: =LayoutDirection.Horizontal
-                                          LayoutGap: =15
-                                          PaddingBottom: =10
-                                          PaddingLeft: =15
-                                          PaddingRight: =15
-                                          PaddingTop: =10
-                                          Width: =Parent.TemplateWidth
-                                        Children:
-                                          - DCC_ActivityIcon:
-                                              Control: Classic/Icon@2.5.0
-                                              Properties:
-                                                Color: |-
-                                                  =If(
-                                                      ThisItem.cr7bb_sendstatus = 'Send Status Choice'.Success,
-                                                      RGBA(16, 124, 16, 1),
-                                                      If(
-                                                          ThisItem.cr7bb_sendstatus = 'Send Status Choice'.Failed,
-                                                          RGBA(168, 0, 0, 1),
-                                                          RGBA(96, 94, 92, 1)
-                                                      )
-                                                  )
-                                                Height: =40
-                                                Icon: |-
-                                                  =If(
-                                                      ThisItem.cr7bb_sendstatus = 'Send Status Choice'.Success,
-                                                      Icon.CheckBadge,
-                                                      If(
-                                                          ThisItem.cr7bb_sendstatus = 'Send Status Choice'.Failed,
-                                                          Icon.Warning,
-                                                          Icon.Send
-                                                      )
-                                                  )
-                                                Width: =40
-                                          - DCC_ActivityDetailsContainer:
-                                              Control: GroupContainer@1.3.0
-                                              Variant: AutoLayout
-                                              Properties:
-                                                DropShadow: =DropShadow.None
-                                                LayoutDirection: =LayoutDirection.Vertical
-                                                LayoutGap: =5
-                                                LayoutMinHeight: =50
-                                                LayoutMinWidth: =100
-                                              Children:
-                                                - DCC_ActivityText:
-                                                    Control: Text@0.0.51
-                                                    Properties:
-                                                      AutoHeight: =true
-                                                      Font: =Font.Lato
-                                                      FontColor: =RGBA(0, 0, 0, 1)
-                                                      Size: =13
-                                                      Text: ="Email " & Text(ThisItem.cr7bb_sendstatus) & " to " & ThisItem.Customer.'[THFinanceCashCollection]Customer'
-                                                      Weight: ='TextCanvas.Weight'.Semibold
-                                                      Width: =400
-                                                - DCC_ActivityTimestamp:
-                                                    Control: Text@0.0.51
-                                                    Properties:
-                                                      AutoHeight: =true
-                                                      Font: =Font.Lato
-                                                      FontColor: =RGBA(100, 100, 100, 1)
-                                                      Size: =11
-                                                      Text: =Text(ThisItem.cr7bb_sentdatetime, "[$-th-TH]hh:mm:ss")
-                                                      Width: =400
-                                          - DCC_ActivityStatusBadge:
-                                              Control: Text@0.0.51
-                                              Properties:
-                                                Align: ='TextCanvas.Align'.Center
-                                                Font: =Font.Lato
-                                                FontColor: |-
-                                                  =If(
-                                                      ThisItem.cr7bb_sendstatus = 'Send Status Choice'.Success,
-                                                      RGBA(16, 124, 16, 1),
-                                                      If(
-                                                          ThisItem.cr7bb_sendstatus = 'Send Status Choice'.Failed,
-                                                          RGBA(168, 0, 0, 1),
-                                                          RGBA(96, 94, 92, 1)
-                                                      )
-                                                  )
-                                                Height: =50
-                                                Size: =12
-                                                Text: =Text(ThisItem.cr7bb_sendstatus)
-                                                VerticalAlign: =VerticalAlign.Middle
-                                                Weight: ='TextCanvas.Weight'.Semibold
-                                                Width: =100
-                                          - DCC_ActivityViewButton:
-                                              Control: Button@0.0.45
-                                              Properties:
-                                                BasePaletteColor: =RGBA(0, 101, 161, 1)
-                                                Height: =36
-                                                OnSelect: |-
-                                                  =Set(gblSelectedEmail, ThisItem);
-                                                  Navigate(scnEmailMonitor)
-                                                Text: ="View"
-                                                Width: =80
-                  - DCC_DatePickerOverlay:
-                      Control: GroupContainer@1.3.0
-                      Variant: ManualLayout
-                      Properties:
-                        DropShadow: =DropShadow.None
-                        Fill: =RGBA(0, 0, 0, 0.5)
-                        Height: =Parent.Height
-                        Visible: =_showDatePicker
-                        Width: =Parent.Width
-                      Children:
-                        - DCC_DatePickerModal:
-                            Control: GroupContainer@1.3.0
-                            Variant: AutoLayout
-                            Properties:
-                              DropShadow: =DropShadow.Regular
-                              Fill: =RGBA(255, 255, 255, 1)
-                              Height: =450
-                              LayoutDirection: =LayoutDirection.Vertical
-                              LayoutGap: =20
-                              PaddingBottom: =30
-                              PaddingLeft: =30
-                              PaddingRight: =30
-                              PaddingTop: =30
-                              RadiusBottomLeft: =10
-                              RadiusBottomRight: =10
-                              RadiusTopLeft: =10
-                              RadiusTopRight: =10
-                              Width: =400
-                              X: =(Parent.Width - 400) / 2
-                              Y: =(Parent.Height - 450) / 2
-                            Children:
-                              - DCC_DatePickerModalTitle:
-                                  Control: Text@0.0.51
-                                  Properties:
-                                    Font: =Font.Lato
-                                    FontColor: =RGBA(0, 101, 161, 1)
-                                    Height: =40
-                                    Size: =20
-                                    Text: ="Select Audit Date"
-                                    VerticalAlign: =VerticalAlign.Middle
-                                    Weight: ='TextCanvas.Weight'.Bold
-                                    Width: =340
-                              - DCC_DatePickerControl:
-                                  Control: DatePicker@0.0.46
+                              - Dash_CustomersBtn:
+                                  Control: Button@0.0.45
                                   Properties:
                                     BasePaletteColor: =RGBA(0, 101, 161, 1)
-                                    Height: =280
-                                    SelectedDate: =_selectedDate
-                                    Width: =340
-                              - DCC_DatePickerModalButtons:
-                                  Control: GroupContainer@1.3.0
-                                  Variant: AutoLayout
+                                    FillPortions: =1
+                                    Height: =35
+                                    Icon: ="People"
+                                    OnSelect: =Navigate(scnCustomer, ScreenTransition.None)
+                                    Text: ="Customers"
+                              - Dash_TransactionsBtn:
+                                  Control: Button@0.0.45
                                   Properties:
-                                    DropShadow: =DropShadow.None
-                                    FillPortions: =0
-                                    Height: =50
-                                    LayoutDirection: =LayoutDirection.Horizontal
-                                    LayoutGap: =15
-                                    LayoutJustifyContent: =LayoutJustifyContent.End
-                                    LayoutMinHeight: =50
-                                    LayoutMinWidth: =100
-                                    Width: =340
-                                  Children:
-                                    - DCC_DatePickerCancelButton:
-                                        Control: Button@0.0.45
-                                        Properties:
-                                          BasePaletteColor: =RGBA(128, 128, 128, 1)
-                                          Height: =40
-                                          OnSelect: =Set(_showDatePicker, false)
-                                          Text: ="Cancel"
-                                          Width: =100
-                                    - DCC_DatePickerSelectButton:
-                                        Control: Button@0.0.45
-                                        Properties:
-                                          BasePaletteColor: =RGBA(0, 101, 161, 1)
-                                          Height: =40
-                                          OnSelect: |-
-                                            =Set(_selectedDate, DCC_DatePickerControl.SelectedDate);
-                                            Set(_showDatePicker, false);
-                                            Set(_refreshTrigger, !_refreshTrigger)
-                                          Text: ="Select Date"
-                                          Width: =120
-            - DCC_NavigationMenu:
+                                    BasePaletteColor: =RGBA(100, 81, 61, 1)
+                                    FillPortions: =1
+                                    Height: =35
+                                    Icon: ="DocumentBulletList"
+                                    OnSelect: =Navigate(scnTransactions, ScreenTransition.None)
+                                    Text: ="Transactions"
+                              - Dash_CalendarBtn:
+                                  Control: Button@0.0.45
+                                  Properties:
+                                    BasePaletteColor: =RGBA(100, 81, 61, 1)
+                                    FillPortions: =1
+                                    Height: =35
+                                    Icon: ="CalendarBlank"
+                                    OnSelect: =Navigate(scnCalendar, ScreenTransition.None)
+                                    Text: ="Calendar"
+                              - Dash_ExportBtn:
+                                  Control: Button@0.0.45
+                                  Properties:
+                                    BasePaletteColor: =RGBA(128, 128, 128, 1)
+                                    DisplayMode: =DisplayMode.Disabled
+                                    FillPortions: =1
+                                    Height: =35
+                                    Icon: ="Download"
+                                    OnSelect: =Notify("Export feature coming soon", NotificationType.Information)
+                                    Text: ="Export"
+
+            # ============================================
+            # DATE PICKER MODAL
+            # ============================================
+            - Dash_DatePickerOverlay:
+                Control: GroupContainer@1.3.0
+                Variant: ManualLayout
+                Properties:
+                  Fill: =RGBA(0, 0, 0, 0.5)
+                  Height: =Parent.Height
+                  LayoutMinHeight: =100
+                  LayoutMinWidth: =100
+                  Visible: =_showDatePicker
+                  Width: =Parent.Width
+                Children:
+                  - Dash_DatePickerModal:
+                      Control: GroupContainer@1.3.0
+                      Variant: AutoLayout
+                      Properties:
+                        DropShadow: =DropShadow.Bold
+                        Fill: =RGBA(255, 255, 255, 1)
+                        Height: =350
+                        LayoutAlignItems: =LayoutAlignItems.Center
+                        LayoutDirection: =LayoutDirection.Vertical
+                        LayoutGap: =15
+                        LayoutMinHeight: =350
+                        LayoutMinWidth: =280
+                        PaddingBottom: =20
+                        PaddingLeft: =20
+                        PaddingRight: =20
+                        PaddingTop: =20
+                        RadiusBottomLeft: =10
+                        RadiusBottomRight: =10
+                        RadiusTopLeft: =10
+                        RadiusTopRight: =10
+                        Width: =320
+                        X: =(Parent.Width - Self.Width) / 2
+                        Y: =(Parent.Height - Self.Height) / 2
+                      Children:
+                        - Dash_DatePickerTitle:
+                            Control: Text@0.0.51
+                            Properties:
+                              Align: ='TextCanvas.Align'.Center
+                              FillPortions: =0
+                              Font: =Font.Lato
+                              FontColor: =RGBA(0, 101, 161, 1)
+                              Height: =30
+                              Size: =18
+                              Text: ="Select Date"
+                              VerticalAlign: =VerticalAlign.Middle
+                              Weight: ='TextCanvas.Weight'.Semibold
+                              Width: =280
+                        - Dash_DatePicker:
+                            Control: DatePicker@0.0.46
+                            Properties:
+                              FillPortions: =0
+                              Height: =220
+                              LayoutMinHeight: =200
+                              LayoutMinWidth: =260
+                              OnChange: |-
+                                =Set(_selectedDate, Self.SelectedDate);
+                                Set(_processLog,
+                                    First(Filter('[THFinanceCashCollection]Process Logs',
+                                        cr7bb_processdate = Text(_selectedDate, "yyyy-mm-dd"))));
+                                ClearCollect(colTodayEmails,
+                                    Filter('[THFinanceCashCollection]Emaillogs',
+                                        cr7bb_processdate >= _selectedDate && cr7bb_processdate < DateAdd(_selectedDate, 1, TimeUnit.Days)));
+                                Set(_emailCount, CountRows(colTodayEmails));
+                                Set(_totalOutstanding, Sum(colTodayEmails, cr7bb_totalamount));
+                                Set(_day12Count, CountRows(Filter(colTodayEmails, cr7bb_maxdaycount <= 2)));
+                                Set(_day3Count, CountRows(Filter(colTodayEmails, cr7bb_maxdaycount = 3)));
+                                Set(_day4PlusCount, CountRows(Filter(colTodayEmails, cr7bb_maxdaycount >= 4)));
+                                Set(_sentCount, CountRows(Filter(colTodayEmails, cr7bb_sendstatus = 'Send Status Choice'.Success)));
+                                Set(_failedCount, CountRows(Filter(colTodayEmails, cr7bb_sendstatus = 'Send Status Choice'.Failed)));
+                                Set(_pendingCount, CountRows(Filter(colTodayEmails, cr7bb_sendstatus = 'Send Status Choice'.Pending)));
+                                Set(_showDatePicker, false);
+                              SelectedDate: =_selectedDate
+                              Width: =280
+                        - Dash_DatePickerCancel:
+                            Control: Button@0.0.45
+                            Properties:
+                              BasePaletteColor: =RGBA(128, 128, 128, 1)
+                              FillPortions: =0
+                              Height: =35
+                              OnSelect: =Set(_showDatePicker, false)
+                              Text: ="Cancel"
+                              Width: =120
+
+            # ============================================
+            # NAVIGATION MENU
+            # ============================================
+            - Dash_NavigationMenu:
                 Control: CanvasComponent
                 ComponentName: NavigationMenu
                 Properties:
-                  Fill: =RGBA(255, 255, 255, 0.5)
+                  Fill: =RGBA(255, 255, 255, 0.95)
                   Height: =Parent.Height - 70
-                  Visible: =If(_showMenu, true, false)
+                  Visible: =_showMenu
                   Width: =260
                   Y: =70
                   navItems: =Navigation

@@ -154,8 +154,9 @@ Edit in templates/powerapps/
 
 **Field Names**:
 - **ALWAYS verify from FIELD_NAME_REFERENCE.md**
-- All fields use `cr7bb_` prefix (NOT `nc_` from schema docs)
-- Example: `cr7bb_customercode`, `cr7bb_customername`, `cr7bb_Region`
+- Most fields use `cr7bb_` prefix
+- **Exception**: Region field uses `nc_region` (different publisher prefix)
+- Example: `cr7bb_customercode`, `cr7bb_customername`, `nc_region`
 
 **Dataverse Tables**:
 - `[THFinanceCashCollection]Customers` - Customer master data
@@ -174,9 +175,10 @@ Edit in templates/powerapps/
 - **Text Controls**: Always specify Width property (default 96px causes issues)
 
 **PowerFx Field Naming Patterns**:
-- **Dataverse Logical Names**: Use `cr7bb_` prefix (e.g., `cr7bb_customercode`, `cr7bb_Region`)
+- **Dataverse Logical Names**: Most use `cr7bb_` prefix (e.g., `cr7bb_customercode`)
+- **Exception**: Region uses `nc_region` (different publisher)
 - **Dataverse Display Names**: Can omit prefix when referencing from record variables (e.g., `Region`, `CustomerCode`)
-- Both work interchangeably: `_selectedCustomer.cr7bb_Region` = `_selectedCustomer.Region`
+- Both work interchangeably: `_selectedCustomer.nc_region` = `_selectedCustomer.Region`
 - **Best Practice**: Use Display Names for readability in formulas
 - **Calculated Column Names** (AddColumns, ShowColumns): NO QUOTES on column name parameter
   - Correct: `AddColumns(table, TransactionTypeText, expression)`

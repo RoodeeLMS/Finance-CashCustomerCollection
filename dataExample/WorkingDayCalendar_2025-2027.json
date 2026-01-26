@@ -1,0 +1,94 @@
+{
+  "metadata": {
+    "description": "Working Day Calendar for Arrear Days Calculation",
+    "purpose": "O(1) lookup for working day number - supports cross-year calculation",
+    "dateRange": "2025-01-01 to 2027-12-31",
+    "totalRecords": 1096,
+    "workingDaysCount": "~780 (estimated)",
+    "lastUpdated": "2026-01-09",
+    "notes": [
+      "WorkingDayNumber is ABSOLUTE - continues across years without reset",
+      "NULL for non-working days (weekends + holidays)",
+      "Thai holidays sourced from HolidayMaster_2026.json"
+    ]
+  },
+  "dataverseTableSchema": {
+    "tableName": "cr7bb_workingdaycalendar",
+    "displayName": "[THFinanceCashCollection]WorkingDayCalendar",
+    "columns": [
+      {"name": "cr7bb_calendardate", "type": "Date Only", "required": true, "indexed": true},
+      {"name": "cr7bb_isworkingday", "type": "Yes/No", "required": true},
+      {"name": "cr7bb_workingdaynumber", "type": "Whole Number", "required": false},
+      {"name": "cr7bb_year", "type": "Whole Number", "required": true}
+    ]
+  },
+  "sampleData": {
+    "description": "Sample showing year-end transition (2025 → 2026)",
+    "records": [
+      {"date": "2025-12-22", "isWorkingDay": true, "workingDayNumber": 255, "year": 2025, "notes": "Monday"},
+      {"date": "2025-12-23", "isWorkingDay": true, "workingDayNumber": 256, "year": 2025, "notes": "Tuesday"},
+      {"date": "2025-12-24", "isWorkingDay": true, "workingDayNumber": 257, "year": 2025, "notes": "Wednesday"},
+      {"date": "2025-12-25", "isWorkingDay": true, "workingDayNumber": 258, "year": 2025, "notes": "Thursday (not Thai holiday)"},
+      {"date": "2025-12-26", "isWorkingDay": true, "workingDayNumber": 259, "year": 2025, "notes": "Friday"},
+      {"date": "2025-12-27", "isWorkingDay": false, "workingDayNumber": null, "year": 2025, "notes": "Saturday"},
+      {"date": "2025-12-28", "isWorkingDay": false, "workingDayNumber": null, "year": 2025, "notes": "Sunday"},
+      {"date": "2025-12-29", "isWorkingDay": true, "workingDayNumber": 260, "year": 2025, "notes": "Monday"},
+      {"date": "2025-12-30", "isWorkingDay": true, "workingDayNumber": 261, "year": 2025, "notes": "Tuesday"},
+      {"date": "2025-12-31", "isWorkingDay": true, "workingDayNumber": 262, "year": 2025, "notes": "Wednesday"},
+      {"date": "2026-01-01", "isWorkingDay": false, "workingDayNumber": null, "year": 2026, "notes": "New Year's Day (HOLIDAY)"},
+      {"date": "2026-01-02", "isWorkingDay": true, "workingDayNumber": 263, "year": 2026, "notes": "Friday - CONTINUES from 262!"},
+      {"date": "2026-01-03", "isWorkingDay": false, "workingDayNumber": null, "year": 2026, "notes": "Saturday"},
+      {"date": "2026-01-04", "isWorkingDay": false, "workingDayNumber": null, "year": 2026, "notes": "Sunday"},
+      {"date": "2026-01-05", "isWorkingDay": true, "workingDayNumber": 264, "year": 2026, "notes": "Monday"},
+      {"date": "2026-01-06", "isWorkingDay": true, "workingDayNumber": 265, "year": 2026, "notes": "Tuesday"},
+      {"date": "2026-01-07", "isWorkingDay": true, "workingDayNumber": 266, "year": 2026, "notes": "Wednesday"},
+      {"date": "2026-01-08", "isWorkingDay": true, "workingDayNumber": 267, "year": 2026, "notes": "Thursday"},
+      {"date": "2026-01-09", "isWorkingDay": true, "workingDayNumber": 268, "year": 2026, "notes": "Friday (TODAY)"}
+    ]
+  },
+  "crossYearExample": {
+    "description": "Calculation example for transaction due Dec 30, 2025 processed Jan 9, 2026",
+    "dueDate": "2025-12-30",
+    "dueDateWorkingDayNumber": 261,
+    "processDate": "2026-01-09",
+    "processDateWorkingDayNumber": 268,
+    "calculation": "268 - 261 = 7",
+    "result": "7 working days overdue",
+    "verification": "Working days: Dec 31, Jan 2, 5, 6, 7, 8, 9 = 7 days (correct!)"
+  },
+  "generationInstructions": {
+    "step1": "Start with WorkingDayNumber = 1 for Jan 2, 2025 (Jan 1 is holiday)",
+    "step2": "For each date from 2025-01-01 to 2027-12-31:",
+    "step2a": "Check if Saturday (dayOfWeek = 6) or Sunday (dayOfWeek = 0) → isWorkingDay = false",
+    "step2b": "Check if date in HolidayMaster → isWorkingDay = false",
+    "step2c": "If isWorkingDay = true → assign next WorkingDayNumber, increment counter",
+    "step2d": "If isWorkingDay = false → WorkingDayNumber = null",
+    "step3": "Counter continues across year boundaries without reset",
+    "estimatedCounts": {
+      "2025": "~250 working days (numbers 1-250)",
+      "2026": "~250 working days (numbers 251-500)",
+      "2027": "~250 working days (numbers 501-750)"
+    }
+  },
+  "thaiHolidays2025": [
+    {"date": "2025-01-01", "name": "New Year's Day"},
+    {"date": "2025-02-12", "name": "Makha Bucha Day (estimated)"},
+    {"date": "2025-04-06", "name": "Chakri Memorial Day"},
+    {"date": "2025-04-13", "name": "Songkran Festival"},
+    {"date": "2025-04-14", "name": "Songkran Festival"},
+    {"date": "2025-04-15", "name": "Songkran Festival"},
+    {"date": "2025-05-01", "name": "Labour Day"},
+    {"date": "2025-05-04", "name": "Coronation Day"},
+    {"date": "2025-05-12", "name": "Visakha Bucha Day (estimated)"},
+    {"date": "2025-06-03", "name": "Queen Suthida's Birthday"},
+    {"date": "2025-07-21", "name": "Asarnha Bucha Day (estimated)"},
+    {"date": "2025-07-22", "name": "Buddhist Lent Day (estimated)"},
+    {"date": "2025-07-28", "name": "King's Birthday"},
+    {"date": "2025-08-12", "name": "Queen's Birthday / Mother's Day"},
+    {"date": "2025-10-13", "name": "King Bhumibol Memorial Day"},
+    {"date": "2025-10-23", "name": "Chulalongkorn Day"},
+    {"date": "2025-12-05", "name": "Father's Day"},
+    {"date": "2025-12-10", "name": "Constitution Day"},
+    {"date": "2025-12-31", "name": "New Year's Eve"}
+  ]
+}

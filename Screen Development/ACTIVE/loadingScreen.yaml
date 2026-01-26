@@ -27,8 +27,7 @@ Screens:
                 Navigation,
                 Table(
                     {name: "Daily Control Center", screen: scnDashboard, color: RGBA(0, 101, 161, 1)},
-                    {name: "Email Approval", screen: scnEmailApproval, color: RGBA(0, 101, 161, 1)},
-                    {name: "Email Monitor", screen: scnEmailMonitor, color: RGBA(0, 101, 161, 1)},
+                    {name: "Email Management", screen: scnEmailApproval, color: RGBA(0, 101, 161, 1)},
                     {name: "Customer Management", screen: scnCustomer, color: RGBA(0, 101, 161, 1)},
                     {name: "Customer History", screen: scnCustomerHistory, color: RGBA(0, 101, 161, 1)},
                     {name: "Transactions", screen: scnTransactions, color: RGBA(0, 101, 161, 1)},
@@ -40,8 +39,7 @@ Screens:
                 Navigation,
                 Table(
                     {name: "Daily Control Center", screen: scnDashboard, color: RGBA(0, 101, 161, 1)},
-                    {name: "Email Approval", screen: scnEmailApproval, color: RGBA(0, 101, 161, 1)},
-                    {name: "Email Monitor", screen: scnEmailMonitor, color: RGBA(0, 101, 161, 1)},
+                    {name: "Email Management", screen: scnEmailApproval, color: RGBA(0, 101, 161, 1)},
                     {name: "Customer Management", screen: scnCustomer, color: RGBA(0, 101, 161, 1)},
                     {name: "Customer History", screen: scnCustomerHistory, color: RGBA(0, 101, 161, 1)},
                     {name: "Transactions", screen: scnTransactions, color: RGBA(0, 101, 161, 1)},

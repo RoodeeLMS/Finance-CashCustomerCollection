@@ -1,0 +1,604 @@
+{
+  "properties": {
+    "connectionReferences": {
+      "shared_commondataserviceforapps": {
+        "api": {
+          "name": "shared_commondataserviceforapps"
+        },
+        "connection": {
+          "connectionReferenceLogicalName": "new_sharedcommondataserviceforapps_7e300"
+        },
+        "runtimeSource": "embedded"
+      }
+    },
+    "definition": {
+      "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+      "contentVersion": "1.0.0.0",
+      "parameters": {
+        "$authentication": {
+          "defaultValue": {},
+          "type": "SecureObject"
+        },
+        "$connections": {
+          "defaultValue": {},
+          "type": "Object"
+        }
+      },
+      "triggers": {
+        "manual": {
+          "type": "Request",
+          "kind": "Button",
+          "inputs": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "number": {
+                  "title": "StartYear",
+                  "type": "number",
+                  "x-ms-dynamically-added": true,
+                  "description": "Please enter a number",
+                  "x-ms-content-hint": "NUMBER"
+                },
+                "number_1": {
+                  "title": "EndYear",
+                  "type": "number",
+                  "x-ms-dynamically-added": true,
+                  "description": "Please enter a number",
+                  "x-ms-content-hint": "NUMBER"
+                }
+              },
+              "required": [
+                "number",
+                "number_1"
+              ]
+            }
+          },
+          "metadata": {
+            "operationMetadataId": "71bd6107-f38d-43c0-9d4e-271bba4cf522"
+          }
+        }
+      },
+      "actions": {
+        "Initialize_variable_varStartDate": {
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "varStartDate",
+                "type": "string",
+                "value": "@{concat(triggerBody()['number'], '-01-01')}"
+              }
+            ]
+          },
+          "runAfter": {},
+          "metadata": {
+            "operationMetadataId": "4f7d6086-dc20-41c3-80be-ea9f242aceb9"
+          }
+        },
+        "Initialize_variable_varEndDate": {
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "varEndDate",
+                "type": "string",
+                "value": "@{concat(string(triggerBody()?['number_1']), '-12-31')}"
+              }
+            ]
+          },
+          "runAfter": {
+            "Initialize_variable_varStartDate": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "b899be33-1850-4bcd-a5f1-06ef70666caa"
+          }
+        },
+        "Initialize_variable_varWorkingDayNumber": {
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "varWorkingDayNumber",
+                "type": "integer",
+                "value": 0
+              }
+            ]
+          },
+          "runAfter": {
+            "Initialize_variable_varEndDate": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "fbb49cbe-2f70-4a2c-987d-1d272ae86c52"
+          }
+        },
+        "Initialize_variable_varCurrentDate": {
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "varCurrentDate",
+                "type": "string",
+                "value": "@variables('varStartDate')"
+              }
+            ]
+          },
+          "runAfter": {
+            "Initialize_variable_varWorkingDayNumber": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "06f4d9a2-8e32-4fc9-a2a0-ba9d084d2ebe"
+          }
+        },
+        "Get_Last_WDN_Before": {
+          "type": "OpenApiConnection",
+          "inputs": {
+            "parameters": {
+              "entityName": "nc_thfinancecashcollectionworkingdaycalendars",
+              "$filter": "nc_calendardate lt @{variables('varStartDate')} and nc_isworkingday eq true",
+              "$orderby": "nc_calendardate desc",
+              "$top": 1
+            },
+            "host": {
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+              "operationId": "ListRecords",
+              "connectionName": "shared_commondataserviceforapps"
+            }
+          },
+          "runAfter": {
+            "Initialize_varPendingBuffer": [
+              "SUCCEEDED"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "d38fc9de-ed1e-42fc-888f-32840cd573ec"
+          }
+        },
+        "Condition": {
+          "type": "If",
+          "expression": {
+            "and": [
+              {
+                "greater": [
+                  "@length(outputs('Get_Last_WDN_Before')?['body/value'])",
+                  0
+                ]
+              }
+            ]
+          },
+          "actions": {
+            "Set_variable": {
+              "type": "SetVariable",
+              "inputs": {
+                "name": "varWorkingDayNumber",
+                "value": "@coalesce(first(outputs('Get_Last_WDN_Before')?['body/value'])?['nc_workingdaynumber'], 0)"
+              }
+            }
+          },
+          "else": {
+            "actions": {}
+          },
+          "runAfter": {
+            "Get_Last_WDN_Before": [
+              "Succeeded"
+            ]
+          }
+        },
+        "Get_All_Holidays": {
+          "type": "OpenApiConnection",
+          "inputs": {
+            "parameters": {
+              "entityName": "nc_thfinancecashcollectioncalendarevents",
+              "$filter": "nc_eventdate ge @{variables('varStartDate')} and nc_eventdate le @{variables('varEndDate')}"
+            },
+            "host": {
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+              "operationId": "ListRecords",
+              "connectionName": "shared_commondataserviceforapps"
+            }
+          },
+          "runAfter": {
+            "Condition": [
+              "Succeeded"
+            ]
+          }
+        },
+        "Holiday_Dates_Array": {
+          "type": "Select",
+          "inputs": {
+            "from": "@outputs('Get_All_Holidays')?['body/value']",
+            "select": "@formatDateTime(item()?['nc_eventdate'], 'yyyy-MM-dd')"
+          },
+          "runAfter": {
+            "Get_All_Holidays": [
+              "Succeeded"
+            ]
+          }
+        },
+        "Do_until": {
+          "type": "Until",
+          "expression": "@greater(variables('varCurrentDate'),variables('varEndDate'))",
+          "limit": {
+            "count": 1500,
+            "timeout": "PT4H"
+          },
+          "actions": {
+            "IsWeekend": {
+              "type": "Compose",
+              "inputs": "@or(equals(dayOfWeek(variables('varCurrentDate')), 0), equals(dayOfWeek(variables('varCurrentDate')), 6))"
+            },
+            "IsHoliday": {
+              "type": "Compose",
+              "inputs": "@contains(body('Holiday_Dates_Array'), variables('varCurrentDate'))",
+              "runAfter": {
+                "IsWeekend": [
+                  "Succeeded"
+                ]
+              }
+            },
+            "IsWorkingDay": {
+              "type": "Compose",
+              "inputs": "@and(not(outputs('IsWeekend')), not(outputs('IsHoliday')))",
+              "runAfter": {
+                "IsHoliday": [
+                  "Succeeded"
+                ]
+              }
+            },
+            "Increment_WDN_if_Working_Day": {
+              "type": "If",
+              "expression": {
+                "and": [
+                  {
+                    "equals": [
+                      "@outputs('IsWorkingDay')",
+                      true
+                    ]
+                  }
+                ]
+              },
+              "actions": {
+                "Increment_variable": {
+                  "type": "IncrementVariable",
+                  "inputs": {
+                    "name": "varWorkingDayNumber",
+                    "value": 1
+                  }
+                },
+                "Update_Working_Day": {
+                  "type": "OpenApiConnection",
+                  "inputs": {
+                    "parameters": {
+                      "entityName": "nc_thfinancecashcollectionworkingdaycalendars",
+                      "recordId": "@outputs('Current_Record_ID')",
+                      "item/nc_isworkingday": true,
+                      "item/nc_workingdaynumber": "@variables('varWorkingDayNumber')"
+                    },
+                    "host": {
+                      "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+                      "operationId": "UpdateOnlyRecord",
+                      "connectionName": "shared_commondataserviceforapps"
+                    }
+                  },
+                  "runAfter": {
+                    "Increment_variable": [
+                      "SUCCEEDED"
+                    ]
+                  }
+                },
+                "Is_Buffer_not_empty": {
+                  "type": "If",
+                  "expression": {
+                    "and": [
+                      {
+                        "greater": [
+                          "@length(variables('varPendingBuffer'))",
+                          0
+                        ]
+                      }
+                    ]
+                  },
+                  "actions": {
+                    "Apply_to_each": {
+                      "type": "Foreach",
+                      "foreach": "@variables('varPendingBuffer')",
+                      "actions": {
+                        "Update_Buffered_Records": {
+                          "type": "OpenApiConnection",
+                          "inputs": {
+                            "parameters": {
+                              "entityName": "nc_thfinancecashcollectionworkingdaycalendars",
+                              "recordId": "@items('Apply_to_each')",
+                              "item/nc_workingdaynumber": "@variables('varWorkingDayNumber')"
+                            },
+                            "host": {
+                              "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+                              "operationId": "UpdateOnlyRecord",
+                              "connectionName": "shared_commondataserviceforapps"
+                            }
+                          }
+                        },
+                        "Clear_Buffer": {
+                          "type": "SetVariable",
+                          "inputs": {
+                            "name": "varPendingBuffer",
+                            "value": []
+                          },
+                          "runAfter": {
+                            "Update_Buffered_Records": [
+                              "SUCCEEDED"
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "else": {
+                    "actions": {}
+                  },
+                  "runAfter": {
+                    "Update_Working_Day": [
+                      "SUCCEEDED"
+                    ]
+                  }
+                }
+              },
+              "else": {
+                "actions": {
+                  "Update_NonWorking_Day": {
+                    "type": "OpenApiConnection",
+                    "inputs": {
+                      "parameters": {
+                        "entityName": "nc_thfinancecashcollectionworkingdaycalendars",
+                        "recordId": "@outputs('Current_Record_ID')",
+                        "item/nc_isworkingday": false
+                      },
+                      "host": {
+                        "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+                        "operationId": "UpdateOnlyRecord",
+                        "connectionName": "shared_commondataserviceforapps"
+                      }
+                    }
+                  },
+                  "Append_to_array_variable": {
+                    "type": "AppendToArrayVariable",
+                    "inputs": {
+                      "name": "varPendingBuffer",
+                      "value": "@outputs('Current_Record_ID')"
+                    },
+                    "runAfter": {
+                      "Update_NonWorking_Day": [
+                        "SUCCEEDED"
+                      ]
+                    }
+                  }
+                }
+              },
+              "runAfter": {
+                "Current_Record_ID": [
+                  "SUCCEEDED"
+                ]
+              }
+            },
+            "Set_variable_1": {
+              "type": "SetVariable",
+              "inputs": {
+                "name": "varCurrentDate",
+                "value": "@outputs('NextDate')"
+              },
+              "runAfter": {
+                "NextDate": [
+                  "Succeeded"
+                ]
+              }
+            },
+            "NextDate": {
+              "type": "Compose",
+              "inputs": "@formatDateTime(addDays(variables('varCurrentDate'), 1), 'yyyy-MM-dd')",
+              "runAfter": {
+                "Increment_WDN_if_Working_Day": [
+                  "Succeeded"
+                ]
+              }
+            },
+            "Check_Existing_Record": {
+              "type": "OpenApiConnection",
+              "inputs": {
+                "parameters": {
+                  "entityName": "nc_thfinancecashcollectionworkingdaycalendars",
+                  "$filter": "nc_name eq '@{variables('varCurrentDate')}'",
+                  "$top": 1
+                },
+                "host": {
+                  "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+                  "operationId": "ListRecords",
+                  "connectionName": "shared_commondataserviceforapps"
+                }
+              },
+              "runAfter": {
+                "IsWorkingDay": [
+                  "Succeeded"
+                ]
+              }
+            },
+            "Condition_2": {
+              "type": "If",
+              "expression": {
+                "and": [
+                  {
+                    "greater": [
+                      "@length(outputs('Check_Existing_Record')?['body/value'])",
+                      0
+                    ]
+                  }
+                ]
+              },
+              "actions": {
+                "Existing_Record_ID": {
+                  "type": "Compose",
+                  "inputs": "@first(outputs('Check_Existing_Record')?['body/value'])?['nc_thfinancecashcollectionworkingdaycalendarid']"
+                }
+              },
+              "else": {
+                "actions": {
+                  "Add_a_new_row": {
+                    "type": "OpenApiConnection",
+                    "inputs": {
+                      "parameters": {
+                        "entityName": "nc_thfinancecashcollectionworkingdaycalendars",
+                        "item/nc_calendardate": "@variables('varCurrentDate')",
+                        "item/nc_name": "@variables('varCurrentDate')",
+                        "item/nc_isworkingday": "@outputs('IsWorkingDay')",
+                        "item/nc_year": "@int(substring(variables('varCurrentDate'), 0, 4))"
+                      },
+                      "host": {
+                        "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+                        "operationId": "CreateRecord",
+                        "connectionName": "shared_commondataserviceforapps"
+                      }
+                    }
+                  },
+                  "New_Record_ID": {
+                    "type": "Compose",
+                    "inputs": "@outputs('Add_a_new_row')?['body/nc_thfinancecashcollectionworkingdaycalendarid']",
+                    "runAfter": {
+                      "Add_a_new_row": [
+                        "SUCCEEDED"
+                      ]
+                    }
+                  }
+                }
+              },
+              "runAfter": {
+                "Check_Existing_Record": [
+                  "SUCCEEDED"
+                ]
+              }
+            },
+            "Current_Record_ID": {
+              "type": "Compose",
+              "inputs": "@coalesce(outputs('Existing_Record_ID'), outputs('New_Record_ID'))",
+              "runAfter": {
+                "Condition_2": [
+                  "SUCCEEDED"
+                ]
+              }
+            }
+          },
+          "runAfter": {
+            "Holiday_Dates_Array": [
+              "Succeeded"
+            ]
+          }
+        },
+        "Log_Completion": {
+          "type": "OpenApiConnection",
+          "inputs": {
+            "parameters": {
+              "entityName": "cr7bb_thfinancecashcollectionprocesslogs",
+              "item/cr7bb_processdate": "@formatDateTime(utcNow(), 'yyyy-MM-dd')",
+              "item/cr7bb_emailsfailed": 0,
+              "item/cr7bb_endtime": "@utcNow()",
+              "item/cr7bb_processtype": "  cr7bb_processtype: WorkingDayGeneration\n",
+              "item/cr7bb_starttime": "@utcNow()",
+              "item/cr7bb_status": 676180001,
+              "item/cr7bb_summary": "Generated @{variables('varStartDate')} to @{variables('varEndDate')}. Final WDN: @{variables('varWorkingDayNumber')}",
+              "item/cr7bb_transactionsexcluded": 0,
+              "item/cr7bb_transactionsprocessed": 0
+            },
+            "host": {
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+              "operationId": "CreateRecord",
+              "connectionName": "shared_commondataserviceforapps"
+            }
+          },
+          "runAfter": {
+            "Is_Buffer_not_empty_1": [
+              "SUCCEEDED"
+            ]
+          }
+        },
+        "Initialize_varPendingBuffer": {
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "varPendingBuffer",
+                "type": "array",
+                "value": []
+              }
+            ]
+          },
+          "runAfter": {
+            "Initialize_variable_varCurrentDate": [
+              "Succeeded"
+            ]
+          }
+        },
+        "Is_Buffer_not_empty_1": {
+          "type": "If",
+          "expression": {
+            "and": [
+              {
+                "greater": [
+                  "@length(variables('varPendingBuffer'))",
+                  0
+                ]
+              }
+            ]
+          },
+          "actions": {
+            "Apply_to_each_1": {
+              "type": "Foreach",
+              "foreach": "@variables('varPendingBuffer')",
+              "actions": {
+                "Update_Buffered_Records_1": {
+                  "type": "OpenApiConnection",
+                  "inputs": {
+                    "parameters": {
+                      "entityName": "nc_thfinancecashcollectionworkingdaycalendars",
+                      "recordId": "@items('Apply_to_each_1')",
+                      "item/nc_workingdaynumber": "@variables('varWorkingDayNumber')"
+                    },
+                    "host": {
+                      "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+                      "operationId": "UpdateOnlyRecord",
+                      "connectionName": "shared_commondataserviceforapps"
+                    }
+                  }
+                },
+                "Clear_Buffer_1": {
+                  "type": "SetVariable",
+                  "inputs": {
+                    "name": "varPendingBuffer",
+                    "value": []
+                  },
+                  "runAfter": {
+                    "Update_Buffered_Records_1": [
+                      "SUCCEEDED"
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "else": {
+            "actions": {}
+          },
+          "runAfter": {
+            "Do_until": [
+              "Succeeded"
+            ]
+          }
+        }
+      }
+    },
+    "templateName": null
+  },
+  "schemaVersion": "1.0.0.0"
+}

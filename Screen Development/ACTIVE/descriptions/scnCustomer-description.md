@@ -124,7 +124,7 @@ Manage master data for ~100 cash customers including contact information, exclus
 |--------------------|--------------|------|-------|
 | Customer Code | cr7bb_customercode | Text | Unique SAP code, read-only after creation |
 | Customer Name | cr7bb_customername | Text | Full legal company name |
-| Region | cr7bb_region | Choice | NO, SO, NE, CE (North, South, Northeast, Central) |
+| Region | nc_region | Choice | NO, SO, NE, CE (North, South, Northeast, Central) |
 | Customer Email 1 | cr7bb_customeremail1 | Email | Primary AP contact |
 | Customer Email 2 | cr7bb_customeremail2 | Email | Secondary contact (optional) |
 | Sales Email 1 | cr7bb_salesemail1 | Email | Sales rep to CC on emails |
@@ -154,12 +154,12 @@ SortByColumns(
 
 **Region (Dataverse Choice)**:
 ```powerfx
-// ✅ CORRECT
-cr7bb_region = "NO"
-Patch(..., {cr7bb_region: "Central"})
+// ✅ CORRECT - Note: Region uses nc_ prefix (different publisher)
+nc_region = "NO"
+Patch(..., {Region: "Central"})  // Use display name in Patch
 
 // For dropdown Items
-Choices('[THFinanceCashCollection]Customers'.cr7bb_region)
+Choices('Region Choice')
 ```
 
 ### Exclusion Rules Format
@@ -312,7 +312,7 @@ OnSelect: |-
           {
               cr7bb_customercode: CustMgmt_CustomerCodeInput.Text,
               cr7bb_customername: CustMgmt_CustomerNameInput.Text,
-              cr7bb_region: CustMgmt_RegionDropdown.Selected.Value,
+              Region: CustMgmt_RegionDropdown.Selected.Value,
               cr7bb_customeremail1: CustMgmt_Email1Input.Text,
               cr7bb_customeremail2: CustMgmt_Email2Input.Text,
               cr7bb_salesemail1: CustMgmt_SalesEmailInput.Text,
@@ -327,7 +327,7 @@ OnSelect: |-
           _selectedCustomer,
           {
               cr7bb_customername: CustMgmt_CustomerNameInput.Text,
-              cr7bb_region: CustMgmt_RegionDropdown.Selected.Value,
+              Region: CustMgmt_RegionDropdown.Selected.Value,
               cr7bb_customeremail1: CustMgmt_Email1Input.Text,
               cr7bb_customeremail2: CustMgmt_Email2Input.Text,
               cr7bb_salesemail1: CustMgmt_SalesEmailInput.Text,

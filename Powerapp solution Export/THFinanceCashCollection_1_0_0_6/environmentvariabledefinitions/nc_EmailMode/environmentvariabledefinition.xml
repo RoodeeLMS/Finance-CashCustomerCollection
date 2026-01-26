@@ -1,0 +1,14 @@
+<environmentvariabledefinition schemaname="nc_EmailMode">
+  <defaultvalue>Development</defaultvalue>
+  <description default="Production/Development">
+    <label description="Production/Development" languagecode="1033" />
+  </description>
+  <displayname default="Email Mode">
+    <label description="Email Mode" languagecode="1033" />
+  </displayname>
+  <introducedversion>1.0.0.2</introducedversion>
+  <iscustomizable>1</iscustomizable>
+  <isrequired>0</isrequired>
+  <secretstore>0</secretstore>
+  <type>100000000</type>
+</environmentvariabledefinition>

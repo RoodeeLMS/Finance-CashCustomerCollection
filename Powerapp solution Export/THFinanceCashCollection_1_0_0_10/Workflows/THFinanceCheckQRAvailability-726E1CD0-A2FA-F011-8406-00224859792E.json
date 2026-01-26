@@ -1,0 +1,269 @@
+{
+  "properties": {
+    "connectionReferences": {
+      "shared_commondataserviceforapps": {
+        "impersonation": {},
+        "runtimeSource": "embedded",
+        "connection": {
+          "connectionReferenceLogicalName": "new_sharedcommondataserviceforapps_7e300"
+        },
+        "api": {
+          "name": "shared_commondataserviceforapps"
+        }
+      },
+      "shared_sharepointonline": {
+        "runtimeSource": "embedded",
+        "connection": {
+          "connectionReferenceLogicalName": "new_sharedsharepointonline_e6d86"
+        },
+        "api": {
+          "name": "shared_sharepointonline"
+        }
+      }
+    },
+    "definition": {
+      "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+      "contentVersion": "1.0.0.0",
+      "parameters": {
+        "$authentication": {
+          "defaultValue": {},
+          "type": "SecureObject"
+        },
+        "$connections": {
+          "defaultValue": {},
+          "type": "Object"
+        }
+      },
+      "triggers": {
+        "manual": {
+          "metadata": {
+            "operationMetadataId": "8ce2b56a-bfac-4de9-8524-af0ba5c87c21"
+          },
+          "type": "Request",
+          "kind": "Button",
+          "inputs": {
+            "schema": {
+              "type": "object",
+              "properties": {},
+              "required": []
+            }
+          }
+        }
+      },
+      "actions": {
+        "Initialize_varUpdatedCount": {
+          "runAfter": {},
+          "metadata": {
+            "operationMetadataId": "fb9c5695-5758-4f0f-9711-050119b68057"
+          },
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "varUpdatedCount",
+                "type": "integer",
+                "value": 0
+              }
+            ]
+          }
+        },
+        "Initialize_varNotFoundCount": {
+          "runAfter": {
+            "Initialize_varUpdatedCount": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "638213c7-fae4-4371-a70c-9037dc916c19"
+          },
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "varNotFoundCount",
+                "type": "integer",
+                "value": 0
+              }
+            ]
+          }
+        },
+        "List_All_Customers": {
+          "runAfter": {
+            "Initialize_varNotFoundCount": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "59f082d2-e6b7-40a7-be64-f64d4c6ba177"
+          },
+          "type": "OpenApiConnection",
+          "inputs": {
+            "parameters": {
+              "entityName": "cr7bb_thfinancecashcollectioncustomers",
+              "$select": "cr7bb_thfinancecashcollectioncustomerid,cr7bb_customercode,cr7bb_qrcodeavailable"
+            },
+            "host": {
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+              "operationId": "ListRecords",
+              "connectionName": "shared_commondataserviceforapps"
+            }
+          }
+        },
+        "Apply_to_each": {
+          "foreach": "@outputs('List_All_Customers')?['body/value']",
+          "actions": {
+            "Get_QR_File": {
+              "metadata": {
+                "operationMetadataId": "a79eec8c-1be6-49fa-8360-24a8356954d4"
+              },
+              "type": "OpenApiConnection",
+              "inputs": {
+                "parameters": {
+                  "dataset": "https://nestle.sharepoint.com/teams/THFinancePowerPlatformSolutions",
+                  "path": "/Shared Documents/Cash Customer Collection/03-QR-Codes/QR Lot 1 ver .jpeg/@{items('Apply_to_each')?['cr7bb_customercode']}.jpg"
+                },
+                "host": {
+                  "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                  "operationId": "GetFileMetadataByPath",
+                  "connectionName": "shared_sharepointonline"
+                }
+              }
+            },
+            "Condition": {
+              "actions": {
+                "Update_Customer_QR_True": {
+                  "type": "OpenApiConnection",
+                  "inputs": {
+                    "parameters": {
+                      "entityName": "cr7bb_thfinancecashcollectioncustomers",
+                      "recordId": "@items('Apply_to_each')?['cr7bb_thfinancecashcollectioncustomerid']",
+                      "item/cr7bb_qrcodeavailable": true
+                    },
+                    "host": {
+                      "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+                      "operationId": "UpdateOnlyRecord",
+                      "connectionName": "shared_commondataserviceforapps"
+                    }
+                  }
+                },
+                "Increment_variable": {
+                  "runAfter": {
+                    "Update_Customer_QR_True": [
+                      "Succeeded"
+                    ]
+                  },
+                  "type": "IncrementVariable",
+                  "inputs": {
+                    "name": "varUpdatedCount",
+                    "value": 1
+                  }
+                }
+              },
+              "runAfter": {
+                "Get_QR_File": [
+                  "Succeeded",
+                  "Failed"
+                ]
+              },
+              "else": {
+                "actions": {
+                  "Update_Customer_QR_False": {
+                    "type": "OpenApiConnection",
+                    "inputs": {
+                      "parameters": {
+                        "entityName": "cr7bb_thfinancecashcollectioncustomers",
+                        "recordId": "@items('Apply_to_each')?['cr7bb_thfinancecashcollectioncustomerid']",
+                        "item/cr7bb_qrcodeavailable": false
+                      },
+                      "host": {
+                        "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+                        "operationId": "UpdateOnlyRecord",
+                        "connectionName": "shared_commondataserviceforapps"
+                      }
+                    }
+                  },
+                  "Increment_variable_1": {
+                    "runAfter": {
+                      "Update_Customer_QR_False": [
+                        "Succeeded"
+                      ]
+                    },
+                    "type": "IncrementVariable",
+                    "inputs": {
+                      "name": "varUpdatedCount",
+                      "value": 1
+                    }
+                  }
+                }
+              },
+              "expression": {
+                "and": [
+                  {
+                    "equals": [
+                      "@not(empty(outputs('Get_QR_File')?['body/Id']))",
+                      true
+                    ]
+                  }
+                ]
+              },
+              "metadata": {
+                "operationMetadataId": "54e521ee-7d6d-4954-8f3e-4bfd710cc45c"
+              },
+              "type": "If"
+            }
+          },
+          "runAfter": {
+            "List_All_Customers": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "6ee4d163-2637-4055-a8df-85bcc049e972"
+          },
+          "type": "Foreach",
+          "runtimeConfiguration": {
+            "concurrency": {
+              "repetitions": 20
+            }
+          }
+        },
+        "Respond_to_a_Power_App_or_flow": {
+          "runAfter": {
+            "Apply_to_each": [
+              "Succeeded"
+            ]
+          },
+          "type": "Response",
+          "kind": "PowerApp",
+          "inputs": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "foundcount": {
+                  "title": "FoundCount",
+                  "type": "number",
+                  "x-ms-content-hint": "NUMBER",
+                  "x-ms-dynamically-added": true
+                },
+                "notfoundcount": {
+                  "title": "NotFoundCount",
+                  "type": "number",
+                  "x-ms-content-hint": "NUMBER",
+                  "x-ms-dynamically-added": true
+                }
+              },
+              "additionalProperties": {}
+            },
+            "statusCode": 200,
+            "body": {
+              "foundcount": "@variables('varUpdatedCount')",
+              "notfoundcount": "@variables('varNotFoundCount')"
+            }
+          }
+        }
+      }
+    },
+    "templateName": null
+  },
+  "schemaVersion": "1.0.0.0"
+}

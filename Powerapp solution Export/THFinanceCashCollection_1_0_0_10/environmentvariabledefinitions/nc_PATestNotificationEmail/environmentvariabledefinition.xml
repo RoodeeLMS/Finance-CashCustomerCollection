@@ -1,0 +1,11 @@
+<environmentvariabledefinition schemaname="nc_PATestNotificationEmail">
+  <defaultvalue>Nestle_Collection@th.nestle.com;THHOARTeam@th.nestle.com;Nick.Chamnong@th.nestle.com;</defaultvalue>
+  <displayname default="PA Test Notification Email">
+    <label description="PA Test Notification Email" languagecode="1033" />
+  </displayname>
+  <introducedversion>1.0.0.8</introducedversion>
+  <iscustomizable>1</iscustomizable>
+  <isrequired>0</isrequired>
+  <secretstore>0</secretstore>
+  <type>100000000</type>
+</environmentvariabledefinition>

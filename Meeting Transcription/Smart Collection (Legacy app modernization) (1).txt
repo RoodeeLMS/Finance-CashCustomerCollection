@@ -1,0 +1,587 @@
+# Smart Collection (Legacy app modernization)
+
+  Meeting started: 11/7/2025, 11:00:19 AM
+  Duration: 73 minutes
+  Participants: Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal, Chamnong,Nick,TH-Bangkok,Information Technology, Nithijarernariya,Russarin,TH-Bangkok,Information Technology, Pisitsupakarn,Supalerk,TH-Bangkok,IT ADI - X-Stream Ops, Thongkumwan,Pattarin,TH-Bangkok,Accounts Receivable
+
+  [View original transcript](https://app.tactiq.io/api/2/u/m/r/ZEMXWD0Z3TXBHznhSmH2?o=txt)
+
+    
+
+  
+
+  
+    ## Highlights
+
+    > 18:20 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: พอได้ lockument มาแล้วเนี่ย ทาง team collector เค้าก็สร้างใบวางบิลขึ้นมา ไบวามีน ตัวเนี้ยพอสร้างขึ้นมาเสร็จมันจะได้นิวเคลียสsumber ก็คือเลขของใบวางบิล เอ่อพี่ปัญญาเขาก็จะเอาตัวเลข replace เนี่ยไปใส่ไว้ในรูทคาแรกเตอร์ เพื่อที่จะ assign ว่าลูกค้าคนเนี้ยจะให้วางบิลวันที่เท่าไหร่ พอถึงวันนั้นๆ อย่างเช่นสมมุติโมซากบินวันนี้แล้วโมก็ iside ว่าอยากจะให้วางบิลวันจันทร์
+> 26:36 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: หลังจากนั้นเวลาที่มีการสร้างใบวางบิลตัวสีส้ม อันที่ 2 เนี่ยสร้างใบวางบิลขึ้นมา สมมุติว่าโมสร้างใบบังดินของลูกค้า a ซึ่งปกติแล้วในตัว pifer date หรือว่า pattern ที่เขาอยากให้ว่างเนี่ย เขาอยากให้เราวางทุกวันจันทร์ตรงนี้เนี่ย พอสร้าง biometin ของลูกค้า a ขึ้นมาแล้ว ระบบก็ควรที่จะเหมือน assign ลงไปให้เลยว่าลูกค้า เอ้ เนี่ย ต้องมี messenger มารับบินทุกวัน จันทร์นะ อะไรอย่างเงี้ยค่ะ ก็คือไปวันที่ใกล้ที่สุดที่
+> 27:24 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: เออ เออรู้คาแรคเตอร์หน้าที่ของมันในตอนนี้มันจะทําหน้าที่เหมือนเป็นการassign ให้กับพี่ messenger อ่ะค่ะ เวลาที่เค้าเข้ามารับเอกสารว่าในวันเนี้ยเขาต้องเข้ามารับบิลของจ๊ะลูกค้าเจ้าไหนบ้าง ซึ่งตัวข้างในที่มันทํางา นอะมันจะเท่าที่อยู่ในskate มานะคะ สมมติฐานข้อแรกก็คือ เออรู้คาแรคเต
+
+  ## Transcript
+
+  00:00 Thongkumwan,Pattarin,TH-Bangkok,Accounts Receivable: ฮัลโหล ฮัลโหล ค่ะ
+00:02 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: ได้ได้คุณนิคเอามีจําด้วยเอาจําเดต้าเอ็กเพิร์ทของไอทีเข้ามาฟังด้วยเผื่อว่า จะมีไอเดียอะไรอ่ะน้องมูเริ่มเออ อันนี้เป็นเรื่องใหม่ นะคุณนิคเรา
+00:14 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: ค่ะ
+00:17 Chamnong,Nick,TH-Bangkok,Information Technology: ผม
+00:18 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: เรื่องใหม่ แต่ก็ยังวนเวียนกับเนี่ยแหละ การเก็บเงินลูกค้าแบบ accounivisive เนาะ ทางนี้อยู่ค่ะ เดี๋ยวให้น้องมูวอกทูอันนี้มันอาจจะ complicate นิดนึง คือว่าเดี๋ยว นัทเล่า background หน่อย มันเป็นเราเรียกว่า regue application นะคะ คือมันเป็นแอปที่เรามีมาแบบน่าจะ 10 20 ปีเข้าไปละ แล้วก็ต้องดิสเครมนิดนึงว่าบางทีไอ้ตัวหลังบ้านอะเราไม่ได้เข้าใจมันทั้งหมด
+00:41 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: เออ ก็พยายามจะจะแก่เท่าที่เรารู้แล้วก็พยายามจะ interview user ว่าเราอันว่าทุกวันเนี้ยไอ้ตัว process เค้าต้องการอะไร แล้วก็ design เป็นคิดว่า flow เนี้ย น่าจะเป็นอันที่เราอยากจะ modern nice มันแล้วก็เนี่ยจะลูปคุณนิคกับกับจําเข้ามาเพื่อที่จะดูว่าเออตรงไหนเราทําอะไรให้มัน automate ได้หรือทําให้มันแบบดีขึ้นได้เนาะได้เดี๋ยวให้น้องโมโปรจูตัวเอสอีสแล้วก็แล้วก็แล้วก็ตัวตัวทูบีที่เราดีไซน์ไว้เนาะ เวลคัมแบบไอเดียมากเลยเพราะว่า
+01:12 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: เออ จะบอกว่าแอพเนี้ยมันผ่อนพันกันอยู่4แอปข้างในมี4แอปตัวริเกซี่อ่ะ 4 แอปที่พันอยู่ข้างในเนาะ แล้วก็มันก็จะทําโพรเซสแบบเต็ม234 ต่างต่างกันอะไรอย่างเงี้ยแล้วเราพยายามจะแบบ เธอเปลี่ยนใหม่ให้มันแบบง่ายขึ้นอะไรเงี้ยนะคะ ดังนั้นถ้าตรงไหนที่งงไม่ทันช้าเบรคได้นะ โอเคอ่ะโมเริ่ม
+01:33 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: โอเคค่ะ ก็หล ก็หลักหลักค่อนเอาใจเทพของอันนี้ก็อยากให้พี่นัทบอกนะคะก็คือเราอยากที่จะ retire และก็เทพพิเคชั่นที่มีอยู่ เนื่องจากว่ามีมีคน suport น้อยลงเรื่อยเรื่อย แล้วก็อยากจะ
+![Screenshot](https://storage.googleapis.com/tactiq-prod-au.appspot.com/screenshots/3MEFZQFTk6U5C9l3bu7sdgUgUrK2/ZEMXWD0Z3TXBHznhSmH2/1762488129403.png?X-Goog-Algorithm=GOOG4-RSA-SHA256&X-Goog-Credential=tactiqrun%40tactiq-prod-au.iam.gserviceaccount.com%2F20260108%2Fauto%2Fstorage%2Fgoog4_request&X-Goog-Date=20260108T103628Z&X-Goog-Expires=604800&X-Goog-SignedHeaders=host&X-Goog-Signature=41c62cc58e037e5546a51ca0ba53be199eaa20a71b36ff4df24f06a89e6957c545551893968a54f782bbdb8a35f03221c8f99e3fa827760f8adb12ec959c35b12d5ee65b79239e9216adc6002988b7ca8fc501c8b4b07026681d76fc19c1920363f3c17f94362a9b24980383c6416d45319a115250b0b1d0d1244080e9bfc8aad5927419be7a25b6dbc649e82fd5769b905f8aa7b0064abf666121b7f8166264bccc9a243b986d805f0debd241bc9a613ce88af168f74e51bd8e9e05d9928e492ba9d035cc2d19053fe0ff68c11742101ceab06b81a5ad0592b18088fac8e623045fd9d4025d1c337e0b47b24c452f42cbef1601567345ce4122752751dfb3de)
+01:49 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: ตัวแมนนวล process หลายๆอย่าง เพื่อที่จะ 3ารถ ทําให้ t v อาเนี่ยไปโฟกัสกับ tark ที่มัน value มากขึ้นได้ค่ะ ซึ่งจาก การ diversiget เนี่ย หลักหลักมันจะมีอยู่ประมาณ 4 ถึง 5 application ที่เราพยายามที่จะ retire ภายในการทํางาน ตัวโปรเจคนี้ขึ้นมาค่ะ ตัวแมน
+02:10 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: อันนี้เป็นเอ่อเอสอีส เอ่อ โฟลว์ทั้งหมดที่เกิดขึ้นที่ที่เกี่ยวข้องกับแอปพลิเคชัน 5ตัวนั้นนะคะ ซึ่งในตัวแอปพลิเคชันท่าตัวนี้เนี่ย หลักๆที่ที่ทางยูสเซอร์จะได้เห็นอย่างชัดเจนก็คือจะเป็นตัวของอะนิโมลิมสลับเป็นบิลเพชรตัวนี้ค่ะ เป็นล็อกบ็อกซ์ แล้วก็เป็นตัวของรูทคอลเลคเตอร์ค่ะ
+![Screenshot](https://storage.googleapis.com/tactiq-prod-au.appspot.com/screenshots/3MEFZQFTk6U5C9l3bu7sdgUgUrK2/ZEMXWD0Z3TXBHznhSmH2/1762488167705.png?X-Goog-Algorithm=GOOG4-RSA-SHA256&X-Goog-Credential=tactiqrun%40tactiq-prod-au.iam.gserviceaccount.com%2F20260108%2Fauto%2Fstorage%2Fgoog4_request&X-Goog-Date=20260108T103628Z&X-Goog-Expires=604800&X-Goog-SignedHeaders=host&X-Goog-Signature=6b570f0a71993db0b01cf544d8f28cd6c269241da7f8aaa2fa1428cd5740ded928c48f2cc0286febed174c30faa76eba8d2a4f91b30f2844e0d11730edfdb8f2af90375225f419056fdb257217e533eeb9c4ae18b644d563b60e1fc2dda0b6c895e03b65560d5f63436dff904268dff3b8075ff2c082090749644ae799c59a104d4f6d66352e33c9a14816feb54cf7728d8bd5d884ffce3fdca895ebc3796d89b266a64515a1e2b481eab6b8f3d383e38cfca10fef6f8d58061a151eec466cd30972dc2cc529120f1097fa9fc55b1661c36532f04ecaa3c80c19c1e356c299bbb491275234dda84655c1eb20e6e9c45a3786b03439d6f05b7cf570d0d7e1fbf0)
+02:36 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: ซึ่งแต่ละตัวเนี่ยจะทํางานแยกออกมาจาก floor ใหญ่ใหญ่เนี่ย ได้เป็น 2 flow ย่อยอ่ะค่ะ เดี๋ยวโมจะโกทูทีละทีละโฟลว์ให้ค่ะ ซึ่งโฟร์แรกเนี่ยจะเป็นโฟร์ที่พี่ส้มทาง m a r เนี่ยจะทําคนเดียวทุกวันค่ะ ซึ่งตัว flow นี้ก็คือในตอนเช้า อะพี่ส้มจะเข้าไปโหลดตัว fine cash กับ file credit ของลูกค้า financial program ของทาง t t b กับ kbank ออกมาอะค่ะ ได้ธนาคารละ 2 ฝายและ 2 ไฟล์เนี่ย
+![Screenshot](https://storage.googleapis.com/tactiq-prod-au.appspot.com/screenshots/3MEFZQFTk6U5C9l3bu7sdgUgUrK2/ZEMXWD0Z3TXBHznhSmH2/1762488194481.png?X-Goog-Algorithm=GOOG4-RSA-SHA256&X-Goog-Credential=tactiqrun%40tactiq-prod-au.iam.gserviceaccount.com%2F20260108%2Fauto%2Fstorage%2Fgoog4_request&X-Goog-Date=20260108T103628Z&X-Goog-Expires=604800&X-Goog-SignedHeaders=host&X-Goog-Signature=9b6e16a375d39f1a3f5948172419b80820e318f83bf016a528dbd9ff9b02312cd77189c91a64997b7d7b2420890577019fb171c679545573ef791c0a578900ff488d23e16d95974848be36c6805007e7d5a8ef3087c827fb751035207a45ced2d2af2604c660d40e1ca7acf01b87d81ea22e641af0d12089f5120ba4f1528381f69a2184fa9d1e8ba6145a4c497597ec45a8174c7790e9575e5a142da72ecbf4632a11693561ca9d09037ad1fd93a145de52862ab75b7b8c5c895b6e53a81f6f0b844b021b021fc0b731baf9202de4965426e37332c5cab6178b2fdd5af011596558b8e2fe86bb3c656bcfdc6c68d13430de639bd0e5a23f1d431888765d038d)
+03:09 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: จะถูกอัพโหลดเข้าตัว bank portal ของธนาคารทั้ง 2 ธนาคารละ 2 ฝ่าย อย่างเงี้ยแล้วทีเนี้ย พอจบวันพี่ส้มก็จะไปดาวน์โหลดเอาไฟล์ ที่เหมือนเป็นเป็น resource ว่ามีลูกค้าคนไหนจ่ายบิลแล้วบ้างอะค่ะ มาจากธนาคาร เว็บไซต์ของธนาคารเหมือนกันก็ธนาคารละ 2 ฝ่ายเหมือนกันค่ะ ทีนี้ทํานองเดียวกันสําหรับธนาคารของ city เนี่ยจะมีการส่งข้อมูลเพื่อเอา standing อะไรแบบเนี้ย ให้กับทาง outsource ซึ่ง outsource เนี่ย เค้าก็จะไปจัดการทําข้อมูลทั้งหลาย แล้วก็มีการส่งข้อมูลเพื่อเก็บหนี้ให้กับลูกค้าค่ะ ที่เหมือน
+03:48 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: เออ แล้วหลังจากนั้นเนี่ย พอ เช่นวันคล้ายคล้ายกันก็คือซิตี้ เค้าก็จะมีไฟล์ให้พี่ส้มเข้าไป สามารถดาวน์โหลดได้ในเว็บออโต้ของซิตี้ค่ะ หลังจากนั้นพี่ส้มก็จะเอาทั้ง6 ไฟล์เนี้ย จาก 3 ธนาคารอัพโหลดเข้าตัวแอพพลิเคชั่น logbox ค่ะ ตัว lock box ก็จะทําการหาเออเร่อว่าในไฟล์ที่ธนาคารให้มาเนี่ย มันมี error ไหม หรือว่ามีอะไรที่ไม่สามารถที่จะตัดหนี้
+04:15 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: ผ่านตัว t code ของ s a p โดยที่ให้เอ็มบีเอสตัดให้เนี่ยได้บ้าง ซึ่งตัวที่ 3ารถตัดการไม่ได้มีปัญหาอะไร ก็จะสามารถ gend ออกมาเป็น work file ทั้งหมด 2 ไฟล์ได้ค่ะ เว็บไฟทั้งหมด 2 ไฟล์เนี่ย ไฟล์นึงจะเป็นไฟล์ของเคแบงค์อีก ไฟล์นึงจะเป็นไฟล์ข้อมูลของเคทีบีรวมกันกับซิตี้ เนื่องจากว่าธนาคารเอทีบีเนี่ยเราไม่ได้มีการเปิดหน้าบัญชีไว้ค่ะ ก็จะเหมือนเป็นเงินก้อนเดียวเป็นบาทนิดส่งไปให้กับทางซิตี้ค่ะ ซิตีเค้าก็จะประมวลผลข้อมูลออกมา เออ ทีนี้ 2 เวิร์ลฟายตัวนี้จะถูกส่งให้กับเอ็นบีเอส และทางเอ็มบีเอสเค้าก็จะ
+04:53 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: อัปเดตเดต้าเข้าแซบก็คือทําการออฟเซตผ่านตัวทีโคดค่ะ ซึ่งเอ่อ อันนี้เป็นโปรเซสที่เกิดขึ้นทุกวันเนาะ ทีนี้ก็จะมีอีกโปรเซตนึงเกิดขึ้นเกือบทุกวันเหมือนกันก็คือโอเค
+05:05 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: เดี๋ยวเดี๋ยว ขอปั๊กโพสต์เฟสแรกก่อนนิครับจํา พอเก็ทไอเดียมั้ย คนนี้ ขอโทษค่ะ อืม อืม
+05:13 Chamnong,Nick,TH-Bangkok,Information Technology: ตอนนี้ของเดิมมันเป็นยังไงบ้าง
+05:15 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: ค่ะ เชิญค่ะ
+05:17 Chamnong,Nick,TH-Bangkok,Information Technology: อันนี้ของเดิมระบบยังไงฮะ
+05:20 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: มันเหมือนซีคั่วป่ะ
+05:23 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: ถ้าดาต้าเบสเป็นสีโค่ค่ะ
+05:25 Chamnong,Nick,TH-Bangkok,Information Technology: ตัวบิลเพลซ นี่คือแอปล่ะฮะ ว่า เป็นยังไง
+05:28 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: เป็นโปรแกรม บน dtoft ค่ะ คุณนิก
+05:31 Chamnong,Nick,TH-Bangkok,Information Technology: พี่ลิสพี่ลิสซิโก้โดยตรงใช่มั้ยฮะ
+05:33 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: อะไรนะคะ
+05:35 Chamnong,Nick,TH-Bangkok,Information Technology: มันไป recipal มามันไม่ qry มาแล้ว gen ออกมาเป็นอันนี้ใช่มั้ยฮะ
+05:38 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: ใช่ใช่ค่ะ ใช่ค่ะ
+05:40 Chamnong,Nick,TH-Bangkok,Information Technology: นี้มี sourcode มั้ยฮะ เป็นโปรแกรมอะไรฮะ
+05:41 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: ไม่มีค่ะ ไม่มีซอสโฮดเลยค่ะ คุณนิก โปร โปรแกรมอะไร คือโมไม่มั่นใจว่าเขาเขียนด้วยภาษาอะไรหรือใช้อะไรทําอะค่ะเพราะว่าที่เทสซาตไปได้ไกลที่สุดมันมัน20ปีแล้วก็เลยไม่มั่นใจเหมือนกันว่าตอนนั้นเขาใช้ภาษาอะไรเขียนแล้วเราก็ไม่มี sourcood ด้วย ใช่
+06:08 Chamnong,Nick,TH-Bangkok,Information Technology: ที่พวกนี้อยู่บนไหนฮะ
+06:12 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: ตรงนี้ก็ไม่ทราบเหมือนกันค่ะ เพราะ host เป็นอะไร แต่ว่า เอ่อ โมมีแอปพลิเคชันที่ พี่ พี่อ้นพี่อ้น คือเป็น support legacy ของ hanesel อะค่ะ มีแอปที่พี่อ้นใช้ใช้เช็คตัวซีโค่ตัวนี้อยู่ ใช่ค่ะ
+06:31 Chamnong,Nick,TH-Bangkok,Information Technology: ซึ่งพี่อ้นเปิดที่ไหนก็ได้ปะ
+06:32 Pisitsupakarn,Supalerk,TH-Bangkok,IT ADI - X-Stream Ops: ถ้าถ้างั้นผมเดาว่าเป็นไอ้เนี่ยครับ เป็น physical physical server อ่ะครับนี่
+06:38 Chamnong,Nick,TH-Bangkok,Information Technology: ผมแอคเซสได้ไหมฮะ หรือว่ามันอยู่ในแบบออนพิมพ์อะไรสักอย่าง
+06:43 Pisitsupakarn,Supalerk,TH-Bangkok,IT ADI - X-Stream Ops: ผมว่าน่าจะอยู่ในออนพิมพ์ แต่ไม่รู้ว่ามันออกเน็ตได้หรือเปล่าแต่แต่ว่าอันนี้เดี๋ยวผมพูดเดี๋ยวให้น้องโมไปเช็คได้ ผมว่าโมโมลองไปเช็กกับพี่เอ้ดูอ่ะครับ
+06:54 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: ได้ค่ะ ได้ค่ะ โอเคค่ะ
+06:58 Chamnong,Nick,TH-Bangkok,Information Technology: แล้วส่วนล็อคบล็อกนี่ก็เหมือนกันใช่มั้ยฮะ
+07:01 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: เหมือนกันค่ะ มันใช้ตัวเดียวกันค่ะ
+07:04 Chamnong,Nick,TH-Bangkok,Information Technology: โปรแกรมที่คล้ายคล้ายกันที่สร้างมาพร้อมกันที่เราไม่มีพระโพสต์และไม่ประมูลอะไรเลย
+07:08 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: ใช่ใช่ค่ะ ใช่ค่ะ
+07:13 Chamnong,Nick,TH-Bangkok,Information Technology: บล็อกนี่เขียนเข้าไปเขียนข้อมูลกับเข้าไปในซีโฟร์ด้วยใช่มั้ยฮะ เหมือนกับไปมาร์คว่า transaction ไหนเคลียร์แล้วอย่างเงี้ยป่ะฮะ
+07:22 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: มีมีการส่งข้อมูลกลับไปในนี้มีการใส่เป็นเหมือนคอมเมนต์ ข้างหลังอะค่ะ ถ้าสมมติว่า มีเช็คเข มีเช็คเข้ามา เราเช็คว่ามันจะมีแบบวิธีการเช็คของมันอยู่ตัวเนี้ย ไอวิธีการเช็คเนี่ยมีโคดค่ะ แต่ว่าก็จะเช็คว่ามันมี error อะไรที่มันไปตกมีจะมีอยู่ประมาณ 19 เออเร่อ ถ้าสมมุติว่ามันมีตกเงี้ย มันก็จะไปเหมือนเขียน text ข้างหลังคอมเมนต์ข้างหลังว่า เออ มันเป็น error ของอะไร ใช่ค่ะ แล้วก็จะมีการอัปเดตเรื่องของโพสต์เดย์เช็คเข้าไปในตัว database ด้วยค่ะ
+07:57 Chamnong,Nick,TH-Bangkok,Information Technology: ครับ แล้วอย่างเวลาดาวน์โหลดฝ่ายออกมา นี่คือมีเก็บไฟล์ไว้ไหมฮะ
+08:04 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: มี เออ มีค่ะ มีเก็บไฟล์ไว้อยู่ค่ะ
+08:05 Chamnong,Nick,TH-Bangkok,Information Technology: เครื่อง เครื่องเก็บไฟล์ไปทุกวันถูกมั้ยฮะ เก็บเก็บไว้ในไหนฮะ
+08:11 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: ปกติเก็บทุกวันไหมคะ พี่จิ๊บตัวตัว file cash credit ใช่มั้ยคะ คุณนิค
+08:16 Thongkumwan,Pattarin,TH-Bangkok,Accounts Receivable: พี่เจนออกมาจากล็อกหลอกใช่ไหมคะ
+08:19 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: เพราะว่าตัวนี้
+08:20 Chamnong,Nick,TH-Bangkok,Information Technology: ทั้งคู่เลยฮะ ทุกทุกอย่างเลยฮะ
+08:25 Thongkumwan,Pattarin,TH-Bangkok,Accounts Receivable: เอเดี๋ยว อันนี้น่าจะต้องไปเช็คกับพี่ส้มว่าว่าเขามีแบบไฟล์ที่เก็บของทุกวันเอาไว้ไหมอะคะ ที่ชอบคือคนที่ที่ทํา process ทั้งหมดนี้เนาะ
+08:38 Pisitsupakarn,Supalerk,TH-Bangkok,IT ADI - X-Stream Ops: ตึงเรื่องโทษนะครับ เรื่องเรื่องเก็บไปอันนี้คุณคุณนิค คอนเซินอะไรบ้างนะครับ
+08:43 Chamnong,Nick,TH-Bangkok,Information Technology: อ๋อ ผมอยากรู้ว่าถ้าพี่ไปเก็บไว้ผมจะได้ลองwork ย้อนหลังได้ฮะ ลอง test ดูอะไรอย่างเงี้ย แล้วก็เหมือนกับว่าถ้าถ้าถ้าเก็บไฟล์ในวันอะไรที่บอก asset ได้ ผมก็อาจจะแบบเหมือนทํา parallel ไปได้อ่ะฮะ ช่วงในช่วงแรกแล้วก็แบบเหมือน verify ข้อมูลได้เหมือนกับว่าเหมือนกับให้พี่เค้าทําเหมือนเดิม แล้วก็ผมก็ทํา paravel ไปแล้ว ดูว่าข้อมูลมี discupency หรือเปล่า อะไรอย่างเงี้ยครับ
+08:50 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: โอเค
+09:09 Chamnong,Nick,TH-Bangkok,Information Technology: เพราะ
+09:09 Pisitsupakarn,Supalerk,TH-Bangkok,IT ADI - X-Stream Ops: ครับ
+09:09 Chamnong,Nick,TH-Bangkok,Information Technology: เราไม่รู้ถูกไหมครับว่าฟังก์ชั่นข้างในเป็นยังไงในแต่ละก้อนนะฮะ เราต้องกะเอา
+09:17 Thongkumwan,Pattarin,TH-Bangkok,Accounts Receivable: หร หรือว่าถ้ามี sample ที่คุณหนิง อยากได้คุณนิคโน้ตมาแล้วเดี๋ยวทาง ar ไปหามาให้ได้เลยค่ะว่าแบบอยากได้ ไฟล์ของวันไหนยังไง
+09:28 Chamnong,Nick,TH-Bangkok,Information Technology: นั่นถ้ามีทั้งหมดผมก็รับเยอะทะเลทั้งหมดได้เลยฮะ เหมือนกับว่าถ้าเค้าเก็บไว้นะ ถ้าไม่เก็บก็ไม่เป็นไรไปหาวิธีอีกที แต่ว่าถ้าถ้าถ้าเหมือนกับว่ามีหลอกของแต่ละวันไว้เลย วันนี้ input คืออย่างงี้เอาput เป็นอย่างงี้ผมก็เอาข้อมูลต้องล้านได้อะครับ
+09:30 Thongkumwan,Pattarin,TH-Bangkok,Accounts Receivable: ท่าทางต้องใช้
+09:47 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: File care credit อันเนี้ยค่ะ มีไปถามทางธนาคารมา และว่าข้อมูลข้างในมันมันเป็นข้อมูลอะไรมาบ้าง อันนี้คือมีทราบข่าวนะคะ แล้วก็ส่วนของรถไฟที่ gen ออกมาจาก lock อันนี้คือ โมมีไป mapping เองมาแล้วค่ะว่าแต่ละข้อมูลมาจากไหน แต่ว่าทีเนี้ยตัว solution เดี๋ยวเดี๋ยวโมอธิบายเพิ่มเติมอีกทีนึงในจดในในพาร์ทของโซลูชั่นอะค่ะ คือตรงเนี้ยตรง solution อะเราเหมือนตอนเนี้ย เราพยายามที่จะตกลงกับธนาคารว่าแทนที่ปกติเค้าจะส่งมาให้แบบ 2 ฝ้าย 2 ฝ้ายทุกธนาคารน่ะ เราอยากได้เป็นแบบไฟล์ที่มันแบบ lady tod of set แบบออโต้ผ่าน sapp ได้เลย โดยที่ไม่ต้องแบบเข้าหรอก บล็อคอะไรอย่างงี้ ใช่ค่ะ
+10:31 Chamnong,Nick,TH-Bangkok,Information Technology: คือแปลว่า 10% อาจจะเปลี่ยนในอนาคตอยู่ดีใช่มั้ย
+10:34 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: ใช่ค่ะ เดี๋ยวเดี๋ยวอันนี้คือเป็นแอดอีส แต่ว่าทูบีเดี๋ยวเดี๋ยวหมออธิบายต่อค่ะ โอเค
+10:40 Chamnong,Nick,TH-Bangkok,Information Technology: แล้วก็ตัวบิวเพลงนี่คือเจน2ไฟล์ เราเอา 2 ไฟนี่ให้ธนาคารละ 2ไฟล์แล้วเขาจะตอบกลับมาเป็น2ฝ่ายอย่างนี้นะฮะ ได้ถูกไหมครับ
+10:49 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: เค้าจะคือในปัจจุบันเนี่ย จะเป็นการที่เหมือนพี่ส้มเค้าจะอัพโหลดไฟล์2ไฟล์เนี้ยขึ้นธนาคารจากธนาคารแล้ว พอ สิ้นวันจบวัน หรือว่าแบบตามเวลาอย่างประมาณ 4 โมงบ่าย 2 แล้วแต่ธนาคารอะค่ะ เค้าก็จะเข้าไปดาวน์โหลดเอาข้อมูลจากเว็บพอร์ตเทิลของธนาคารใหม่อีกทีนึง ซึ่งก็ได้มาเป็น 2 ฝ่าย ของแต่ละธนาคาร
+11:12 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: ใช่
+11:12 Chamnong,Nick,TH-Bangkok,Information Technology: ซึ่ง five เข้ากับไฟล์ออกมันเกี่ยวพันกันถูกมั้ยฮะ
+11:13 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: ใช่ เกี่ยวพันกันค่ะ
+11:16 Chamnong,Nick,TH-Bangkok,Information Technology: โอเค โอเคครับ เข้าใจโอเคครับ แล้วก็สอบถามอันนึง ภาพรวมคืออยากให้ผมทําสิ่งนี้ในในเป็นโปรแกรมแบบไหนเป็นซี เป็นพาวเวอร์แอปเป็นเว็บเบสเป็นยังไง
+11:30 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: ในตอนนี้ตอนแรกที่ดีไซน์ไว้อยากอยากจะเป็นพาวเวอร์แอปกับออโตเมทอ่ะค่ะ แต่ว่าถ้าถ้าคุณนิคมีลองฟังโซลูชั่นแล้วรู้สึกว่าตัวอื่นมันน่าจะเวิร์คกว่าก็แนะนําได้ค่ะ
+11:44 Chamnong,Nick,TH-Bangkok,Information Technology: ที่ ที่ปกติ ถ้าถ้าถ้าผมทําตัวเองนะผมก็จะไม่รอ
+11:48 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: อ๋อ โอเค
+11:50 Chamnong,Nick,TH-Bangkok,Information Technology: อันนี้อันนี้ refinivate นะฮะ
+11:52 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: อ๋อ ok ok ได้ได้ค่ะเดี๋ยวเดี๋ยวเดี๋ยวเดี๋ยวเดี๋ยวเราลองได้ค่ะ
+11:59 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: ว่าไงนะ
+11:59 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: ค่ะ ค่ะ พี่จํา
+12:00 Pisitsupakarn,Supalerk,TH-Bangkok,IT ADI - X-Stream Ops: ถามนิดนึงครับ คือสมมุติว่าไอ้ flow อันเนี้ยผมไม่แน่ใจ ผมเข้าใจถูกกว่านั้นอย่างไอ้ตัว man manualy อะที่เป็นเส้นสีดํา ถืออันนี้ยังใช้คน download แล้วก็วางไฟล์อะไรอย่างเดียวใช่มั้ยครับ ไม่ไม่ได้ ไม่ได้มี การที่จะต้องเอาไป capillate
+12:10 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: ค่ะ ใช่ค่ะ ใช่ค่ะ
+12:17 Pisitsupakarn,Supalerk,TH-Bangkok,IT ADI - X-Stream Ops: อะไรเลยใช่ป่ะ
+12:18 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: ไม่มี
+12:18 Pisitsupakarn,Supalerk,TH-Bangkok,IT ADI - X-Stream Ops: ขยายไฟล์จากที่นึงไปวางอีกที่นึงอัพโหลดไปอีกที่นึงแล้วเอาไปส่งไปหาเอ็นบีเอสแค่นี้ใช่มั้ย
+12:19 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: ไม่มีค่ะ ใช่ค่ะ ใช่ค่ะ ใช่ค่ะ
+12:25 Pisitsupakarn,Supalerk,TH-Bangkok,IT ADI - X-Stream Ops: หรือ หรือถ้าสมมุติว่า เป็นลักษณะเนี้ย มันมันไม่จําเป็น ต้องเป็นเพราะว่าแอปก็ได้ปะครับ
+12:33 Chamnong,Nick,TH-Bangkok,Information Technology: จริงจริง
+12:34 Pisitsupakarn,Supalerk,TH-Bangkok,IT ADI - X-Stream Ops: ว่า เป็นเพราะว่าตัวเองก็ได้น่าจะพอมั้ย
+12:36 Chamnong,Nick,TH-Bangkok,Information Technology: ถ้าไม่มีควายมีอะไร ก็ไม่มีอะไรจําเป็นต้องโทรแอปทั้งนั้นอ่ะ
+12:41 Pisitsupakarn,Supalerk,TH-Bangkok,IT ADI - X-Stream Ops: อืม ครับ
+12:42 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: โอเค Ok ได้ค่ะ
+12:48 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: คือ จัมพ์หลักหลักอ่ะคือตอนนี้มันเหมือนข้อมูลมันมาจากแฟบใช่ป่ะ ดาวน์โหลดออกมาแล้วมันก็เหมือนคล้ายคล้ายจัดจัดหน้าอะไรอย่างเงี้ย ให้มันไปคอมแพทเทเบิลกับฟอร์แมตที่ธนาคารต้องการ ไอ้พาร์ทที่จากวิวเคลสเข้าไปที่ธนาคารอะ คือมันคือเราไม่ได้ส่งเมลไปนะมันจะเหมือนกับอัปโหลดไฟล์เข้าไปในเว็บไซต์ของธนาคารแล้วแล้วด้วยฟอร์แมตด้วยแบบคอลัมน์ที่แบบตกลงกันอะไรประมาณเนี้ย
+13:12 Chamnong,Nick,TH-Bangkok,Information Technology: จริงจริง คล้ายโปรเจ็ค อาร์พีเอ มากกว่าที่ผมทําให้อันนั้นก็ไม่ใช่เพราะว่าแอปอันนั้นเราจะสร้างเป็น visual machine ขึ้นมาและมีโปรแกรมรันของเสิร์ฟพวกนี้อัตโนมัตินะฮะ มีรันอีก ไม่ใช่ไม่ใช่เพราะ watermate ด้วยนะฮะ
+13:15 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: เลย ได้เดี๋ยวๆ ลองลองดูเพราะว่าอันนี้เป็นประมาณ 2223 น่าจะสัก 3 แอปมันจะมีสีส้มรางอยู่ ข้างหลังอีกนิดนึง
+13:25 Pisitsupakarn,Supalerk,TH-Bangkok,IT ADI - X-Stream Ops: อือ
+13:33 Chamnong,Nick,TH-Bangkok,Information Technology: 3 33 เหมือนเลเยอร์อย่างงี้ป่ะฮะ เหมือนมี3เปสท์ที่ที่ก็อาจจะไม่ได้เกี่ยวกันขนาดนั้นปะฮะ หมายความว่าแต่ละโปรเซตอินเพียร์กันใช่มั้ยฮะ
+13:44 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: เอ่อ เอ่อ มันมีความ intersect กันนิดหน่อยค่ะ
+13:48 Chamnong,Nick,TH-Bangkok,Information Technology: เพราะ เพราะอย่างอย เพราะอย่างอย่างตัวนี้เท่าที่ผมเห็นนี่ผมก็คืออาร์พีเอเนี่ย ผมทําเป็นอาร์พีเอดีกว่าครับ
+13:53 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: ได้เดี๋ยว
+13:53 Pisitsupakarn,Supalerk,TH-Bangkok,IT ADI - X-Stream Ops: เห็นด้วยครับ เพราะว่าจังหวะที่ล็อกเข้าไปในในฝั่งที่เป็นของธนาคารน่ะ มันก็จะต้องมีพวกแอคเคาท์ต้องใส่ไอดีพลัสเวิร์ดอะไรพวกนั้นถูกป่ะครับ
+14:03 Chamnong,Nick,TH-Bangkok,Information Technology: ครับ ใช่ครับ
+14:04 Pisitsupakarn,Supalerk,TH-Bangkok,IT ADI - X-Stream Ops: เดอะทัชก็ใช้อันนึง อันนั้นน่าจะเป็นคุณคุณนิคใช้อะไรอะ ใช้ไซเรียม
+14:10 Chamnong,Nick,TH-Bangkok,Information Technology: จริงจริงผมเป็นคนเราน้อยคนเข้าด้วยที่เค้าทํา r p a บทนี้ผมไม่ทราบว่ามันจะเป็นแบบนี้ก็น้องเค้าผมไม่แน่ใจ เค้าใช้ pay live มั้ยฮะ pay live run อยู่บนอะไรซักอย่างครับ แต่เป็น virtual machine แน่แน่ฮะ
+14:25 Pisitsupakarn,Supalerk,TH-Bangkok,IT ADI - X-Stream Ops: ครับ โอเคครับ ครับ โอเค
+14:27 Chamnong,Nick,TH-Bangkok,Information Technology: อาร์พีเอ อยู่ที่ดึงข้อมูลจากแมคโครอะ ถ้าถ้าตัวนั้นเสร็จน่าจะเห็นภาพว่าสุดท้ายเนสท์เล่ แต่ต้องรันอะไรแบบนี้ยังไงฮะ น่าจะเอามาประยุกต์กับ ตน นี้ได้ฮะ
+14:38 Pisitsupakarn,Supalerk,TH-Bangkok,IT ADI - X-Stream Ops: โอเคครับผม ผมว่า solution มันคล้ายกันเลยไม่ไม่ได้ ไม่ได้แตกต่างกัน
+14:45 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: โอเคค่ะ อันนี้ไม่คํา
+14:48 Chamnong,Nick,TH-Bangkok,Information Technology: ติดก็ตรงฟีฟอลนี่แหละฮะ ฟีฟัคซีโคอยู่ตรงไหนครับ
+14:48 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: อันนี้ไม่คําถาม ok อ๋อ โอเคได้ค่ะ งั้นเดี๋ยวเดี๋ยวโมไปเอ่อ ดูให้ค่ะว่าตัว zeco ตอนนี้มันหลานอยู่บนอะไร เออ แต่ว่าเป็นดิสเคมง่ายนะคะ คือตอนนี้แต่ละเบสตัวซีโอปัจจุบันมันค่อนข้างที่จะเอ่อบวม พอสมควรแล้วก็อาคริสเค้ก ข้างในมันก็ไม่ค่อยดีเท่าไหร่ ใช่ โอเค ทีนี้ เอ่อ นอก
+15:17 Chamnong,Nick,TH-Bangkok,Information Technology: ไม่ได้มีแผนจะทําใหม่ใช่มั้ยฮะ ตัวซีฟลัลเอง
+15:21 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: จริงจริง ถ้าทําใหม่ได้ก็จะดีค่ะ เพราะว่าตอนนี้คือข้อมูล ข้างในมันก็มีข้อมูลที่ไม่ไม่ได้ใช้ประโยชน์เยอะ พอสมควรแล้วก็มีแบบหลายหลายอย่างที่มันอย่างที่บอกอ่ะค่ะ ขี้เกียจข้างในมันก็ไม่ไม่ค่อยดีแล้ว เพราะว่าเหมือนเวลาผ่านไป บางคนเค้าก็เข้าไปสร้างเทเบิลขึ้นมาใหม่ไป modify มันซะ แล้วก็แบบข้อมูล ข้างในมันก็บวม พอสมควรค่ะ
+15:45 Chamnong,Nick,TH-Bangkok,Information Technology: ผมกลัวว่าถ้าไปทําว่ามันจะทํา
+15:47 Pisitsupakarn,Supalerk,TH-Bangkok,IT ADI - X-Stream Ops: ผมถามนิดนึงครับ คุณคุณนิคอันเนี้ย เนื่องจากว่าถ้าผมเข้าใจไม่ผิดอะข้อมูลตรงเนี้ย มันมันไม่ต้องไปเข้าไปทําอะไรกับไอ้ตัวสีปั๊วอะครับ เพราะว่ามันถูกออโตเมติกไปหมดแล้ว กําลังงงๆ อยู่ว่ามันไปคุณนิคจะไปใช้สีโค้กตรงไหน
+16:00 Chamnong,Nick,TH-Bangkok,Information Technology: ครับ ไม่ไม่ผมไม่ผมไม่กะจะเข้าไปทําผมแค่กลัวว่าเดี๋ยวมีแพลนไปแก้แล้วแล้วเดี๋ยวผมทําไปแล้วมันไม่เหมือนเดิมอะไรเงี้ยหมายถึงว่าเดี๋ยวมีอีกถีบมีโปรเจกต์นึงที่แก้นี้ซ้อนกันหรือเปล่าอะไรเงี้ย
+16:17 Pisitsupakarn,Supalerk,TH-Bangkok,IT ADI - X-Stream Ops: ไม่พบเพราะว่าว่าถ้าผมเข้าใจไม่ผิดอะจะจะจะโฟลว์เนี้ย ไอ้สิ่งที่เราเริ่มทํา คือเราเริ่มทําจากซิตี้ใช่ปะครับ บิลเพรสแล้วก็ตรงร็อกบ็อกซ์น่ะ มันไม่ได้มีโฟร์อันไหนที่เป็นแมนนวลไปต่อกับไอตัวซีโค่เลย ก็เลยงงๆว่า
+16:33 Chamnong,Nick,TH-Bangkok,Information Technology: ไม่ไม่ไม่ผมไม่ได้กะจะทําซีโก้เลยแค่ถามดูว่าเห็นเห็นว่ามัน20ปีแล้วผมเลยคิดว่าเอ๊ะ เห็นว่าจะรื้อเลย กลัวว่าจะรื้อซิโก้ด้วยรึเปล่าเนี่ยฮะ
+16:44 Pisitsupakarn,Supalerk,TH-Bangkok,IT ADI - X-Stream Ops: ไม่ไม่เป็นไรครับ คือคือถ้าสมมุติว่าจําเป็นจะต้องรื้อซีโก้ยังไง มันคงจะต้องมีพวก รีมิ รีมิเนชั่น แพลนอยู่แล้ว คือทําไงก็ได้ให้ถ้าสมมุติเราเปลี่ยนไอตัวซีโค่นี้เป็นคลาวด์เบรกเป็นคลาวด์เบจเนาะ สมมุตินะต้องเปลี่ยนเป็นคลาวดเบสเค้าก็คงต้องไปทําไอ้ตัวเชื่อมเนี่ยเนี่ย ไปซิตี้ไปบิลเพรสไปล็อกบ็อกซ์อยู่แล้วแหละ ผมก็เลยคิดว่าไม่ไม่ค่อย น่ากังวลเท่าไหร่ครับ
+17:09 Chamnong,Nick,TH-Bangkok,Information Technology: จึงนําน่าจะไม่ใช่ผมใช่มั้ยฮะ
+17:11 Pisitsupakarn,Supalerk,TH-Bangkok,IT ADI - X-Stream Ops: เออใช่คิดว่าใช่
+17:13 Chamnong,Nick,TH-Bangkok,Information Technology: จับได้ครับผม
+17:14 Pisitsupakarn,Supalerk,TH-Bangkok,IT ADI - X-Stream Ops: ครับ ณ ตอนนี้นะฮะ ณ ตอนนี้คิดว่าใช่
+17:19 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: โอ โอเคค่ะ
+17:20 Chamnong,Nick,TH-Bangkok,Information Technology: โอเค
+17:22 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: มี มีคําถามตรงไหนเพิ่มเติมไหมคะ
+17:24 Chamnong,Nick,TH-Bangkok,Information Technology: ไม่มีครับ
+17:25 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: โอเคค่ะ ok สําหรับ e โอเคค่ะ ok สําหรับอีก part หนึ่งใน flow นี้ก็จะเป็น part อ่าเรื่องของการ register consumer ใหม่ แล้วก็เรื่องของการวางบิลค่ะ ในปัจจุบันเนี่ยจะใช้วิธีการว่า สมมุติว่าธนาคารน่ะ มีลูกค้าคนใหม่ที่เค้าสมัครตัว financial program ของ t e b หรือเคแบงก์เนี่ย เค้าก็จะส่งเมลมาหาทีม collector อะ ก็คือทีม ar เเล้วก็ทางให้พี่ collector เนี่ย เค้าก็จะ register customer เข้าไปใน willpese ว่า
+17:54 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: ลูกค้าที่เข้ามาเนี่ย เค้าเป็นลูกค้า cash หรือว่าลูกค้าเครดิต หลังจากนั้นตัว pulplace ก็จะอัพเดทเข้าไปใน sicle เก็บไว้ว่าเออ ลูกค้าคนนี้เป็นลูกค้า cast ลูกค้าเครดิต มีเลข cost นัมเบอร์ แบบนี้นะ อะไรอย่างเงี้ยค่ะ ทีนี้ต่อวันเนี่ยก็จะมีการสร้างใบวางบิลขึ้นมา โดยที่จะสร้างไปวังบินก็ต่อเมื่อได้ได้พวก document บิลต่างต่างมาจากทางแวร์เฮ้าส์ว่ามี การส่งของไปแล้วค่ะ
+![Screenshot](https://storage.googleapis.com/tactiq-prod-au.appspot.com/screenshots/3MEFZQFTk6U5C9l3bu7sdgUgUrK2/ZEMXWD0Z3TXBHznhSmH2/1762489124350.png?X-Goog-Algorithm=GOOG4-RSA-SHA256&X-Goog-Credential=tactiqrun%40tactiq-prod-au.iam.gserviceaccount.com%2F20260108%2Fauto%2Fstorage%2Fgoog4_request&X-Goog-Date=20260108T103628Z&X-Goog-Expires=604800&X-Goog-SignedHeaders=host&X-Goog-Signature=b39d31092369781586ac59e4fc206addc3afb5f44ac36bf13cd8f7f398d8cbe258263959411e7d5333cbee5acb74dbfac6f6dcf9a612c7135f0c85f2cd7b279390a1cfdd0fa604d029e9c22884bb0676d48cfcf7e7c6b9d0d23085512ee257452713333209faac3f641bf9a5b978f2060b4e88e46c6a02690711e48f859934da8b61600a8dbc8ed24d146ee496ce6de8c35b5963a498373570aa6f2cee50bf7171b66ecb51e4bb388de4b86459ab7983ca0f4474f8d26b7c98a95764dae849a07cb330fe9787fd9abcca0b7355cd2a364b68683cda13eee04e99e17305e323c1f5ae2b931d6fcf51854c459367f1c1d09e73fb54ad314566ddf8e76cc93e439b)
+18:20 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: พอได้ lockument มาแล้วเนี่ย ทาง team collector เค้าก็สร้างใบวางบิลขึ้นมา ไบวามีน ตัวเนี้ยพอสร้างขึ้นมาเสร็จมันจะได้นิวเคลียสsumber ก็คือเลขของใบวางบิล เอ่อพี่ปัญญาเขาก็จะเอาตัวเลข replace เนี่ยไปใส่ไว้ในรูทคาแรกเตอร์ เพื่อที่จะ assign ว่าลูกค้าคนเนี้ยจะให้วางบิลวันที่เท่าไหร่ พอถึงวันนั้นๆ อย่างเช่นสมมุติโมซากบินวันนี้แล้วโมก็ iside ว่าอยากจะให้วางบิลวันจันทร์
+18:51 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: เอ่อ messenger ที่อยู่ใน rout ของลูกค้าคนอันนั้นเนี่ยเขาก็จะมารับเอาบิลที่ว่าเนี่ย มาไปส่งให้กับ customer ที่ๆ สํานักงานใหญ่ หรือตาม destination ที่ที่กําหนดกันไว้อ่ะค่ะ ทีนี้พอลูกค้าได้บินมาละเนี่ย ก็จะขึ้นอยู่กับว่าลูกค้าค่าใช้จ่ายเงินยังไง ซึ่งถ้าสมมุติว่า เป็นเช็คเนี่ย ตัวเช็คก็จะถูก เอ่อ messen
+19:17 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: ส่งมาอาจจะมี 2 กรณีส่งไปตรงตรงให้กับ city เลย หรือว่าอาจจะส่งมาให้กับ เราที่สํานักงานใหญ่ค่ะ พี่พี่เองอ่ะ เขาก็จะเช็คว่าตัวเช็คที่ที่ลูกค้าส่งมาให้เนี่ย มันเลขตรงกับใบวางบิลไหม ถ้าสมมุติไม่ตรงเขา ก็จะ generate ตัวเขาบัญชีอีกตัวหนึ่งที่เป็นสําหรับใบปาดหน้า เช็คให้เลขมันตรงกันเพื่อที่จะได้สามารถให้ช้าง sitting เนี่ยเขาทําการ settle ได้อัตโนมัติค่ะ
+19:47 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: เงิน ต่างๆ เงิน ต่างๆ ทั้งการจ่ายแคชจ่ายจ่ายอะไรอ่ะค่ะ พอ ข้อมูลมันไหล รวมกันที่ city ก็จะเข้าไป flow เมื่อกี้ก็คือ salits city เขาก็จะส่งมีการแบบเอาไปดาวน์โหลดไฟล์ 2 ไฟล์ที่เข้าตัว logbox เพื่อทําการเซทเทิลได้ ก็โปรโมจากคอน ก็โปรโมจากคอนเนคกันประมาณนี้ตรงนี้มีคําถามตรงไหนมั้ยคะ
+20:07 Chamnong,Nick,TH-Bangkok,Information Technology: อันนี้จะให้ผมทําทําไม
+20:09 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: เอ เอ่อ เดี๋ยวเดี๋ยวจะมีอันถัดไปค่ะ
+20:13 Chamnong,Nick,TH-Bangkok,Information Technology: คือตอนนี้ยังไม่มีใช่มั้ย
+20:15 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: อันนี้เป็นแอดเป็นโซโฟร์แอดอีสอยู่ค่ะ เดี๋ยว
+20:15 Pisitsupakarn,Supalerk,TH-Bangkok,IT ADI - X-Stream Ops: เอ่อ โมค่ะ
+20:18 Chamnong,Nick,TH-Bangkok,Information Technology: โอเคนี้ เป็น asia โอเค
+20:19 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: ใช่ใช่ค่ะ อันนี้ยังเป็นเอสซีอยู่
+20:22 Pisitsupakarn,Supalerk,TH-Bangkok,IT ADI - X-Stream Ops: โมฆะเมื่อกี้นี้เห็นบอกว่าตอนที่ลูกค้าออกเช็กมา มันจะถูกส่งไปที่ซิตี้กับอีกอันนึงไปที่บริษัทเราเลยใช่ป้ะ
+20:23 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: ครับ ค่ะ ใช่ค่ะ
+20:35 Pisitsupakarn,Supalerk,TH-Bangkok,IT ADI - X-Stream Ops: อันนั้นมันมันไม่ได้อยู่ในนี้ใช่มั้ยครับ หรือยังไงนะ
+20:39 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: คือสุดท้ายไม่ว่าบิลจะส่งมาที่ซิตี้โดยตรง หรือว่าบินจะส่งมาที่เฮตออฟฟิศของเนสเลย์อะค่ะ ไม่ว่ายังไงมันจะถูกส่งไปหาซิตี้อีกทีอยู่ดีก็คือสมมุติว่าเช็คลูกค้าส่งมาให้เราที่เฮอออฟฟิศพี่เปียเค้าจะเช็คก่อนว่าไอ้เลข เช็คที่ที่ที่ลูกค้าทําการทําจ่ายมาเนี่ย มันตรงกันกับ
+21:03 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: ใบวางบิลที่เคยส่งให้ลูกค้า ใบวางบิลที่เคยส่งให้ลูกค้าไหม เพราะบางทีลูกค้าเขามีซีเอ็นที่เขาจะใช้อย่างเงี้ย เขาก็จะหัก c n เองแล้วเขาก็เขียนเช็คตามจํานวนเงินที่ที่มันสุทธิมาให้ ซึ่งอาจจะไม่ตรงกับใบวางบิล ถ้ามันส่งมาที่สํานักงานใหญ่ปึ๊บพี่พี่คอลเลคเตอร์เขา ก็จะเช็คว่ามันตรงกันไหม ถ้ามันไม่ตรงออกใบปาดหน้าเช็คใหม่ แล้วก็จะเอาตัวเช็คที่มีไฟป่าหน้าเรียบร้อยแล้วเนี่ยส่งให้กับเมสเซนเจอร์ของซิตี้ที่เขาจะมารับ
+21:31 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: แล้วก็จะส่งไปหาซิตี้อีกทีนึง ใช่ค่ะ
+21:36 Pisitsupakarn,Supalerk,TH-Bangkok,IT ADI - X-Stream Ops: โอ โอเค ซึ่งซึ่งตอนแรกที่ที่ถามเรื่องเนี้ย มันเป็นเพราะว่า พอไม่เห็นมันอยู่ในในเนี้ยอะครับ ก็เลยเผื่อว่ามันมี solution ที่เราจะทําแล้วแล้วมันหลุดผ่านนั้นไปอะไรแบบเนี้ย แต่ว่าถ้าสมมุติว่าตรงนั้นมี process ที่ยังไงจําเป็นจะต้องใช้คนเช็คอยู่แล้ว อันนั้นก็ก็ไปครับ
+21:56 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: โอเคค่ะ นี้ไม่ค่อยถามอันไหนเพิ่มเติมไหมคะ เดี๋ยวจะไป to be ละ
+22:05 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: ทูบีก็ได้และเดี๋ยวโอเค
+22:06 Chamnong,Nick,TH-Bangkok,Information Technology: มีมีแค่ 2 layer สนุกหรอ
+22:08 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: ใช่ค่ะ มี2ละเอียด
+22:09 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: ส่ง layer ค่ะ ประมาณนี้มีสิทธิ์ประมาณ 4 ถึง 5 app แต่ประมาณเนี้ยค่ะ 2 layer ค่ะ โอเคอะ น้องโมไปถูก b
+22:13 Chamnong,Nick,TH-Bangkok,Information Technology: โอเค โอเคครับ
+22:14 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: โอเคค่ะ สําหรับทูบีที่ตอนแรกวางแผนไว้ก็คืออยากจะเป็นหน้าตาประมาณนี้ค่ะ
+22:22 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: คนนี้ตรงพาวเวอร์แอปพาวเวอร์ออโตเมติก ตรงนี้ค่ะ อาจจะโน๊ตไว้ว่า เป็นอะไรไม่รู้ ตอนนี้เนาะเป็นสักอย่างที่จะเอามาใช้เนาะค่ะ อาจจะไม่ต้องเป็น 2 ตัวนี้ก็ได้ค่ะ
+22:32 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: โอเคค่ะ ก็ flow แรกที่เป็น flow ของพี่ส้มวางแผนว่าอยากจะให้จากตอนแรกมันมี part บาง part ที่เป็น manual เนาะ อยากจะให้มันเป็น automate ได้ทั้งหมดเลยค่ะ ซึ่ง apartne มีการคุยกับธนาคารมาเบื้องต้น แล้วก็คือคุยกับทางทีทีกับเคแบงก์มาแล้วว่า เอ่อ จะใช้วิธีการในลักษณะ ประมาณนี้ก็คือเหมือนตอนเช้า ทางดิสนีย์จะเอาไฟล์ 2 ไฟล์ที่ว่าเนี่ยไปวางในเซิร์ฟเวอร์ตัวนึงที่ agree กับทางธนาคารไว้ค่ะ ซึ่งตรงเนี้ยธนาคารเค้าจะเป็นคน provide ให้
+23:03 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: หลังจากนั้นธนาคารเขาก็จะไม่หยิบไฟล์ตัวนี้ไปเพื่อทําการ process ในแต่ละวันเหมือนคล้ายคล้ายกับการที่เราอัปโหลดบนแบงก์ พอร์ทอล พอจบวัน หรือว่าในเวลาที่เราคุยกับธนาคารว่า เออ อยากให้เขาส่ง file มาเวลาประมาณนี้หรืออะไร อย่างเงี้ยเขาก็จะเอา file วันเนี้ย มาวางใน server เหมือนกัน แล้วเรา ก็จะไปหยิบมาเพื่อที่จะทําการออฟเซตบน srap ต่อไป
+23:25 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: ค่ะ
+23:25 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: ซึ่งตรงนี้เราต้องการคุณนิคมาเขียนไรปะ ไม่ต้องการใช่ปะ
+23:28 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: ต้องการคุณนิคมาเขียนเรื่องการเจนเนอเรท เอ่อ ตัวไฟล์แคส กับเครดิตตัวนี้ออกมาค่ะ
+23:37 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: เหมือนว่าคลีนนิ่ง ไฟล์
+23:39 Chamnong,Nick,TH-Bangkok,Information Technology: มันสร้างเลยใช่มั้ยฮะ เพราะเราจะเอาตัวเก่าออก
+23:41 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: ใช่ใช่ค่ะก็คือสร้างไฟล์แล้วก็ไปวางบนพาร์ทที่ทรงลงกับธนาคารไว้ค่ะ
+23:43 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: อืม
+23:47 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: ใช่ ใช่ Ok สําหรับอีกส่วนหนึ่งก็คือ ส่วน pass ของการวาง bill เนาะ ok ค่ะ
+23:54 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: น้องโบว์ ขอขลับไป flow four sees อันแรกนิดหนึ่ง ดังนั้นแอสอีสอัน อันนี้แสดงว่าของคนนี้ก็คือจากแซบไม่ขอดูเอ้ย ขอโทษค่ะ to be to b to be flow แรกก็คืออันเนี้ย ก็คือจาก sat มาที่ตัว cquire database ใช่มั้ย แล้วก็ค่ะ จากซีคั่วเนี่ยก็คือให้คุณนิคเข้ามาทําอะไรสักอย่าง เพื่อ generate file ตัวเนี้ย ไปวางให้กับธนาคาร
+24:08 Chamnong,Nick,TH-Bangkok,Information Technology: คือพวกจากซื้อพวก
+24:16 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: เนาะ
+24:17 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: ใช่ค่ะ
+24:17 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: โอเคค่ะค่ะ
+24:19 Chamnong,Nick,TH-Bangkok,Information Technology: แต่ตัวอัปเกรด data นี่ผมต้องเข้าไปแก้ใน sap หรอฮะ
+24:25 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: ในพาณิชย์ จริงจริงคือตอนนี้มีติดต่อกับทางโกลบอลไว้ค่ะว่าเค้ามีโซลูชั่นอะไรใน การที่จะเหมือ นแบบเอาข้อมูลจากธนาคาร
+24:33 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: ตัวอัพเดทดาต้าไม่ไม่เออ ตอนนี้แพลนว่าอัพเดตดาต้ากลับเข้าไปในไซต์อ่ะค่ะ จะไม่ใช่คุณหนิงอะค่ะ คือแพลนไม่ว่า จะให้ธนาคารส่งไฟล์ที่มันคอมแพทเทเบิลกับแซบเลยแล้วเมื่อวางที่โฟลเดอร์ของธนาคารแล้วเล่า เอ่อ เนสท์เล่ไปหยิบเพื่อเข้าไปรันในแซบเป็นออโต้ค่ะ ดังนั้นเข้าใจว่าค่ะ
+24:52 Chamnong,Nick,TH-Bangkok,Information Technology: ซึ่งออโต้นั้นผมทําหรือว่าทําเอง
+24:54 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: คิดว่า จะเป็นเนสท์เล่ เพราะว่าเราใช้เราจะให้ธนาคารให้ไฟล์ที่มันพร้อมพร้อมแล้วเป็นแบบฟอร์แมตที่เนสท์เล่ต้องการ
+25:02 Chamnong,Nick,TH-Bangkok,Information Technology: เพราะฉะ เพราะฉะนั้นงานผมก็คือดึงซีกล้วมาเจอซีไฟลท์นี้แค่นั้นถูกมั้ยฮะ แล้วไปวาง
+25:07 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: ใช่ค่ะ แค่ขาไปวางธนาคารค่ะ ค้าส่งตอนเช้าค่ะ
+25:07 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: ใช่ค่ะ
+25:11 Chamnong,Nick,TH-Bangkok,Information Technology: แล้วส่วนซิตี้นี่ไม่ไม่ไม่มีเลย
+25:15 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: เอ่อ เอ่อ พระของซิตี้ มันคือในปัจจุบันจะเป็นการส่งไปให้ outsource ทําผ่านอีเมลอะค่ะก็
+25:24 Chamnong,Nick,TH-Bangkok,Information Technology: เหมือนเดิม
+25:24 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: ในตอนนี้ยังเหมือนเดิม ใช่ค่ะ
+25:29 Chamnong,Nick,TH-Bangkok,Information Technology: ก็คือผมหลักหลักคือผมอ่านซีโฟล้เจนสีไฟล์นี้ซึ่งดูแล้วน่าจะเป็นแค่คิวลี่เฉยเฉยด้วยซ้ํา
+25:34 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: ใช่ใช่ใช่ค่ะ
+25:37 Chamnong,Nick,TH-Bangkok,Information Technology: ได้ครับ
+25:40 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: ทีนี้อีก part นึงก็คือจะเป็น part การ register customer แล้วก็สร้างใบวางบิล รวมถึงการ as a auto and เราค่ะ ซึ่งจะแบ่งออกเป็น 3 t s หลักหลักก็คือเรื่องของการ register customerita ค่ะ คือถ้าเป็นปัจจุบันน่ะก็คือเหมือน register แค่ว่า ลูกค้าคนนี้เป็น financial program ของธนาคารไหนแล้วก็
+26:05 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: มีเป็นลูกค้า cast หรือว่า เป็นลูกค้าเครดิตค่ะ แต่ว่าในครั้งนี้เนี่ย สําหรับตัวแอปใหม่คือมีการตกลง มีการพูดคุยกันว่าอยากจะให้มีการแบบไหนไหน ลูกค้าบางส่วนเขาก็มีพี่เฟิร์ทของเขาว่าเขาอยากจะให้วางบิลวันไหนลงไป จนถึงว่าบางคนเขา เออ ลูกค้าบางคนเนี่ยเขา ก็มีเหมือนเป็นแพทเทิร์นของเขาอยู่แล้วว่าเขาจะให้วางวินสมมุติทุกวันจันทร์ทุกวันที่ 2 หรืออะไรอย่างเงี้ยค่ะ ก็คิดว่าน่าจะเหมือน register ข้อมูลเหล่าเนี้ยเข้าไปด้วย
+26:36 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: หลังจากนั้นเวลาที่มีการสร้างใบวางบิลตัวสีส้ม อันที่ 2 เนี่ยสร้างใบวางบิลขึ้นมา สมมุติว่าโมสร้างใบบังดินของลูกค้า a ซึ่งปกติแล้วในตัว pifer date หรือว่า pattern ที่เขาอยากให้ว่างเนี่ย เขาอยากให้เราวางทุกวันจันทร์ตรงนี้เนี่ย พอสร้าง biometin ของลูกค้า a ขึ้นมาแล้ว ระบบก็ควรที่จะเหมือน assign ลงไปให้เลยว่าลูกค้า เอ้ เนี่ย ต้องมี messenger มารับบินทุกวัน จันทร์นะ อะไรอย่างเงี้ยค่ะ ก็คือไปวันที่ใกล้ที่สุดที่
+![Screenshot](https://storage.googleapis.com/tactiq-prod-au.appspot.com/screenshots/3MEFZQFTk6U5C9l3bu7sdgUgUrK2/ZEMXWD0Z3TXBHznhSmH2/1762489650359.png?X-Goog-Algorithm=GOOG4-RSA-SHA256&X-Goog-Credential=tactiqrun%40tactiq-prod-au.iam.gserviceaccount.com%2F20260108%2Fauto%2Fstorage%2Fgoog4_request&X-Goog-Date=20260108T103628Z&X-Goog-Expires=604800&X-Goog-SignedHeaders=host&X-Goog-Signature=1d897622df37f2b18e44ac05a5456a80a4ff9dfef9689906dbfe52449f9976548618bfa55a310cf0581e6a4ae30dc872b6efa97d055fab339a02a27973e06514300ee454903a06916430c1f283d19a0536a00efbe1adc05ebbc20b76105f86faae65f96ec8d8e6b77796786e19dd710d3ad53d860bb5ae959a1e082cb6b0cea6569d96edfff58d41aedceb865f1e6feb8e82b9002e07ae09ac67c41d292564afac68a0f688bb12ffd1aa55f7d7859280e1719f98617b69553dd3d426bcbb718316eba974bca31759e5f49722874665597411af452a21aa34d09f6cb3906479242fcf699a0fc4e5dd72483a28cbfc2a392b572ac02a0858108a6c55f9cc7bb9b3)
+27:07 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: ถึงในการวางบิลของลูกค้าคนนั้น ใช่ ก็คือแทนที่ว่า เอ่อ พี่พีเออาเขาต้องเข้าไปในรู้แครักเตอร์ แล้วก็กรอกเลขไปวางบิลลงไปอีกทีนึงก็ผ่านผาตรงนี้ให้มันเป็นออโต้ไปเลยค่ะ ประมาณ
+27:20 Chamnong,Nick,TH-Bangkok,Information Technology: รูดคอแร็กเตอร์มันเป็นยังไงนะฮะ
+27:24 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: เออ เออรู้คาแรคเตอร์หน้าที่ของมันในตอนนี้มันจะทําหน้าที่เหมือนเป็นการassign ให้กับพี่ messenger อ่ะค่ะ เวลาที่เค้าเข้ามารับเอกสารว่าในวันเนี้ยเขาต้องเข้ามารับบิลของจ๊ะลูกค้าเจ้าไหนบ้าง ซึ่งตัวข้างในที่มันทํางา นอะมันจะเท่าที่อยู่ในskate มานะคะ สมมติฐานข้อแรกก็คือ เออรู้คาแรคเต
+27:47 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: มัน มันจะทําการเช็คจากเขตต่างๆในที่อยู่ของลูกค้าอ่ะค่ะ
+27:51 Chamnong,Nick,TH-Bangkok,Information Technology: หมายถึง หม หมายถึงว่าการการการเข้าไปทําการเข้าไปเอาข้อมูลสายมาเลย
+27:59 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: หมายถึงรู้ collector หมายถึงรู้ collector ใช่มั้ยคะ ถ้าเป็นแอลเอสปัจจุบันหรือคอลเลกเตอร์คือหนึ่ง มันจะดึงข้อมูลตัว customer มาสเตอร์เดต้าออกมาค่ะ แล้วก็มันจะมีเขตในที่อยู่ของลูกค้าอยู่แล้วว่าลูกค้าแต่ละคนเขาอยู่เขตไหน ซึ่งแต่ละเขต
+28:16 Chamnong,Nick,TH-Bangkok,Information Technology: Interface Interface นะฮะ
+28:19 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: คือหมายถึงว่าคุณอิก อยากเห็น interface ของของตัวลูคาแรกเตอร์เหรอคะ
+28:22 Chamnong,Nick,TH-Bangkok,Information Technology: ถึงผมเข้าไปอันนี้คืออยากให้ผมเอาข้อมูลนี้ไปใส่ดูcharacterป่ะฮะ เข้าใจผิดมั้ย
+28:29 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: พรุ่ง พรุ่งนี้ไป
+28:32 Chamnong,Nick,TH-Bangkok,Information Technology: Central ที่ให้ messenger ไปวางบิลมา Centralst ที่ให้
+28:36 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: ใช่ค่ะ มันคือพาร์ทที่เมสเซนเจอร์เข้าไปให้วางบิล
+28:39 Chamnong,Nick,TH-Bangkok,Information Technology: หมายถึงว่า จะให้ผมเป็นคนให้พาวตอร์เมทเป็นคน gentart เพื่อเอาให้มันเชื่อลองบิบมา
+28:45 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: ใช่ค่ะ
+28:46 Chamnong,Nick,TH-Bangkok,Information Technology: นะฮะ นั่นแหละฮะ ในตัวนู้นคาแรกเตอร์มันเป็นยังไงฮะ มันผมถึงจะเอาไปเต็มอาร์ตได้
+28:53 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: เออ หลุดอะ ถ้าเป็นปัจจุบันก่อนนะคะ ปัจจุบันคือมันจะเช็กจากที่อยู่ของลูกค้าก่อน แล้วพี่พี่อาเวลาเค้าว่างบินแต่ละครั้งอะเค้าจะบอกบินตอนนั้นแล้วก็แอดไซน์วันที่8 แมนนวล แต่ว่าถ้าเป็นทูบีที่เราอยากได้คือลูกค้าแต่ละคนอะเค้ามีแพทเทิร์นของเค้า หรือว่าเค้ามีแบบวันที่เค้าอยากจะให้เข้าไปวางบิลอยู่แล้ว ซึ่งไอ้ตรงเนี้ยถ้าเราสามารถที่จะรีจิสเตอร์เข้าไปได้ตั้งแต่ตอนที่เราจะเจอรีจิสเตอร์คอน ซูเมอร์เดต้าเข้าไปเนี่ย ตัวระบบก็ควรที่จะเข้าไปจับว่าลูกค้าคนเนี้ยที่เจนวายบังบิลขึ้นมาเนี่ยเค้าอยากให้เราไปวาง
+29:35 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: แบบวันที่ใกล้ที่สุดที่กําลังจะถึงอ่ะ คือวันไหน แบบวัน ก็ asia อัตโนมัติ
+29:42 Chamnong,Nick,TH-Bangkok,Information Technology: ก็คือสร้าง talk ที่ใกล้กับ preference ของลูกค้ามากขึ้นถูกมั้ยฮะ
+29:45 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: ใช่ค่ะ
+29:47 Chamnong,Nick,TH-Bangkok,Information Technology: ทีนี้ผมผมไม่รู้ว่าขั้นตอนการสร้างฐานมันเป็นยังไงฮะ
+29:52 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: ตอนการสร้างฐานหมายถึงว่ายังไงเหรอคะ คุณนิก
+29:54 Chamnong,Nick,TH-Bangkok,Information Technology: มันเป็นการเข้าไปพิมพ์ในเว็บไซต์ หรือมันเป็นยังไงฮะ ตัวรูปคาแรคเตอร์มันเป็นเว็บ มันเป็น
+30:02 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: ลูกคอเลสเตอรอล เป็นโปรแกรมโมเลก์เหมือนกันค่ะ ลูกคอเลสเตอรอล เป็นโปรแกรม
+30:04 Chamnong,Nick,TH-Bangkok,Information Technology: โปรแกรมโมเดสท์ ซึ่ง ซึ่งมัน ซึ่งมันมาอ่านไฟล์อีกแล้วฮะ
+30:10 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: มันไม่ได้อ่านอะไรที่ฟายเลยค่ะ มันมันจะเอาแค่บิลเพนบิลเพนท์ นัมเบอร์ที่ที่พี่คอลเลกเตอร์เค้ากรอกกัน
+30:13 Chamnong,Nick,TH-Bangkok,Information Technology: คือ คือเปิดหน้าต่างขึ้นมาแล้วผมพิมพ์เข้าไปเนี่ย
+30:21 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: ใช่ค่ะ ก็เปิดหน้าต่างขึ้นมาแล้วก็พิมพ์เข้าไปว่า บิลเพรส นัมเบอร์ตัวนี้แล้วก็เลือกวัน
+30:29 Chamnong,Nick,TH-Bangkok,Information Technology: โอเคฮะ อันอันนี้ไม่ใช่ให้ผมตามทั้งหลาย แต่ว่าจะให้ผมกรอกเข้าไปในนั้นถูกมั้ยฮะ ก็ต้องเป็นเป็น
+30:31 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: ค่ะ ปัจปัจจุบันมันไป ค่ะ ปัจปัจจุบันมันไปเท่านี้
+30:37 Chamnong,Nick,TH-Bangkok,Information Technology: มันไม่มีเอพีไออะไรที่จะยิงข้อมูลเขาตรงใช่ไหมฮะ
+30:40 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: ไม่มีค่ะ
+30:42 Chamnong,Nick,TH-Bangkok,Information Technology: ต้องพ ต้องพิมพ์ต้องเปิดหน้าจอขึ้นมา พิมพ์อย่างเดียว
+30:44 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: ได้ค่ะ คือทางทางบิสซิเนสจะต้องต้องเลือกว่าใบไหนจะเอาไปวางบ้าง เพราะว่าเค้าจะต้องไปอ่า ชนกับเอกสารที่เป็น physical เอกสารอะค่ะ
+30:45 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: ใช่ใช่ค่ะ
+30:52 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: เออว่าเออวันเนี้ยได้รับกระดาษใบนี้มาอันเนี้ยให้ให้ messenger ไปวางบิลได้ตอนเนี้ยตรงส่วนนี้ลองดูแล้วมันเลยยังไม่มี a p i ให้มัน auto ได้ดังนั้นน่ะ ถ้าคุณนึกทําก็คือมันก็คงจะต้องเป็นหน้าตาอะไรสักอย่างที่ทางทาง business อะเข้ามาเลือกว่า ว่า ตัว of thanding จาก sapp ใบนี้ใบนี้จะให้ไปเก็บจะให้จะให้เอาไปวางบิลได้
+31:15 Chamnong,Nick,TH-Bangkok,Information Technology: อ๋อ ก็คือพูดง่ายง่ายคือผมแค่โชว์ข้อมูลให้ดูแล้ว business จะเป็น
+31:19 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: ใช่ใช่ค่ะ คือโชว์ข้อมูลมาว่าข้อมูลจากแซบมามีแบบแบบแบบ 30 ไอเทียมไอเทม แล้วทางก็ต้องอาจจะดูว่า เออาร์ ทํายังไงให้เค้าเข้าไปเลือกง่ายว่าเค้าจะติ๊กไอเทมไหนเค้าก็จะติดอย่างเงี้ยว่าอันนี้เอาอันนี้เอาให้ให้เจนว่าแมสเซนเจอร์ไปวางบิลได้คราวเนี้ยตัวเมสเซนเจอร์ไปวางบิลอะแมสเซนเจอร์มันมี4คนเค้าก็จะรู้ว่าคนนี้แบบเป็นภาคไหน ภาคกลางตะวันออกตะวันตกอันเนี้ยค่ะ อันนี้อาจจะเป็นแอปที่เข้ามาดูว่า
+31:45 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: แอดเดรสของ แอดเดรสของ customer อยู่ตรงไหนเพื่อให้แมสเซนเจอร์เอบีซีดีคนไหนไปวางบิลแล้วมันก็จะมีเรื่องของวันที่ที่อาจจะให้คุณนิอะ ช่วยทําคือดีไซน์ไว้ว่าคือปกติอะลูกค้า แต่ละคนก็จะมีวันแบบวันวางบิลวันที่เค้าอยากจะรับบินอะไม่ตรงกัน เช่นคนที่ทุกวันจันทร์คนนี้ทุกวันจันทร์ที่2 หรือ4 ของเดือนคนนี้ขอเป็นอะไรประมาณเนี้ยค่ะ คืออยากก็เลยจะเอาตัวschedo ตัวเนี่ยค่ะ พร้อมกับตัวอ่า address ตัวภาค
+32:11 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: Location ที่เค้าอยู่อะค่ะ ตัวเนี้ยจะต้องเป็นพาร์ทของคุณนิกที่ช่วย design ว่า จะให้จะให้วางบิลยังไง ซึ่งเดี๋ยวน้องโม้จะต้องไปดูว่า messenger คนนึงอะวันนึงมันได้กี่ใบป่ะ พี่ไม่แน่ใจ อือ
+32:23 Chamnong,Nick,TH-Bangkok,Information Technology: ก็ ก็คือแค่โชว์ข้อมูลในรูปแบบที่ที่คนเอาไปทํางานต่อง่าย แต่ว่าผมไม่ได้ไม่ได้เชื่อมไม่ได้เชื่อมกับตัว route planter
+32:26 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: ใช่ ใช่ใช่ค่ะ ไม่ได้เชื่อมใช่ค่ะ คุณนี่อาจจะต้องดึงข้อมูลจากแซบ และก็โชว์ขึ้นมาให้ทางบิสซิเนสเลือกว่า บินตัวไหนฉันอยากจะเอาไปวางบิลในวันเออเหมือนว่าเออเหมือนกับเขาเลยนะเหมือนบิลตัวไหนพร้อมแล้วที่จะเอาไปวางบิลแล้วมันก็จะไปลิงก์กับตัววันที่ว่าลูกค้าคนนั้นอยากให้วางบิลวันไหนแล้วเขาจะเลือกวันที่ใกล้ที่สุดมา ประมาณเนี้ยค่ะค่ะ โอเคค่ะ
+33:01 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: น่าจะหมดเหรอคะ นี่แหละ อันนี้มีคําถามอะไรเพิ่มเติมมั้ยคะ เพราะว่าถ้าเป็นทูบีตอนนี้ครบหมดแล้วค่ะ
+33:12 Pisitsupakarn,Supalerk,TH-Bangkok,IT ADI - X-Stream Ops: มี มีคําถามต่อจากพี่นัทตะกี้เนี้ย อะครับ คือสมมุติว่าจังหวะที่เค้าจะต้องมามาเลือกเลือกอะไรพวกเนี้ย มันจําเป็นจะต้องเป็นคนจริงจริงมั้ยอะ หรือว่ามันมี business logic อะไรบางอย่าง
+33:22 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: จําเป็น จํา จําเป็น จําเป็นเราลองล่ะ เราลองคิดแล้วว่ามันมีแบบเหมือนกับเป็นโลจิสติกส์ว่าอันนี้ออโต้เลือกได้ไหม แต่ว่าเนื่องจากมันรีไลน์ออนเอกสารอะจ๋าเหมือนกับว่ามันจะต้องได้ใบส่งของที่เป็น physical เอกสารมาวางที่แบบ hospit ก่อนแล้วน้องน้องทางทางทีมทาง business อ่ะ เค้าก็ต้องเอาเอกสารนั้นน่ะ มา match ว่าเอกสารอันเนี้ย พร้อมแล้วที่จะไปวางบิลมันเลยไม่มีอะไรซักอย่างที่เป็น auto ใน system ซึ่งมาจับว่าอันเนี้ย เออ ผอมแบบเออ ตอนแรกเราก็คิดเหมือนจําว่าจําเป็นต้องมีคนมานั่งทําตรงนี้มั้ย
+33:54 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: เออ แต่พอเค้าบอกว่ายังไงเค้าก็ต้องรีไลน์ด้วยด้วย document ที่เป็น paper อะเออ มันก็เลยต้องเออ มันเลยทําไม่ได้ อืมใช่
+34:02 Pisitsupakarn,Supalerk,TH-Bangkok,IT ADI - X-Stream Ops: แต่แต่ถ้าสมมุตินะไม่ไม่รู้ อันนี้คิดเล่นเล่นนะ คือสมมุติว่า เรา เรามี เรามีคนกรอกไอ้ เรามีคนกรอกไอ้ฟิสิคอลดอทคิวเน็ตน่ะเข้าไปว่าเออไอ้ไอ้คนเนี้ยพร้อมแล้วละเอียดเนี้ย มันมาชนแล้วมันจะลดตัวลีดไทม์ที่คนมานั่งเช็คกล้วยตายจริง
+34:18 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: เป็นไปได้ก็อาจจะเป็นเหมือนกับว่า เป็น source ตัวนึงที่เอกสารในพร้อมแล้วก็เข้าเอาไปไปก รอก อาจจะเป็นแค่เลขใช่มั้ย ให้มันง่ายง่ายแล้วเพื่อเอาเลขตัวนี้มาชนจะได้ไม่ต้องมานั่งควานหาแล้วก็ติ๊ก เออ อันนี้ก็เป็นไปได้ก็เป็นไปได้ค่ะ คุณติ๊ก อืม
+34:27 Pisitsupakarn,Supalerk,TH-Bangkok,IT ADI - X-Stream Ops: เออ ใช่เออ ไม่งั้นต้องมา นั่งดูตาตลอดเวลาเลยว่าเอกสารที่เข้ามา มันคืออะไรและอีอันนี้มันคืออะไรนะ แล้วมานั่งติ๊กติ๊กแทนที่ดีกว่าก็คือ input เลขเข้าไปเลยตั้งแต่ต้น
+34:35 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: เออใช่ อ่า ก็อาจก็อาจจะเป็น interface interface ตัวนึงให้ อุ๊ย พูเลขเข้าไปแล้วก็ให้ของคุณนี้ก็จับมาชนว่า เป็นใบไหนใช่มั้ย ก็เป็นไปได้ดี ก็เป็นไอเดีย น้องจิ๊บทันทีมะทันไอเดียนี้มา
+34:53 Thongkumwan,Pattarin,TH-Bangkok,Accounts Receivable: เปิดท่านพี่ท่านพี่ ณัฐ แต่ว่าเลขบิดนะคะ มันจะเป็นเลขประมาณแบบ10 หลัก997 เอ็กเอเอ็กซ์ ใช่แต่ว่าสมมุติว่าถ้าต้องอินฟลูเลข10หลักอันนั้นเข้าไปจิ๊บว่ามันเทคไทม์กว่าการติ๊กอ่ะ
+34:55 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: จะมีคอนเสิร์ตนะ แต่ถ้าการติดลงตรงติดต้องใช้ตาไล่นะว่าว่าเลข10 หลักอันเนี่ยมันอยู่ตรงไหนอะ
+35:11 Thongkumwan,Pattarin,TH-Bangkok,Accounts Receivable: อะฮะ ใช่ แต่ว่าถ้าถ้าต้องออกเลข10หลักลงไปแบบจิว่างบิน20กว่าใบอย่างเงี้ยพี่นัท ใช่ เราก็ปกติเวลาบินมันมาอะค่ะ มันจะค่อนข้างมาเลี้ยงกันตามวันนั้นแบบในรอบส่งของวันนั้นมันอาจจะมีบิน997 เรียงกันประมาณ 10ใบ ส่วนมากมันก็จะมาแบบอาจจะมา8ใบอย่างเงี้ย แต่ว่ามันก็จะอยู่ใกล้ใกล้กัน
+35:34 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: แสดงว่าน้องจิ๊บต้องฟิลเตอร์ก่อนปะฟิลเตอร์ด้วย จะคอสตูมเมอร์ นัมเบอร์ หรือว่าอะไรก่อนมั้ย
+35:36 Thongkumwan,Pattarin,TH-Bangkok,Accounts Receivable: ใช่ ใช่ค่ะ ก็จะเลือกด้วย customer numberg ก่อน แล้วก็เป็น document dates ของ invoice ใช่ใช่
+35:45 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: ที่เพื่อที่ให้ให้ lot นั้นมันมีแค่จํานวนแบบ customer กับวันที่นั้นนั้น ก่อนที่จะติ๊กถูกมั้ย
+![Screenshot](https://storage.googleapis.com/tactiq-prod-au.appspot.com/screenshots/3MEFZQFTk6U5C9l3bu7sdgUgUrK2/ZEMXWD0Z3TXBHznhSmH2/1762490178669.png?X-Goog-Algorithm=GOOG4-RSA-SHA256&X-Goog-Credential=tactiqrun%40tactiq-prod-au.iam.gserviceaccount.com%2F20260108%2Fauto%2Fstorage%2Fgoog4_request&X-Goog-Date=20260108T103628Z&X-Goog-Expires=604800&X-Goog-SignedHeaders=host&X-Goog-Signature=1a0056f1e586b9ba3fe5f35af69e7ef0becdf4f4456dc1ebc853e08416f808eca5eb299776a1b9222ffb2f9114e53b7c30621e692fa35db23671763e4e5bdb41bd5b443cc1e937622ec5e7185280b71a71ba41c64061ab3a1830d6e89c955914ba7cf52d218de13c36eb7db0aaafc56a447695ed13a3efa2ce3804be00a6cc245711c461c25120328f3371dae35c613f4e34cb3865cb11437defb31550621f28ca7ce2d76f8a10c137b989a0038790913fef5de6802ab1e99eee7a81b36b42284221eae057547d7c577ae46c0561f7a7858fe5bba84e0903e655fdd654d399b1bb0c41ff59b1ab0c2f67f98e371a0e4932fd6c17ac753bd9783d9109765df195)
+35:51 Thongkumwan,Pattarin,TH-Bangkok,Accounts Receivable: ใช่ ใช่ใช่ใช่ก็คือจํากัดให้มันน้อยลงมาแบบอาจจะเป็นวันที่8 ถึงวันที่10 อย่างเงี้ยค่ะ ของ customer code หนึ่งตัว ประมาณนี้พี่นัท
+36:00 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: ค่ะ งั้นงั้นถ้ากลับไปแบบเนี้ยคุณนิคก็อาจจะอาจจะใช้โซลูชันคงอาจจะไม่ตอบโจทย์ของบิสซิเนส แต่ว่าอาจจะต้องเพิ่มฟังชันนอลิตี้ของการการฟิลเตอร์เพื่อเลือกว่าเค้าจะติ๊กใบไหนให้มันให้มันให้มันจํานวนน้อยลงอะค่ะ คุณนิค เป็น customer นัมเบอร์ กับ date อะไรอย่างเงี้ยค่ะ สมมุติว่าเราดาวน์โหลดทั้งหมดมาจะมีแบบ 200 บรรทัด customer 20 คน วันคนนึงมีปี 20 bill อะไรอย่างเงี้ยค่ะ เออ ก็อาจจะเหมือนกับว่าฟิลเตอร์ได้ว่าฉันจะเริ่มติ๊ก จะ customer เบอร์นี้บิน ช่วงวันนี้ถึงวันนี้อะค่ะ อืม
+36:17 Chamnong,Nick,TH-Bangkok,Information Technology: เค้าจะ มันยังไม่ค่อยเห็นภาพเท่าไหร่ แต่คิดว่าน่าจะพอได้อยู่ครับ โอเคได้ก็คือต้องเลือก
+36:41 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: แต่คุณคุณนิค คิดภาพไอ้ตัวไอ้ตัวแคชคัสโตเมอร์คอลเล็กชันไอ้ที่เราทําอีกแอพหนึ่งได้ไหม คุณอิกที่มันจะเป็นแบบที่ที่แบบไฟล์ไปทุกวันอะค่ะ มันก็จะมีเลขคัสโตเมอร์ นัมเบอร์เยอะเยอะใช่มั้ยคะ แล้วมันก็จะมีโพสต์ติ้งเดทหลายหลายวันอะไรอย่างเงี้ยค่ะ คือไอ้ตัวนี้แหละคล้ายคล้ายกันเดต้ามันจะเป็นเซตประมาณนั้นน่ะค่ะที่เข้ามาให้เข้าเข้ามาในเข้ามาในในในเรื่องเนี้ยดังนั้นน่ะ มันจะต้องมีอาจจะฟิลเตอร์ว่า
+37:06 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: ต้องการต้องการแมตช์ว่า invoice ไหนพร้อมแล้วอะ จากอาจจะ filter customer ก่อน แล้วก็ filter doc date ว่า doctor อยากดูแค่แค่ 2 วัน พอ แต่ว่าไอ้ตัวที่เข้ามาในใน datab มันอาจจะมันมันมันอาจจะหลายหลายวันกว่านั้นอะไรอย่างเงี้ยค่ะ
+37:23 Chamnong,Nick,TH-Bangkok,Information Technology: อันนี้ จําเป็น จําเป็นต้องเป็น two wapp เนี่ยเพราะมันseg
+37:29 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: จริงจริง จริงจริง นัทไม่ไม่ค่อยมีความรู้ว่าทรูตัวไหนจะเหมาะกับเรื่องเนี้ย อันนี้แบบคุณนิคเสนอได้ อืม
+37:34 Pisitsupakarn,Supalerk,TH-Bangkok,IT ADI - X-Stream Ops: จริงจริงผมผมเสริมผม ผมว่าเคสเคสเนี้ย น่าจะเหมาะกับพาวเวอร์แอปครับ เพราะว่ายังไงมันต้องมีคนมา interact ด้วยแล้วก็ผมว่าไอ้ตัว u i ที่น่าจะทําได้ เร็วที่สุดแล้วก็ที่เนสท์เล่ใช้ยันเยอะเยอะอะครับ น่าจะเป็นพาวเวอร์แอป
+37:37 Chamnong,Nick,TH-Bangkok,Information Technology: จริง เป็นเรื่อง policy มากกว่า ผมห่วงเรื่องที่เชื่อมซีโฟล่อ่ะ
+37:59 Pisitsupakarn,Supalerk,TH-Bangkok,IT ADI - X-Stream Ops: ทั้ง 4 ผมว่าหมายถึงว่ายังไงนะครับ เอาพาวเวอร์แอปไปเชื่อมกับซีควู
+38:04 Chamnong,Nick,TH-Bangkok,Information Technology: ผมกลัวว่ามันจะไปติด policy อะไร แบบแปลกผมก็ทําไม่ได้
+38:09 Pisitsupakarn,Supalerk,TH-Bangkok,IT ADI - X-Stream Ops: จริงจริงผมผม ผมเข้าใจว่าถ้าสมมุติว่า เป็นข้อมูลลักษณะแบบนี้ครับ ถ้าถ้าเป็นพวก ถ้าถ้าเป็นพวก confidential data น่าจะไปเชื่อมกับไอ้ตัว databerse ได้ แต่ว่าอาจจะต้องทําตัวเชื่อมกันระหว่าง dataverse กับสีครูอันนี้
+38:25 Chamnong,Nick,TH-Bangkok,Information Technology: ก็คือทําทําตัวซิงค์ตัวนึงที่เอาสีโค้วมาวางอีกชุดนึงในดาต้าเวิร์สใช่มั้ยฮะ แล้วก็ค่อยให้กรี้ดจากดาต้าเวิร์สอีกทีนึง
+38:33 Pisitsupakarn,Supalerk,TH-Bangkok,IT ADI - X-Stream Ops: ใจว่าแบบนั้นครับ แต่ว่าเดี๋ยวอาจจะอันนี้อันนี้ต้องฝากทั้งมุมเช็คให้
+38:36 Chamnong,Nick,TH-Bangkok,Information Technology: มันมันมัน
+38:38 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: ดื้อดื้อ หรือว่าถ้าใช้เป็น dataverse อย่างเดียวเลยได้มั้ยคะ
+38:42 Chamnong,Nick,TH-Bangkok,Information Technology: ไม่ได้เพราะว่าต้นฉบับมันอยู่ในซีโก้อ่ะฮะ ก็คือซีโก้ยังคงอยู่ถูกไหมฮะ
+38:49 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: เท่าที่วางแผนไว้ล่าสุดคือไม่ไม่ไม่ต้องมาคิดจากต้นฉบับมาเลยก็ได้ค่ะ
+38:55 Chamnong,Nick,TH-Bangkok,Information Technology: คําว่า ข้อมูลหรือ giscer ลูกค้าเป็นข้อมูลใหม่หมดเลยอ่ะ หยิบ หรือ dum มาจาก zero ครั้งเดียว แล้วก็มา maintain ใหม่อีกชุดนึงได้อย่างงี้ได้
+39:03 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: แบบนั้นก็ได้ค่ะ คือคือตอนเนี้ยในในข้อมูล register ลูกค้าที่อยู่ในตัวแอปเก่ามันจะมีข้อมูลที่แบบลูกค้าเค้าไม่ได้เป็นลูกค้าแล้วอะไรอย่างเงี้ยเยอะ พอสมควรแล้วเท่าที่โมเลเช็คล่าสุดอะค่ะ ลูกค้าที่จะ register เออ ที่ที่เป็นอย่างเป็นลูกค้า เออ financial program ของ kbank กับ t t b เนี่ย มันจะมีอยู่ประมาณ 80 คน ซึ่งซึ่งใน patch ตรงเนี้ย
+39:28 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: ยังไงเราก็ต้องเพิ่มเติมในส่วนของ pefer date ที่ลูกค้าเค้าต้องการเข้าไปอยู่แล้ว โมคิดว่าถ้า register เข้าไปใหม่ในตัว power app เลย น่าจะสะดวกกว่า
+39:39 Chamnong,Nick,TH-Bangkok,Information Technology: เอาจริงเราไม่ต้องยุ่งกับ zepo เลยถูกมั้ยฮะ
+39:41 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: ไม่จําเป็นก็ได้ค่ะ
+39:43 Chamnong,Nick,TH-Bangkok,Information Technology: ขอขอกลับไปดูอันนี้ แล้วก็ขอดูขอดูตัวตัวอีกตัวนึงนะฮะ ตัวที่เป็นอาร์พีเออะฮะ แล้วแล้วแต่แต่ตัวนี้แซ่บมันเป็นมันยิงข้อมูลเข้ามาทางซีฟอ่ะฮะ ยังไงตัวนี้ซีฟโก้ต้องอยู่ก็คือก็คือแปลว่าตัวเนี้ย ยังไงก็ต้องใช้ซีคั่ว แต่ว่าตัวที่เป็นสูงวัยบังบิลอาจจะไม่ใช้ซีโก้ได้งี้แหละ
+39:53 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: นี้นะคะ คืออย่างงี้ค่ะคนนี้คือคือที่ไอ้แผนผังอันเนี้ยใช้สีโค้วเพราะว่าโมเม้มั่นใจว่าในตัวพาวเวอร์แอปอะมีช้อยส์อะไรให้สามารถใช้ได้บ้าง แต่ว่าถ้าสมมุติว่าใช้ตัวดาต้าเวิร์สแล้วสามารถทํางานได้เหมือนกันก็ใช้แต่เจ้าเวิร์สได้ค่ะ
+40:24 Chamnong,Nick,TH-Bangkok,Information Technology: ถ้าทรัพย์มันไม่ได้มาอัพเดทในนอทตาเวิร์สนะ
+40:28 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: อ่าแล อ่า แล้วสามารถใช้ลักษณะคล้ายคล้ายกันกับตัว cash collection ได้มั้ยคะ คือเหมือนอาจจะเป็น auto jobs run ให้ให้ chat มาวางข้อมูลทิ้งไว้แล้วก็ Path match เข้าไปเก
+40:44 Chamnong,Nick,TH-Bangkok,Information Technology: หม หมาย
+40:44 Pisitsupakarn,Supalerk,TH-Bangkok,IT ADI - X-Stream Ops: แต่ แต่แต่ว่าถ้าถ้าทํา sayuil เราเอา data จากในเอเจพีออกมาจาก 4โคได้อยู่แล้วอะ ในโซลูชั่นนี้ก็ไม่น่ามีปัญหาแค่มาคุยกันว่า agree กันว่าอันนี้คือ folder หรือว่า file ที่สรุปมาแล้วที่ดึงออกมาเป็น match
+40:44 Chamnong,Nick,TH-Bangkok,Information Technology: หมายถึง แต่จริงจริงผมแอบรู้สึกว่าอ่านจากซีโคอาจจะง่ายกว่า อ่านจากแซบมาวาง ไฟล์นั่นน่ะ คลีนกว่า คิวที่ 4 โป้ น่าจะน่าจะพังยากกว่าอ่านไฟล์ไฟล์เอ็กซ์เซลนะฮะ
+41:21 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: อาหารแบบอย่างกลายเป็นว่าดาต้าเบสมันจะมี2ตัวถูกไหมคะ คุณนิคหรือว่ายังไงเอ่ย
+41:28 Chamnong,Nick,TH-Bangkok,Information Technology: จริง จริงจริงแล้วไม่เชิง เพราะผมไม่จําเป็นต้อง kip ก็ได้อะฮะ ผมลีดซีฟวู้วทั้งแจมฟายโดยตรง อันนี้อันนี้อาจจะแบบไม่ไม่ ไม่ไม่เป็นพาวเวอร์แอปแล้วก็ไม่ผ่านดาตาเวิร์ดเลยฮะ เป็นอาร์พีเอร้อย เปอร์เซ็นต์เลย ก็คือก็คือโปรแกรม
+41:41 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: อืม อืม ก็คือตัวนี้ไม่จําเป็น ต้องไม่ต้องผ่าน power app กับ automate แต่ว่าไอ้อีกผังผังนี้
+41:49 Chamnong,Nick,TH-Bangkok,Information Technology: แต่แต่แต่ผังนี้แต่แต่ผังผังเนี่ยฮะ มันใช้มันใช้ข้อมูลวัยบางบิลที่มาจากแซบด้วยใช่มั้ยฮะ
+41:49 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: ผ ก็คือผ่านผ่าน ใช่ค่ะ
+41:59 Chamnong,Nick,TH-Bangkok,Information Technology: งั้นก็ต้องคงต้องเสียความ
+42:01 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: ค่ะ ok
+42:02 Chamnong,Nick,TH-Bangkok,Information Technology: งั้นไม่งั้นจะต้องงั้นก็คงต้องมีสีคล้วอยู่ ไม่งั้นผมก็ต้องไปรีดจากแซป ซึ่งก็จะกลายเป็นว่าต้องสร้างระบบคล้ายคล้าย cast customer อีกชุดนึง ถ้าอาจจะถ้าระบบเดิมที่เข้าซีคั่วมันเว่แล้วก็ใช้ต่อไปแล้วผมไปดีจากซีคล้วแถมแล้วจะง่ายกว่า แต่ทีนี้จะมาดูพ รด อีกชุดนึง ทัตเตอร์เวิร์ดมั้ย อันนี้เดี๋ยวดูอีกทีนะ งั้นไม่งั้นจะต้องงั้นก็คงต้องมีสีคล้วอยู่ไม่งั้น
+42:22 Pisitsupakarn,Supalerk,TH-Bangkok,IT ADI - X-Stream Ops: ผมว่าพอยท์พอยต์ของตอนแรกที่เราคุยกันว่าเราจะสร้างดาต้าเวิร์ส เป็นเพราะว่าเรากลัวสิ่งที่เรากังวลคือไอ้ระบบที่คุณหนิงจะทําขึ้นมา มันไม่สามารถคอนเน็กเป็นที่ซีโฟลด์ได้ ก็เลยอาจจะย้ายจากสีโคมาทีเดียว แต่ถ้าสมมุติว่ามันมันมันเชื่อมได้โดยตรงอะ ผมว่าก็ไม่น่าไม่น่าจะมีปัญหาอะไร แต่ว่าสิ่งเนี้ยอย่างที่บอกผมเข้าใจว่าอาจจะต้องไปเช็คกับพีเอ
+42:46 Chamnong,Nick,TH-Bangkok,Information Technology: ผมผมกําลังคิดว่าอย่างนี้ฮะ ผมกําลังคิดว่าตัวอาร์พีเอที่ทําอีกอีกหน้าหนึ่งเนี่ยใช่จะดึงจะดึงตัวเนี้ยอาจจะนอกจากสร้างสีฟ้านี้แล้วจะสร้างเคเบิ้ลเน็ตอัลตราเวิร์ดด้วยในตัวเดียวกันเลย ป้องยังไงตัวนี้ก็ต้องอ่านซีโป้อยู่แล้ว หมายถึงว่าตัว หมายถึงว่าตัวนี้ก็จะทํา 2 อย่าง คือทําอีกอย่างนึงก็คือว่าเอาข้อมูลมาวางบนดาต้าเวอร์ด้วยฮะ เป็นอีกสเต็ปหนึ่งในตัวนี้ซึ่งซึ่งไม่ใช่พาวเวอร์แอปแล้วทีนี้เพราะแอปก็จะรีจากเบตาเวิร์สอย่างเดียวครับ ประมาณนี้ฮะ ที่แถวที่เท่าที่ดูเลย
+43:19 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: เออ แต่ว่ามันมีอย่างหนึ่งค่ะ คุณนิคก็คือตัวใบวางบิลที่ถูกสร้างขึ้นมาอะค่ะ อยากจะโมไปหน้าที่มันคือปลายวางบิลที่ถูกสร้างขึ้นมาอะค่ะ มันบางตัวมันไม่ใช่ข้อมูลที่ที่ถูกเจนออกมาเป็นไฟล์แขนกับเครดิต อันนี้มันเป็นปัญหามั้ยคะ
+43:37 Chamnong,Nick,TH-Bangkok,Information Technology: ไหนนะฮะ บางฝายไม่ใช่กู
+43:39 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: คือตัวแคช กับเครดิตฝ่ายที่ถูกสร้างขึ้นมาตัวนี้อะค่ะ มันมันขึ้นอยู่กับว่าลูกค้าเป็นลูกค้า financial mog ของ t t b kb รึเปล่า แต่ว่าถ้าใบบังปีที่ถูกสร้างขึ้นมาเนี่ย บิลนั้นนั้นน่ะ เค้าอาจจะไม่ได้ เป็น financial program ก็ได้
+43:42 Chamnong,Nick,TH-Bangkok,Information Technology: ครับ ครับ ถูกมั้ย ครับ ถูกมั้ยฮะ เป็นเป็นใหญ่กว่า เป็นเซตที่ใหญ่กว่าเซตนั้นถูกมั้ย
+43:56 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: ใช่ค่ะ เป็นเซตที่ใหญ่กว่า
+43:58 Chamnong,Nick,TH-Bangkok,Information Technology: ก็ไม่เป็นไรผมก็ตราบใดที่ผมต้องรี๊ดซีโค่อยู่ดีก็รีดมาแล้วก็ทําทุกอย่างเลยให้เรียบร้อยในฝั่งอาร์พีเอ แล้วก็เพราะแอปแค่แค่มาแมตช์กับ แต่ทีนี้ข้อมูล customer นี่ผมผมจําเป็นจะต้องซิงค์กับเข้าไปใน spo ไหมฮะ คือมีมีมีตรงไหนก็ตามที่ผมจะต้อง relive squระk
+44:15 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: ข้อมูล customer น่า ถึงแม้จะไม่ได้มีค่ะ ถ้า ถ้าตัว น่าจะไม่ได้มีอะค่ะ
+44:36 Chamnong,Nick,TH-Bangkok,Information Technology: แต่มีลูกมันมีเนี่ย
+44:38 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: จะถึงตัว pdc ใช่มั้ยคะ
+44:41 Chamnong,Nick,TH-Bangkok,Information Technology: เส้นประcทีซีกับซ้ายนะฮะ ใช่ฮะ
+44:42 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: อันนี้ใช่มั้ย คือถ้าสมมุติว่ามี dataverse คือ คือคือคุณนิค หมายความว่าจะมี dataverse ขึ้นมาหนึ่งตัวที่ จะตัวเพราะว่าแอปตัวเนี้ยตอนที่เขา gen file อันนี้ออกมาเขาจะไหลข้อมูลที่ได้จาก ceo ไปลง ไปลงในดาต้าเวิร์ด อันนี้โมข้อเท็จถูกมั้ยคะ
+45:01 Chamnong,Nick,TH-Bangkok,Information Technology: มีอีก layer หนึ่งแล้วผมดึงเฉพาะที่จําเป็นจากซีโก้เฉยๆ แต่ผมจะรีดลีดอย่างเดียวไม่ไหว แต่ว่าถ้ามีมันต้องไลฟ์ด้วยก็จะเป็นอีกเรื่องนึงเลย
+45:14 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: คือโมกําลังคิดว่าตัวรีจิสเตอร์คอสตูมอันเนี้ยค่ะ คือคือมันเข้าไปเพื่อเพื่อใช้งาน อ๋อ เพราะว่าตัวไฟนี้มันมาจาก4ข้อเนาะ ถ้างั้นมันจะมีตัวรีจิสเตอร์คอนซูเมอร์เนี่ยค่ะ ที่ที่ที่น่าจะต้องเกี่ยวกับสีโค แต่ว่าพาสอื่น
+45:34 Chamnong,Nick,TH-Bangkok,Information Technology: คือต้องเขียนกลับไปด้วย ถูกมั้ยฮะ
+45:36 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: ใช่ค่ะ
+45:38 Chamnong,Nick,TH-Bangkok,Information Technology: เค งั้นก็แปลว่าตัวตัวซิงค์ต้องซิงค์ 2 ทางต้องซิงค์ ซิงค์ ซิงค์ mattervice 2 ด้าน สิงห์สิงห์ 4 ครัว 242 ทางกับ dataverse ก็อาจจะเป็นแบบนั้นอ่ะ
+45:55 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: Ok มันมันมี concern อะไรไหมคะ ถ้าถ้าไปกับ package นี้
+45:57 Chamnong,Nick,TH-Bangkok,Information Technology: ไม่มีฮะ แค่อยากหลุดเฉยเฉย อยากรู้ว่ามันมี process อีกมั้ยแล้ว p d c นี่คืออะไรมั้ยฮะ
+46:06 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: เพราะ the check ค่ะก็คือเวลาที่ลูกค้าจ่ายทําทําจ่ายเช็คมาเนี่ย บางครั้งมันเป็นเช็คที่ยังไม่3ารถที่จะขึ้นเงินวันนั้นได้เลย เป็นเช็คที่แบบขึ้นเงินได้ในอนาคตอะไรอย่างเงี้ย ซึ่งข้อมูล
+46:19 Chamnong,Nick,TH-Bangkok,Information Technology: แต่ในโปรเซสทั้งหมดไม่มีตรงไหนที่ผมรับเช็คนี่ฮะ
+46:22 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: คือพาร์ทเนี้ยอะค่ะ พาร์ทพาพีอีซีเนี่ย มันต้องคือมันจะเป็นข้อมูลที่มาจากทางซิตี้เนาะ ตรงเนี้ยต้องไปตกลงกับฮัลซิตี้ก่อนว่าถ้าเค้าจะส่งไฟล์ตัวนี้มา เอ่อ เค้าจะส่งข้อมูล p d c มาให้เรายังไงได้บ้าง เพราะว่าข้อมูล p d c อะมันมันตัดแต่ set ไม่ได้มันไม่ควรละกัน คือไม่ควรที่จะในแชทเพราะว่าเรายังไม่ได้เงินมาจริงจริง
+46:46 Chamnong,Nick,TH-Bangkok,Information Technology: ก็คือแปลว่าจริงๆก็มีเส้นหนึ่งที่ที่ก่อนนี้ไม่ได้ไม่ได้ไม่ได้พูดเรื่องพีดีสิ
+46:52 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: เอ่อ ยังไม่ได้พูดเพราะว่าตอนนี้ยังยังพูดคุยกับทางซิตี้ไม่ได้ค่ะ ไอ้ไอ้ place ซิตี้เนี่ย อาจจะต้อง freeze ไว้ก่อน
+46:59 Chamnong,Nick,TH-Bangkok,Information Technology: โอเค ก็คืออย่างผมยังไม่ต้องทําก็คือพีดีซีในเฟสนี้ยังไม่มีแน่แน่ถูกมั้ยฮะ โอเค
+47:03 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: ใช่ค่ะ ใช่ค่ะ ผ้าป่าเนี่ย
+47:11 Chamnong,Nick,TH-Bangkok,Information Technology: ครับ
+![Screenshot](https://storage.googleapis.com/tactiq-prod-au.appspot.com/screenshots/3MEFZQFTk6U5C9l3bu7sdgUgUrK2/ZEMXWD0Z3TXBHznhSmH2/1762490860226.png?X-Goog-Algorithm=GOOG4-RSA-SHA256&X-Goog-Credential=tactiqrun%40tactiq-prod-au.iam.gserviceaccount.com%2F20260108%2Fauto%2Fstorage%2Fgoog4_request&X-Goog-Date=20260108T103628Z&X-Goog-Expires=604800&X-Goog-SignedHeaders=host&X-Goog-Signature=a911e1f519cf63c5dcf7aac481f082c411b61dfbe9fef719f9087a74481acf640e9374317db7f7df78b9bd191ad1572909b5188e867ed5dc4e549dc94d2feb2d9b2d0160ac21445231822b4a985c4569073d316b9b61acd517d9b34a12a94c511361833092ca2552d4694370e2852f20a735f7c4a74e758b770ba90cf320046299e28acbabcbf0d7aa1bcfbb99fc20d5b9744efd3c821a8b4900ca596409e6bc030872319cd6a8201780975f02045e20ffc3224aec20815165eb680e9788f591fe7ab2f2d2b80a45e85e4e01a77a3ddaab2100c48e0bb47b566e3b22cd5020a2d9745407eccb9a3e72f48dba147f5e28b1be0ae9aee9289577450994cada4037)
+47:14 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: ค่ะ เดี๋ยวยังไงคือจริงจริง โมเมทําตัวสเปคดอกใบข้าวขาวแล้วค่ะ แต่ว่าเดี๋ยวมีแก้ไขตามที่เราคุยกันวันนี้เนาะ เรื่องเรื่องของซีโค่กับเอ่อดาต้าเวิร์สเดี๋ยวยังไงโมติดต่อคุณนิคไปอีกทีนึง
+47:32 Chamnong,Nick,TH-Bangkok,Information Technology: ได้ครับ
+47:33 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: ค่ะ โอเคค่ะ ไหนมีใครมีคําถามอะไรเพิ่มเติมมั้ยคะ ไหนมี
+47:39 Pisitsupakarn,Supalerk,TH-Bangkok,IT ADI - X-Stream Ops: ครับ ครับ คือผมว่าตอนตอนเนี้ยครับ อันนี้เนื่องจากว่า เป็นรูปแบบทูบีใช่ปะครับ โมสิ่งเนี้ย อาจจะลองแบบผมเสนออย่างงี้แล้วกันนะ แต่ว่าแต่ว่าลองตัดสินใจกันเอาเองก็คือหนึ่ง อยากจะให้ลองไปแมตช์เฟสซิ่งมามาก่อนนะครับว่าตรงไหนที่
+47:46 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: ค่ะ ใช่ค่ะ
+48:01 Pisitsupakarn,Supalerk,TH-Bangkok,IT ADI - X-Stream Ops: ใช้คน เยอะ เยอะเยอะก็อาจจะทําตรงนั้นก่อนแบบใช้man out เยอะเยอะในในฝั่งของ B f t e saving อะนะครับกับอันไหนที่มันค่อนข้างแบบ critical อะครับเราเรายังจําเป็นจะต้องใช้คนอยู่เบื้องต้นน่ะไอ้อะไรที่มันผิดไม่ได้อย่างเวลาที่มันไปคุยอะไรกับdatabaseอะไรอย่างเงี้ย อาจจะให้เป็น process เดิมไปก่อนเนอะ แล้วก็ once ที่ทุกอย่างมันเริ่มนิ่งและมันก็ค่อยค่อยสเกลไปเราทําfaceing เนี่ย เราไม่ต้องทําทุกอย่างให้มันเสร็จภายในทีเดียว
+48:33 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: โอเคค่ะได้ Ok มีค่ะ
+48:41 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: แต่แต่ถ้ามันทําถ้ามันเสร็จเป็นเป็นเป็นจุดจุดอะมันจะไปเชื่อมกับไอรีเกซี่แอปมันจะงงนะจ๊ะ คืออันนี้ก็ยังคิดอยู่ เพราะว่าก็คิดเหมือนกันว่าอย่างตอนเนี้ย อืม in the mint time อ่ะก็เวิร์กกับ t t b กับ kbank อยู่อะไรเงี้ย ก็เลยคิดว่า เออ ถ้าตรงนั้นเสร็จอ่ะไอ้ตรงพาสหลอกบอกก็อาจจะจบไปเลยคือเหมือนกับได้ ไฟล์มาก็เข้าแซปใช่ไหม แต่ว่าไม่แน่ใจว่าจุดอื่นที่คุณนิคทํา ถ้าเราดูว่าอันไหนมันมันได้แล้วเราจะ connect กับ legacy app ปัจจุบันยังไงว่าอันนี้ยังใช้สเต็ปนี้ยังใช้อยู่ สเต็ปนี้ยังไม่ใช้อยู่อ่ะ น้องมั่วอาจจะต้องไปลองดูว่าตรงไหนที่เราฉีกออกมาได้อะ จากตัว regue app อะ อืม อืม
+49:23 Pisitsupakarn,Supalerk,TH-Bangkok,IT ADI - X-Stream Ops: ความหมายของผมคืออย่างงี้สุดท้ายแล้วเนี่ย มันก็จะเป็นรูปนี้แหละเนอะ เพราะว่าก็แล้วแล้วแต่ตาม requirement ของเรา แต่ถ้าสมมุติว่ามันมีพาร์ทไหนที่มันเซฟเวลาคนได้ก่อนอะ เราก็น่าจะทยอยเปิดไปก่อนเลย เพราะว่าไม่งั้นเรารอให้มันเสร็จทีเดียว หมายความว่าสมมุตินะคุณนิค ใช้เวลา develop 3 เดือน สมมุตินะมั่วมั่ว มี3 เฟสละเดือน ต้องรอ 3เดือนก่อนคนถึงจะได้
+49:45 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: อืม
+49:50 Pisitsupakarn,Supalerk,TH-Bangkok,IT ADI - X-Stream Ops: คนถึงจะได้ทํางานลดลงหรออะไรอย่างเงี้ย แต่ถ้าสมมุติเมื่อเสร็จเดือนแรกผ่านไปปึ๊บ โอเคมีบางพาร์ทที่คนไม่ต้องมานั่งทําและเออเดือนที่ 2 ปุ๊บ เออ คนสบายขึ้นอีกหน่อยนึง และและอันที่3 ก็คือคนคนนี้สามารถอันล็อกไปทําอย่างอื่น
+49:57 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: อือ อือ อือ อือ
+50:05 Chamnong,Nick,TH-Bangkok,Information Technology: ผมผมมองว่ามันเป็นมีมี2เฟสฮะก็คือ 2สองวงตามรูปเลยอะเฟสแรกก็คืออาร์พีเอเฟส2 ก็คือพาวเวอร์แอปอะฮะ เท่าเท่าที่ผมมองนะฮะ ผมผมมองว่ามันเป็นมี2เฟสฮะก็คือ 22วงตามรูปเลยอะเฟสแรกก็คืออาร์พีเอเฟส2 ก็คือพาวเวอร์แอพอ่ะ ทั้งเท่าที่ผมมองนะฮะ พรรคแรกทําได้ก็น่าจะลดงานคนไปได้ประมาณนึงแล้ว แต่อันนี้ผมผมอยากทราบเรื่องที่บอกว่าจะคุยกับแบงก์ที่ว่า จะให้มีโฟลเดอร์มาให้วางไป อันนี้เค้าทามไลน์เค้าเป็นยังไงฮะ
+50:30 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: เอ่อ ตอนนี้คุยพาราเรลไปคือก็เลยคือคือนอกจากคุยกับคุยกับแบงค์เนี่ย จะต้องไปคุยกับไอทีด้วยว่าเพราะวางไฟแล้วนัดเอาไฟล์นั้นน่ะ ออโต้เข้าไปได้มั้ย แต่ว่าตอนนี้คร่าวคร่าวว่าอยู่ที่ประมาณ ปี ปีหน้าแบบมีนาอะไรอย่างเงี้ยค่ะ เออ เร เร็วไปใช่ไหมคะ
+50:48 Chamnong,Nick,TH-Bangkok,Information Technology: เลือกไปฮะครับฮะ ก็คือถ้าถามผมก็ซักผ้าอันนั้นไม่นิ่งอะ ผมก็ยังไม่ควรเริ่ม
+50:48 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: เร็วไปใช่ไหมคะ เออ เออ เออ เออ เออ ประมาณเพราะ อ๋อ เพราะว่าแต่ว่าอันนั้นน่ะมันจะเป็นข่าวขาออก คือตอนน้องโมไฟไฟที่มันคือไอพาที่คุยกับแบงค์หลักหลักตอนเนี้ยค่ะ เป็นพาร์ทขาที่ข้างล่างอะค่ะ เอ็นด์ออฟเดอะเดย์อ่ะค่ะ ที่แบงค์จะมาวางไฟล์แล้วก็เจนเนอเรท เอ้อเข้าไปใช่ใช่ใช่จะไม่ได้เกี่ยวกับตัวโฟลว์ตัวนี้เพราะว่าตัวเนี้ยคือตอนนี้มันได้วันละรอบตอนนั้นน่ะ ตอนนี้เราเห็นเบเนฟิตว่าถ้าเค้าวางไฟล์แล้วมันรันได้เราอาจจะแบบสามารถแบบ
+51:08 Chamnong,Nick,TH-Bangkok,Information Technology: ไม่เกี่ยวอยู่แล้ว
+51:20 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: เน็ตเน็ตลูก เน็ตเน็ตลูกค้าได้วันนึงหลายหลายรอบอะไรอย่างเงี้ย แต่ว่า จะไม่ได้เกี่ยวกับตัวเพราะว่าตัวอื่นของพาร์ทธนาคารอะมันแค่แค่ เราเอาไฟล์ไปวางให้เค้าแล้วก็เอาเข้าไปในเว็บเหมือนเดิม แต่แบบเหมือนกับแทนที่เราจะอัพโหลดไปในเว็บอ่ะเหมือนกับแค่แค่วาง แล้วมันก็แบบออโต้เข้าไปในซิสเตมเขาอะค่ะ ดังนั้นน่ะคิดว่าตัวเนี้ยไม่ได้แค่แค่เหมือนเอาเอาผาดว่า จะให้วางไฟล์ที่ไหนมาบอกเรา
+51:43 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: เข้าใจว่าแค่นี้นะ
+51:45 Chamnong,Nick,TH-Bangkok,Information Technology: อย่างนั้น ขอขอดูตัวตอนจุดระบบอ่าโฟร์ปัจจุบันได้มั้ยฮะ อันหน้าแรกเลย ฮะ อันเนี้ยก็คือแปลว่าจริงจริงแล้วที่ผมทําแล้ว work ตอนนี้เลยคือผมควรจะ replace หน้า game place
+51:57 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: หน้าตรงแถว ใช่ใช่ คือทํายังไงให้ข้อมูลจากแฟบมาแล้วก็อย่างทุกวันนี้ข้อมูลจากแฟบมาต้องมีคนมาเอาจากจาก 4 ขวบมาไว้เด็ดจากบิวเพชรแล้วจับบิวเพชร เข้าไปอัปโหลดในในธนาคารอันเนี่ย น่าจะ
+52:12 Chamnong,Nick,TH-Bangkok,Information Technology: อันนี้จริงจริงแล้ว
+52:12 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: ค่ะ แล้วมันเป็นงานเดลี่ ฮื้ม
+52:14 Chamnong,Nick,TH-Bangkok,Information Technology: ผมไม่เกี่ยวอะไรกับล็อคบล็อคเลยป่ะฮะ เท่าที่ดู ผมไม่เกี่ยวอะไรกับล็อคบล็อคเลยป่ะ
+52:16 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: ใช่ค่ะ ไม่เกี่ยวหรอกบอกเลย
+52:19 Chamnong,Nick,TH-Bangkok,Information Technology: จริงๆแล้วก็คือว่างานผมคือ repress ตัว view press ตัวเดียว
+52:22 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: กับตัวทา ถ้าโฟดํานะใช่ค่ะกับตัว ส่วนก็น่าจะเป็นพวกรูทคอลเลคเตอร์ค่ะที่
+52:27 Chamnong,Nick,TH-Bangkok,Information Technology: ตัว ตัวส้ม ก็ไม่ก็ผมก็ไม่ได้ทําอะไรป่ะฮะ ผมก็แค่ทํา build patizy u i มันง่ายต่อการสร้างวัยวางบิล
+52:34 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: ใช่แล้วก็อยากจะให้คือตอนเนี้ยมีมีดีไซน์ไอ้ตัวที่อยากให้ทําเหมือนเป็นแบบ schedule ว่าลูกค้าคนเนี้ยอาจจะแบบใช่จะมี record ใช่มีconference ชั้นว่าลูกค้าคนเนี้ยเออ อยากได้วางบิลวันวันที่5ของทุกเดือน คนนี้พระจันทร์เดียวกะอังคารแล้วก็อยากจะให้เหมือนกับเหมือนกับมีตัว
+52:44 Chamnong,Nick,TH-Bangkok,Information Technology: คือคนมีความคิดดูเลชั่น
+52:55 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: คล้ายคล้ายแบบเหมือนเหมือนช่วยคิดว่าแล้ววันไหนที่มันใกล้ที่สุดตามสเก็ตดวลของแต่ละลูกค้าอะค่ะ ซึ่งตัวนี้ทุกวันเนี้ยเค้าทํามือเขาเขาแบบเขาดีไซน์เหมือนกึ่งๆมืออ่ะค่ะว่าจะให้คนนี้เป็นวันไหนวันไหนอย่างเงี้ยค่ะ
+52:59 Chamnong,Nick,TH-Bangkok,Information Technology: วางแผน เอ็นทรานซ์ บิวเพรส ให้มีฟังก์ชันเพิ่มขึ้นมาแต่ว่า
+53:09 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: เออ ตัว collector ใช่ค่ะ
+53:11 Chamnong,Nick,TH-Bangkok,Information Technology: ไม่ได้ไม่ได้ไม่ได้แก้ไข flower อะไร สุดท้ายก็คือผมทํา will p
+53:18 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: บิล บิลเพรส ใช่ค่ะ ใช่ไหมน้องเอย ใช่ค่ะ บิลเพรสแล้วก็ไปวางบิลใช่ค่ะ
+53:22 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: ได้ค่ะ
+53:24 Chamnong,Nick,TH-Bangkok,Information Technology: โอเคได้ครับ ก็ก็ก็
+53:26 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: ส่วนร็อคบ๊อก น่าจะไม่เกี่ยวกับคุณนิคค่ะ ล็อคบ็อกซ์ เดี๋ยวนะ จะไป work กับธนาคาร
+53:30 Chamnong,Nick,TH-Bangkok,Information Technology: โอเคได้ครับ
+53:33 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: แต่ตรงพาร์ทที่แบบเป็นรูคาปเตอร์ก็จะต้องมีหน้าที่เหมือนรีจิสเตอร์คัสโตเมอร์เนอะ ที่เมื่อกี้เหมือนอาจจะคุยคุยไปแล้วรอบนึงค่ะ พอจะ
+53:42 Chamnong,Nick,TH-Bangkok,Information Technology: ตอนนี้ทุกวันนี้ก็คือทําไมฮะ
+53:45 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: ทําไง bellpare ค่ะ
+53:46 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: ใช่ค่ะ
+53:49 Chamnong,Nick,TH-Bangkok,Information Technology: นี้ถ้าปิดได้รบกวน
+53:49 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: แบบน้องจิ๊บพี่ เข้าใจว่ามันว่ามันไม่มีกําหนดวันเข้าไปใช่มั้ยว่าวันแบบคนไหนเป็นวันไหน เออ
+53:53 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: ไม่ไม่มีค่ะ คือเขา manual ทุกครั้งที่มีการสร้างโดยวังบิล
+53:54 Chamnong,Nick,TH-Bangkok,Information Technology: อยากมีบิวเพิ่ม
+53:56 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: ใช่ ใช่ค่ะ อันนี้อยากจะ enhance เพิ่มเพื่อที่น้องไม่ได้ต้องมา นั่งดูตารางของลูกค้า แต่ละคนอยากให้มันอยากให้มันทําเหมือนแบบเป็นเหมือนแบบทีม meeting ทุกวันนี้พี่ที่เรารีเคอร์ริ่งได้อะไรอย่างเงี้ย เออค่ะ
+54:08 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: มันที่แบบ recuring ได้
+54:12 Chamnong,Nick,TH-Bangkok,Information Technology: อันนี้ขอถ้าเป็นไปได้รบกวนขอดูยูไอบิวเพลงทั้งหมดได้มั้ย
+54:17 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: เดี๋ยวต้องนัดเค้ามาเปิดมั้ง นัดนัดยูเซอร์
+54:17 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: เอ่อพี่หรือพี่จิ๊บมีมั้ยคะ
+54:22 Thongkumwan,Pattarin,TH-Bangkok,Accounts Receivable: หมาย หมายถึงว่าเนี่ยเวลาเปิด bill case มีค่ะ เปิดให้ได้หรือยัง หรือว่าโอเคได้ได้
+54:27 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: ลองเปิดดูก็ได้ 6 นัดได้มีเวลาอยู่นิดนึง ดูว่าหน้าตามันโบราณแค่ไหน
+54:33 Thongkumwan,Pattarin,TH-Bangkok,Accounts Receivable: ได้เดี๋ยวพริกจ่อแป๊บนึงนะคะ
+54:34 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: ได้อะ
+54:43 Thongkumwan,Pattarin,TH-Bangkok,Accounts Receivable: อันนี้มันจะเป็นหน้าตาแอปอะค่ะ build case Ok เวลาที่จิบจะสร้างไปวางบิลอย่างเงี้ยค่ะ จิบก็ไป manage เนาะแล้วก็เลือกอย่างเช่นถ้ามันเป็นบิลของวันที่28ถึง30 แล้วก็เป็นลูกค้า sipo ใส่ customer code ไป
+![Screenshot](https://storage.googleapis.com/tactiq-prod-au.appspot.com/screenshots/3MEFZQFTk6U5C9l3bu7sdgUgUrK2/ZEMXWD0Z3TXBHznhSmH2/1762491330884.png?X-Goog-Algorithm=GOOG4-RSA-SHA256&X-Goog-Credential=tactiqrun%40tactiq-prod-au.iam.gserviceaccount.com%2F20260108%2Fauto%2Fstorage%2Fgoog4_request&X-Goog-Date=20260108T103628Z&X-Goog-Expires=604800&X-Goog-SignedHeaders=host&X-Goog-Signature=923cbf5f01ffdee70e3cd0d9cf66960a4ee65864f0b39203d3b5c7a7548a72275f7e28027b68cf7f6f916b4b7f45d68b2e7993108ad0222d98573d9263f1426affa6a024a953ee11a9dbb7b8db530ca83b00b7550b4565ca48976575d6a8a5784faa124f87902dfceb9f97f1c4491c1e0cd81b29f17be7e7aaf2a63ccaf237c3bee7eacdf3ed0088bcabbebadd38aff7fca723dd43a6c5a6c6beb8ec4e6883e9be1792b8c4f9833074ef03f6c659d1377a737d8f006337ae45043b1de70263d313be1fdfccc3190034c439555fabe0427b30715dce70f42bdb8cbfe6fc928aff9b7c409164e8d15e8f682390808fc9020fac45b28319986abfa9b2c433c2a4b1)
+55:10 Thongkumwan,Pattarin,TH-Bangkok,Accounts Receivable: แล้วก็เจนตัวเนี้ยเวลามันออกมาก็จะเป็นพวกอินวอยซ์แล้วก็ซีเอ็นที่เกิดขึ้นระหว่างวันที่28 ถึง31 อย่างเงี้ยค่ะ
+![Screenshot](https://storage.googleapis.com/tactiq-prod-au.appspot.com/screenshots/3MEFZQFTk6U5C9l3bu7sdgUgUrK2/ZEMXWD0Z3TXBHznhSmH2/1762491344615.png?X-Goog-Algorithm=GOOG4-RSA-SHA256&X-Goog-Credential=tactiqrun%40tactiq-prod-au.iam.gserviceaccount.com%2F20260108%2Fauto%2Fstorage%2Fgoog4_request&X-Goog-Date=20260108T103628Z&X-Goog-Expires=604800&X-Goog-SignedHeaders=host&X-Goog-Signature=51b9dad519853b430ef656825407963729d6c27942fc1d4a0869d52c1945d0d0f580d8d271696a30d1dbc8b40e8d210e168e5f8216144faf08a788815a4b3650c5f592f0bcbbfd2e96a2027e6d2d61bd94bd3af6b5d97fe2535f815352b606c60eb146d52ae5e3f33c234825491183e69a874579f997d19cce192a60058b3752eff7687870513f09c89ce084a3ace8c7abc50cf2603e4c4372866f7d1a3a8d1c86d1e52cc3ae95cc3f7a50a511ccfccfd64862a4fcaafc985b82d41117a11f0a701cab0cfff26470d581c9bc2fdc0328cb331caf9fd73938552f99c0038e44027d164e5643c919483605d8cd97a2312d865e11b032a126e7a952b05a18f09841)
+55:18 Chamnong,Nick,TH-Bangkok,Information Technology: เคย เคยผ่านมา
+55:20 Thongkumwan,Pattarin,TH-Bangkok,Accounts Receivable: โอ้ขอโทษอะ ยังไงดีก็คือเวลามีได้ได้ได้โอเค
+55:23 Chamnong,Nick,TH-Bangkok,Information Technology: ขอขออ่านนิดนึงนะฮะ ก็คือ เพลเยอร์ เพลเยอร์ลีส เมคกิ้ง อินวอยซ์ อัปเดตเอาอินวอยซ์ อินเสิร์ทดีดีมิติ เมดอะเมาท์ ก็คือมีโปรเซสที่มันไล่ท้องอยู่โอเคเหมือนจนซีชาร์ปเลยโอเคฮะได้ เพลเยอร์ลีส เมคกิ้งอินว
+![Screenshot](https://storage.googleapis.com/tactiq-prod-au.appspot.com/screenshots/3MEFZQFTk6U5C9l3bu7sdgUgUrK2/ZEMXWD0Z3TXBHznhSmH2/1762491362483.png?X-Goog-Algorithm=GOOG4-RSA-SHA256&X-Goog-Credential=tactiqrun%40tactiq-prod-au.iam.gserviceaccount.com%2F20260108%2Fauto%2Fstorage%2Fgoog4_request&X-Goog-Date=20260108T103628Z&X-Goog-Expires=604800&X-Goog-SignedHeaders=host&X-Goog-Signature=940a75bf7b533dc8e9b52855ec668148cec1743b317dcce4d5e6e6f0d9dca7749963d3bfe30d7efc2fd50ce27b2ac2d138c8dbda8e817962a01e6ac17d5657dcaf445adf4ada3f3353f596ba61812a92f84e1c79819ec3cd3ea647dc017f91efbd3ad9843c212077dffc2066e2ffcd6568984320d92873c0c22b29cb3baf4ffed5fb80afa49665140c1cd816286efa2870a7540690a8bfe2e9eba5784379438be1929de09f03948113762e0809ad706afdb945b94dcb4b618548eb38c07336db9efa257d63c232b47148e1d59b6fdd1bb3d3269bd69db660b77362d582ae8a30aa1ba1ae66c8cc9faff0b2f38d2031fb928eeca1e2f26e7cf57816faadf0854a)
+55:39 Thongkumwan,Pattarin,TH-Bangkok,Accounts Receivable: เราก็อะสมูทจิ๊มมี physical แบบ paper ว่าวันนี้มีซีเอ็นกับ invoice ไปไหนที่จิ๊บและส่งให้ลูกค้าบ้างจิ๊บก็จะมาเช็คเลขตรงนี้แล้วก็โอเค ปกติเวลาจีบพามาจิ๊บก็จะมีมันมี606อย่างอ่ะค่ะ จิ๊บก็จะติ๊กออกติ๊กออกสําหรับใบที่มีเอาเอาเอาค่ะ คือเอาแล้วจิ๊บก็จะลบตัวที่ไม่เอา
+55:55 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: ก็คือเอาหรือไม่เอานะ
+56:02 Chamnong,Nick,TH-Bangkok,Information Technology: นะฮะ logic คือยังไงฮะ ติ๊กออกอะไรมั้ยฮะเมื่อกี้
+56:05 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: ติ๊ก ติ๊ก อ้าน้องน้องจะอธิบายเอ้า
+56:05 Thongkumwan,Pattarin,TH-Bangkok,Accounts Receivable: คือ ติ๊ก ได้ค่ะ คือติ๊กออกสําหรับเลขที่จิ๊บ อยากสร้างใบวางบิลขึ้นมา อย่างเช่นตอนนี้จิ๊ดมีเปเปอร์ของบิล 9974745978 แล้วก็ติดมันออกไปแล้วก็บิลที่เหลือก็จะเป็นตัวที่ยังติดถูกอยู่เนอะ พวกเนี้ยเป็นตัวที่ต้องการหลบมันออกจากไตรหวังบิน
+56:25 Chamnong,Nick,TH-Bangkok,Information Technology: พบมันออกจากวัยบังบิลนะฮะ
+56:26 Thongkumwan,Pattarin,TH-Bangkok,Accounts Receivable: ก็จะ ก็จะกด delete invoice อย่างเงี้ยค่ะ แล้วพรุ่งนี้เป็นตัวที่จิ๊บ อยากเอาไปส่งลูกค้า
+56:33 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: คือก็ก็ คือก็ก็คือเหมือนตอนแรกมันจะ gen มาทั้งหมดอะค่ะ แล้วก็แค่แค่เหมือนเหมือนใช่เราเลือกตัวที่ไม่เอาเพื่อที่จะ dealeet มันออกไปให้โชว์ใช่ค่ะ
+56:36 Thongkumwan,Pattarin,TH-Bangkok,Accounts Receivable: ใช่
+56:40 Chamnong,Nick,TH-Bangkok,Information Technology: ที่ลิตรพวกลิตร ไม่ใช่ลิตรละเบสนะฮะดิ ลิตรแค่แค่ในหน้านี้ฮะ
+56:44 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: ไม่ไม่ไม่ delide คานาค่ะ ไม่ไม่เกี่ยวกับ databet
+56:44 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: ไม่ไม่ไม่ได้ databay ค่ะ
+56:49 Chamnong,Nick,TH-Bangkok,Information Technology: ก็เบื่อแค่นี้แค่ฟังดูคล้ายคล้ายตัว cash collection เลยนะฮะ
+56:54 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: ขายขาย
+56:56 Thongkumwan,Pattarin,TH-Bangkok,Accounts Receivable: ใช่แล้วก็อ่า create เสร็จแล้วมันจะเซ็นใบหมายเลขใบวาง bill ขึ้นมา ก็คือเนี่ยค่ะ 00189678 10 ได้อันนี้แหละอะค่ะ
+57:06 Chamnong,Nick,TH-Bangkok,Information Technology: เดี๋ยวนะฮะ เป็น running number ที่ต้องดูในในในในใน 4 คู่คั่วถูกมั้ยฮะ
+57:15 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: อะไรนะคะ
+57:15 Thongkumwan,Pattarin,TH-Bangkok,Accounts Receivable: เข้าใจว่ามันน่าจะเจนขึ้นมาใหม่ในในโปรแกรมนี้นะ ใช่
+57:19 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: มันจึงขึ้นมาใหม่ค่ะ คุณดิ
+57:20 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: รันนิ่ง ดมเบิร์ก
+57:21 Chamnong,Nick,TH-Bangkok,Information Technology: ผมว่ามันเป็นอันนี้ แต่ว่ามันจะรู้ได้ไงว่าต้องเป็นเลข 678 ไม่ใช่677 อะไรอย่างเงี้ยฮะ
+57:26 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: อ๋อ คือในมันจะรันคือเลขมาบองบินจะมี10หลักใช่มั้ยคะ มันรันตั้งแต่หนึ่งแล้วก็ยาวไปเรื่อยเรื่อยเลยค่ะ ชาติขึ้นมาใหม่ก็บวกเข้าไปอีกหนึ่งจ้างขึ้นมาใหม่ก็บวกเข้าไปอีกหนึ่งไปเรื่อยเรื่อย
+57:37 Chamnong,Nick,TH-Bangkok,Information Technology: เลขที่ที่มันต้องรู้คือมันต้องรู้ว่าล่าสุดเลขเท่าไหร่ ซึ่งมันต้องเก็บจากสีพวง
+57:41 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: ใช่ค่ะ อันนั้นเก็บใช่อันนั้นเก็บไว้อะค่ะ
+![Screenshot](https://storage.googleapis.com/tactiq-prod-au.appspot.com/screenshots/3MEFZQFTk6U5C9l3bu7sdgUgUrK2/ZEMXWD0Z3TXBHznhSmH2/1762491481543.png?X-Goog-Algorithm=GOOG4-RSA-SHA256&X-Goog-Credential=tactiqrun%40tactiq-prod-au.iam.gserviceaccount.com%2F20260108%2Fauto%2Fstorage%2Fgoog4_request&X-Goog-Date=20260108T103628Z&X-Goog-Expires=604800&X-Goog-SignedHeaders=host&X-Goog-Signature=7d40ce9331f8dd9fd86a096012dbc7572a4f8552da6ca617013a15b714fe49e125ac1440d82b69da388654e15100c5c3bbc1174ca0c29f5b13e2051157e5d16b36b0b6ac33dd38b7593b40c863a60a83989a9e08ff91c60de1f6b61032d72592fab3b8f151c437c53d4aacff51d3cfe1abe994dcab4dc1437a0d11069110c9fc1c3f2267d1ec062d41abfe069082b03a47d71aa0e7a39efe9221d3119da0b2b533a66e88e3bab532d30ee295d2ac9d5550eb819a55ae9327137892bf8b8b91234e5512aa21c66018bee1bc24f0908cec658d5df02ea68c3e9422f10770c1b2df6b7d3398eb28798615099f3806acce9330ae794bfcef3e5308de1070b0c40854)
+57:45 Chamnong,Nick,TH-Bangkok,Information Technology: ว่าแอปต้องอ่าน 4 คนโดยตรงได้ยังไงก็ต้องทําได้ โอเคต้องลองดู อันนี้อันนี้แต่ว่าไปวางบิลนี้ตอนกดตอนที่มันขึ้นอันนี้มา มันยังไม่ได้ไลฟ์เบสถูกมั้ยฮะ มันต้องกดอะไรสักอย่างก่อนถึงจะเริ่มถึงจะมีผลหรือมีผลแล้ว ณ ตอนนี้เลยฮะ
+58:04 Thongkumwan,Pattarin,TH-Bangkok,Accounts Receivable: ทิพย์ กดขี้เหล็กแล้วมันก็จะใช้ได้เลยอะ คุณอิกเท่าที่ใช้
+58:08 Chamnong,Nick,TH-Bangkok,Information Technology: ที่ผมเคยไม่มีปุ่มไลฟ์ไม่มีปุ่มอะไรเลยใช่มั้ยฮะ
+58:13 Thongkumwan,Pattarin,TH-Bangkok,Accounts Receivable: ไม่มีนะคะก็คือแค่แค่ซีคล็กเลย
+58:14 Chamnong,Nick,TH-Bangkok,Information Technology: ถ้าสมมุติว่าถ้าถ้าถ้าพลาดทําไงอ่ะ สมมุติว่าผิดแล้วทําผิดทําไง ถ้าสมมุติว่า
+58:19 Thongkumwan,Pattarin,TH-Bangkok,Accounts Receivable: จะเ จะเพิ่มอย่างนี้ใช่ไหมคะ จิ๊บว่าแอดอินวอยซ์ แล้วก็สามารถแอดได้ว่าแบบโอเคจิ๊บคาด invoice หมายเลขนี้ไปแอดไปแล้วก็โอเค กดโอเคเงี้ยค่ะ เราว่าแล้วมันก็จะเด้งขึ้นมาเพิ่มตรงนี้ให้จิ๊บก็มาร์คออลแล้วเซ็กซ์อีกทีหนึ่ง
+58:35 Chamnong,Nick,TH-Bangkok,Information Technology: อีกทีนึง กดซีแลค นั่นมันมีผลเลยไม่ไม่มีบุคลิกด้วยนะ โอเคแล้วแล้วทีนี้ถ้าสมมุติว่าคุณจิ๊บ คุณจิ๊บ ผลประกันปิดไปอย่างเงี้ยฮะ สมมติปิดโปรแกรมตอนนี้เลยได้มั้ยฮะ
+58:45 Thongkumwan,Pattarin,TH-Bangkok,Accounts Receivable: โอ โอเคค่ะ
+58:45 Chamnong,Nick,TH-Bangkok,Information Technology: แล้ว แล้วเปิดขึ้นมาใหม่ ลองลองทําเองได้ไหมฮะ
+58:55 Thongkumwan,Pattarin,TH-Bangkok,Accounts Receivable: ด่าย อันนี้เป็น bill ตามวันเดิม
+59:11 Chamnong,Nick,TH-Bangkok,Information Technology: ผ่าน ผ่านไปเจ ผ่านไป 79 ละแปลว่าแปลว่ามันรันไปแล้วแปลว่าไป78 อย่าง
+59:17 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: มันมันมันเหมือนการันต์ทุกครั้งที่เราคลิกตัว generate อะค่ะ คุณเอก
+59:22 Chamnong,Nick,TH-Bangkok,Information Technology: แล้วแล้วการแล้วใบ78 เมื่อกี้ไม่เป็นไรเหรอฮะ มันมันไม่มีปัญหาใช่มั้ยฮะ ไม่มีปัญหา
+59:27 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: ถ้าไม่ได้มีไม่ไม่มีค่ะ ถ้าถ้าสมมุติว่ายังไม่ได้แบบว่า เอ่อ เขาเรียกไรยังไม่ได้ไปใส่ไหน รู้ collector ก็ไม่ได้มีปัญหา อะไร คือต่อให้ใส่ก็ลบก็ลบได้ไม่ค่ะ พี่จิ๊บ
+59:40 Chamnong,Nick,TH-Bangkok,Information Technology: นึกว่าเอกสารโผล่โตมาแล้วแล้วแล้วเป็นไรเหรอฮะ อะไรอย่างเงี้ย
+59:40 Thongkumwan,Pattarin,TH-Bangkok,Accounts Receivable: ใช่ใช่ มันสามารถแบบ
+59:46 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: แล แล้วเจนเลขมาแล้วแล้วเราไม่ใช้แล้ว
+59:46 Thongkumwan,Pattarin,TH-Bangkok,Accounts Receivable: เรียกออกมาได้
+59:48 Chamnong,Nick,TH-Bangkok,Information Technology: เอากลับมาให้ด้วย อืม
+59:51 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: เลขเราไม่ใช้เราก็ไม่เป็นไรอย่างงี้ใช่ไหม เต็มทิ้งเจนขว้างไป เลขเราไม่ใช้เราก็ไม่เป็นไรอย่างงี้ใช่ไหม
+59:54 Thongkumwan,Pattarin,TH-Bangkok,Accounts Receivable: ใช่ใช่
+59:56 Chamnong,Nick,TH-Bangkok,Information Technology: มันไม่ใช่เลขมันข้อมูลอยู่ด้วยนะครับ ไม่เป็นไรจริงจริง แต่ไม่เป็นไรก็ไม่เป็นไร
+59:56 Thongkumwan,Pattarin,TH-Bangkok,Accounts Receivable: ใช่ ใช่
+01:00:02 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: คือพี่ว่าคุณณี กําลังคิดว่า การที่เรามาร์คไปแล้วแล้วมันอยู่ในในเลขแล้วนี่นัมเบอร์เบอร์ที่แล้วอะมันมันมันมีผลมั้ยว่ามันจะซ้ํามั้ย มันจะอะไรมั้ยอะไรอย่างเงี้ย
+01:00:09 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: ไม่ไม่มีค่ะ
+01:00:13 Thongkumwan,Pattarin,TH-Bangkok,Accounts Receivable: ไม่จิ๋มว่าไม่นะคะ
+01:00:14 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: ไม่มีผล
+01:00:14 Chamnong,Nick,TH-Bangkok,Information Technology: ถูกต้อง มันจะผิดอะไรอย่างเงี้ยเหมือนกับว่าวันนี้ออกใบนั้นไปแล้วด้วยเหมือนมันออกใบไปแล้วเลยอะ
+01:00:18 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: เออ มันออกซ้ํารึ มันออกซ้ํารึ มันออกซ้ํารึเปล่า จะว่าแบบไปเหมือนใบเหมือนใบ 7777 เมื่อกี้ก็ออกเบอร์606 ไปแล้ว แล้วพอจิ๊บปิดแล้วจิ๊บมาเปิดใหม่เป็นใบ 78 จิ๊บก็เอา 606 มาซ้ํามันจะกลายเป็นว่าว่าไอ้ cover ไอ้ตัว cover cheeze อะมันมันแบบจะรู้ได้ไงว่าเราไม่ได้ส่งบิล2ใบในใน ไปวางบิล 2 อันอะไรอย่างเงี้ยส่งบิลเดิมในใบสวางบิล 2 อันอะ
+01:00:39 Thongkumwan,Pattarin,TH-Bangkok,Accounts Receivable: ชงแต่ว่าบิลมันก็จะมีแค่ฉบับเดียวนะ แบบพี่นัทที่เป็นแบบฟิสโค้ชใช่ใช่
+01:00:42 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: ก็ใช่ไง แต่ว่าใช่แต่ว่า cover page มันอาจจะมีโอกาสที่จะ gens อยู่ใน cover page 2 ใบได้ถูกป่ะ
+01:00:45 Thongkumwan,Pattarin,TH-Bangkok,Accounts Receivable: อ่า ใช่จิ๋วว่ามันมันสามารถแบบผิดแบบนั้นได้ แต่ว่าสุดท้ายแล้วอะเลขในโคฟเวอร์เพจก็ควรจะไปชนกับแบบเอกสารที่เป็นฟิสิคอลเพราะมัน มันต้องเช็คอยู่แล้ว เวลาแบบเจนไปวางวินเข้ามา
+01:01:02 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: ก็คืออคุนนิคสรุปมันก็คือทางบิสซิเนสไม่สนใจอ่ะค่ะ ซ้ําได้ทิ้งอะไรก็ได้เพราะสุดท้ายเราเค้าจะต้องเอาใบวางบิลไปไปแมตช์กับเอกสารอยู่ดี เข้าใจว่าอันนี้ไม่ได้มีเดต้าเบสที่มาร์คเลยป่ะ น้องจิ๊บว่าอันเนี้ยเรียกแล้วเรียกซ้ําหรือเรียกใหม่เรียกอะไร คือขอแค่ให้ดึงให้ดึงสิ่งที่เข้ามาใน 2วันนี้อ่ะ ในในช่วงเดียร์ ช่วงวันที่ที่ที่จิ๊บต้องการเข้ามาแต่ว่าไม่ได้สนใจเลยว่าจริงจริงแล้ว อันนี้มันอาจจะเอาไปเรียกแล้ววัน3วันที่แล้วก็ได้ถูกป่ะ
+01:01:25 Thongkumwan,Pattarin,TH-Bangkok,Accounts Receivable: ค่ะ ใช่ ถ้าเกิดว่าจีบเรียกมา มันก็จะมาแบบทั้งหมดเลยอะพี่นัท
+01:01:37 Chamnong,Nick,TH-Bangkok,Information Technology: อืม ก็ อืม ก็คือแปลว่าจริงจริงเราไม่มี data รวมว่าวันนี้ออกไปกี่ใบอะไรอย่างเงี้ยไม่มีเลย เพราะว่ามันใช้ไม่ได้เพราะว่ามันจะมั่วถูกมั้ยฮะ
+01:01:45 Thongkumwan,Pattarin,TH-Bangkok,Accounts Receivable: ฉันไม่ได้มีการแบบเรียก report ออกมาดูแบบนั้นค่ะ ใช่ให้ให้ทํา7 สุดไหมอ่ะแบบสุดท้ายแล้วมันจะออกมาเป็นหน้าไปวางบินที่เป็นแบบpdfค่ะ
+01:02:00 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: คือสุดท้ายเจนเจนมาจนพีดีเอฟอะค่ะ ท่าทางทางบิสซิเนสไม่ได้เอาไปทําอะไรก็ก็ก็ไม่มีผลอะไรก็เจน
+01:02:07 Chamnong,Nick,TH-Bangkok,Information Technology: นะฮะ โอเค
+01:02:08 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: จะเล่นเล่นขึ้นมาแบบเนี้ยค่ะที่เราเล่นเล่นกันอยู่ตอนนี้ค่ะ
+01:02:11 Thongkumwan,Pattarin,TH-Bangkok,Accounts Receivable: ใช่ ใช่ ใช่ใช่
+01:02:13 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: ใช่ อ๋อ หน้าหน้าตา นี้ก็จะให้คุณหนิงทําด้วย แต่ว่าเดี๋ยวจะ layout the layout ไม่ได้ไม่ได้ซีเรียสมาก เดี๋ยวดูอีกทีอะ
+01:02:20 Chamnong,Nick,TH-Bangkok,Information Technology: เจนเจนให้ เจนเจนให้เจนพีเอฟด้วยให้เจนใบวังมีจริงจริงเลยใช่มั้ย ไฟวังบินเลยใช่มั้ยฮะ
+01:02:22 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: ใช่ใช่ค่ะ ให้เจนปอยบ้างบิลใช่ค่ะใช่
+01:02:28 Pisitsupakarn,Supalerk,TH-Bangkok,IT ADI - X-Stream Ops: ผมผมถามอย่างงี้ได้มั้ยครับ คือคืออันเนี้ย มันเป็นอันที่เราแบบแฮปปี้กับมันอยู่แล้วถูกมั้ย
+01:02:35 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: เขาแฮปปี้
+01:02:36 Pisitsupakarn,Supalerk,TH-Bangkok,IT ADI - X-Stream Ops: ก็คือ เนื่องจากว่าอันเนี้ยเรากําลังจะทําอันนี้อันใหม่กันเนอะ คืออันเนี้ย มันคือ asia สิ่งที่เราให้ความเป็นคุณนิคไปอะครับ มันแค่มา replace ของเก่า แต่ว่าจริงจริงมันอาจจะมีบางพาร์ทที่มันเปลี่ยนได้ และทําให้มันชีวิตเราดีกว่านี้ได้อะไร แบบเนี้ยคือมันไม่อาจจะไม่จําเป็นจะต้องแบบ replace อันเดิมแบบร้อยเปอร์เซ็นต์
+01:02:36 Thongkumwan,Pattarin,TH-Bangkok,Accounts Receivable: ด้วยด้วย
+01:02:48 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: มันเปลี่ยนได้ อืม
+01:02:56 Thongkumwan,Pattarin,TH-Bangkok,Accounts Receivable: ได้แบบ ถ้าอันนี้ก็คือเท่าที่เป็น process ที่ทํา ณ ตอนเนี้ย แต่ถ้าเกิดว่ามันสามารถช่วยลดงานหรืออะไร จิว่าก็โอเคด้วยแบบ ถ้ามันยังตอบจุดประสงค์เดิมที่เราอยากจะได้ใบวางบิลส่งไปให้ลูกค้าค่ะ เพราะว่ามันใบเนี้ยมันต้องเก็บไว้เนาะ เวลาไปส่งเอกสารอะเค้าจะต้องเซ็นรับ
+01:03:16 Thongkumwan,Pattarin,TH-Bangkok,Accounts Receivable: เพื่อแบบเปิดเป็นซัพพอร์ตว่าทางลูกค้าได้รับเอกสารครบตามที่เราส่งไปแล้ว
+01:03:24 Chamnong,Nick,TH-Bangkok,Information Technology: มันมันคือมันดูมันดูแบบมันแบบเหมือนยังไงทําไมพังวินมันยังดูมีแบบมีริววิชั่นเนี่ยอันนี้มันไม่มีเลยอะ สมมุติเราส่งมานี้ไปให้ลูกค้าแล้วนะ678 ใช่มั้ยฮะ แล้วเรามาแก้ในตอนนั้นเป็นเราได้ด้วยใช่มั้ย
+01:03:24 Thongkumwan,Pattarin,TH-Bangkok,Accounts Receivable: ค่ะ
+01:03:38 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: แต่ แต่ในสาระเผ็ด
+01:03:41 Chamnong,Nick,TH-Bangkok,Information Technology: ว่าเราเราเราไปติ๊กเราไปติ๊กเพิ่มอีก2 รายการไงแต่ใบนี้ส่งให้ลูกค้าไปแล้วมันก็ทําได้ถูกมั้ยฮะ มันไม่มีรีวิชั่น ไม่มีเวอร์ชั่นนิ่งไม่มีอะไร
+01:03:48 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: ใช่มันไม่มีคนโชว์อะไรเลย
+01:03:51 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: ได้ค่ะ ก็ทําได้ ใช่ใช่ทําได้ค่ะ
+01:03:53 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: ยิบมัน human error ก็เกิดได้ใช่เหมือนแบบเหมือนถ้าเหมือนถ้าจิ๊บแบบติ๊กผิดเอาอันนี้มาซ้ําแล้วก็ลืมเช็คเอกสารว่าไม่มีจริงมันก็ไปซ้ําได้
+01:03:54 Chamnong,Nick,TH-Bangkok,Information Technology: มันดูน่ากลัวมันก็ดูน่ากลัวมาก
+01:04:03 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: ใช่ค่ะ
+01:04:03 Chamnong,Nick,TH-Bangkok,Information Technology: มันไปไม่เหมือนกันได้ด้วยนะฮะ ในในเลขเดียวกันนะฮะ
+01:04:09 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: น่าจะได้นะคะ เพราะเหมือนมันแอดเพิ่มได้
+01:04:10 Chamnong,Nick,TH-Bangkok,Information Technology: เหมือนมัน เหมือนมันควรจะมีว่าถ้าเราปริ้นแล้วมันจะมาว่าปริ้นแล้วแล้วถ้าเราแก้อีกมันจะต้องเติม r หนึ่ง r 2 อะไรอย่างเงี้ยแบบแบบเหมือนกับเพื่อให้ไม่เป็นเลขเดียวกันที่ข้อมูลไม่เหมือนกันอะไรอย่างเงี้ยฮะ แค่คิดจะ
+01:04:23 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: เออเท่าเท่าเท่าที่ดูใน database ไม่มีการ flag ไว้ค่ะ
+01:04:26 Chamnong,Nick,TH-Bangkok,Information Technology: ไม่มี fact อะไรเลยใช่มั้ยฮะแบบ
+01:04:27 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: ไม่มีค่ะไม่มีใช่ใช่ ไม่มีflagweight
+01:04:30 Chamnong,Nick,TH-Bangkok,Information Technology: มันก็ทําได้แหละแค่ผมไม่มีว่ามันจะผิดไม่ใช่วันทําไมมันมันดูมันดูมันดูไม่มันดูผิดหลักตั้งแต่แรก
+01:04:34 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: หรือว่าทําทําไมใช่ไหม คิดเหมือนกัน
+01:04:41 Chamnong,Nick,TH-Bangkok,Information Technology: แต่แต่ไม่เป็นไรได้อยู่ทําได้เดี๋ยวค่อยว่าอีกทีละกันฮะ ตอนนั้นว่าเราจะเพิ่มฟังก์ชันอะไรมั้ย
+01:04:48 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: ได้ค่ะ
+01:04:49 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: โอเค โอเคค่ะ
+01:04:50 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: งั้นวันนี้ประมาณนี้เดี๋ยวอาจจะไม่ได้ อันนี้เป็นแบบไกลไกลไว้ก่อนเดี๋ยวให้น้องอ่าไปแก้ตัวตัว requirement อะ สเปคด็อกแล้วเดี๋ยวอาจจะส่งให้คุณนิคแล้วเรา regulp กันอีกรอบ
+01:04:57 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: สเปคด็อก
+01:05:01 Chamnong,Nick,TH-Bangkok,Information Technology: รอดูอีกนิดนึง เลยมั้ยฮะ ตัวตัวหน้าเลยมั้ยฮะ มีหน้าหน้าที่แอ้นลูกค้าใหม่อะฮะ
+01:05:02 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: ได้ค่ะได้
+01:05:06 Thongkumwan,Pattarin,TH-Bangkok,Accounts Receivable: นักเรียนลูกค้าใหม่
+![Screenshot](https://storage.googleapis.com/tactiq-prod-au.appspot.com/screenshots/3MEFZQFTk6U5C9l3bu7sdgUgUrK2/ZEMXWD0Z3TXBHznhSmH2/1762491938502.png?X-Goog-Algorithm=GOOG4-RSA-SHA256&X-Goog-Credential=tactiqrun%40tactiq-prod-au.iam.gserviceaccount.com%2F20260108%2Fauto%2Fstorage%2Fgoog4_request&X-Goog-Date=20260108T103628Z&X-Goog-Expires=604800&X-Goog-SignedHeaders=host&X-Goog-Signature=9b2dd55da75e431ab65a0b3db9e8013d5d206e8848821e1a56c28001267c15c3d06799f474817420e45040fa67922942cdad63b2941967100a4206c7eb4e3b8dd655580fdc7d08ac40c9b997b1014356d263582ca2dd6fbbdf6939d6621ee3eadb701e589c46448bfe0cae162b4b619dd4c8897edc299634d299ec2f5b1068d67349b4eb50baf4ef61ab2bf30564df62035b8a3a4d64476d7f5aee7930b25ee0c0200a147f6c2a406e8cc839b0a6b2774590c6328f64ae158d280dd05d0220bba0db7fc65f382be622837c31237df402e7de06eebf4c3b2dd4cd00b861042caec7f5d755cf02b167d81fd1ce67093bb3b28b409803ebd0e7c2b9365292a9be7e)
+01:05:10 Thongkumwan,Pattarin,TH-Bangkok,Accounts Receivable: ในในพาร์ทที่เป็นของพี่ส้มที่เป็นไฟแนนซิ่งใช่ไหมคะ
+01:05:16 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: ใช่ใช่ ไม่ใช่ค่ะ แต่เรามองหาวัน
+01:05:20 Thongkumwan,Pattarin,TH-Bangkok,Accounts Receivable: สักแป๊บนึงนะ
+01:05:22 Chamnong,Nick,TH-Bangkok,Information Technology: ปิ้ง
+01:05:25 Thongkumwan,Pattarin,TH-Bangkok,Accounts Receivable: ตัวนี้ อันนี้ปกติจิ๋มไม่เคยทําแบบกันนะไม่รู้
+01:05:30 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: ไปที่ maping customer ใส่ customer list เอ้ย customer coat เราเอา customer coach คือต้องมาจาก
+![Screenshot](https://storage.googleapis.com/tactiq-prod-au.appspot.com/screenshots/3MEFZQFTk6U5C9l3bu7sdgUgUrK2/ZEMXWD0Z3TXBHznhSmH2/1762491966002.png?X-Goog-Algorithm=GOOG4-RSA-SHA256&X-Goog-Credential=tactiqrun%40tactiq-prod-au.iam.gserviceaccount.com%2F20260108%2Fauto%2Fstorage%2Fgoog4_request&X-Goog-Date=20260108T103628Z&X-Goog-Expires=604800&X-Goog-SignedHeaders=host&X-Goog-Signature=9f1edcc1458ff575ef4d851c0f82ee7a78283d93a9b7534910aebfaa591705c9b838abf768a89d3bde220331754b32acb728a21d0bbd2b0d86d2101670b6d893c4d080ecfcd4b3c7b35215c6e09639a937f8565ba699ff9f8249cef222651211ee16a37a4704c9639fa91f4f5b434882fc28cf166c3e6e8d5c6264419815c2e82075b64a40a4acc2481e7650c5b5f6c8247b08f11a561e528cd0ed8bf57ededbd6d671d3a0e4d8641565c11bb5ac79a51a0b49fcd02aa7cdf53e10fc41a484a794184354acfcf2f3bc3ea4cc02585f632b158f4e9b06a6e49d25b4677a11b91ec05d9f36f36f8fe58275e90b3080ae0a5c70db6bb15fb1b92d212b13a9f53bbe)
+01:05:42 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: มันต้องมาจากจากจาก
+01:05:42 Chamnong,Nick,TH-Bangkok,Information Technology: นี่คือแอป
+01:05:42 Thongkumwan,Pattarin,TH-Bangkok,Accounts Receivable: นี้เหรอ
+01:05:44 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: งั้นอันนี้คือมดจมา งั้นอันนี้คือมดจดมาจากจดมาจดจดมาจาก dock อีกทีนึง
+01:05:49 Thongkumwan,Pattarin,TH-Bangkok,Accounts Receivable: ออโต้ แอบิว
+01:05:50 Chamnong,Nick,TH-Bangkok,Information Technology: คือ เพจอินวอยซ์ด้วยนะ คืออะไรไม่รู้
+01:05:54 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: มันจะเป็น No countsumer myanhan No coun
+01:05:58 Thongkumwan,Pattarin,TH-Bangkok,Accounts Receivable: ฉันว่าเออ ลองกด แต่ว่าอันนี้น่าจะ
+01:06:03 Chamnong,Nick,TH-Bangkok,Information Technology: ไม่ ไม่น่าใช่
+01:06:03 Thongkumwan,Pattarin,TH-Bangkok,Accounts Receivable: ว้าย ไม่งั้นไม่อยากลองกดอะเพราะว่า ok
+01:06:04 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: น่าจะ น่าจะเป็นนิว new customer only รึเปล่าคะ
+01:06:09 Chamnong,Nick,TH-Bangkok,Information Technology: ใช่ มันน่าจะมีฟิวเจอร์
+01:06:10 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: ไม่
+01:06:10 Thongkumwan,Pattarin,TH-Bangkok,Accounts Receivable: ไม่ ไม่ใช่
+01:06:10 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: ไม่ใช่ เอ๊ะ มัน เอ๊ะ มันหน้าตาไม่เหมือนอันที่โมเห็นในล็อกเลยอะเดี๋ยวนะ ขออนุญาต
+01:06:19 Chamnong,Nick,TH-Bangkok,Information Technology: โปรแกรมนี้โปรแกรมนี้สอนให้ผมได้หรือเปล่า
+01:06:28 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: ไม่มั่นใจเหมือนกันค่ะ คุณเอ๋เนี่ยค่ะ มันมีในมันมีในเอพีเอ็มมั้ยคะตัวนี้
+01:06:38 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: ใน a p m
+01:06:38 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: น่า น่าจะ น่าจะมันน่าจะ e shopee ได้ไหมคะ
+01:06:42 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: อะไรนะดีทําอะไรนะ ดีท็อกซ์อะไรนะ
+01:06:44 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: มันมันมันใช้ e shopping ได้มั้ยคะตัวนี้
+01:06:48 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: ไม่ไม่ไม่
+01:06:48 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: ไม่เคย
+01:06:48 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: ไม่ไม่ไม่น่าได้เพราะว่ามันเป็น regue มันเป็นโลโก้แอพอะมันไม่ใช่แอปแบบแอปแบบทั่วไปอ่ะเออ
+01:06:49 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: ไม่เคยร้องคือเหมือนหาไม่เจอ เอ แล้วปกติเวลาลงลงยังไงนะคะพี่จิ๊บ พอจะนึกออกมั้ย
+01:07:01 Chamnong,Nick,TH-Bangkok,Information Technology: Copy folder มาแล้วเปิดมั้ย
+01:07:03 Thongkumwan,Pattarin,TH-Bangkok,Accounts Receivable: ลงเขาลงให้เป็นพี่อ้นน่ะตอนที่ทํา เหม เหมือนมันมี folder นะคะ
+01:07:11 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: เห้ย เดี๋ยวให้โมไปเช็คไปเช็คพี่อ้นก็ได้แล้วลองดูว่าเอ่อ ต้องลงอันเนี้ยให้คุณนิคได้มั้ย ลองไปถามพี่โอ๊ตดู
+01:07:13 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: ได้ค่ะ
+01:07:18 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: โจนา ลูมั้ยก็ไม่รู้อ่ะ หากมีอ้นดูอะเออว่าถ้าจะแบบลงให้แบบเออ ข้างนอกมันมีแบบคอนโทรลหรืออะไรมั้ย
+01:07:26 Chamnong,Nick,TH-Bangkok,Information Technology: ช็อตคัทโอไม่รู้อยู่นิ
+01:07:28 Thongkumwan,Pattarin,TH-Bangkok,Accounts Receivable: เรื่อง
+01:07:31 Chamnong,Nick,TH-Bangkok,Information Technology: ผมมี compeigh ได้ ดูแล้ว น่าจะเป็นดอทเน็ตเห็น จะ 4ฉาบ ชาร์ตเก่าเก่าเลย
+01:07:49 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: ใช่ค่ะ
+01:07:50 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: อ๋อพี่พี่จีบค่ะ งัวเจอ และถ้าถ้ารีจิสเตอร์คอนซูเมอร์ก็ไปตรงคอสตูมเมอร์อันที่เราเห็นเยอะเยอะเมื่อกี้อะค่ะ แล้วมันจะมีช่อง consumer teacher โค้ด ใช่แล้วก็อันนี้ก็คือถ้าเราได้ได้ได้ลูกค้าว่าลูกค้าจะเข้า financial program ใหม่อะ ทีนี้ก็ต้องก่อนหน้าเนี้ย ต้องไปเข้าแซบเพื่อเอาตัว customer นัมเบอร์อะมาใส่ตรงนี้แล้วก็กด refres
+01:08:18 Chamnong,Nick,TH-Bangkok,Information Technology: เพราะ เพราะว่าแบบนี้มันแปลว่ามันไม่ใช่มันไม่ได้สร้างมันไม่ได้สร้างลูกค้าใหม่แต่มันไปเก็บมาจากบาตาเบตที่แซบเป็นคน
+01:08:26 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: มันไปเก็ตมาเพื่อที่จะใส่ตัว เอ่อมันจะมีเชนพวกเขาอะไรเหมือนใส่พวกแบบว่าข้อมูลว่าลูกค้าคนเนี้ยเป็นลูกค้าไฟแนนเชียลโปรแกรมของธนาคารไหนอ่ะคะ
+01:08:45 Chamnong,Nick,TH-Bangkok,Information Technology: ข้อมูลนั้นอยู่ไหนนะฮะ ว่าลูกค้านี่เป็น financing program ของธนาคารไหน อันนี้ดูด
+01:08:50 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: ธนาคารเค้าจะส่งอีมาให้ค่ะ
+01:08:53 Chamnong,Nick,TH-Bangkok,Information Technology: แปลว่าในโปรแกรมนี้ไม่รู้ถูกมั้ยฮะ
+01:08:55 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: โปร โปรแกรมนี้ไม่ทราบค่ะ เราต้องกรอกเข้าไปแฮนด์
+01:08:58 Chamnong,Nick,TH-Bangkok,Information Technology: แปลว่า database ไม่ทราบด้วย ถ้าให้เดา
+01:09:03 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: อาใช่ไหม คือถ้ายังไม่ยัง ถ้ายังไม่ได้ register เข้าไป แต่ถ้ายังไม่รู้ แต่ว่าถ้า register ปุ๊บดาต้าเบสก็จะรู้ว่า เป็นลูกค้าธนาคารไหน
+01:09:13 Chamnong,Nick,TH-Bangkok,Information Technology: มีซิสเตอร์ยังไงฮะ
+01:09:15 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: ก็เนี่ยค่ะ เดี๋ยวสมมุติโมไม่มั่นใจว่าถ้าเป็นลูกค้าที่มันมีอยู่แล้วมันได้มั้ยนะพี่ เอ๊ะ ลองลองลองเป็นลูกค้าที่ที่ที่มีอยู่ในนี้ได้ไหมคะ สมมุติเป็น020929 นี้ก็ได้มึง ต้อง refit นิดนึง ต้อง re ต้อง refit นิดนึงค่ะ
+01:09:33 Chamnong,Nick,TH-Bangkok,Information Technology: เหมือนเป็นแค่ฟิลเตอร์
+01:09:37 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: แล้วก็ มันจะแก้ตัวเชนกรุ๊ป code กับ collector code ได้มั้ยคะ
+01:09:45 Chamnong,Nick,TH-Bangkok,Information Technology: อันนี้คือไอ้ไอ้นี่คือไอ้ นี่คือสิ่งที่บอกว่า เป็นลูกค้าธนาคารไหนเป็น fixed
+01:09:50 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: ใช่ใช่ค่ะก็คือใช่ก็จะมีโค้ชบอกว่าลูกค้าถ้าสมมุติเป็นลูกค้าเคแบงก์จะเป็นเลขหนึ่ง ถ้าเป็นลูกค้า ttb เป็นอีกเลขนึง แต่ว่าถ้าถ้าสมมุติว่าลูกค้าเค้าเป็นลูกค้า cash อันนี้คือเป็นการรีจิสเตอร์ของลูกค้า credit ถ้าเป็นลูกค้าแคสด้วยเนี่ย เค้าต้องต้องเข้าไปตรง mapping ค่ะ พี่พี่จิ๊บ
+01:09:51 Chamnong,Nick,TH-Bangkok,Information Technology: คือ 2 prop นี้ โอเคฮะ อ๋อ ส่งเลขอย่างที่บอก
+![Screenshot](https://storage.googleapis.com/tactiq-prod-au.appspot.com/screenshots/3MEFZQFTk6U5C9l3bu7sdgUgUrK2/ZEMXWD0Z3TXBHznhSmH2/1762492234029.png?X-Goog-Algorithm=GOOG4-RSA-SHA256&X-Goog-Credential=tactiqrun%40tactiq-prod-au.iam.gserviceaccount.com%2F20260108%2Fauto%2Fstorage%2Fgoog4_request&X-Goog-Date=20260108T103628Z&X-Goog-Expires=604800&X-Goog-SignedHeaders=host&X-Goog-Signature=860b2fca1bc08ff9744ef76e30c52af95663d126714d0860bf8f58cc2e3bae1a27bdc611008163b1733b9cd742eb369c9ce95d5ce87d4502c83bdf66d59df8aad7e297ae2d92686b989fe40bb75eff06f814a72147b90f8be3ec20a4b4ce8d832bcc22fddc53ed3182dee05e5b835fb3d47e718e5aecad4366e13a38e1cc8835613bf6f27f62a4daa668e16d09396a270b7fbd4c3db9dd76a0f625f23a54426f7f1ce0cf0c025af67d8da778294755cadd57d0416abfd8e2c7e7900261b733a8a406527b1b801e290ad92bae17abb66e676a8111930c49f3e7a4dafbbc8b2d7c58d33fec0ac757113af54f181f01f8202e0cb31fce200d433f533113f89e7b68)
+01:10:14 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: ปิ้งแล้วก็ cut of date
+01:10:15 Thongkumwan,Pattarin,TH-Bangkok,Accounts Receivable: อือ
+01:10:18 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: ตรงเนี้ยก็คือเค้าต้องเค้าไปเลือกว่าเค้าเป็นแบงก์ไหนมีแค่แบงก์กับซีทีวี แล้วก็ customer i d ละก็ใส่ข้อมูลแบบว่ามันก็จะขึ้นมาให้ตั้งแต่เออ มีข้อมูล bank coach อะไรแล้วเค้าก็ต้องสาย cut ofdate เข้าไป ถ้าเป็นลูกค้า cash
+01:10:35 Chamnong,Nick,TH-Bangkok,Information Technology: ออฟเดตคืออะไรนะฮะ
+01:10:36 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: เคารพเดทคือเป็น เอ่อ สมมุติว่ามันจะเซ็นเฉพาะบิลตั้งแต่ cut of late มาให้ดูอะค่ะ
+01:10:46 Thongkumwan,Pattarin,TH-Bangkok,Accounts Receivable: วันที่แบบว่าเค้าเริ่มที่จะเป็นลูกค้าไฟแนนซ์ป้ะ
+01:10:48 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: ใช่ที่เขาเริ่มเป็นลูกค้าไฟแนนซ์เขา ก็จะจินเวลาแบบตัวบิลเพนท์ มันจะดึงข้อมูลเอามาแค่แบบจากวันที่ที่กรอกเข้าไป อ่า ใช่ที่
+01:10:50 Thongkumwan,Pattarin,TH-Bangkok,Accounts Receivable: อืม
+01:11:00 Chamnong,Nick,TH-Bangkok,Information Technology: ติวเตอร์ซักอย่าง ประมาณหนึ่ง
+01:11:01 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: ฟีเจอร์ซักอย่างออกมาคือจะมีมีข้อมูลบิล ฟิลเตอร์ตาม เอ่อ cut of date ที่มี
+01:11:08 Chamnong,Nick,TH-Bangkok,Information Technology: กดผัก กด health ด้วยมั้ย ช่วงบน
+01:11:11 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: คุณคุณดี เดี๋ยวขอขอดรอปก่อนนะเดี๋ยวมีประชุมบ่ายโมงเดี๋ยวกินข้าวไม่ทันได้โอเคค่ะ
+01:11:15 Chamnong,Nick,TH-Bangkok,Information Technology: คือเอา
+01:11:19 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: ฝาก
+01:11:24 Chamnong,Nick,TH-Bangkok,Information Technology: ปรับกฎ ปรากฎปุ่มได้ไหมฮะ
+01:11:29 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: อ๋อไม่มี
+01:11:31 Chamnong,Nick,TH-Bangkok,Information Technology: ไม่หมายถึง ไม่หมายถึงกฎอีกกลุ่มนะครับที่ไม่ใช่ฮะ
+01:11:33 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: อีกอันนี้ไม่ใช about ตรง health ป่ะค่ะ ทาน เออเร่อ
+01:11:42 Chamnong,Nick,TH-Bangkok,Information Technology: โอเค แพ้เลย ได้งบประมาณเนี้ยครับผมก็น่าจะเดี๋ยวต้องมาดูอีกทีนึงอีกเยอะครับ อาจจะสั่งต่อฝากเช็คให้หน่อยว่าว่าต้นซีปั๊วมันอยู่ที่ไหนแล้วผมอักเสบได้มั้ย
+01:11:53 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: ได้ค่ะ ได้ ได้ค่ะ ตัวแอปมันน่าจะใหญ่ขึ้นน่ะค่ะ คุณเน็ตก็ยัง
+01:12:05 Chamnong,Nick,TH-Bangkok,Information Technology: ใหญ่หรอครับ แอปแป๊บนี้ใหญ่เหรอ
+01:12:07 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: ใหญ่ค่ะ ใหญ่หมายถึงว่าความฟีเชอร์ที่ใช้มันเยอะนิดนึง คือฟีเจอร์ที่ใช้มันค่อนข้างจะยูนิต พอสมควรยังไง ถ้าถ้ามีข้อสงสัยตรงไหนก็ถามหมดได้ค่ะ เดี๋ยวเดี๋ยวโมไปหาคําตอบมาให้
+01:12:24 Chamnong,Nick,TH-Bangkok,Information Technology: ผมต้องทําทุกฟังก์ชั่นที่แอพนี้ทําได้ หรือว่าจะมีลิสต์ฟังก์ชันที่ต้องการให้
+01:12:24 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: ใช่ เดี๋ยวเดอะโมลิสให้ค่ะ เพราะว่าตอนนี้คือหลายหลายฟังชั่นมันไม่ได้ใช้แล้วก็มีจากแอพเก่า ใช่ค่ะ โอเค
+01:12:35 Chamnong,Nick,TH-Bangkok,Information Technology: เขียนได้ครับ
+01:12:39 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: เออโม้ถามนิดนึงค่ะ คุณนิคดาต้าเบสเป็นออนพรีมิสกับอะไรอีกอันนึงนะคะ
+01:12:45 Chamnong,Nick,TH-Bangkok,Information Technology: อ่อนข่าวความผิดนี้อ่ะ
+01:12:47 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: โอเคได้ค่ะ
+01:12:49 Chamnong,Nick,TH-Bangkok,Information Technology: ว่า ถ้าออมที่มิตเกิลคําถามใหม่ว่าผมจะต่อยังไงอะพี่
+01:12:53 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: โอเคได้ได้ได้ค่ะ เดี๋ยวมัวไปถามมาให้ โอเค ได้ค่ะ น่าจะประมาณนี้ค่ะ ขอบคุณค่ะคนนี้ ขอบคุณค่ะพี่เจ ขอบคุณค่ะคนนี้ ขอบคุณค่ะ พี่เจ็บ
+01:13:04 Thongkumwan,Pattarin,TH-Bangkok,Accounts Receivable: คุณคะ สวัสดีค่ะ
+01:13:05 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: ขอบคุณค่า
+  

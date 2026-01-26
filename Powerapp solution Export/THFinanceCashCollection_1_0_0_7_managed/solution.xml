@@ -1,0 +1,108 @@
+<ImportExportXml version="9.2.25123.155" SolutionPackageVersion="9.2" languagecode="1033" generatedBy="CrmLive" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" OrganizationVersion="9.2.25123.155" OrganizationSchemaType="Full" CRMServerServiceabilityVersion="9.2.25123.00155">
+  <SolutionManifest>
+    <UniqueName>THFinanceCashCollection</UniqueName>
+    <LocalizedNames>
+      <LocalizedName description="[THFinance]Cash Collection" languagecode="1033" />
+    </LocalizedNames>
+    <Descriptions />
+    <Version>1.0.0.7</Version>
+    <Managed>1</Managed>
+    <Publisher>
+      <UniqueName>NickChamnong</UniqueName>
+      <LocalizedNames>
+        <LocalizedName description="NickChamnong" languagecode="1033" />
+      </LocalizedNames>
+      <Descriptions />
+      <EMailAddress xsi:nil="true"></EMailAddress>
+      <SupportingWebsiteUrl xsi:nil="true"></SupportingWebsiteUrl>
+      <CustomizationPrefix>nc</CustomizationPrefix>
+      <CustomizationOptionValuePrefix>12485</CustomizationOptionValuePrefix>
+      <Addresses>
+        <Address>
+          <AddressNumber>1</AddressNumber>
+          <AddressTypeCode>1</AddressTypeCode>
+          <City xsi:nil="true"></City>
+          <County xsi:nil="true"></County>
+          <Country xsi:nil="true"></Country>
+          <Fax xsi:nil="true"></Fax>
+          <FreightTermsCode xsi:nil="true"></FreightTermsCode>
+          <ImportSequenceNumber xsi:nil="true"></ImportSequenceNumber>
+          <Latitude xsi:nil="true"></Latitude>
+          <Line1 xsi:nil="true"></Line1>
+          <Line2 xsi:nil="true"></Line2>
+          <Line3 xsi:nil="true"></Line3>
+          <Longitude xsi:nil="true"></Longitude>
+          <Name xsi:nil="true"></Name>
+          <PostalCode xsi:nil="true"></PostalCode>
+          <PostOfficeBox xsi:nil="true"></PostOfficeBox>
+          <PrimaryContactName xsi:nil="true"></PrimaryContactName>
+          <ShippingMethodCode>1</ShippingMethodCode>
+          <StateOrProvince xsi:nil="true"></StateOrProvince>
+          <Telephone1 xsi:nil="true"></Telephone1>
+          <Telephone2 xsi:nil="true"></Telephone2>
+          <Telephone3 xsi:nil="true"></Telephone3>
+          <TimeZoneRuleVersionNumber xsi:nil="true"></TimeZoneRuleVersionNumber>
+          <UPSZone xsi:nil="true"></UPSZone>
+          <UTCOffset xsi:nil="true"></UTCOffset>
+          <UTCConversionTimeZoneCode xsi:nil="true"></UTCConversionTimeZoneCode>
+        </Address>
+        <Address>
+          <AddressNumber>2</AddressNumber>
+          <AddressTypeCode>1</AddressTypeCode>
+          <City xsi:nil="true"></City>
+          <County xsi:nil="true"></County>
+          <Country xsi:nil="true"></Country>
+          <Fax xsi:nil="true"></Fax>
+          <FreightTermsCode xsi:nil="true"></FreightTermsCode>
+          <ImportSequenceNumber xsi:nil="true"></ImportSequenceNumber>
+          <Latitude xsi:nil="true"></Latitude>
+          <Line1 xsi:nil="true"></Line1>
+          <Line2 xsi:nil="true"></Line2>
+          <Line3 xsi:nil="true"></Line3>
+          <Longitude xsi:nil="true"></Longitude>
+          <Name xsi:nil="true"></Name>
+          <PostalCode xsi:nil="true"></PostalCode>
+          <PostOfficeBox xsi:nil="true"></PostOfficeBox>
+          <PrimaryContactName xsi:nil="true"></PrimaryContactName>
+          <ShippingMethodCode>1</ShippingMethodCode>
+          <StateOrProvince xsi:nil="true"></StateOrProvince>
+          <Telephone1 xsi:nil="true"></Telephone1>
+          <Telephone2 xsi:nil="true"></Telephone2>
+          <Telephone3 xsi:nil="true"></Telephone3>
+          <TimeZoneRuleVersionNumber xsi:nil="true"></TimeZoneRuleVersionNumber>
+          <UPSZone xsi:nil="true"></UPSZone>
+          <UTCOffset xsi:nil="true"></UTCOffset>
+          <UTCConversionTimeZoneCode xsi:nil="true"></UTCConversionTimeZoneCode>
+        </Address>
+      </Addresses>
+    </Publisher>
+    <RootComponents>
+      <RootComponent type="1" schemaName="cr7bb_thfinancecashcollectioncustomer" behavior="0" />
+      <RootComponent type="1" schemaName="cr7bb_thfinancecashcollectionemaillog" behavior="0" />
+      <RootComponent type="1" schemaName="cr7bb_thfinancecashcollectionprocesslog" behavior="0" />
+      <RootComponent type="1" schemaName="cr7bb_thfinancecashcollectionrole" behavior="0" />
+      <RootComponent type="1" schemaName="cr7bb_thfinancecashcollectionroleassignment" behavior="0" />
+      <RootComponent type="1" schemaName="cr7bb_thfinancecashcollectiontransaction" behavior="0" />
+      <RootComponent type="1" schemaName="nc_thfinancecashcollectioncalendarevent" behavior="0" />
+      <RootComponent type="1" schemaName="nc_thfinancecashcollectionworkingdaycalendar" behavior="0" />
+      <RootComponent type="9" schemaName="cr7bb_approvalstatuschoice" behavior="0" />
+      <RootComponent type="9" schemaName="cr7bb_emailtemplatechoice" behavior="0" />
+      <RootComponent type="9" schemaName="cr7bb_recordtypechoice" behavior="0" />
+      <RootComponent type="9" schemaName="cr7bb_sendstatuschoice" behavior="0" />
+      <RootComponent type="9" schemaName="cr7bb_statuschoice" behavior="0" />
+      <RootComponent type="9" schemaName="cr7bb_transactiontypechoice" behavior="0" />
+      <RootComponent type="9" schemaName="nc_regionchoice" behavior="0" />
+      <RootComponent type="20" id="{ae76f1cc-06f1-f011-8406-000d3ac83593}" behavior="0" />
+      <RootComponent type="29" id="{27f552f1-95a7-f011-bbd2-0022485a6e32}" behavior="0" />
+      <RootComponent type="29" id="{327169f2-09a4-f011-bbd2-6045bd1ce914}" behavior="0" />
+      <RootComponent type="29" id="{63b838fa-53ee-f011-8406-6045bd204eb3}" behavior="0" />
+      <RootComponent type="29" id="{76dc1ef9-a9a3-f011-bbd2-6045bd1c675a}" behavior="0" />
+      <RootComponent type="29" id="{a84f2134-97a7-f011-bbd2-0022485a6e32}" behavior="0" />
+      <RootComponent type="29" id="{cf8144d2-a3a3-f011-bbd2-002248572d93}" behavior="0" />
+      <RootComponent type="29" id="{e5d6dfb8-97a7-f011-bbd3-6045bd1f07e5}" behavior="0" />
+      <RootComponent type="29" id="{fbab356c-96a7-f011-bbd2-002248572cf8}" behavior="0" />
+      <RootComponent type="300" schemaName="nc_thfinancecashcustomercollection_f7d47" behavior="0" />
+    </RootComponents>
+    <MissingDependencies />
+  </SolutionManifest>
+</ImportExportXml>

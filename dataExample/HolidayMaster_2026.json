@@ -1,0 +1,138 @@
+{
+  "metadata": {
+    "description": "Thai Public Holidays 2026 - For Arrear Days Calculation",
+    "source": "Bank of Thailand / Government of Thailand",
+    "lastUpdated": "2026-01-09",
+    "totalHolidays": 19
+  },
+  "holidays": [
+    {
+      "date": "2026-01-01",
+      "name": "New Year's Day",
+      "nameThai": "วันขึ้นปีใหม่"
+    },
+    {
+      "date": "2026-02-12",
+      "name": "Makha Bucha Day",
+      "nameThai": "วันมาฆบูชา"
+    },
+    {
+      "date": "2026-04-06",
+      "name": "Chakri Memorial Day",
+      "nameThai": "วันจักรี"
+    },
+    {
+      "date": "2026-04-13",
+      "name": "Songkran Festival",
+      "nameThai": "วันสงกรานต์"
+    },
+    {
+      "date": "2026-04-14",
+      "name": "Songkran Festival",
+      "nameThai": "วันสงกรานต์"
+    },
+    {
+      "date": "2026-04-15",
+      "name": "Songkran Festival",
+      "nameThai": "วันสงกรานต์"
+    },
+    {
+      "date": "2026-05-01",
+      "name": "Labour Day",
+      "nameThai": "วันแรงงานแห่งชาติ"
+    },
+    {
+      "date": "2026-05-04",
+      "name": "Coronation Day",
+      "nameThai": "วันฉัตรมงคล"
+    },
+    {
+      "date": "2026-05-11",
+      "name": "Visakha Bucha Day",
+      "nameThai": "วันวิสาขบูชา"
+    },
+    {
+      "date": "2026-06-03",
+      "name": "Queen Suthida's Birthday",
+      "nameThai": "วันเฉลิมพระชนมพรรษา สมเด็จพระนางเจ้าสุทิดา"
+    },
+    {
+      "date": "2026-07-09",
+      "name": "Asarnha Bucha Day",
+      "nameThai": "วันอาสาฬหบูชา"
+    },
+    {
+      "date": "2026-07-10",
+      "name": "Buddhist Lent Day",
+      "nameThai": "วันเข้าพรรษา"
+    },
+    {
+      "date": "2026-07-28",
+      "name": "King Vajiralongkorn's Birthday",
+      "nameThai": "วันเฉลิมพระชนมพรรษา รัชกาลที่ 10"
+    },
+    {
+      "date": "2026-08-12",
+      "name": "Queen Sirikit's Birthday / Mother's Day",
+      "nameThai": "วันแม่แห่งชาติ"
+    },
+    {
+      "date": "2026-10-13",
+      "name": "King Bhumibol Memorial Day",
+      "nameThai": "วันคล้ายวันสวรรคต รัชกาลที่ 9"
+    },
+    {
+      "date": "2026-10-23",
+      "name": "Chulalongkorn Day",
+      "nameThai": "วันปิยมหาราช"
+    },
+    {
+      "date": "2026-12-05",
+      "name": "King Bhumibol's Birthday / Father's Day",
+      "nameThai": "วันพ่อแห่งชาติ"
+    },
+    {
+      "date": "2026-12-10",
+      "name": "Constitution Day",
+      "nameThai": "วันรัฐธรรมนูญ"
+    },
+    {
+      "date": "2026-12-31",
+      "name": "New Year's Eve",
+      "nameThai": "วันสิ้นปี"
+    }
+  ],
+  "sharePointListSchema": {
+    "listName": "HolidayMaster",
+    "columns": [
+      {
+        "name": "HolidayDate",
+        "type": "DateTime",
+        "required": true,
+        "indexed": true
+      },
+      {
+        "name": "HolidayName",
+        "type": "Single line of text",
+        "required": true,
+        "maxLength": 100
+      },
+      {
+        "name": "HolidayNameThai",
+        "type": "Single line of text",
+        "required": false,
+        "maxLength": 100
+      },
+      {
+        "name": "Year",
+        "type": "Number",
+        "required": true
+      },
+      {
+        "name": "IsActive",
+        "type": "Yes/No",
+        "default": true
+      }
+    ]
+  }
+}

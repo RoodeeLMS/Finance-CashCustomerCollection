@@ -1,8 +1,9 @@
 Screens:
   scnCalendar:
     Properties:
-      LoadingSpinnerColor: =RGBA(56, 96, 178, 1)
-      OnVisible: |+
+      Fill: =RGBA(243, 242, 241, 1)
+      LoadingSpinnerColor: =RGBA(0, 101, 161, 1)
+      OnVisible: |-
         =// Batch local variables with UpdateContext
         UpdateContext({
             currentScreen: "Calendar",
@@ -10,11 +11,45 @@ Screens:
             _refreshTrigger: true,
             _isLoading: true,
             _dateSelected: Today(),
-            _firstDayOfMonth: DateAdd(Today(), 1 - Day(Today()), TimeUnit.Days)
+            _firstDayOfMonth: DateAdd(Today(), 1 - Day(Today()), TimeUnit.Days),
+            _showRecalcConfirm: false,
+            _needsRecalc: false,
+            _lastRecalcDate: Blank(),
+            _showEventForm: false,
+            _eventMode: "New",
+            _selectedEvent: First(Filter(' [THFinanceCashCollection]CalendarEvents', false))
         });
         UpdateContext({
-            _firstDayInView: DateAdd(_firstDayOfMonth, -(Weekday(_firstDayOfMonth) - 2 + 1), TimeUnit.Days),
+            _firstDayInView: DateAdd(_firstDayOfMonth, -(Weekday(_firstDayOfMonth, StartOfWeek.Monday) - 1), TimeUnit.Days),
             _lastDayOfMonth: DateAdd(DateAdd(_firstDayOfMonth, 1, TimeUnit.Months), -1, TimeUnit.Days)
+        });
+
+        // Load WorkingDayCalendar data for visible range (2 months buffer)
+        ClearCollect(
+            colWorkingDayCalendar,
+            Filter(
+                '[THFinanceCashCollection]WorkingDayCalendars',
+                'Calendar Date' >= DateAdd(_firstDayOfMonth, -7, TimeUnit.Days) &&
+                'Calendar Date' <= DateAdd(_lastDayOfMonth, 7, TimeUnit.Days)
+            )
+        );
+
+        // Load CalendarEvents (holidays)
+        ClearCollect(
+            colCalendarEvents,
+            Filter(
+                ' [THFinanceCashCollection]CalendarEvents',
+                'Event Date' >= DateAdd(_firstDayOfMonth, -7, TimeUnit.Days) &&
+                'Event Date' <= DateAdd(_lastDayOfMonth, 7, TimeUnit.Days)
+            )
+        );
+
+        // Get today's WDN for reference
+        UpdateContext({
+            _todayWDN: LookUp(
+                '[THFinanceCashCollection]WorkingDayCalendars',
+                'Calendar Date' = Today()
+            ).'Working Day Number'
         });
 
         UpdateContext({
@@ -22,681 +57,15 @@ Screens:
         });
     Children:
       - Calendar_Container:
-          Control: GroupContainer@1.3.0
+          Control: GroupContainer@1.4.0
           Variant: ManualLayout
           Properties:
+            DropShadow: =DropShadow.None
             Height: =Parent.Height
             Width: =Parent.Width
           Children:
-            - BodyContainer1:
-                Control: GroupContainer@1.3.0
-                Variant: AutoLayout
-                Properties:
-                  DropShadow: =DropShadow.None
-                  Height: =Parent.Height - 85
-                  LayoutDirection: =LayoutDirection.Horizontal
-                  LayoutGap: =16
-                  PaddingBottom: =2
-                  PaddingTop: =4
-                  RadiusBottomLeft: =0
-                  RadiusBottomRight: =0
-                  RadiusTopLeft: =0
-                  RadiusTopRight: =0
-                  Width: |+
-                    =Parent.Width - 20
-                  X: =10
-                  Y: =75
-                Children:
-                  - Container2:
-                      Control: GroupContainer@1.3.0
-                      Variant: ManualLayout
-                      Properties:
-                        FillPortions: =If(And(scnCalendar.Size = ScreenSize.Small, isDateSelected), 0, 3)
-                        Visible: =If(And(scnCalendar.Size = ScreenSize.Small, isDateSelected), false, true)
-                      Children:
-                        - LblMonthSelected1_1:
-                            Control: Label@2.5.1
-                            Properties:
-                              Align: =Align.Center
-                              BorderColor: =RGBA(0, 0, 0, 1)
-                              Font: =Font.'Open Sans'
-                              Height: =50
-                              Size: =14
-                              Text: =Text(_firstDayOfMonth, "mmmm yyyy")
-                              Width: =Parent.Width - 60
-                              Wrap: =false
-                        - iconPrevMonth1_1:
-                            Control: Classic/Icon@2.5.0
-                            Properties:
-                              BorderColor: =RGBA(0, 18, 107, 1)
-                              Color: =RGBA(0, 0, 0, 1)
-                              Height: =50
-                              Icon: =Icon.ChevronLeft
-                              OnSelect: |-
-                                =UpdateContext({
-                                _firstDayOfMonth: DateAdd(_firstDayOfMonth, -1, TimeUnit.Months)
-                                });
-                                UpdateContext({
-                                _firstDayInView: DateAdd(_firstDayOfMonth, -(Weekday(_firstDayOfMonth) - 2 + 1), TimeUnit.Days),
-                                _lastDayOfMonth: DateAdd(DateAdd(_firstDayOfMonth, 1, TimeUnit.Months), -1, TimeUnit.Days)
-                                });
-                                If(_minDate > _firstDayOfMonth, UpdateContext({_minDate: _firstDayOfMonth}))
-                              PaddingBottom: =10
-                              PaddingLeft: =10
-                              PaddingRight: =10
-                              PaddingTop: =10
-                              TabIndex: =0
-                              Tooltip: ="View previous month"
-                              Width: =50
-                        - iconNextMonth1_1:
-                            Control: Classic/Icon@2.5.0
-                            Properties:
-                              BorderColor: =RGBA(0, 18, 107, 1)
-                              Color: =RGBA(0, 0, 0, 1)
-                              Height: =50
-                              Icon: =Icon.ChevronRight
-                              OnSelect: |-
-                                =UpdateContext({
-                                _firstDayOfMonth: DateAdd(_firstDayOfMonth, 1, TimeUnit.Months)
-                                });
-                                UpdateContext({
-                                _firstDayInView: DateAdd(_firstDayOfMonth, -(Weekday(_firstDayOfMonth) - 2 + 1), TimeUnit.Days),
-                                _lastDayOfMonth: DateAdd(DateAdd(_firstDayOfMonth, 1, TimeUnit.Months), -1, TimeUnit.Days)
-                                });
-                                If(_lastDayOfMonth > _maxDate, UpdateContext({_maxDate: _lastDayOfMonth}))
-                              PaddingBottom: =10
-                              PaddingLeft: =10
-                              PaddingRight: =10
-                              PaddingTop: =10
-                              TabIndex: =0
-                              Tooltip: ="View next month"
-                              Width: =50
-                              X: =LblMonthSelected1_1.X + LblMonthSelected1_1.Width - 50
-                        - WeekdayGallery1_1:
-                            Control: Gallery@2.15.0
-                            Variant: WeekdayGallery
-                            Properties:
-                              BorderColor: =RGBA(0, 18, 107, 1)
-                              Height: =45
-                              Items: =Calendar.WeekdaysShort()
-                              TemplatePadding: =0
-                              TemplateSize: =Self.Width / 7
-                              Width: =Parent.Width
-                              X: =0
-                              Y: =60
-                            Children:
-                              - Title2_1:
-                                  Control: Label@2.5.1
-                                  Properties:
-                                    Align: =Align.Center
-                                    BorderColor: =RGBA(0, 0, 0, 1)
-                                    Font: =Font.'Open Sans'
-                                    Height: =WeekdayGallery1_1.TemplateHeight
-                                    OnSelect: =Select(Parent)
-                                    Size: =17 * WeekdayGallery1_1.TemplateWidth / 77
-                                    Text: =ThisItem.Value
-                                    Width: =WeekdayGallery1_1.TemplateWidth
-                                    Wrap: =false
-                                    X: =WeekdayGallery1_1.TemplateWidth / 2 - Self.Width / 2
-                                    Y: =WeekdayGallery1_1.TemplateHeight / 2 - Self.Height / 2
-                        - MonthDayGallery1_1:
-                            Control: Gallery@2.15.0
-                            Variant: MonthDayGallery
-                            Properties:
-                              BorderColor: =RGBA(0, 18, 107, 1)
-                              Height: =425
-                              Items: =[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19, 20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41]
-                              TemplatePadding: =0
-                              TemplateSize: =55
-                              Width: =Parent.Width
-                              X: =0
-                              Y: =115
-                            Children:
-                              - Subcircle1_1:
-                                  Control: Circle@2.3.0
-                                  Properties:
-                                    BorderColor: =RGBA(0, 18, 107, 1)
-                                    Fill: =RGBA(56, 96, 178, 0.8)
-                                    Height: =3 * Title3_1.Size
-                                    OnSelect: =Select(Parent)
-                                    Visible: =And(DateAdd(_firstDayInView, ThisItem.Value) = _dateSelected, Title3_1.Visible)
-                                    Width: =Self.Height
-                                    X: =MonthDayGallery1_1.TemplateWidth/2 - Self.Width/2
-                                    Y: =MonthDayGallery1_1.TemplateHeight / 2 - Self.Height / 2
-                              - Circle1_1:
-                                  Control: Circle@2.3.0
-                                  Properties:
-                                    BorderColor: =RGBA(0, 18, 107, 1)
-                                    Fill: =RGBA(215, 58, 60, 1)
-                                    Height: =Self.Width
-                                    OnSelect: =Select(Parent)
-                                    Visible: |-
-                                      =/*Visible if calendar events are found on this day*/               
-                                      //CountRows(Filter(MyCalendarEvents, DateValue(Text(Start)) = DateAdd(_firstDayInView,ThisItem.Value, TimeUnit.Days))) > 0 && !Subcircle1_1.Visible && Title3_1.Visible
-                                      CountRows(Filter(' [THFinanceCashCollection]CalendarEvents', 'Event Date' = DateAdd(_firstDayInView,ThisItem.Value, TimeUnit.Days))) > 0 && Title3_1.Visible
-                                    Width: =6.5
-                                    X: =MonthDayGallery1_1.TemplateWidth / 2 - Self.Width / 2
-                                    Y: =MonthDayGallery1_1.TemplateHeight * (0.75)
-                              - Title3_1:
-                                  Control: Label@2.5.1
-                                  Properties:
-                                    Align: =Align.Center
-                                    BorderColor: =RGBA(0, 0, 0, 0)
-                                    Color: =If(DateAdd(_firstDayInView, ThisItem.Value) = _dateSelected, RGBA(255, 255, 255, 1), DateAdd(_firstDayInView, ThisItem.Value) = Today(), RGBA(47, 41, 43, 1), LblMonthSelected1_1.Color)
-                                    Fill: |-
-                                      =/*Fill value changes if the gallery item day = today, or if it lies outside of the current month*/             
-                                      If(
-                                          /*Date selected is today*/
-                                          DateAdd(_firstDayInView, ThisItem.Value) = Today() && DateAdd(_firstDayInView, ThisItem.Value) = _dateSelected, RGBA(0,0,0,0),
-                                          /*Today when it is not selected*/
-                                          DateAdd(_firstDayInView, ThisItem.Value) = Today(), ColorFade(Subcircle1_1.Fill, 0.67), 
-                                          /*The day is outside the range of the currently selected month*/
-                                          Abs(Self.Text - ThisItem.Value) > 10,RGBA(200, 200, 200, 0.3), RGBA(0, 0, 0, 0))
-                                    FocusedBorderColor: =Self.Color
-                                    FocusedBorderThickness: =2
-                                    Font: =Font.'Open Sans'
-                                    Height: =MonthDayGallery1_1.TemplateHeight
-                                    OnSelect: |-
-                                      =UpdateContext({
-                                          _dateSelected: DateAdd(_firstDayInView, ThisItem.Value, TimeUnit.Days), 
-                                          isDateSelected: true,
-                                          CurrentItem: Blank()
-                                      });
-                                      ResetForm(Form1)
-                                    Size: =17 * MonthDayGallery1_1.TemplateWidth / 91
-                                    TabIndex: =0
-                                    Text: =Day(DateAdd(_firstDayInView,ThisItem.Value, TimeUnit.Days))
-                                    Visible: |-
-                                      =/*This item is in a row containing no days of the visible month. It is in the row after the row where the last day of the month occurs*/ 
-                                       !(DateAdd(_firstDayInView,ThisItem.Value, TimeUnit.Days) - Weekday(DateAdd(_firstDayInView,ThisItem.Value, TimeUnit.Days)) + 1 > _lastDayOfMonth)
-                                    Width: =MonthDayGallery1_1.TemplateWidth
-                                    Wrap: =false
-                        - LblResetToday1_1:
-                            Control: Label@2.5.1
-                            Properties:
-                              Align: =Align.Center
-                              BorderColor: =RGBA(0, 0, 0, 1)
-                              Color: =iconCalendar1_1.Color
-                              Font: =Font.'Open Sans'
-                              FontWeight: =FontWeight.Bold
-                              Height: =iconCalendar1_1.Height
-                              PaddingTop: =12
-                              Size: =11
-                              Text: =DateDiff(Date(Year(Today()), Month(Today()), 1), Today(), TimeUnit.Days) + 1
-                              Width: =iconCalendar1_1.Width
-                              X: =Parent.Width - 50
-                              Y: =5
-                        - iconCalendar1_1:
-                            Control: Classic/Icon@2.5.0
-                            Properties:
-                              BorderColor: =RGBA(0, 18, 107, 1)
-                              Color: =RGBA(0, 0, 0, 1)
-                              Height: =40
-                              Icon: =Icon.CalendarBlank
-                              OnSelect: |-
-                                =/*resets calendar view and date selection to today*/
-                                UpdateContext({
-                                    _dateSelected: Today(),
-                                    _firstDayOfMonth: DateAdd(Today(), 1 - Day(Today()), TimeUnit.Days)
-                                });
-                                UpdateContext({
-                                    _firstDayInView: DateAdd(_firstDayOfMonth, -(Weekday(_firstDayOfMonth) - 2 + 1), TimeUnit.Days),
-                                    _lastDayOfMonth: DateAdd(DateAdd(_firstDayOfMonth, 1, TimeUnit.Months), -1, TimeUnit.Days)
-                                });
-                              TabIndex: =0
-                              Tooltip: ="Reset selected date to today"
-                              Width: =40
-                              X: |+
-                                =Parent.Width - 50
-                              Y: =5
-                  - DeleteConfirmDialogContainer1:
-                      Control: GroupContainer@1.3.0
-                      Variant: AutoLayout
-                      Properties:
-                        FillPortions: =7
-                        LayoutDirection: =LayoutDirection.Vertical
-                        Visible: =If(deleteMode, true, false)
-                        Width: =0
-                      Children:
-                        - ConfirmDeleteLabelContainer1:
-                            Control: GroupContainer@1.3.0
-                            Variant: AutoLayout
-                            Properties:
-                              DropShadow: =DropShadow.None
-                              LayoutAlignItems: =LayoutAlignItems.End
-                              LayoutDirection: =LayoutDirection.Horizontal
-                              PaddingBottom: =20
-                              RadiusBottomLeft: =0
-                              RadiusBottomRight: =0
-                              RadiusTopLeft: =0
-                              RadiusTopRight: =0
-                            Children:
-                              - TextCanvas2:
-                                  Control: Text@0.0.51
-                                  Properties:
-                                    Align: ='TextCanvas.Align'.Center
-                                    FillPortions: =1
-                                    Size: =16
-                                    Text: ="Are you sure you want to delete this record?"
-                        - ConfirmDeleteButtonBarContainer1:
-                            Control: GroupContainer@1.3.0
-                            Variant: AutoLayout
-                            Properties:
-                              DropShadow: =DropShadow.None
-                              LayoutDirection: =LayoutDirection.Horizontal
-                              LayoutGap: =15
-                              LayoutJustifyContent: =LayoutJustifyContent.Center
-                              LayoutWrap: =true
-                              RadiusBottomLeft: =0
-                              RadiusBottomRight: =0
-                              RadiusTopLeft: =0
-                              RadiusTopRight: =0
-                            Children:
-                              - ConfirmDeleteButton1:
-                                  Control: Button@0.0.45
-                                  Properties:
-                                    AccessibleLabel: ="Delete"
-                                    OnSelect: |
-                                      =Remove(
-                                          ' [THFinanceCashCollection]CalendarEvents',
-                                          selectedRecord
-                                      );
-                                      If(
-                                          IsEmpty(
-                                              Errors(
-                                                  ' [THFinanceCashCollection]CalendarEvents',
-                                                  selectedRecord
-                                              )
-                                          ),
-                                          UpdateContext(
-                                              {
-                                                  CurrentItem: Blank(),
-                                                  isItemSelected: false,
-                                                  newMode: false,
-                                                  deleteMode: false
-                                              }
-                                          );
-                                          ResetForm(Form1);
-                                      );
-                                    Text: ="Delete"
-                              - CancelDeleteButton1:
-                                  Control: Button@0.0.45
-                                  Properties:
-                                    AccessibleLabel: ="Cancel"
-                                    Appearance: ='ButtonCanvas.Appearance'.Secondary
-                                    OnSelect: |-
-                                      =UpdateContext({ deleteMode: false })
-                                    Text: ="Cancel"
-                  - RightContainer1:
-                      Control: GroupContainer@1.3.0
-                      Variant: AutoLayout
-                      Properties:
-                        DropShadow: =DropShadow.None
-                        FillPortions: =7
-                        LayoutAlignItems: =LayoutAlignItems.Stretch
-                        LayoutDirection: =LayoutDirection.Vertical
-                        LayoutGap: =16
-                        PaddingBottom: =2
-                        PaddingLeft: =2
-                        PaddingRight: =2
-                        RadiusBottomLeft: =0
-                        RadiusBottomRight: =0
-                        RadiusTopLeft: =0
-                        RadiusTopRight: =0
-                        Visible: =If(Or(deleteMode, And(scnCalendar.Size = ScreenSize.Small, !isDateSelected)), false, true)
-                        Width: =0
-                      Children:
-                        - Container1:
-                            Control: GroupContainer@1.3.0
-                            Variant: AutoLayout
-                            Properties:
-                              FillPortions: =0
-                              LayoutDirection: =LayoutDirection.Vertical
-                              LayoutMinHeight: =80
-                              LayoutMinWidth: =200
-                            Children:
-                              - Container3:
-                                  Control: GroupContainer@1.3.0
-                                  Variant: AutoLayout
-                                  Properties:
-                                    Fill: =RGBA(245, 245, 245, 1)
-                                    FillPortions: =0
-                                    Height: =50
-                                    LayoutDirection: =LayoutDirection.Horizontal
-                                    LayoutMinWidth: =100
-                                  Children:
-                                    - BackIcon1:
-                                        Control: Button@0.0.45
-                                        Properties:
-                                          AlignInContainer: =AlignInContainer.Center
-                                          Appearance: ='ButtonCanvas.Appearance'.Transparent
-                                          Icon: ="ArrowLeft"
-                                          Layout: ='ButtonCanvas.Layout'.IconBefore
-                                          OnSelect: |-
-                                            =ResetForm(Form1); UpdateContext({ newMode: false, editMode: false, CurrentItem: Blank(), isItemSelected:false, isDateSelected:false });
-                                          Text: ="Back"
-                                          Visible: =If(And(scnCalendar.Size = ScreenSize.Small, !deleteMode), true, false)
-                                          Width: =If(scnCalendar.Size = ScreenSize.Small, 75, 96)
-                                    - LblDateSelected1_1:
-                                        Control: Label@2.5.1
-                                        Properties:
-                                          BorderColor: =RGBA(0, 0, 0, 1)
-                                          Font: =Font.'Open Sans'
-                                          Height: =50
-                                          PaddingLeft: =15
-                                          PaddingRight: =15
-                                          Size: =12
-                                          Text: =Text(_dateSelected, DateTimeFormat.LongDate)
-                                          Width: =Parent.Width
-                                          Wrap: =false
-                                          X: =451
-                                          Y: =50
-                              - CalendarEventsGallery1_1:
-                                  Control: Gallery@2.15.0
-                                  Variant: BrowseLayout_Vertical_OneTextVariant_ver5.0
-                                  Properties:
-                                    AccessibleLabel: ="Calendar events for selected day"
-                                    BorderColor: =RGBA(0, 18, 107, 1)
-                                    Height: =Parent.Height - Self.Y
-                                    Items: |+
-                                      =SortByColumns(Filter(' [THFinanceCashCollection]CalendarEvents', 'Event Date' = _dateSelected), "nc_eventdate", SortOrder.Descending)
-                                    LayoutMinHeight: =50
-                                    LayoutMinWidth: =
-                                    OnSelect: |-
-                                      =UpdateContext({ isItemSelected: true, newMode: false, CurrentItem:CalendarEventsGallery1_1.Selected })
-                                    ShowScrollbar: =false
-                                    TemplateSize: =50
-                                    Width: =Parent.Width - Self.X
-                                    X: =422
-                                    Y: =
-                                  Children:
-                                    - Rectangle1:
-                                        Control: Rectangle@2.3.0
-                                        Properties:
-                                          BorderColor: =RGBA(0, 18, 107, 1)
-                                          Fill: =RGBA(238, 238, 238, 1)
-                                          Height: =Parent.TemplateHeight - Separator3.Height
-                                          OnSelect: =Select(Parent)
-                                          Visible: =ThisItem.' [THFinanceCashCollection]CalendarEvent' = CurrentItem.' [THFinanceCashCollection]CalendarEvent'
-                                          Width: =Parent.Width
-                                    - Title1:
-                                        Control: Label@2.5.1
-                                        Properties:
-                                          BorderColor: =RGBA(0, 0, 0, 1)
-                                          Color: =RGBA(50, 49, 48, 1)
-                                          Font: =Font.'Open Sans'
-                                          Height: =Self.Size * 1.8
-                                          OnSelect: =Select(Parent)
-                                          PaddingBottom: =0
-                                          PaddingLeft: =0
-                                          PaddingRight: =0
-                                          PaddingTop: =0
-                                          Size: =12
-                                          Text: =ThisItem.Description
-                                          VerticalAlign: =VerticalAlign.Top
-                                          Width: =Parent.TemplateWidth - 86
-                                          X: =40
-                                          Y: =(Parent.TemplateHeight / 2) - (Self.Height / 2)
-                                    - Separator3:
-                                        Control: Rectangle@2.3.0
-                                        Properties:
-                                          BorderColor: =RGBA(0, 18, 107, 1)
-                                          Fill: =RGBA(136, 136, 136, 1)
-                                          Height: =1
-                                          OnSelect: =Select(Parent)
-                                          Width: =Parent.TemplateWidth
-                                          Y: =Parent.TemplateHeight - Self.Height
-                                    - Icon1:
-                                        Control: Classic/Icon@2.5.0
-                                        Properties:
-                                          BorderColor: =RGBA(0, 18, 107, 1)
-                                          Color: =RGBA(128, 128, 128, 1)
-                                          Height: =20
-                                          Icon: =Icon.CalendarBlank
-                                          Width: =20
-                                          X: =10
-                                          Y: =13
-                        - MainContainer1:
-                            Control: GroupContainer@1.3.0
-                            Variant: AutoLayout
-                            Properties:
-                              Fill: =RGBA(255, 255, 255, 1)
-                              LayoutDirection: =LayoutDirection.Vertical
-                              LayoutGap: =16
-                              LayoutMinHeight: =150
-                              LayoutMinWidth: =300
-                              LayoutOverflowY: =LayoutOverflow.Scroll
-                            Children:
-                              - Container21:
-                                  Control: GroupContainer@1.3.0
-                                  Variant: AutoLayout
-                                  Properties:
-                                    DropShadow: =DropShadow.None
-                                    Fill: =RGBA(245, 245, 245, 1)
-                                    FillPortions: =0
-                                    Height: =50
-                                    LayoutDirection: =LayoutDirection.Horizontal
-                                    LayoutGap: =10
-                                    LayoutMinHeight: =60
-                                    PaddingLeft: =If(scnCalendar.Size = ScreenSize.Small,8,12)
-                                    RadiusBottomLeft: =0
-                                    RadiusBottomRight: =0
-                                    RadiusTopLeft: =0
-                                    RadiusTopRight: =0
-                                    X: =40
-                                    Y: =40
-                                  Children:
-                                    - NewRecordButton1:
-                                        Control: Button@0.0.45
-                                        Properties:
-                                          AlignInContainer: =AlignInContainer.Center
-                                          Appearance: ='ButtonCanvas.Appearance'.Primary
-                                          Icon: ="Add"
-                                          OnSelect: |-
-                                            =NewForm(Form1); UpdateContext({ newMode: true })
-                                          Text: ="New"
-                                          Visible: =And(!newMode, !deleteMode)
-                                          Width: |+
-                                            =100
-                                    - EditButton1:
-                                        Control: Button@0.0.45
-                                        Properties:
-                                          AlignInContainer: =AlignInContainer.Center
-                                          Appearance: ='ButtonCanvas.Appearance'.Primary
-                                          BasePaletteColor: =RGBA(100, 81, 61, 1)
-                                          DisplayMode: =If (IsBlank(CurrentItem), DisplayMode.Disabled, DisplayMode.Edit)
-                                          Icon: ="Edit"
-                                          OnSelect: |-
-                                            =UpdateContext({ editMode: true, selectedRecord: CurrentItem })
-                                          Text: ="Edit"
-                                          Visible: =And(!newMode, !deleteMode)
-                                          Width: |+
-                                            =80
-                                    - DeleteButton1:
-                                        Control: Button@0.0.45
-                                        Properties:
-                                          AlignInContainer: =AlignInContainer.Center
-                                          Appearance: ='ButtonCanvas.Appearance'.Primary
-                                          BasePaletteColor: =RGBA(191, 25, 34, 1)
-                                          DisplayMode: =If (IsBlank(CurrentItem), DisplayMode.Disabled, DisplayMode.Edit)
-                                          Icon: ="Delete"
-                                          OnSelect: |-
-                                            =UpdateContext({ deleteMode: true, selectedRecord: CurrentItem })
-                                          Text: ="Delete"
-                                          Visible: =And(!newMode, !deleteMode)
-                                          Width: |+
-                                            =90
-                              - Form1:
-                                  Control: Form@2.4.4
-                                  Layout: Vertical
-                                  Properties:
-                                    BorderColor: =RGBA(0, 18, 107, 1)
-                                    BorderStyle: =BorderStyle.None
-                                    DataSource: =' [THFinanceCashCollection]CalendarEvents'
-                                    DefaultMode: =If(newMode, FormMode.New, editMode, FormMode.Edit, FormMode.View)
-                                    Item: =CurrentItem
-                                    LayoutMinHeight: =100
-                                    LayoutMinWidth: =300
-                                    NumberOfColumns: =1
-                                    OnFailure: =Notify("Cannot save. Please check if there are errors in the form.", NotificationType.Error)
-                                    OnSuccess: |
-                                      =UpdateContext({ CurrentItem: Self.LastSubmit, newMode:false, editMode: false, isItemSelected: false});Notify("Success",NotificationType.Success);ResetForm(Form1)
-                                    Width: =Parent.Width
-                                  Children:
-                                    - Description_DataCard1:
-                                        Control: TypedDataCard@1.0.7
-                                        Variant: TextualEdit
-                                        IsLocked: true
-                                        Properties:
-                                          BorderColor: =RGBA(0, 18, 107, 1)
-                                          DataField: ="nc_description"
-                                          Default: =ThisItem.Description
-                                          DisplayName: =DataSourceInfo([@' [THFinanceCashCollection]CalendarEvents'],DataSourceInfo.DisplayName,'nc_description')
-                                          MaxLength: =DataSourceInfo([@' [THFinanceCashCollection]CalendarEvents'], DataSourceInfo.MaxLength, 'nc_description')
-                                          Required: =true
-                                          Update: =DataCardValue1.Value
-                                          Width: =927
-                                          X: =0
-                                          Y: =0
-                                        Children:
-                                          - DataCardKey1:
-                                              Control: Text@0.0.51
-                                              MetadataKey: FieldName
-                                              Properties:
-                                                Height: =22
-                                                Text: =Parent.DisplayName
-                                                Weight: ='TextCanvas.Weight'.Semibold
-                                                Width: =Parent.Width - 48
-                                                Wrap: =false
-                                                X: =24
-                                                Y: =10
-                                          - DataCardValue1:
-                                              Control: TextInput@0.0.54
-                                              MetadataKey: FieldValue
-                                              Properties:
-                                                AccessibleLabel: =Parent.DisplayName
-                                                DisplayMode: =Parent.DisplayMode
-                                                Mode: ="'TextInputCanvas.Mode'.TextInputModeSingleLine"
-                                                Required: =Parent.Required
-                                                ValidationState: =If(IsBlank(Parent.Error), "None", "Error")
-                                                Value: =Parent.Default
-                                                Width: =Parent.Width - 48
-                                                X: =24
-                                                Y: =DataCardKey1.Y + DataCardKey1.Height + 4
-                                          - ErrorMessage1:
-                                              Control: Text@0.0.51
-                                              MetadataKey: ErrorMessage
-                                              Properties:
-                                                Height: =30
-                                                Text: =Parent.Error
-                                                Visible: =And(!IsBlank(Parent.Error), Parent.DisplayMode=DisplayMode.Edit)
-                                                Width: =Parent.Width - 48
-                                                X: =24
-                                                Y: =DataCardValue1.Y + DataCardValue1.Height
-                                          - StarVisible1:
-                                              Control: Text@0.0.51
-                                              MetadataKey: FieldRequired
-                                              Properties:
-                                                Align: ='TextCanvas.Align'.Center
-                                                Height: =30
-                                                Text: ="*"
-                                                Visible: =And(Parent.Required, Parent.DisplayMode=DisplayMode.Edit)
-                                                Width: =30
-                                                Y: =DataCardKey1.Y
-                                    - Event Date_DataCard1:
-                                        Control: TypedDataCard@1.0.7
-                                        Variant: DateTimeEdit
-                                        Properties:
-                                          BorderColor: =RGBA(0, 18, 107, 1)
-                                          DataField: ="nc_eventdate"
-                                          Default: =_dateSelected
-                                          DisplayMode: =DisplayMode.Disabled
-                                          DisplayName: =DataSourceInfo([@' [THFinanceCashCollection]CalendarEvents'],DataSourceInfo.DisplayName,'nc_eventdate')
-                                          Required: =false
-                                          Update: =DateValue1.SelectedDate
-                                          Width: =927
-                                          X: =0
-                                          Y: =1
-                                        Children:
-                                          - DataCardKey3:
-                                              Control: Text@0.0.51
-                                              MetadataKey: FieldName
-                                              Properties:
-                                                Height: =22
-                                                Text: =Parent.DisplayName
-                                                Weight: ='TextCanvas.Weight'.Semibold
-                                                Width: =Parent.Width - 48
-                                                Wrap: =false
-                                                X: =24
-                                                Y: =10
-                                          - DateValue1:
-                                              Control: DatePicker@0.0.46
-                                              MetadataKey: DateFieldValue
-                                              Properties:
-                                                AccessibleLabel: =Parent.DisplayName
-                                                DisplayMode: =Parent.DisplayMode
-                                                SelectedDate: =Parent.Default
-                                                ValidationState: =If(IsBlank(Parent.Error), "None", "Error")
-                                                Width: =Parent.Width - 48
-                                                X: =24
-                                                Y: =DataCardKey3.Y + DataCardKey3.Height + 4
-                                          - ErrorMessage2:
-                                              Control: Text@0.0.51
-                                              MetadataKey: ErrorMessage
-                                              Properties:
-                                                Height: =30
-                                                Text: =Parent.Error
-                                                Visible: =And(!IsBlank(Parent.Error), Parent.DisplayMode=DisplayMode.Edit)
-                                                Width: =Parent.Width - 48
-                                                X: =24
-                                                Y: =DateValue1.Y + DateValue1.Height
-                                          - StarVisible2:
-                                              Control: Text@0.0.51
-                                              MetadataKey: FieldRequired
-                                              Properties:
-                                                Align: ='TextCanvas.Align'.Center
-                                                Height: =20
-                                                Text: ="*"
-                                                Visible: =And(Parent.Required, Parent.DisplayMode=DisplayMode.Edit)
-                                                Width: =30
-                                                Y: =DataCardKey3.Y
-                              - ButtonContainer1:
-                                  Control: GroupContainer@1.3.0
-                                  Variant: AutoLayout
-                                  Properties:
-                                    DropShadow: =DropShadow.None
-                                    FillPortions: =0
-                                    Height: |+
-                                      =50
-                                    LayoutAlignItems: =LayoutAlignItems.Center
-                                    LayoutDirection: =LayoutDirection.Horizontal
-                                    LayoutGap: =10
-                                    LayoutJustifyContent: =LayoutJustifyContent.End
-                                    LayoutMinHeight: =50
-                                    LayoutOverflowY: =LayoutOverflow.Scroll
-                                    PaddingRight: =24
-                                    RadiusBottomLeft: =0
-                                    RadiusBottomRight: =0
-                                    RadiusTopLeft: =0
-                                    RadiusTopRight: =0
-                                  Children:
-                                    - CancelButton1:
-                                        Control: Button@0.0.45
-                                        Properties:
-                                          Appearance: ='ButtonCanvas.Appearance'.Secondary
-                                          OnSelect: |-
-                                            =ResetForm(Form1); UpdateContext({ newMode: false, editMode: false, CurrentItem: CalendarEventsGallery1_1.Selected, isItemSelected:false });
-                                          Text: ="Cancel"
-                                          Visible: =Or(newMode, editMode)
-                                    - SubmitButton1:
-                                        Control: Button@0.0.45
-                                        Properties:
-                                          Appearance: ='ButtonCanvas.Appearance'.Primary
-                                          OnSelect: =SubmitForm(Form1)
-                                          Text: ="Submit"
-                                          Visible: =Or(newMode, editMode)
             - Calendar_Header:
-                Control: GroupContainer@1.3.0
+                Control: GroupContainer@1.4.0
                 Variant: AutoLayout
                 Properties:
                   DropShadow: =DropShadow.Regular
@@ -704,7 +73,9 @@ Screens:
                   Height: =55
                   LayoutAlignItems: =LayoutAlignItems.Center
                   LayoutDirection: =LayoutDirection.Horizontal
+                  LayoutGap: =10
                   PaddingLeft: =15
+                  PaddingRight: =15
                   RadiusBottomLeft: =8
                   RadiusBottomRight: =8
                   RadiusTopLeft: =8
@@ -729,23 +100,1252 @@ Screens:
                   - Calendar_HeaderTitle:
                       Control: Text@0.0.51
                       Properties:
+                        FillPortions: =1
                         Font: =Font.Lato
                         FontColor: =Color.White
                         Height: =50
-                        PaddingLeft: =20
-                        Size: =25
-                        Text: ="Calendar"
+                        PaddingLeft: =10
+                        Size: =If(Parent.Width < 400, 16, 20)
+                        Text: |-
+                          =If(
+                              Parent.Width < 400,
+                              "Calendar",
+                              "Working Day Calendar"
+                          )
                         VerticalAlign: =VerticalAlign.Middle
-                        Weight: ='TextCanvas.Weight'.Medium
-                        Width: =Parent.Width - Calendar_MenuIcon.Width - 40
+                        Weight: ='TextCanvas.Weight'.Bold
+                        Width: =150
+                  - Calendar_TodayWDN:
+                      Control: Text@0.0.51
+                      Properties:
+                        Align: ='TextCanvas.Align'.Center
+                        Fill: =RGBA(255, 255, 255, 0.2)
+                        Font: =Font.Lato
+                        FontColor: =Color.White
+                        Height: =35
+                        Size: =11
+                        Text: ="WDN " & If(IsBlank(_todayWDN), "-", Text(_todayWDN))
+                        VerticalAlign: =VerticalAlign.Middle
+                        Visible: =Parent.Width > 400
+                        Weight: ='TextCanvas.Weight'.Semibold
+                        Width: =70
+                  - Calendar_RecalcBtn:
+                      Control: Button@0.0.45
+                      Properties:
+                        BasePaletteColor: |-
+                          =If(
+                              _needsRecalc,
+                              RGBA(212, 41, 57, 1),
+                              RGBA(100, 81, 61, 1)
+                          )
+                        Height: =35
+                        Icon: ="ArrowSync"
+                        OnSelect: |-
+                          =UpdateContext({_showRecalcConfirm: true})
+                        Text: |-
+                          =If(
+                              Parent.Width < 500,
+                              "",
+                              If(_needsRecalc, "⚠ Recalc", "Recalc")
+                          )
+                        Width: =If(Parent.Width < 500, 45, 120)
+            - Calendar_Content:
+                Control: GroupContainer@1.4.0
+                Variant: AutoLayout
+                Properties:
+                  DropShadow: =DropShadow.Regular
+                  Fill: =RGBA(255, 255, 255, 1)
+                  Height: =Parent.Height - 85
+                  LayoutDirection: |-
+                    =If(
+                        Parent.Width < 800,
+                        LayoutDirection.Vertical,
+                        LayoutDirection.Horizontal
+                    )
+                  LayoutGap: =15
+                  LayoutOverflowY: =LayoutOverflow.Scroll
+                  PaddingBottom: =15
+                  PaddingLeft: =15
+                  PaddingRight: =15
+                  PaddingTop: =15
+                  RadiusBottomLeft: =10
+                  RadiusBottomRight: =10
+                  RadiusTopLeft: =10
+                  RadiusTopRight: =10
+                  Width: =Parent.Width - 20
+                  X: =10
+                  Y: =75
+                Children:
+                  - Calendar_LeftPanel:
+                      Control: GroupContainer@1.4.0
+                      Variant: ManualLayout
+                      Properties:
+                        DropShadow: =DropShadow.None
+                        Height: |-
+                          =If(
+                              Parent.Width < 800,
+                              400,
+                              Parent.Height - 30
+                          )
+                        LayoutMinHeight: =350
+                        LayoutMinWidth: =280
+                      Children:
+                        - Calendar_MonthNav:
+                            Control: GroupContainer@1.4.0
+                            Variant: AutoLayout
+                            Properties:
+                              DropShadow: =DropShadow.None
+                              Height: =50
+                              LayoutAlignItems: =LayoutAlignItems.Center
+                              LayoutDirection: =LayoutDirection.Horizontal
+                              Width: =Parent.Width
+                            Children:
+                              - Calendar_PrevMonth:
+                                  Control: Classic/Icon@2.5.0
+                                  Properties:
+                                    Color: =RGBA(0, 101, 161, 1)
+                                    Height: =40
+                                    Icon: =Icon.ChevronLeft
+                                    OnSelect: |-
+                                      =UpdateContext({
+                                          _firstDayOfMonth: DateAdd(_firstDayOfMonth, -1, TimeUnit.Months)
+                                      });
+                                      UpdateContext({
+                                          _firstDayInView: DateAdd(_firstDayOfMonth, -(Weekday(_firstDayOfMonth, StartOfWeek.Monday) - 1), TimeUnit.Days),
+                                          _lastDayOfMonth: DateAdd(DateAdd(_firstDayOfMonth, 1, TimeUnit.Months), -1, TimeUnit.Days)
+                                      });
+                                      // Reload WDN data for new month
+                                      ClearCollect(
+                                          colWorkingDayCalendar,
+                                          Filter(
+                                              '[THFinanceCashCollection]WorkingDayCalendars',
+                                              'Calendar Date' >= DateAdd(_firstDayOfMonth, -7, TimeUnit.Days) &&
+                                              'Calendar Date' <= DateAdd(_lastDayOfMonth, 7, TimeUnit.Days)
+                                          )
+                                      );
+                                      ClearCollect(
+                                          colCalendarEvents,
+                                          Filter(
+                                              ' [THFinanceCashCollection]CalendarEvents',
+                                              'Event Date' >= DateAdd(_firstDayOfMonth, -7, TimeUnit.Days) &&
+                                              'Event Date' <= DateAdd(_lastDayOfMonth, 7, TimeUnit.Days)
+                                          )
+                                      );
+                                    PaddingBottom: =8
+                                    PaddingLeft: =8
+                                    PaddingRight: =8
+                                    PaddingTop: =8
+                                    Width: =40
+                              - Calendar_MonthLabel:
+                                  Control: Text@0.0.51
+                                  Properties:
+                                    Align: ='TextCanvas.Align'.Center
+                                    FillPortions: =1
+                                    Font: =Font.Lato
+                                    FontColor: =RGBA(0, 0, 0, 1)
+                                    Height: =40
+                                    Size: =18
+                                    Text: =Text(_firstDayOfMonth, "mmmm yyyy")
+                                    VerticalAlign: =VerticalAlign.Middle
+                                    Weight: ='TextCanvas.Weight'.Bold
+                                    Width: =200
+                              - Calendar_NextMonth:
+                                  Control: Classic/Icon@2.5.0
+                                  Properties:
+                                    Color: =RGBA(0, 101, 161, 1)
+                                    Height: =40
+                                    Icon: =Icon.ChevronRight
+                                    OnSelect: |-
+                                      =UpdateContext({
+                                          _firstDayOfMonth: DateAdd(_firstDayOfMonth, 1, TimeUnit.Months)
+                                      });
+                                      UpdateContext({
+                                          _firstDayInView: DateAdd(_firstDayOfMonth, -(Weekday(_firstDayOfMonth, StartOfWeek.Monday) - 1), TimeUnit.Days),
+                                          _lastDayOfMonth: DateAdd(DateAdd(_firstDayOfMonth, 1, TimeUnit.Months), -1, TimeUnit.Days)
+                                      });
+                                      // Reload WDN data for new month
+                                      ClearCollect(
+                                          colWorkingDayCalendar,
+                                          Filter(
+                                              '[THFinanceCashCollection]WorkingDayCalendars',
+                                              'Calendar Date' >= DateAdd(_firstDayOfMonth, -7, TimeUnit.Days) &&
+                                              'Calendar Date' <= DateAdd(_lastDayOfMonth, 7, TimeUnit.Days)
+                                          )
+                                      );
+                                      ClearCollect(
+                                          colCalendarEvents,
+                                          Filter(
+                                              ' [THFinanceCashCollection]CalendarEvents',
+                                              'Event Date' >= DateAdd(_firstDayOfMonth, -7, TimeUnit.Days) &&
+                                              'Event Date' <= DateAdd(_lastDayOfMonth, 7, TimeUnit.Days)
+                                          )
+                                      );
+                                    PaddingBottom: =8
+                                    PaddingLeft: =8
+                                    PaddingRight: =8
+                                    PaddingTop: =8
+                                    Width: =40
+                              - Calendar_TodayBtn:
+                                  Control: Classic/Icon@2.5.0
+                                  Properties:
+                                    Color: =RGBA(0, 101, 161, 1)
+                                    Height: =40
+                                    Icon: =Icon.CalendarBlank
+                                    OnSelect: |-
+                                      =UpdateContext({
+                                          _dateSelected: Today(),
+                                          _firstDayOfMonth: DateAdd(Today(), 1 - Day(Today()), TimeUnit.Days)
+                                      });
+                                      UpdateContext({
+                                          _firstDayInView: DateAdd(_firstDayOfMonth, -(Weekday(_firstDayOfMonth, StartOfWeek.Monday) - 1), TimeUnit.Days),
+                                          _lastDayOfMonth: DateAdd(DateAdd(_firstDayOfMonth, 1, TimeUnit.Months), -1, TimeUnit.Days)
+                                      });
+                                      ClearCollect(
+                                          colWorkingDayCalendar,
+                                          Filter(
+                                              '[THFinanceCashCollection]WorkingDayCalendars',
+                                              'Calendar Date' >= DateAdd(_firstDayOfMonth, -7, TimeUnit.Days) &&
+                                              'Calendar Date' <= DateAdd(_lastDayOfMonth, 7, TimeUnit.Days)
+                                          )
+                                      );
+                                    PaddingBottom: =8
+                                    PaddingLeft: =8
+                                    PaddingRight: =8
+                                    PaddingTop: =8
+                                    Tooltip: ="Go to today"
+                                    Width: =40
+                        - Calendar_WeekdayHeader:
+                            Control: Gallery@2.15.0
+                            Variant: Horizontal
+                            Properties:
+                              Height: =35
+                              Items: =["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+                              TemplatePadding: =0
+                              TemplateSize: =Parent.Width / 7
+                              Width: =Parent.Width
+                              Y: =55
+                            Children:
+                              - Weekday_Label:
+                                  Control: Text@0.0.51
+                                  Properties:
+                                    Align: ='TextCanvas.Align'.Center
+                                    Font: =Font.Lato
+                                    FontColor: |-
+                                      =If(
+                                          ThisItem.Value = "Sat" || ThisItem.Value = "Sun",
+                                          RGBA(168, 0, 0, 1),
+                                          RGBA(100, 100, 100, 1)
+                                      )
+                                    Height: =Parent.TemplateHeight
+                                    Text: =ThisItem.Value
+                                    VerticalAlign: =VerticalAlign.Middle
+                                    Weight: ='TextCanvas.Weight'.Semibold
+                                    Width: =Parent.TemplateWidth
+                        - Calendar_DayGrid:
+                            Control: Gallery@2.15.0
+                            Variant: Vertical
+                            Properties:
+                              Height: =Parent.Height - 100
+                              Items: =[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41]
+                              TemplatePadding: =0
+                              TemplateSize: =1
+                              Width: =Parent.Width
+                              Y: =95
+                            Children:
+                              - DayCell_Container:
+                                  Control: GroupContainer@1.4.0
+                                  Variant: ManualLayout
+                                  Properties:
+                                    Fill: |-
+                                      =With(
+                                          {
+                                              cellDate: DateAdd(_firstDayInView, ThisItem.Value, TimeUnit.Days),
+                                              wdnRecord: LookUp(colWorkingDayCalendar, 'Calendar Date' >= DateAdd(_firstDayInView, ThisItem.Value, TimeUnit.Days) && 'Calendar Date' < DateAdd(_firstDayInView, ThisItem.Value + 1, TimeUnit.Days))
+                                          },
+                                          If(
+                                              cellDate = _dateSelected,
+                                              RGBA(0, 101, 161, 0.2),
+                                              cellDate = Today(),
+                                              RGBA(0, 101, 161, 0.1),
+                                              !IsBlank(wdnRecord) && !wdnRecord.'Is Working Day',
+                                              RGBA(255, 200, 200, 0.3),
+                                              Month(cellDate) <> Month(_firstDayOfMonth),
+                                              RGBA(245, 245, 245, 1),
+                                              RGBA(255, 255, 255, 1)
+                                          )
+                                      )
+                                    Height: =Parent.Height / 6
+                                    Visible: =!(DateAdd(_firstDayInView, ThisItem.Value, TimeUnit.Days) - Weekday(DateAdd(_firstDayInView, ThisItem.Value, TimeUnit.Days)) + 1 > _lastDayOfMonth)
+                                    Width: =Parent.Width / 7
+                                    X: =Mod(ThisItem.Value, 7) * Parent.Width / 7
+                                    Y: =Int(ThisItem.Value / 7) * Parent.Height / 6
+                                  Children:
+                                    - DayCell_DayNumber:
+                                        Control: Text@0.0.51
+                                        Properties:
+                                          Align: ='TextCanvas.Align'.Center
+                                          Font: =Font.Lato
+                                          FontColor: |-
+                                            =With(
+                                                {cellDate: DateAdd(_firstDayInView, ThisItem.Value, TimeUnit.Days)},
+                                                If(
+                                                    cellDate = _dateSelected,
+                                                    RGBA(0, 101, 161, 1),
+                                                    cellDate = Today(),
+                                                    RGBA(0, 101, 161, 1),
+                                                    Month(cellDate) <> Month(_firstDayOfMonth),
+                                                    RGBA(180, 180, 180, 1),
+                                                    Weekday(cellDate, StartOfWeek.Monday) >= 6,
+                                                    RGBA(168, 0, 0, 1),
+                                                    RGBA(0, 0, 0, 1)
+                                                )
+                                            )
+                                          Height: =24
+                                          Text: =Day(DateAdd(_firstDayInView, ThisItem.Value, TimeUnit.Days))
+                                          VerticalAlign: =VerticalAlign.Middle
+                                          Weight: |-
+                                            =If(
+                                                DateAdd(_firstDayInView, ThisItem.Value, TimeUnit.Days) = Today(),
+                                                'TextCanvas.Weight'.Bold,
+                                                'TextCanvas.Weight'.Regular
+                                            )
+                                          Width: =Parent.Width
+                                          Y: =2
+                                    - DayCell_WDN:
+                                        Control: Text@0.0.51
+                                        Properties:
+                                          Align: ='TextCanvas.Align'.Center
+                                          Font: =Font.Lato
+                                          FontColor: =RGBA(100, 100, 100, 1)
+                                          Height: =18
+                                          Size: =10
+                                          Text: |-
+                                            =With(
+                                                {wdnRecord: LookUp(colWorkingDayCalendar, 'Calendar Date' >= DateAdd(_firstDayInView, ThisItem.Value, TimeUnit.Days) && 'Calendar Date' < DateAdd(_firstDayInView, ThisItem.Value + 1, TimeUnit.Days))},
+                                                If(
+                                                    IsBlank(wdnRecord),
+                                                    "",
+                                                    wdnRecord.'Is Working Day',
+                                                    "WDN " & wdnRecord.'Working Day Number',
+                                                    "Holiday"
+                                                )
+                                            )
+                                          VerticalAlign: =VerticalAlign.Middle
+                                          Width: =Parent.Width
+                                          Y: =26
+                                    - DayCell_HolidayIcon:
+                                        Control: Classic/Icon@2.5.0
+                                        Properties:
+                                          Color: =RGBA(212, 41, 57, 1)
+                                          Height: =16
+                                          Icon: =Icon.Warning
+                                          Visible: |-
+                                            =With(
+                                                {wdnRecord: LookUp(colWorkingDayCalendar, 'Calendar Date' >= DateAdd(_firstDayInView, ThisItem.Value, TimeUnit.Days) && 'Calendar Date' < DateAdd(_firstDayInView, ThisItem.Value + 1, TimeUnit.Days))},
+                                                !IsBlank(wdnRecord) && !wdnRecord.'Is Working Day' && Weekday(DateAdd(_firstDayInView, ThisItem.Value, TimeUnit.Days), StartOfWeek.Monday) < 6
+                                            )
+                                          Width: =16
+                                          X: =Parent.Width - 20
+                                          Y: =2
+                                    - DayCell_EventDot:
+                                        Control: Circle@2.3.0
+                                        Properties:
+                                          Fill: =RGBA(0, 101, 161, 1)
+                                          Height: =6
+                                          Visible: =CountRows(Filter(colCalendarEvents, 'Event Date' = DateAdd(_firstDayInView, ThisItem.Value, TimeUnit.Days))) > 0
+                                          Width: =6
+                                          X: =(Parent.Width - 6) / 2
+                                          Y: =Parent.Height - 10
+                                    - DayCell_ClickArea:
+                                        Control: Button@0.0.45
+                                        Properties:
+                                          Appearance: ='ButtonCanvas.Appearance'.Transparent
+                                          Height: =Parent.Height
+                                          OnSelect: |-
+                                            =UpdateContext({
+                                                _dateSelected: DateAdd(_firstDayInView, ThisItem.Value, TimeUnit.Days)
+                                            })
+                                          Text: =""
+                                          Width: =Parent.Width
+                  - Calendar_RightPanel:
+                      Control: GroupContainer@1.4.0
+                      Variant: AutoLayout
+                      Properties:
+                        DropShadow: =DropShadow.None
+                        Fill: =RGBA(248, 248, 248, 1)
+                        Height: |-
+                          =If(
+                              Parent.Width < 800,
+                              500,
+                              Parent.Height - 30
+                          )
+                        LayoutDirection: =LayoutDirection.Vertical
+                        LayoutGap: =15
+                        LayoutMinHeight: =300
+                        LayoutMinWidth: =280
+                        LayoutOverflowY: =LayoutOverflow.Scroll
+                        PaddingBottom: =15
+                        PaddingLeft: =15
+                        PaddingRight: =15
+                        PaddingTop: =15
+                        RadiusBottomLeft: =8
+                        RadiusBottomRight: =8
+                        RadiusTopLeft: =8
+                        RadiusTopRight: =8
+                      Children:
+                        - RightPanel_DateHeader:
+                            Control: Text@0.0.51
+                            Properties:
+                              Font: =Font.Lato
+                              FontColor: =RGBA(0, 0, 0, 1)
+                              Height: =28
+                              Text: =Text(_dateSelected, "ddd, mmm d, yyyy")
+                              Weight: ='TextCanvas.Weight'.Bold
+                              Width: =Parent.Width - 30
+                        - RightPanel_Divider1:
+                            Control: Rectangle@2.3.0
+                            Properties:
+                              Fill: =RGBA(200, 200, 200, 1)
+                              Height: =1
+                              Width: =Parent.Width - 30
+                        - RightPanel_WDNSection:
+                            Control: GroupContainer@1.4.0
+                            Variant: AutoLayout
+                            Properties:
+                              DropShadow: =DropShadow.None
+                              Fill: =RGBA(255, 255, 255, 1)
+                              LayoutDirection: =LayoutDirection.Vertical
+                              LayoutGap: =8
+                              LayoutMinHeight: =80
+                              LayoutMinWidth: =80
+                              PaddingBottom: =10
+                              PaddingLeft: =10
+                              PaddingRight: =10
+                              PaddingTop: =10
+                              RadiusBottomLeft: =6
+                              RadiusBottomRight: =6
+                              RadiusTopLeft: =6
+                              RadiusTopRight: =6
+                              Width: =Parent.Width - 30
+                            Children:
+                              - WDN_SectionTitle:
+                                  Control: Text@0.0.51
+                                  Properties:
+                                    Font: =Font.Lato
+                                    FontColor: =RGBA(0, 101, 161, 1)
+                                    Height: =22
+                                    Size: =13
+                                    Text: ="Working Day Info"
+                                    Weight: ='TextCanvas.Weight'.Bold
+                                    Width: =Parent.Width - 20
+                              - WDN_StatusRow:
+                                  Control: GroupContainer@1.4.0
+                                  Variant: AutoLayout
+                                  Properties:
+                                    DropShadow: =DropShadow.None
+                                    LayoutAlignItems: =LayoutAlignItems.Center
+                                    LayoutDirection: =LayoutDirection.Horizontal
+                                    LayoutGap: =8
+                                    LayoutMinHeight: =28
+                                    LayoutMinWidth: =80
+                                    Width: =Parent.Width - 20
+                                  Children:
+                                    - WDN_StatusIcon:
+                                        Control: Classic/Icon@2.5.0
+                                        Properties:
+                                          Color: |-
+                                            =With(
+                                                {wdnRecord: LookUp(colWorkingDayCalendar, 'Calendar Date' = _dateSelected)},
+                                                If(
+                                                    IsBlank(wdnRecord),
+                                                    RGBA(128, 128, 128, 1),
+                                                    wdnRecord.'Is Working Day',
+                                                    RGBA(16, 124, 16, 1),
+                                                    RGBA(212, 41, 57, 1)
+                                                )
+                                            )
+                                          Height: =24
+                                          Icon: |-
+                                            =With(
+                                                {wdnRecord: LookUp(colWorkingDayCalendar, 'Calendar Date' = _dateSelected)},
+                                                If(
+                                                    IsBlank(wdnRecord),
+                                                    Icon.Warning,
+                                                    wdnRecord.'Is Working Day',
+                                                    Icon.CheckBadge,
+                                                    Icon.Cancel
+                                                )
+                                            )
+                                          Width: =24
+                                    - WDN_StatusText:
+                                        Control: Text@0.0.51
+                                        Properties:
+                                          FillPortions: =1
+                                          Font: =Font.Lato
+                                          FontColor: =RGBA(0, 0, 0, 1)
+                                          Height: =22
+                                          Size: =12
+                                          Text: |-
+                                            =With(
+                                                {wdnRecord: LookUp(colWorkingDayCalendar, 'Calendar Date' = _dateSelected)},
+                                                If(
+                                                    IsBlank(wdnRecord),
+                                                    "No data",
+                                                    wdnRecord.'Is Working Day',
+                                                    "Working Day",
+                                                    "Non-Working"
+                                                )
+                                            )
+                                          VerticalAlign: =VerticalAlign.Middle
+                                          Weight: ='TextCanvas.Weight'.Semibold
+                                          Width: =100
+                              - WDN_NumberRow:
+                                  Control: GroupContainer@1.4.0
+                                  Variant: AutoLayout
+                                  Properties:
+                                    DropShadow: =DropShadow.None
+                                    LayoutAlignItems: =LayoutAlignItems.Center
+                                    LayoutDirection: =LayoutDirection.Horizontal
+                                    LayoutGap: =8
+                                    LayoutMinHeight: =35
+                                    LayoutMinWidth: =80
+                                    Width: =Parent.Width - 20
+                                  Children:
+                                    - WDN_NumberLabel:
+                                        Control: Text@0.0.51
+                                        Properties:
+                                          FillPortions: =1
+                                          Font: =Font.Lato
+                                          FontColor: =RGBA(100, 100, 100, 1)
+                                          Height: =35
+                                          Size: =12
+                                          Text: ="WDN:"
+                                          VerticalAlign: =VerticalAlign.Middle
+                                          Width: =50
+                                    - WDN_NumberValue:
+                                        Control: Text@0.0.51
+                                        Properties:
+                                          Align: ='TextCanvas.Align'.Center
+                                          Fill: =RGBA(0, 101, 161, 0.1)
+                                          Font: =Font.Lato
+                                          FontColor: =RGBA(0, 101, 161, 1)
+                                          Height: =35
+                                          Size: =18
+                                          Text: |-
+                                            =With(
+                                                {wdnRecord: LookUp(colWorkingDayCalendar, 'Calendar Date' = _dateSelected)},
+                                                If(
+                                                    IsBlank(wdnRecord) || IsBlank(wdnRecord.'Working Day Number'),
+                                                    "-",
+                                                    Text(wdnRecord.'Working Day Number')
+                                                )
+                                            )
+                                          VerticalAlign: =VerticalAlign.Middle
+                                          Weight: ='TextCanvas.Weight'.Bold
+                                          Width: =70
+                              - WDN_YearRow:
+                                  Control: GroupContainer@1.4.0
+                                  Variant: AutoLayout
+                                  Properties:
+                                    DropShadow: =DropShadow.None
+                                    LayoutAlignItems: =LayoutAlignItems.Center
+                                    LayoutDirection: =LayoutDirection.Horizontal
+                                    LayoutGap: =10
+                                    LayoutMinHeight: =25
+                                    LayoutMinWidth: =100
+                                    Width: =Parent.Width - 30
+                                  Children:
+                                    - WDN_YearLabel:
+                                        Control: Text@0.0.51
+                                        Properties:
+                                          Font: =Font.Lato
+                                          FontColor: =RGBA(100, 100, 100, 1)
+                                          Height: =25
+                                          Size: =13
+                                          Text: ="Year:"
+                                          VerticalAlign: =VerticalAlign.Middle
+                                          Width: =100
+                                    - WDN_YearValue:
+                                        Control: Text@0.0.51
+                                        Properties:
+                                          Font: =Font.Lato
+                                          FontColor: =RGBA(0, 0, 0, 1)
+                                          Height: =25
+                                          Size: =13
+                                          Text: |-
+                                            =With(
+                                                {wdnRecord: LookUp(colWorkingDayCalendar, 'Calendar Date' = _dateSelected)},
+                                                If(
+                                                    IsBlank(wdnRecord),
+                                                    "-",
+                                                    Text(wdnRecord.Year)
+                                                )
+                                            )
+                                          VerticalAlign: =VerticalAlign.Middle
+                                          Weight: ='TextCanvas.Weight'.Semibold
+                                          Width: =80
+                        - RightPanel_Divider2:
+                            Control: Rectangle@2.3.0
+                            Properties:
+                              Fill: =RGBA(200, 200, 200, 1)
+                              Height: =1
+                              Width: =Parent.Width - 30
+                        - RightPanel_EventsSection:
+                            Control: GroupContainer@1.4.0
+                            Variant: AutoLayout
+                            Properties:
+                              DropShadow: =DropShadow.None
+                              LayoutDirection: =LayoutDirection.Vertical
+                              LayoutGap: =10
+                              LayoutMinHeight: =150
+                              LayoutMinWidth: =100
+                              Width: =Parent.Width - 30
+                            Children:
+                              - Events_SectionHeader:
+                                  Control: GroupContainer@1.4.0
+                                  Variant: AutoLayout
+                                  Properties:
+                                    DropShadow: =DropShadow.None
+                                    LayoutAlignItems: =LayoutAlignItems.Center
+                                    LayoutDirection: =LayoutDirection.Horizontal
+                                    LayoutJustifyContent: =LayoutJustifyContent.SpaceBetween
+                                    LayoutMinHeight: =35
+                                    LayoutMinWidth: =100
+                                    Width: =Parent.Width
+                                  Children:
+                                    - Events_Title:
+                                        Control: Text@0.0.51
+                                        Properties:
+                                          Font: =Font.Lato
+                                          FontColor: =RGBA(0, 101, 161, 1)
+                                          Height: =25
+                                          Text: ="Events / Holidays"
+                                          Weight: ='TextCanvas.Weight'.Bold
+                                          Width: =150
+                                    - Events_AddBtn:
+                                        Control: Button@0.0.45
+                                        Properties:
+                                          BasePaletteColor: =RGBA(0, 101, 161, 1)
+                                          Height: =30
+                                          Icon: ="Add"
+                                          OnSelect: |-
+                                            =UpdateContext({
+                                                _showEventForm: true,
+                                                _eventMode: "New",
+                                                _selectedEvent: First(Filter(' [THFinanceCashCollection]CalendarEvents', false))
+                                            })
+                                          Text: ="Add"
+                                          Width: =80
+                              - Events_Gallery:
+                                  Control: Gallery@2.15.0
+                                  Variant: Vertical
+                                  Properties:
+                                    Height: =Parent.Height - 50
+                                    Items: =Filter(colCalendarEvents, 'Event Date' = _dateSelected)
+                                    TemplateSize: =60
+                                    Width: =Parent.Width
+                                  Children:
+                                    - EventCard:
+                                        Control: GroupContainer@1.4.0
+                                        Variant: AutoLayout
+                                        Properties:
+                                          Fill: =RGBA(255, 255, 255, 1)
+                                          Height: =55
+                                          LayoutAlignItems: =LayoutAlignItems.Center
+                                          LayoutDirection: =LayoutDirection.Horizontal
+                                          LayoutGap: =10
+                                          PaddingBottom: =10
+                                          PaddingLeft: =10
+                                          PaddingRight: =10
+                                          PaddingTop: =10
+                                          RadiusBottomLeft: =6
+                                          RadiusBottomRight: =6
+                                          RadiusTopLeft: =6
+                                          RadiusTopRight: =6
+                                          Width: =Parent.TemplateWidth - 10
+                                        Children:
+                                          - EventCard_Icon:
+                                              Control: Classic/Icon@2.5.0
+                                              Properties:
+                                                Color: =RGBA(212, 41, 57, 1)
+                                                Height: =30
+                                                Icon: =Icon.CalendarBlank
+                                                Width: =30
+                                          - EventCard_Description:
+                                              Control: Text@0.0.51
+                                              Properties:
+                                                FillPortions: =1
+                                                Font: =Font.Lato
+                                                FontColor: =RGBA(0, 0, 0, 1)
+                                                Height: =35
+                                                Size: =13
+                                                Text: =ThisItem.Description
+                                                VerticalAlign: =VerticalAlign.Middle
+                                                Weight: ='TextCanvas.Weight'.Semibold
+                                                Width: =200
+                                          - EventCard_DeleteBtn:
+                                              Control: Classic/Icon@2.5.0
+                                              Properties:
+                                                Color: =RGBA(168, 0, 0, 1)
+                                                Height: =30
+                                                Icon: =Icon.Trash
+                                                OnSelect: |-
+                                                  =Remove(' [THFinanceCashCollection]CalendarEvents', ThisItem);
+                                                  ClearCollect(
+                                                      colCalendarEvents,
+                                                      Filter(
+                                                          ' [THFinanceCashCollection]CalendarEvents',
+                                                          'Event Date' >= DateAdd(_firstDayOfMonth, -7, TimeUnit.Days) &&
+                                                          'Event Date' <= DateAdd(_lastDayOfMonth, 7, TimeUnit.Days)
+                                                      )
+                                                  );
+                                                  UpdateContext({_needsRecalc: true});
+                                                  Notify("Event deleted. WDN recalculation needed.", NotificationType.Warning)
+                                                Width: =30
+                              - Events_Empty:
+                                  Control: Text@0.0.51
+                                  Properties:
+                                    Align: ='TextCanvas.Align'.Center
+                                    Font: =Font.Lato
+                                    FontColor: =RGBA(150, 150, 150, 1)
+                                    Height: =60
+                                    Size: =13
+                                    Text: ="No events for this date"
+                                    VerticalAlign: =VerticalAlign.Middle
+                                    Visible: =CountRows(Filter(colCalendarEvents, 'Event Date' = _dateSelected)) = 0
+                                    Width: =Parent.Width
+                        - RightPanel_Legend:
+                            Control: GroupContainer@1.4.0
+                            Variant: AutoLayout
+                            Properties:
+                              DropShadow: =DropShadow.None
+                              Fill: =RGBA(255, 255, 255, 1)
+                              LayoutDirection: =LayoutDirection.Horizontal
+                              LayoutGap: =15
+                              LayoutMinHeight: =40
+                              LayoutMinWidth: =100
+                              PaddingBottom: =10
+                              PaddingLeft: =10
+                              PaddingRight: =10
+                              PaddingTop: =10
+                              RadiusBottomLeft: =6
+                              RadiusBottomRight: =6
+                              RadiusTopLeft: =6
+                              RadiusTopRight: =6
+                              Width: =Parent.Width - 30
+                            Children:
+                              - Legend_Working:
+                                  Control: GroupContainer@1.4.0
+                                  Variant: AutoLayout
+                                  Properties:
+                                    DropShadow: =DropShadow.None
+                                    LayoutAlignItems: =LayoutAlignItems.Center
+                                    LayoutDirection: =LayoutDirection.Horizontal
+                                    LayoutGap: =5
+                                    LayoutMinHeight: =20
+                                    LayoutMinWidth: =50
+                                  Children:
+                                    - Legend_WorkingBox:
+                                        Control: Rectangle@2.3.0
+                                        Properties:
+                                          Fill: =RGBA(255, 255, 255, 1)
+                                          Height: =16
+                                          Width: =16
+                                    - Legend_WorkingText:
+                                        Control: Text@0.0.51
+                                        Properties:
+                                          Font: =Font.Lato
+                                          FontColor: =RGBA(100, 100, 100, 1)
+                                          Height: =20
+                                          Size: =11
+                                          Text: ="Working"
+                                          VerticalAlign: =VerticalAlign.Middle
+                                          Width: =55
+                              - Legend_Holiday:
+                                  Control: GroupContainer@1.4.0
+                                  Variant: AutoLayout
+                                  Properties:
+                                    DropShadow: =DropShadow.None
+                                    LayoutAlignItems: =LayoutAlignItems.Center
+                                    LayoutDirection: =LayoutDirection.Horizontal
+                                    LayoutGap: =5
+                                    LayoutMinHeight: =20
+                                    LayoutMinWidth: =50
+                                  Children:
+                                    - Legend_HolidayBox:
+                                        Control: Rectangle@2.3.0
+                                        Properties:
+                                          Fill: =RGBA(255, 200, 200, 0.5)
+                                          Height: =16
+                                          Width: =16
+                                    - Legend_HolidayText:
+                                        Control: Text@0.0.51
+                                        Properties:
+                                          Font: =Font.Lato
+                                          FontColor: =RGBA(100, 100, 100, 1)
+                                          Height: =20
+                                          Size: =11
+                                          Text: ="Holiday"
+                                          VerticalAlign: =VerticalAlign.Middle
+                                          Width: =50
+                              - Legend_Selected:
+                                  Control: GroupContainer@1.4.0
+                                  Variant: AutoLayout
+                                  Properties:
+                                    DropShadow: =DropShadow.None
+                                    LayoutAlignItems: =LayoutAlignItems.Center
+                                    LayoutDirection: =LayoutDirection.Horizontal
+                                    LayoutGap: =5
+                                    LayoutMinHeight: =20
+                                    LayoutMinWidth: =50
+                                  Children:
+                                    - Legend_SelectedBox:
+                                        Control: Rectangle@2.3.0
+                                        Properties:
+                                          Fill: =RGBA(0, 101, 161, 0.2)
+                                          Height: =16
+                                          Width: =16
+                                    - Legend_SelectedText:
+                                        Control: Text@0.0.51
+                                        Properties:
+                                          Font: =Font.Lato
+                                          FontColor: =RGBA(100, 100, 100, 1)
+                                          Height: =20
+                                          Size: =11
+                                          Text: ="Selected"
+                                          VerticalAlign: =VerticalAlign.Middle
+                                          Width: =55
+                        - RightPanel_RecalcStatus:
+                            Control: GroupContainer@1.4.0
+                            Variant: AutoLayout
+                            Properties:
+                              DropShadow: =DropShadow.None
+                              Fill: |-
+                                =If(
+                                    _needsRecalc,
+                                    RGBA(255, 243, 205, 1),
+                                    RGBA(240, 255, 240, 1)
+                                )
+                              LayoutAlignItems: =LayoutAlignItems.Center
+                              LayoutDirection: =LayoutDirection.Horizontal
+                              LayoutGap: =8
+                              LayoutMinHeight: =35
+                              LayoutMinWidth: =80
+                              PaddingBottom: =8
+                              PaddingLeft: =8
+                              PaddingRight: =8
+                              PaddingTop: =8
+                              RadiusBottomLeft: =6
+                              RadiusBottomRight: =6
+                              RadiusTopLeft: =6
+                              RadiusTopRight: =6
+                              Width: =Parent.Width - 30
+                            Children:
+                              - RecalcStatus_Icon:
+                                  Control: Classic/Icon@2.5.0
+                                  Properties:
+                                    Color: |-
+                                      =If(
+                                          _needsRecalc,
+                                          RGBA(212, 146, 0, 1),
+                                          RGBA(16, 124, 16, 1)
+                                      )
+                                    Height: =20
+                                    Icon: |-
+                                      =If(
+                                          _needsRecalc,
+                                          Icon.Warning,
+                                          Icon.CheckBadge
+                                      )
+                                    Width: =20
+                              - RecalcStatus_Text:
+                                  Control: Text@0.0.51
+                                  Properties:
+                                    FillPortions: =1
+                                    Font: =Font.Lato
+                                    FontColor: |-
+                                      =If(
+                                          _needsRecalc,
+                                          RGBA(133, 100, 4, 1),
+                                          RGBA(16, 100, 16, 1)
+                                      )
+                                    Height: =18
+                                    Size: =10
+                                    Text: |-
+                                      =If(
+                                          _needsRecalc,
+                                          "Recalc needed",
+                                          "Up to date"
+                                      )
+                                    VerticalAlign: =VerticalAlign.Middle
+                                    Width: =100
             - Calendar_NavigationMenu:
                 Control: CanvasComponent
                 ComponentName: NavigationMenu
                 Properties:
                   Fill: =RGBA(255, 255, 255, 0.5)
                   Height: =Parent.Height - 70
-                  Visible: =If(_showMenu, true, false)
+                  Visible: =_showMenu
                   Width: =260
                   Y: =70
                   navItems: =Navigation
                   navSelected: =currentScreen
+            - Calendar_RecalcConfirmOverlay:
+                Control: GroupContainer@1.4.0
+                Variant: ManualLayout
+                Properties:
+                  Fill: =RGBA(0, 0, 0, 0.5)
+                  Height: =Parent.Height
+                  Visible: =_showRecalcConfirm
+                  Width: =Parent.Width
+                Children:
+                  - RecalcConfirm_Box:
+                      Control: GroupContainer@1.4.0
+                      Variant: AutoLayout
+                      Properties:
+                        DropShadow: =DropShadow.Regular
+                        Fill: =RGBA(255, 255, 255, 1)
+                        Height: =293
+                        LayoutDirection: =LayoutDirection.Vertical
+                        LayoutGap: =15
+                        PaddingBottom: =20
+                        PaddingLeft: =20
+                        PaddingRight: =20
+                        PaddingTop: =20
+                        RadiusBottomLeft: =10
+                        RadiusBottomRight: =10
+                        RadiusTopLeft: =10
+                        RadiusTopRight: =10
+                        Width: =400
+                        X: =(Parent.Width - 400) / 2
+                        Y: =(Parent.Height - 250) / 2
+                      Children:
+                        - RecalcConfirm_Title:
+                            Control: Text@0.0.51
+                            Properties:
+                              Font: =Font.Lato
+                              FontColor: =RGBA(0, 0, 0, 1)
+                              Height: =30
+                              Size: =18
+                              Text: ="Recalculate Working Day Numbers"
+                              Weight: ='TextCanvas.Weight'.Bold
+                              Width: =360
+                        - RecalcConfirm_Message:
+                            Control: Text@0.0.51
+                            Properties:
+                              AutoHeight: =true
+                              Font: =Font.Lato
+                              FontColor: =RGBA(100, 100, 100, 1)
+                              Size: =13
+                              Text: ="Select the year range to recalculate WDN values."
+                              Width: =360
+                        - RecalcConfirm_YearRow:
+                            Control: GroupContainer@1.4.0
+                            Variant: AutoLayout
+                            Properties:
+                              DropShadow: =DropShadow.None
+                              LayoutAlignItems: =LayoutAlignItems.Center
+                              LayoutDirection: =LayoutDirection.Horizontal
+                              LayoutGap: =15
+                              LayoutMinHeight: =70
+                              LayoutMinWidth: =100
+                              Width: =360
+                            Children:
+                              - RecalcConfirm_StartYearGroup:
+                                  Control: GroupContainer@1.4.0
+                                  Variant: AutoLayout
+                                  Properties:
+                                    DropShadow: =DropShadow.None
+                                    LayoutDirection: =LayoutDirection.Vertical
+                                    LayoutGap: =5
+                                    LayoutMinHeight: =60
+                                    LayoutMinWidth: =80
+                                  Children:
+                                    - RecalcConfirm_StartYearLabel:
+                                        Control: Text@0.0.51
+                                        Properties:
+                                          Font: =Font.Lato
+                                          FontColor: =RGBA(100, 100, 100, 1)
+                                          Height: =20
+                                          Size: =12
+                                          Text: ="Start Year"
+                                          Width: =150
+                                    - RecalcConfirm_StartYearDropdown:
+                                        Control: ComboBox@0.0.51
+                                        Properties:
+                                          DefaultSelectedItems: =[Year(Today())]
+                                          Height: =38
+                                          Items: =[Year(Today()) - 1, Year(Today()), Year(Today()) + 1, Year(Today()) + 2]
+                                          Width: =150
+                              - RecalcConfirm_EndYearGroup:
+                                  Control: GroupContainer@1.4.0
+                                  Variant: AutoLayout
+                                  Properties:
+                                    DropShadow: =DropShadow.None
+                                    LayoutDirection: =LayoutDirection.Vertical
+                                    LayoutGap: =5
+                                    LayoutMinHeight: =60
+                                    LayoutMinWidth: =80
+                                  Children:
+                                    - RecalcConfirm_EndYearLabel:
+                                        Control: Text@0.0.51
+                                        Properties:
+                                          Font: =Font.Lato
+                                          FontColor: =RGBA(100, 100, 100, 1)
+                                          Height: =20
+                                          Size: =12
+                                          Text: ="End Year"
+                                          Width: =150
+                                    - RecalcConfirm_EndYearDropdown:
+                                        Control: ComboBox@0.0.51
+                                        Properties:
+                                          DefaultSelectedItems: =[Year(Today()) + 1]
+                                          Height: =38
+                                          Items: =[Year(Today()), Year(Today()) + 1, Year(Today()) + 2, Year(Today()) + 3]
+                                          Width: =150
+                        - RecalcConfirm_ValidationMsg:
+                            Control: Text@0.0.51
+                            Properties:
+                              Font: =Font.Lato
+                              FontColor: =RGBA(212, 41, 57, 1)
+                              Height: =20
+                              Size: =11
+                              Text: ="End year must be >= Start year"
+                              Visible: =RecalcConfirm_EndYearDropdown.Selected.Value < RecalcConfirm_StartYearDropdown.Selected.Value
+                              Width: =360
+                        - RecalcConfirm_Info:
+                            Control: Text@0.0.51
+                            Properties:
+                              Font: =Font.Lato
+                              FontColor: =RGBA(100, 100, 100, 1)
+                              Height: =40
+                              Size: =11
+                              Text: ="This will update WDN for all dates in the selected range. Process may take 1-5 minutes depending on range."
+                              Width: =360
+                        - RecalcConfirm_Buttons:
+                            Control: GroupContainer@1.4.0
+                            Variant: AutoLayout
+                            Properties:
+                              DropShadow: =DropShadow.None
+                              LayoutDirection: =LayoutDirection.Horizontal
+                              LayoutGap: =10
+                              LayoutJustifyContent: =LayoutJustifyContent.End
+                              LayoutMinHeight: =40
+                              LayoutMinWidth: =100
+                              Width: =360
+                            Children:
+                              - RecalcConfirm_CancelBtn:
+                                  Control: Button@0.0.45
+                                  Properties:
+                                    BasePaletteColor: =RGBA(128, 128, 128, 1)
+                                    Height: =35
+                                    OnSelect: |-
+                                      =UpdateContext({_showRecalcConfirm: false})
+                                    Text: ="Cancel"
+                                    Width: =100
+                              - RecalcConfirm_ConfirmBtn:
+                                  Control: Button@0.0.45
+                                  Properties:
+                                    BasePaletteColor: =RGBA(0, 101, 161, 1)
+                                    DisplayMode: |-
+                                      =If(
+                                          RecalcConfirm_EndYearDropdown.Selected.Value < RecalcConfirm_StartYearDropdown.Selected.Value,
+                                          DisplayMode.Disabled,
+                                          DisplayMode.Edit
+                                      )
+                                    Height: =35
+                                    OnSelect: |-
+                                      =// Show loading state
+                                      UpdateContext({_isRecalculating: true});
+
+                                      // Call Power Automate flow with year parameters
+                                      Set(
+                                          _recalcResult,
+                                          '[THFinance]RecalculateWDN(PowerApps)'.Run(
+                                              RecalcConfirm_StartYearDropdown.Selected.Value,
+                                              RecalcConfirm_EndYearDropdown.Selected.Value
+                                          )
+                                      );
+
+                                      // Refresh local WDN collection
+                                      ClearCollect(
+                                          colWorkingDayCalendar,
+                                          Filter(
+                                              '[THFinanceCashCollection]WorkingDayCalendars',
+                                              'Calendar Date' >= DateAdd(_firstDayOfMonth, -7, TimeUnit.Days) &&
+                                              'Calendar Date' <= DateAdd(_lastDayOfMonth, 7, TimeUnit.Days)
+                                          )
+                                      );
+
+                                      // Update UI state
+                                      UpdateContext({
+                                          _isRecalculating: false,
+                                          _needsRecalc: false,
+                                          _lastRecalcDate: Now(),
+                                          _showRecalcConfirm: false
+                                      });
+
+                                      Notify(
+                                          "WDN recalculation complete for " & RecalcConfirm_StartYearDropdown.Selected.Value & "-" & RecalcConfirm_EndYearDropdown.Selected.Value & "!",
+                                          NotificationType.Success
+                                      )
+                                    Text: ="Recalculate"
+                                    Width: =120
+            - Calendar_EventFormOverlay:
+                Control: GroupContainer@1.4.0
+                Variant: ManualLayout
+                Properties:
+                  Fill: =RGBA(0, 0, 0, 0.5)
+                  Height: =Parent.Height
+                  Visible: =_showEventForm
+                  Width: =Parent.Width
+                Children:
+                  - EventForm_Box:
+                      Control: GroupContainer@1.4.0
+                      Variant: AutoLayout
+                      Properties:
+                        DropShadow: =DropShadow.Regular
+                        Fill: =RGBA(255, 255, 255, 1)
+                        Height: =302
+                        LayoutDirection: =LayoutDirection.Vertical
+                        LayoutGap: =15
+                        PaddingBottom: =20
+                        PaddingLeft: =20
+                        PaddingRight: =20
+                        PaddingTop: =20
+                        RadiusBottomLeft: =10
+                        RadiusBottomRight: =10
+                        RadiusTopLeft: =10
+                        RadiusTopRight: =10
+                        Width: =400
+                        X: =(Parent.Width - 400) / 2
+                        Y: =(Parent.Height - 300) / 2
+                      Children:
+                        - EventForm_Title:
+                            Control: Text@0.0.51
+                            Properties:
+                              Font: =Font.Lato
+                              FontColor: =RGBA(0, 0, 0, 1)
+                              Height: =30
+                              Size: =18
+                              Text: |-
+                                =If(
+                                    _eventMode = "New",
+                                    "Add Holiday/Event",
+                                    "Edit Holiday/Event"
+                                )
+                              Weight: ='TextCanvas.Weight'.Bold
+                              Width: =360
+                        - EventForm_DateLabel:
+                            Control: Text@0.0.51
+                            Properties:
+                              Font: =Font.Lato
+                              FontColor: =RGBA(100, 100, 100, 1)
+                              Height: =20
+                              Size: =12
+                              Text: ="Date"
+                              Width: =360
+                        - EventForm_DateDisplay:
+                            Control: Text@0.0.51
+                            Properties:
+                              Fill: =RGBA(248, 248, 248, 1)
+                              Font: =Font.Lato
+                              FontColor: =RGBA(0, 0, 0, 1)
+                              Height: =35
+                              PaddingLeft: =10
+                              Text: =Text(_dateSelected, "dddd, mmmm d, yyyy")
+                              VerticalAlign: =VerticalAlign.Middle
+                              Weight: ='TextCanvas.Weight'.Semibold
+                              Width: =360
+                        - EventForm_DescLabel:
+                            Control: Text@0.0.51
+                            Properties:
+                              Font: =Font.Lato
+                              FontColor: =RGBA(100, 100, 100, 1)
+                              Height: =20
+                              Size: =12
+                              Text: ="Description *"
+                              Width: =360
+                        - EventForm_DescInput:
+                            Control: TextInput@0.0.54
+                            Properties:
+                              Height: =40
+                              Mode: =TextMode.SingleLine
+                              Placeholder: ="e.g., New Year's Day, Company Holiday"
+                              Value: |-
+                                =If(
+                                    _eventMode = "New",
+                                    "",
+                                    _selectedEvent.Description
+                                )
+                              Width: =360
+                        - EventForm_Buttons:
+                            Control: GroupContainer@1.4.0
+                            Variant: AutoLayout
+                            Properties:
+                              DropShadow: =DropShadow.None
+                              LayoutDirection: =LayoutDirection.Horizontal
+                              LayoutGap: =10
+                              LayoutJustifyContent: =LayoutJustifyContent.End
+                              LayoutMinHeight: =40
+                              LayoutMinWidth: =100
+                              Width: =360
+                            Children:
+                              - EventForm_CancelBtn:
+                                  Control: Button@0.0.45
+                                  Properties:
+                                    BasePaletteColor: =RGBA(128, 128, 128, 1)
+                                    Height: =35
+                                    OnSelect: |-
+                                      =Reset(EventForm_DescInput);
+                                      UpdateContext({
+                                          _showEventForm: false,
+                                          _selectedEvent: First(Filter(' [THFinanceCashCollection]CalendarEvents', false))
+                                      })
+                                    Text: ="Cancel"
+                                    Width: =100
+                              - EventForm_SaveBtn:
+                                  Control: Button@0.0.45
+                                  Properties:
+                                    BasePaletteColor: =RGBA(0, 101, 161, 1)
+                                    DisplayMode: |-
+                                      =If(
+                                          IsBlank(EventForm_DescInput.Value),
+                                          DisplayMode.Disabled,
+                                          DisplayMode.Edit
+                                      )
+                                    Height: =35
+                                    OnSelect: |-
+                                      =// Create new calendar event
+                                      Patch(
+                                          ' [THFinanceCashCollection]CalendarEvents',
+                                          Defaults(' [THFinanceCashCollection]CalendarEvents'),
+                                          {
+                                              'Event Date': _dateSelected,
+                                              Description: EventForm_DescInput.Value
+                                          }
+                                      );
+
+                                      // Refresh local collection
+                                      ClearCollect(
+                                          colCalendarEvents,
+                                          Filter(
+                                              ' [THFinanceCashCollection]CalendarEvents',
+                                              'Event Date' >= DateAdd(_firstDayOfMonth, -7, TimeUnit.Days) &&
+                                              'Event Date' <= DateAdd(_lastDayOfMonth, 7, TimeUnit.Days)
+                                          )
+                                      );
+
+                                      // Reset form and close
+                                      Reset(EventForm_DescInput);
+                                      UpdateContext({
+                                          _showEventForm: false,
+                                          _needsRecalc: true
+                                      });
+
+                                      Notify(
+                                          "Event added. WDN recalculation needed.",
+                                          NotificationType.Warning
+                                      )
+                                    Text: ="Save"
+                                    Width: =100

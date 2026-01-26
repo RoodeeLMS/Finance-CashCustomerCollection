@@ -1,0 +1,259 @@
+{
+  "properties": {
+    "connectionReferences": {
+      "shared_commondataserviceforapps": {
+        "runtimeSource": "embedded",
+        "connection": {
+          "connectionReferenceLogicalName": "new_sharedcommondataserviceforapps_7e300"
+        },
+        "api": {
+          "name": "shared_commondataserviceforapps"
+        }
+      },
+      "shared_sharepointonline": {
+        "runtimeSource": "embedded",
+        "connection": {
+          "connectionReferenceLogicalName": "nc_sharedsharepointonline_80205"
+        },
+        "api": {
+          "name": "shared_sharepointonline"
+        }
+      },
+      "shared_office365": {
+        "runtimeSource": "embedded",
+        "connection": {
+          "connectionReferenceLogicalName": "new_sharedoffice365_50b72"
+        },
+        "api": {
+          "name": "shared_office365"
+        }
+      }
+    },
+    "definition": {
+      "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+      "contentVersion": "1.0.0.0",
+      "parameters": {
+        "$connections": {
+          "defaultValue": {},
+          "type": "Object"
+        },
+        "$authentication": {
+          "defaultValue": {},
+          "type": "SecureObject"
+        },
+        "Test Customer Email (nc_TestCustomerEmail)": {
+          "defaultValue": "Nick.Chamnong@th.nestle.com",
+          "type": "String",
+          "metadata": {
+            "schemaName": "nc_TestCustomerEmail"
+          }
+        }
+      },
+      "triggers": {
+        "manual": {
+          "metadata": {
+            "operationMetadataId": "94cf5de0-f3af-4e06-a9d7-19daf450a1e0"
+          },
+          "type": "Request",
+          "kind": "PowerAppV2",
+          "inputs": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "text": {
+                  "title": "EmailLogID",
+                  "type": "string",
+                  "x-ms-dynamically-added": true,
+                  "description": "GUID of EmailLog record to resend",
+                  "x-ms-content-hint": "TEXT"
+                }
+              },
+              "required": [
+                "text"
+              ]
+            }
+          }
+        }
+      },
+      "actions": {
+        "Initialize_varEmailLogID": {
+          "runAfter": {},
+          "metadata": {
+            "operationMetadataId": "ad810b77-567b-47ad-ae4d-34ebc6b0be06"
+          },
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "varEmailLogID",
+                "type": "string",
+                "value": "@triggerBody()['text']"
+              }
+            ]
+          }
+        },
+        "Get_EmailLog": {
+          "runAfter": {
+            "Initialize_varEmailLogID": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+          },
+          "type": "OpenApiConnection",
+          "inputs": {
+            "host": {
+              "connectionName": "shared_commondataserviceforapps",
+              "operationId": "GetItem",
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps"
+            },
+            "parameters": {
+              "entityName": "cr7bb_thfinancecashcollectionemaillogs",
+              "recordId": "@variables('varEmailLogID')"
+            },
+            "authentication": "@parameters('$authentication')"
+          }
+        },
+        "Get_Customer": {
+          "runAfter": {
+            "Get_EmailLog": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "b2c3d4e5-f6a7-8901-bcde-f12345678901"
+          },
+          "type": "OpenApiConnection",
+          "inputs": {
+            "host": {
+              "connectionName": "shared_commondataserviceforapps",
+              "operationId": "GetItem",
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps"
+            },
+            "parameters": {
+              "entityName": "cr7bb_thfinancecashcollectioncustomers",
+              "recordId": "@outputs('Get_EmailLog')?['body/_cr7bb_customer_value']"
+            },
+            "authentication": "@parameters('$authentication')"
+          }
+        },
+        "Get_QR_Code": {
+          "runAfter": {
+            "Get_Customer": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "c3d4e5f6-a7b8-9012-cdef-123456789012",
+            "%252fShared%2bDocuments%252fCash%2bCustomer%2bCollection%252f03-QR-Codes%252fQR%2bLot%2b1%2bver%2b.jpeg%252f1039634.jpg": "/Shared Documents/Cash Customer Collection/03-QR-Codes/QR Lot 1 ver .jpeg/1039634.jpg"
+          },
+          "type": "OpenApiConnection",
+          "inputs": {
+            "host": {
+              "connectionName": "shared_sharepointonline",
+              "operationId": "GetFileContent",
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+            },
+            "parameters": {
+              "dataset": "https://nestle.sharepoint.com/teams/THFinancePowerPlatformSolutions",
+              "id": "%252fShared%2bDocuments%252fCash%2bCustomer%2bCollection%252f03-QR-Codes%252fQR%2bLot%2b1%2bver%2b.jpeg%252f1039634.jpg"
+            },
+            "authentication": "@parameters('$authentication')"
+          }
+        },
+        "Send_Email": {
+          "runAfter": {
+            "Get_QR_Code": [
+              "Succeeded",
+              "Failed"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "d4e5f6a7-b8c9-0123-def0-123456789013"
+          },
+          "type": "OpenApiConnection",
+          "inputs": {
+            "host": {
+              "connectionName": "shared_office365",
+              "operationId": "SendEmailV2",
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_office365"
+            },
+            "parameters": {
+              "emailMessage/To": "@parameters('Test Customer Email (nc_TestCustomerEmail)')",
+              "emailMessage/Subject": "@outputs('Get_EmailLog')?['body/cr7bb_emailsubject']",
+              "emailMessage/Body": "@outputs('Get_EmailLog')?['body/cr7bb_emailbodypreview']",
+              "emailMessage/Attachments": "@if(equals(outputs('Get_QR_Code')?['statusCode'], 200), createArray(json(concat('{\"Name\":\"', outputs('Get_Customer')?['body/cr7bb_customercode'], '_QRCode.jpg\",\"ContentBytes\":\"', base64(body('Get_QR_Code')), '\"}'))), createArray())",
+              "emailMessage/Importance": "@{if(greaterOrEquals(outputs('Get_EmailLog')?['body/cr7bb_maxdaycount'], 3), 'High', 'Normal')}"
+            },
+            "authentication": "@parameters('$authentication')"
+          }
+        },
+        "Update_EmailLog": {
+          "runAfter": {
+            "Send_Email": [
+              "Succeeded",
+              "Failed",
+              "TimedOut"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "e5f6a7b8-c9d0-1234-ef01-234567890123"
+          },
+          "type": "OpenApiConnection",
+          "inputs": {
+            "host": {
+              "connectionName": "shared_commondataserviceforapps",
+              "operationId": "UpdateRecord",
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps"
+            },
+            "parameters": {
+              "entityName": "cr7bb_thfinancecashcollectionemaillogs",
+              "recordId": "@variables('varEmailLogID')",
+              "item/cr7bb_errormessage": "@if(equals(outputs('Send_Email')?['statusCode'], 200), '', outputs('Send_Email')?['error']?['message'])",
+              "item/cr7bb_sendstatus": "@if(equals(outputs('Send_Email')?['statusCode'], 200), 'Success', 'Failed')",
+              "item/cr7bb_sentdatetime": "@utcNow()"
+            },
+            "authentication": "@parameters('$authentication')"
+          }
+        },
+        "Respond_to_PowerApp": {
+          "runAfter": {
+            "Update_EmailLog": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "1eb44b89-5234-48a4-b809-ba7f41a061e5"
+          },
+          "type": "Response",
+          "kind": "PowerApp",
+          "inputs": {
+            "statusCode": 200,
+            "body": {
+              "status": "@if(equals(outputs('Send_Email')?['statusCode'], 200), 'Success', 'Failed')",
+              "message": "@if(equals(outputs('Send_Email')?['statusCode'], 200), concat('Email sent to ', outputs('Get_EmailLog')?['body/cr7bb_recipientemails']), concat('Failed: ', outputs('Send_Email')?['error']?['message']))"
+            },
+            "schema": {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "title": "Status",
+                  "x-ms-dynamically-added": true,
+                  "type": "string"
+                },
+                "message": {
+                  "title": "Message",
+                  "x-ms-dynamically-added": true,
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "templateName": ""
+  },
+  "schemaVersion": "1.0.0.0"
+}

@@ -1,0 +1,11 @@
+<environmentvariabledefinition schemaname="nc_SystemNotificationEmail">
+  <defaultvalue>Nestle_Collection@th.nestle.com;THHOARTeam@th.nestle.com;Nick.Chamnong@th.nestle.com;</defaultvalue>
+  <displayname default="System Notification Email">
+    <label description="System Notification Email" languagecode="1033" />
+  </displayname>
+  <introducedversion>1.0.0.2</introducedversion>
+  <iscustomizable>1</iscustomizable>
+  <isrequired>0</isrequired>
+  <secretstore>0</secretstore>
+  <type>100000000</type>
+</environmentvariabledefinition>

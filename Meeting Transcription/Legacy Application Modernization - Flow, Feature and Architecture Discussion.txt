@@ -1,0 +1,141 @@
+# Legacy Application Modernization - Flow, Feature and Architecture Discussion
+
+  Meeting started: 12/1/2025, 2:01:31 PM
+  Duration: 19 minutes
+  Participants: Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal, Chamnong,Nick,TH-Bangkok,Information Technology, Changsalak,Alisara,TH-Bangkok,Accounts Receivable, Nithijarernariya,Russarin,TH-Bangkok,Information Technology, Thongkumwan,Pattarin,TH-Bangkok,Accounts Receivable
+
+  [View original transcript](https://app.tactiq.io/api/2/u/m/r/TZJWdwYzpDusOZ7FCD5M?o=txt)
+
+    
+
+  
+
+  
+
+  ## Transcript
+
+  00:00 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: ชั่น หรือ discussion ต่างต่างที่ มีคําถามหรือว่าอยากจะมา discuss กันอะไรอย่างเงี้ยค่ะ ก็เดี๋ยวยังไงเดี๋ยว รบกวนคุณ หลายเรื่อง อาทิตย์ เจอกันก็ได้ครับ
+00:12 Chamnong,Nick,TH-Bangkok,Information Technology: ผม ผมให้ให้แอป อือแปบนะฮะครับคน
+00:52 Chamnong,Nick,TH-Bangkok,Information Technology: ครับครับ 2 นะฮะ
+01:29 Chamnong,Nick,TH-Bangkok,Information Technology: ขึ้นมั้ยฮะ ไม่ไม่ขึ้นเอาขึ้นหลัก ก็ที่คุยกับครั้งแล้วก็คือว่าเราจะเน้นเป็นตัวที่บิลเพรสใช่ไหมฮะ แล้วก็ต่อกับซีโก้ดาต้าเบส ซึ่งซึ่งหนังที่ไปลองพันชัยชนะนานมากไปต่อสิ้นวันต่อได้ไหมฮะ ก็คือตอนนี้น่าจะสามารถดึงห้องออกจากฟีโก้ได้ แต่ว่าเหมือนที่คุยกับคุณโมตอนนี้อยากให้ผมไม่ใช้ซีโคเลยถูกมั้ยฮะ หมายถึงว่าให้ทําพาเลลไปเลยโดยเชื่อมต่อแซดโดยตรงใช่มั้ยฮะ
+02:11 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: เอ่อ ไม่ไม่ได้หมายความว่าไม่ไม่ใช้ซีโค้เลยค่ะ หมายถึงว่าคือในในตอนเนี้ยค่ะ ตัว flow เนี่ย มันอาจจะยังจําเป็นที่จะต้องใช้อยู่ เนื่องจากว่า city เรายังไม่ได้ confirm ว่าเค้าจะสามารถทําให้เราอะไรยังไงได้บ้างอะไรอย่างเงี้ยค่ะ ก็เลยอยากให้ตัว flow ของ mack up เนี่ย มันมันมันใช้งานได้ตามปกติ แล้วก็อาจจะไม่ได้แบบ interup อะไรกับข้อมูลของมันมากจะได้ไม่มีปัญหา
+02:37 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: เพราะว่าถ้ามีขึ้นมาตัวแอปเก่าอาจจะอาจจะพังได้เลย
+02:41 Chamnong,Nick,TH-Bangkok,Information Technology: หมายหมายถึงว่า ผมหมายถึงว่าแอพใหม่จะไม่ไม่ได้อินเตอร์เกตตัวเองลงไปในโฟลว์นี้ แต่ว่า จะเหมือนกับซ่าอีก เลเยอร์ขึ้นมาอะฮะ หมายถึงว่าตัวเก่าก็โอเปอร์เรตเหมือนเดิม แต่ผมสร้างอีกไอ้เยื่อขึ้นมา คือคือตอนแรกที่เราดูกันนะฮะ นะฮะ ตัวตัวที่เราคุย คราวที่แล้วมันจะเป็นว่าตัวอันใหม่ก็จะดึงจากสีโก้อยู่อะฮะ แต่ว่าอันนี้เราจะเปลี่ยนไปเป็นอันเนี้ยดึงจากแฟตโดยตรงถูกมั้ยฮะ
+03:12 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: เอ่อ เอ่อ สามารถดึงจาก zapp โดยตรง คือเราไม่มั่นใจว่า คือเราไม่มั่นใจว่ามันจะมีติดปัญหาเรื่องแบบ permition หรืออะไรอย่างงั้นไหมอะคะ คือคือเหมือนตอนแรกที่ที่ตั้งใจว่าให้มันมีดาต้าเบสมารองรับเพราะว่าไม่มั่นใจเนี่ยล่ะค่ะว่าตัวเขา app มันสามารถที่จะดึงจาก s a p ได้ได้โดยตรงหรือเปล่า
+03:36 Chamnong,Nick,TH-Bangkok,Information Technology: มีดาต้าเบส มารองรับหมายถึงซีฟอลนะฮะ หรือว่าหมายถึงดาต้าเวิร์สสิจะมาบังใหม่นะฮะ มีดาต้าเบ
+03:43 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: คือเป็นดาต้าเบสอะไรก็ได้ค่ะ อาจจะเป็น rescueal อาจจะเป็น dose คิวแอล หรืออาจจะเป็น nature worst ก็ได้ คือเพียงแค่ว่ามันจะเป็นแค่หนึ่งของ s m e ใช่ค่ะ คืออยากได้เป็น databaseใหม่
+03:53 Chamnong,Nick,TH-Bangkok,Information Technology: เบสใหม่มาแทนใช่มั้ยฮะ ซึ่งซึ่งมันก็จะเหมือนเดิมฮะ หมายความว่าอันนี้ก็คือจะวางกันได้ใหม่ ซึ่งก็แปลว่าผมจะต้องตอบกลับแซกอยู่ดีอะฮะ ถูกมั้ยฮะ ซึ่งซึ่งซึ่งซึ่งอันเนี้ยผมไม่แน่ใจว่ามันจะเป็นท่าไหนอะฮะ ปกติแล้วเค้ายอมให้ผมเข้าไปดึง zat โดยตรงได้มั้ย หรือว่ามันจะมาเป็นรูปแบบเดียวกับตัว
+04:18 Chamnong,Nick,TH-Bangkok,Information Technology: ตัวแคชแค แคชคอลเลกชันนะฮะ ที่ที่ว่า จะเป็นอีกทีนึงเค้าจะเจ็บฟายเอ็กเซลรายวันมาให้เป็นอย่างงั้น อันนี้ผมไม่แน่ใจนะฮะ แต่อันนี้จะยากกว่าประมาณนึง เพราะว่ามันจะเป็นการซิงค์มันจะไม่ใช่เดลี่อ่ะฮะ ใช่ไหมฮะ เพราะว่ามันจะเป็น เอาสแตนดิงจริงจริงอะฮะ คือมันมันมันไม่ใช่ของมันจะเป็น replace ของ flow ใน database โดยตรงถูกมั้ยฮะ
+04:43 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: หม หมายถึงว่ายังไงนะคะ คุณนิ
+04:46 Chamnong,Nick,TH-Bangkok,Information Technology: คล้ายคล้ายกับว่าอย คล้ายคล้ายกับว่าอย่างตอนอันที่เราทําแคชคอลเลคชั่นน่ะ สมมุติคอลเลกแคชคอลเลคชั่นใช่มั้ย เข้าเอ็กซ์ปอร์ตมาผมลีดของวันนี้แล้วผมเอาไปสร้างเอาไปสร้าง โร โรใหม่ของวันนี้ทั้งหมด โรใหม่ของวันนี้ทั้งหมดนะฮะ คือข้อมูลแต่ละวันไม่ไม่ไม่ไม่สนวันที่แล้วอ่ะฮะ แต่ถ้าเป็นตัวใหม่ อันนี้มันจะเป็นการซื้อข้อมูลโดยตรงก็คือแบบว่าผมจะต้องคิดให้โลว์มันเหมือนกับในแซ่บอย่างงี้รึเปล่าฮะ ไม่ใช่ถ้าเคารพลบลบลบอันนึงผมต้องลบด้วยอะไรอย่างเงี้ยฮะ หรือเค้าเค้าเค้าเพิ่ม3อันผมต้องเพิ่มไม่ใช่ว่าผมดึงทุกโลว์แล้วคือมันเหมือนมันเป็นการซิงค์แทนที่จะเป็นการแค่ก็อปปี้มา
+05:27 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: อ๋อ
+05:28 Chamnong,Nick,TH-Bangkok,Information Technology: นี้ผมไม่รู้ว่า จะทําท่าไหนเหมือนกัน
+05:30 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: เด เดี๋ยวก่อนนะ น้องน้องโมโฟลว์ที่น้องโมดีไซน์ไว้น้องโม อยากให้มันเป็นยังไงนะพี่พี่ขอขอคอนเฟิร์มแป๊บนึงจากแซบมาที่มามาที่แอพคุณนิคอะค่ะ หมายถึงว่าน้องโมอยากให้มันเป็นยังไงนะ ที่ที่คิดว่ามันน่าจะเป็นได้อะ ที่ที่น้องโบว์วางไว้
+05:48 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: คือ จากความเข้าใจของโบว์อะค่ะ คือโมเข้าใจว่าเราไม่3ารถที่จะเชื่อมพาวเวอร์แอปกับเอสเอพีได้โดยตรง ก็เลยจําเป็นที่จะต้องมี double based ตัวนึงที่มารับข้อมูลเอาไว้
+05:55 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: คิดว่าไม่ได้
+06:02 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: ซึ่ง ภาวะที่คนใน concern คือเรื่องของการ update ข้อมูลถูกมั้ยคะ
+06:12 Chamnong,Nick,TH-Bangkok,Information Technology: ผมขอย้อนไปตั้งแต่ที่บอกว่าอันนี้จะไม่เชื่อมกับสพ โดยตรงหมายความว่าเรียกว่าไงดีว่ะ หมายถึงว่า ปกติเวลาทํางานนะฮะ เวลาอย่างเช่น แม้แต่จะจะเป็นแคชคอลเลกชันแอปก็ตา มอะฮะ มันจะเป็นตัวนี้จะเป็นดาต้าเวิร์ดอยู่แล้ว คือผมก็ต้องมีดาต้าเบิร์กดาต้าเบสตัวนึงมารันอยู่แล้ว เพราะพาวเวอร์แอปไม่ใช่ดาต้าเบสนะฮะ เพาแอพแค่ท้องถิ่นล้วนล้วนออโตเมติกก็เป็นแค่เป็นแค่โปรเซสโปรอ่ะฮะ มันจะมีตัวที่3เสมออยู่แล้วคือดาต้าเบส
+06:41 Chamnong,Nick,TH-Bangkok,Information Technology: คือคือคือดาต้าเวิร์ส หรือแชร์พอร์ตหรือ หรือแชร์พอยต์ลิสต์อ่ะฮะ เป็นอย่างงั้นเสมออยู่แล้ว อันนั้นถ้าบอกว่าอันนี้ต่ออันนี้ไม่ได้ การมีดาต้าเบสมาขวางมันก็ไม่ใช่ดาต้าเวิร์สอะฮะ ของขวางนึกออกมั้ยฮะ งงๆมั้ยฮะ
+07:00 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: ก็ไม่ใช่
+07:00 Chamnong,Nick,TH-Bangkok,Information Technology: หมายความว่าที่ที่ที่คุณโมที่คุณโมแจ้งว่าคิดว่าต่อไม่ได้เลยต้องมีรายได้เปลี่ยนวางตรงกลางอ่ะฮะ อันนั้นมันเป็นอย่างนั้น เสมออยู่แล้วไงฮะ ในทุกงานที่เราทําอ่ะฮะ
+07:11 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: ค่ะ
+07:11 Chamnong,Nick,TH-Bangkok,Information Technology: ต้องต้องถามว่าทําไมถึงตอบไม่ได้เชื่อมไม่ได้เพราะอะไร
+07:20 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: คือคืออย่างงี้ค่ะ คุณอีหมายถึงว่า ที่ที่เป็น scr แล้วก็ based ที่เขียนลงไปว่า เป็น scipl เนี่ย เพราะว่ามันอ้างอิงมาจากระบบเก่าว่ามันเป็น sql๊ะ แต่ว่าถ้าสมมุติว่าตัว power app สามารถที่จะใช้ dataverse แล้วมี tools หรือว่าวิธีการอะไรที่สามารถจะไปกวาดเอา batch ข้อมูลจาก s a p มาอัปเดตใน datawearch ได้ ก็ใช้ dataward ได้ค่ะ ก็คือ ไม่ได้ไม่ได้ strict ว่าจะต้องเป็น squl
+07:51 Chamnong,Nick,TH-Bangkok,Information Technology: อ่า อ่า โอเคครับ ใช่ทีนี้ ทีนี้เราก็เลยต้องมาคุยกันว่าผมจะเอาดาต้าเวิร์ดต่อกับแซบยังไงฮะ
+08:00 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: โอ โอเคค่ะ ก็คือ ไม่ถึง ไม่ถึงกรณีของอย่าง cash collection ก็คือใช้วิธีการที่เขาจะเหมือนเจนไฟล์มาแล้วก็คนนิกไปอ่าน file ตัวนั้นมาลงใน dataverse ถูกมั้ยคะ
+08:14 Chamnong,Nick,TH-Bangkok,Information Technology: นะครับ
+08:16 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: คือถ้าอ ย่างตัวแอปตัวเนี้ยมันก็จะคล้ายกันตรงที่ว่ามันจะอ่านข้อมูลเพราะสแตนดิ้งเหมือนกันออกมาอะค่ะ ตัวพวกบิ๊กอะไรพวกเนี้ย อ่านอ่านออกมาเหมือนกันเลยเพียงแต่ว่าแทนที่การอ่านข้อมูลเหล่านั้นอะมันจะเอามาสโคปด้วย ข้อมูลที่เส้นสีน้ําเงินน่ะค่ะ ที่ทางทีมคอลเลคเตอร์เค้าจะรีจิสเตอร์ customer เข้าไป
+08:41 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: ถ้าอ ย่างแคช bustumer อะเค้าจะมีลิสต์อยู่แล้วว่า ลูก ลูกค้า customer number อันนี้อันนี้อันนี้ให้ให้ให้ทางโกลบอลเค้า เอ่อเอาไฟล์ที่มีเฉพาะข้อมูลบิลของลูกค้า คนเหล่านี้มาก แต่ว่าในกรณีของอันเนี้ย มันจะอาจจะต้อง scope ด้วยตัวของ customer ที่โดน register เข้าไปในแอปเพื่อที่จะแยกออกมาเป็น fine cash กับ fund cred อะค่ะ
+09:07 Chamnong,Nick,TH-Bangkok,Information Technology: ครับ แต่ทีนี้ก็คือแปลว่าผมจะต้อง dump data ทั้งหมดของ sapp ที่เกี่ยวกับอันนี้มา มาที่ sepo ก่อน แล้วผมค่อยมาแมทชิ่งกับตัวคัสตอมเมอร์ดาต้าที่มีแค่ฝั่งผมเพื่อจะฟิลเตอร์ออกมาเป็นดาต้าอีกชุดนึงอย่างงี้ถูกมั้ยฮะ ต้องทําอย่างงี้ทุกวันใช่มั้ยฮะ
+09:24 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: ใช่ค่ะ
+09:25 Chamnong,Nick,TH-Bangkok,Information Technology: เนี่ยผมกลัวว่ามันจะหนักไป
+09:29 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: เคเออ ถ้าอย่างนั้นคุณคุณเนวิน วิวบอกว่ามี
+09:33 Chamnong,Nick,TH-Bangkok,Information Technology: ต้องต้องสอบถามทางเนสท์เล่ เพราะว่าการการที่จะเป็นแซ่บเอ็กพอร์ต ไฟล์มาแล้วรีดอะฮะ มันมันมันเวิร์คในกรณี ตัวแคชเวอร์ชั่นพวกมันไม่เยอะอันนี้ผมไม่รู้ว่ามันเยอะแค่ไหนนะฮะ แล้วอันนี้มันจะเป็นการซิงค์ซิงค์โลว์ทั้งหมดอะฮะ ผมเข้าใจไม่ผิดนะฮะ มันตระหนัก คือ
+09:51 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: ทุกวันนี้มันมายังไงนะ น้องโม
+09:53 Chamnong,Nick,TH-Bangkok,Information Technology: แล แล้ว แล้วจริงๆแล้วอ่ะฮะ แซปมันต่อกับ dataword ได้โดยตรงนะฮะ
+09:59 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: ใช่หรอคะ
+09:59 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: อ๋อ ด้ายที่เหมือน
+09:59 Chamnong,Nick,TH-Bangkok,Information Technology: ได้ฮะ
+10:01 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: เหมือนเป็น snowplick อย่างงั้นเป็นแบบที่เหมือนกับทีมจําใช่มั้ยคะ ที่เหมือนข้อมูลใน fat ก็จะลิงก์เข้าเข้าถัง data ใช่มั้ย
+10:03 Chamnong,Nick,TH-Bangkok,Information Technology: มัน ใช่ฮะ มันมีทางไม่รู้ว่าเนสท์เล่ไม่ปากว่าหรือว่าอะไรคือจริงจริง ออโตเมทออโตเมติกเนี่ย มันตอบโดยตรงได้ฮะ
+10:09 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: อะ อ่ะอ่ะอ่ะอ่ะอ่ะอ่ะคิดออก
+10:19 Chamnong,Nick,TH-Bangkok,Information Technology: ครับ ผมอาจจะแบบ อยากจะสอบถามว่ามัน พอมีทางอื่นมั้ยที่ไม่ใช่เป็น การให้อีทีใหม่ อ่อนตายมันมันมัน
+10:27 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: ถ้ามันสามารถต่อกับเอสซีพีได้โดยตรง ก็ก็ก็ก็ก็ได้ สามารถต่อกับ
+10:31 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: น้องโมไปเวิร์คน้องโมไปเวิร์คกับทีมจัมป์อะพี่ว่าจั๊มดูตรงนี้อยู่ เออ ดูว่าเราต้องการข้อมูลอะไรอะไรอย่างเงี้ย เออ เพราะว่าจํามันจะมีแบบสโนว์เฟล็กอ่ะ เออ ที่มันจะเป็นแบบเป็นถังข้อมูลอยู่แล้วก็คุณนิ ก็เอาข้อมูลจากถังนั้นน่ะ เอาเข้าไปในตัวพาวเวอร์แอปได้
+10:51 Chamnong,Nick,TH-Bangkok,Information Technology: คือคืออาจจะแบบลองถามเขาดูว่าเขาทําท่าไหนฮะ แล้วก็เขาก็ขอขอเป็นแบบผมทําได้ไหมอะไรอย่างเงี้ยผมมีสิทธิ์ทําเหมือนเขาไหม แล้วก็ถ้ามีฮาวทูมาเหมือนกับว่า เป็น flow ออโตเมติกมาเลย เป็นตัวอย่างแล้วผมก็ทําเหมือนกันได้ครับ น่าจะดีกว่าฮะ น่าจะดีกว่า equment แบบ export file กัน
+11:09 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: คุณนิค คุณนิค นัทคุณคุณว่า ตอนครั้งที่แล้วที่เราคุยกันแล้วมีจําศุภฤกษ์เข้ามาด้วยค่ะ เรามีทัชตัวนี้ไหมคะ
+11:10 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: โอเค
+11:15 Chamnong,Nick,TH-Bangkok,Information Technology: ตอนนั้นตอนนั้นเราไม่เราไม่คุยเรื่องผมต่อตรงตรงนี้เลยครับ ตอนนั้นที่คุยกันเป็นผมเครื่องกับซื้อคั่วอ่ะฮะ ผมเลยซีโฟร์มา มีมีตอน
+11:19 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: อ่า โอเค แม่โอเคอ่ะ โอ โอเคได้ได้ ถ้าอย่างนั้นเดี๋ยวเดี๋ยวเดี๋ยว ขอไป work ตรงนี้ตัวถังข้อมูลจาก sapp ที่มันแบบมันมันใช่มันใช่แซ่บมันมีเลย พี่เคทเข้าไปในถังข้อยู่ค่ะ แล้วเดี๋ยวจะเอาตัวนั้น
+11:37 Chamnong,Nick,TH-Bangkok,Information Technology: ได้ครับผม
+11:38 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: ก็เข้ามาใน automate อะได้อะ ok เดี๋ยวอันนั้น refreendat ไปคุยค่ะ อะอะจุดต่อไปเลยค่ะ
+11:46 Chamnong,Nick,TH-Bangkok,Information Technology: ก็ ก็แล้วก็อาจจะเป็นเรื่องที่ผมแจ้งขอขอขอขอไป อันนี้กี่ พอดี พอดีเสียเวลาไปเยอะกับการถอนอะไรมาก นึกว่าผมเองด้วย ผมพิมพ์เลขศูนย์มาเป็นตัว or กัน ค่ะ ค่ะ ก็จะอาจจะเป็นถัดไปคือผมอาจจะต้องขอขอบิวเพรสโปรแกรมเนี้ยฮะ ถ้าเป็นไปได้ มี มีแจ้งครับ มีแจ้งครับ
+12:08 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: พี่ติ๊กพี่เอขา มีตัวตัว build place กับ rock box มัน เอ่อ ตอนนี้มันอยู่ในรูปร่างอะไรคะ
+12:19 Thongkumwan,Pattarin,TH-Bangkok,Accounts Receivable: รูปร่างอะไรหมายถึงแบบหน้าตาโปรแกรม หรือว่ายังไงนะคะ
+12:22 Chamnong,Nick,TH-Bangkok,Information Technology: มันเป็นไฟล์
+12:24 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: มันมันเป็นไฟล์อธิบายไม่ถูก คือคือตอนสมุดที่พี่จิ๊บพี่อะ สมมุติว่าแบบว่ามีเอ่อ new comerมาใหม่แล้วเค้าจะต้องใช้22อันเนี้ยอะค่ะ เวลาที่ที่ที่จะstate upcom ไว้เค้าอย่างเงี้ยคือต้องต้องทํายังไงบ้างอะคะ
+12:33 Thongkumwan,Pattarin,TH-Bangkok,Accounts Receivable: เฮ้ย ท่า ท่านี้ปกติเราจะแจ้งพี่อ้นแล้วพี่อ้นเขาจะมาลงไฟล์ให้เราแล้วก็ติดตั้งให้เลยอะ แต่ว่า แต่ว่าหน้าตาของไฟล์ เรา
+13:04 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: รบกวนเปิด ถ้างั้นรบกวนพี่จิ๊บเอานิดนึงได้ไหม แต่ว่ามันเป็นสไตล์ที่3ารถส่งได้
+13:06 Changsalak,Alisara,TH-Bangkok,Accounts Receivable: และหน และหน้าจอ
+13:07 Thongkumwan,Pattarin,TH-Bangkok,Accounts Receivable: ถ้าได้ได้ ฉัน ได้ได้ได้แล้ว เป็นหน้าเป็น 16 10 ก็ได้ค่ะ สักครู่นะ อันนี้เห็นแล้วเนอะ ค่ะก็คืออันเนี้ย จะเป็นโปรแกรมที่เราได้ออกมาแต่ว่า ค่ะก็
+13:30 Chamnong,Nick,TH-Bangkok,Information Technology: เนี่ยผมไม่เห็นเดินปั๊บนะฮะ
+13:32 Thongkumwan,Pattarin,TH-Bangkok,Accounts Receivable: เห็นเห็นไหมคะ 222 ตัวนี้อ่ะ เป็นแบบเป็นไฟล์ที่อยู่ใน
+13:40 Chamnong,Nick,TH-Bangkok,Information Technology: อ๋อครับ คุณแชร์ก่อนเลย
+13:40 Thongkumwan,Pattarin,TH-Bangkok,Accounts Receivable: ใน ได้ได้
+13:40 Changsalak,Alisara,TH-Bangkok,Accounts Receivable: ไอ คอมที่มันที่เขาเอ่อติดตั้งให้
+13:45 Thongkumwan,Pattarin,TH-Bangkok,Accounts Receivable: ใช่
+13:48 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: ตอนคลิกซ ตัวนึงกันซิกซ์แล้วก็เอ่อ โอเพ่นไฟล์โลเคชั่น
+14:02 Chamnong,Nick,TH-Bangkok,Information Technology: อะไรเนี่ย c r c r p t t คุณอัญเคยเห็นอะไรอย่างงี้มั้ยฮะ อ๋อ นี่ไม่ใช่ นี่เป็น export file ใช่มั้ยฮะ
+14:10 Thongkumwan,Pattarin,TH-Bangkok,Accounts Receivable: โปรแกรมจะแต่งตั้ง
+14:13 Chamnong,Nick,TH-Bangkok,Information Technology: น่า น่าจะน่า น่า น่าจะน่าถ้าก๊อปมาทั้งยวงนะ แต่เปิดได้ป่ะฮะ
+14:16 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: อายเลย
+14:18 Thongkumwan,Pattarin,TH-Bangkok,Accounts Receivable: ใช่เดี๋ยว ไม่งั้นเดี๋ยวจิ๊บส่งเป็นเป็น file นี้ให้ไหมคะ หรือยังไงดี
+14:25 Chamnong,Nick,TH-Bangkok,Information Technology: ได้ครับ ขอขอลองมองดูเลย
+14:25 Thongkumwan,Pattarin,TH-Bangkok,Accounts Receivable: ว่าควรจะเป็นทั้งทั้งหมดนี่เลย ควรจะ ได้ ได้ได้ ได้ได้ไปไปมั๊ยเมื่อกี้ที่เปิดคือ
+14:30 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: หมดนี้มันจะส่งได้
+14:32 Chamnong,Nick,TH-Bangkok,Information Technology: มัน มันดูเยอะอยู่แล้ว ทําไมมันดูแบบ มีอะไรมากเหลือเกิน
+14:36 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: เหมือนฟ้าผ่าเชือกลกาซี แอปพลิเคชัน
+14:40 Thongkumwan,Pattarin,TH-Bangkok,Accounts Receivable: น่าจะใช่ วันไม่กี่คืนอะไรวะ
+14:44 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: ที่นี่ค่ะ พี่จิ๊บเมื่อกี้คุณจริงแหละ ตรงข้างล่าง อี wr ศูนย์ดี แถวแถวตรงกลาง
+14:53 Thongkumwan,Pattarin,TH-Bangkok,Accounts Receivable: ถ้าตรงกลางอันนี้เนาะ
+14:55 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: ใช่ใช่ ใช่ใช่ใช่
+14:56 Thongkumwan,Pattarin,TH-Bangkok,Accounts Receivable: Ok ค่ะจะ
+14:59 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: ยังไงสมุดไปซิตได้มั้ยอะ
+14:59 Thongkumwan,Pattarin,TH-Bangkok,Accounts Receivable: ส่ง ส่ง ยังไงอ่ะคะ
+15:04 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: มัน โสดยังไงก็หรือว่า เอหร เอ หรือพี่จิ๊บ ลองกดเข้าไปให้มึง
+15:17 Thongkumwan,Pattarin,TH-Bangkok,Accounts Receivable: ได้ ได้ ผมเป็น chef five ให้ได้มั้ย หรือว่ามันต้องใช้ทั้งหมดนี่เลยนะคะ
+15:26 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: พี่ คือ คอนโทรล คือคอนโทรล ข้างล่างน่าจะไม่ได้ใช้ค่ะ น่าจะใช้นิวเคลียส lock block light ถ้าส่งตัวเอ๊ะ ก็ ก็จะ อาจจะลอง ก็จะลองเปิดดู collector เมื่อเมื่อกี้ได้มั้ยคะ แบบคิกซายแล
+15:44 Thongkumwan,Pattarin,TH-Bangkok,Accounts Receivable: ได้ นี้ก็อยู่ใน wplace life ค่ะ
+15:52 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: เย็บเหมือนกันก็น่าจะแค่ folderst กับโฟลเดอร์ล็อคบ็อกซ์ค่ะ เป็นซิปมา นะจะได้ใช่มั้ยคะ คุณอิก
+15:59 Thongkumwan,Pattarin,TH-Bangkok,Accounts Receivable: แบบ
+16:00 Chamnong,Nick,TH-Bangkok,Information Technology: น่าจะได้ครับ
+16:02 Thongkumwan,Pattarin,TH-Bangkok,Accounts Receivable: โอเคค่ะ เดี๋ยวเอาจิ๊บส่งซิปไปให้ทางอีเมลเอ้ย อีเมล์จะหลอกสายมันจะได้หรือเปล่าอ่ะ
+16:11 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: คอนเฟ คอนเฟรสเดอร์ จะได้นิดนึง วันนี้ต้องรอ
+16:18 Thongkumwan,Pattarin,TH-Bangkok,Accounts Receivable: ได้ได้ค่ะ
+16:23 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: โอเค โอเคค่ะ มีประเด็นไหนเพิ่มเติมมั้ยคะ คุณริศ
+16:28 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: ว่าใหญ่อยู่นะ 15 มินิทรีเม็นนิ่งเลย
+16:30 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: น้อง ข้างนอกใหญ่บ้างนะ
+16:33 Thongkumwan,Pattarin,TH-Bangkok,Accounts Receivable: ไม่งั้น
+16:33 Chamnong,Nick,TH-Bangkok,Information Technology: ตอนนี้ยังไม่มีฮะ ยังไม่มีฮะ แต่ผมน่าทําพร็อพเพอร์ต น่าจะทําไปประมาณนึงแล้ว น่าจะส่งให้ได้ในอาทิตย์นี้ฮะครับ
+16:41 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: โอเค โอเคค่ะได้
+16:46 Thongkumwan,Pattarin,TH-Bangkok,Accounts Receivable: ได้เงินทรานซื้อไฟเดี๋ยว ถ้าได้แล้วจิ๊บ อาจจะโยนไปไหน แชร์แชร์มิวแบบแชร์ ไฟล์เราก็ส่งลิงก์ให้ได้มั้ยคะ ในเมลน่าจะอาจจะไม่ไหวค่ะ โอเค ครับ
+17:04 Chamnong,Nick,TH-Bangkok,Information Technology: ก็จะมีจะมีเรื่องขอแต่เดี๋ยวผมลองดูก็ได้ฮะ ไม่ ไม่แน่ ไม่แน่ใจเรื่องเรื่องที่ว่า ออโตเมทมันจะเอาไปวางไฟฮะ อันนี้แต่เห็นว่าเห็นคุณมองว่าน่าจะทําได้ ก็น่าจะน่าจะได้นะครับที่ที่แบบเป็น
+17:16 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: ได้ค่ะ อันนี้มีอันนี้มาคุย มีคุยกับพี่ทีม a d i ไว้แล้วคร่าวคร่าวก็เหมือนธันเดอร์อีกอีก โปรเจคหนึ่งก็มีทําลักษณะคล้ายคล้ายกันอย่างงี้เหมือนกัน แต่ว่าเค้าเป็นแบบ วิธีการ grabfy อะไรอย่างเงี้ย ซึ่ง automate ทําได้ในแง่ของการ graffy แล้วก็คิดว่าน่าจะทําในแง่ของการวางไฟได้ ไม่น่ามีปัญหาอะไรค่ะ แต่เดี๋ยวโมลองถามอีกทีนึงว่า how to หรือว่าแบบมี code automate อะไร meat อยู่แล้วรึเปล่า ถ้ามีก็เดี๋ยวมูส่งให้คุณนี้อีกทีนึงค่ะ
+17:50 Chamnong,Nick,TH-Bangkok,Information Technology: ครับ ครับว่าฝ่ายผมชอบปิดปิดภูมิชันตลอดเลยคือ
+17:54 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: ได้ได้
+17:56 Chamnong,Nick,TH-Bangkok,Information Technology: มันไม่ได้จะ มันไม่ได้จะคุยเอาได้ครับ แต่ว่ามันจะชอบติดอะไรมาฝากไว้ครับได้ครับ
+18:00 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: โอเคค่ะ ได้ค่ะ เดี๋ยวโมเป็นคนเสริมให้ว่ามีต้องขอคอมมิชชั่นอะไรเพิ่มเติมรึเปล่า
+18:06 Chamnong,Nick,TH-Bangkok,Information Technology: ใช่ครับผม โอเค โอเคครับ
+18:10 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: ยังมีคําถามอะไรเพิ่มเติมมั้ยคะ ทุกคน ไม่มีโอเค ถ้างั้นเดี๋ยวโบรบกวนพี่จิ๊บ ถ้าถ้าถ้าสีไฟล์เรียบร้อยแล้วก็ส่งให้นิดนึงค่ะ โอเค
+18:24 Thongkumwan,Pattarin,TH-Bangkok,Accounts Receivable: ได้ค่ะ โอเคค่ะ ได้เลยค่ะ โอเค
+18:26 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: ก็เดี๋ยวโมไปคอนเฟิร์ม เรื่อง เอ่อ การวางไฟล์ของออโตเมติก แล้วก็การเชื่อมต่อของแซฟกับดาเวิร์สให้ค่ะ และเดี๋ยว
+18:34 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: เกิดเออโมตัวนั้นอะลองไปถามกอล์ฟเดี๋ยวพรุ่งนี้ก็ได้เดี๋ยวพรุ่งนี้พี่ไปออฟฟิศเดี๋ยวพี่ถามถามก๊อปหรือจําให้
+18:42 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: พี่กอล์ฟ อยู่กับหน้า
+18:44 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: อ๋อ ลองถามก็ได้ ถ้ากอล์ฟง่วงเดี๋ยวพี่ไปถามกอล์ฟอีกที เดี๋ยวพี่ติดประชุม แต่เดี๋ยวพรุ่งนี้พี่เปาฟิต ถ้ากอล์ฟง่วงเดี๋ยวพี่ไปถามกอล์ฟอีกที เดี๋ยวพี่ติดประชุม ได้แบบว่า
+18:50 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: ได้ หรือยังไงเดี๋ยวโม หรือยังไงเดี๋ยวโมอัปเดตกับคนนี้อีกทีหนึ่งค่ะ
+18:56 Chamnong,Nick,TH-Bangkok,Information Technology: ได้ครับผม
+18:56 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: เคค่ะ อันนี้น่าจะประมาณนี้ค่ะ ขอบคุณทุกคนมากมากเลยค่ะ
+19:01 Thongkumwan,Pattarin,TH-Bangkok,Accounts Receivable: ขอบคุณค่ะ สวัสดีค่ะ
+19:01 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: สวัสดี สวัสดีค่ะ
+19:02 Changsalak,Alisara,TH-Bangkok,Accounts Receivable: ครับ
+  

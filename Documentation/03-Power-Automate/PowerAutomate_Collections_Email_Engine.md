@@ -3,10 +3,18 @@
 ## Flow Overview
 
 **Flow Name**: `Daily Collections Email Engine`
-**Purpose**: Process transactions using FIFO logic and send personalized payment reminder emails
-**Trigger**: Manual (after SAP Import) or Scheduled (Daily 8:30 AM)
+**Purpose**: Process transactions using FIFO logic and create email logs for payment reminders
+**Trigger**: Scheduled (Mon-Fri, 07:30 SE Asia Time)
 **Runtime**: ~15-30 minutes for 100 customers
 **Dependencies**: Daily SAP Data Import flow must complete first
+
+### Key Behaviors (Updated 2026-01-21)
+| Behavior | Details |
+|----------|---------|
+| **Auto-Approve** | Creates EmailLog with ApprovalStatus = Approved (676180001) |
+| **Exclusion** | Data filtered at Power BI source - excluded transactions never imported |
+| **Template Selection** | D (MI docs) → C (Day 4+) → B (Day 3) → A (Day 1-2) |
+| **Does NOT Send** | Only creates EmailLog records - Email Sending Flow handles actual send |
 
 ---
 
@@ -569,17 +577,21 @@ Fields:
   cr7bb_customer@odata.bind: "/cr7bb_customers(@{outputs('Get_customer')?['cr7bb_customerid']})"
   cr7bb_processdate: "@{variables('varProcessDate')}"
   cr7bb_emailsubject: "@{variables('varEmailSubject')}"
+  cr7bb_emailbodypreview: "@{variables('varEmailBody')}"
   cr7bb_emailtemplate: "@{variables('varEmailTemplate')}"
   cr7bb_maxdaycount: "@{variables('varMaxDayCount')}"
   cr7bb_totalamount: "@{variables('varNetAmount')}"
   cr7bb_transactioncount: "@{length(outputs('DN_sorted'))}"
   cr7bb_recipientemails: "@{variables('varRecipientEmails')}"
   cr7bb_ccemails: "@{variables('varCCEmails')}"
-  cr7bb_sentdatetime: "@{utcNow()}"
-  cr7bb_sendstatus: "@{if(outputs('Send_email')?['statusCode'] equals 200, 'Success', 'Failed')}"
-  cr7bb_errormessage: "@{if(outputs('Send_email')?['statusCode'] equals 200, null, outputs('Send_email')?['error']?['message'])}"
+  cr7bb_approvalstatus: 676180001     # Approved (AUTO-APPROVED)
+  cr7bb_sendstatus: 676180002         # Pending (waiting for Email Sending Flow)
   cr7bb_qrcodeincluded: "@{not(empty(variables('varQRCodeFile')))}"
 ```
+
+**Important**: This flow does NOT send emails. It only creates EmailLog records with:
+- `ApprovalStatus = Approved (676180001)` - Auto-approved, no manual approval needed
+- `SendStatus = Pending (676180002)` - Waiting for Email Sending Flow at 08:00
 
 ---
 

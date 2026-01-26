@@ -1,0 +1,11 @@
+<environmentvariabledefinition schemaname="nc_TestCustomerEmail">
+  <defaultvalue>Nick.Chamnong@th.nestle.com;trescend@gmail.com</defaultvalue>
+  <displayname default="Test Customer Email">
+    <label description="Test Customer Email" languagecode="1033" />
+  </displayname>
+  <introducedversion>1.0.0.2</introducedversion>
+  <iscustomizable>1</iscustomizable>
+  <isrequired>0</isrequired>
+  <secretstore>0</secretstore>
+  <type>100000000</type>
+</environmentvariabledefinition>

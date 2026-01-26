@@ -1,0 +1,859 @@
+Screens:
+  scnCustomer:
+    Properties:
+      Fill: =RGBA(243, 242, 241, 1)
+      LoadingSpinnerColor: =RGBA(0, 101, 161, 1)
+      OnVisible: |-
+        =UpdateContext({
+            currentScreen: "Customer Management",
+            _showMenu: false,
+            _currentMode: "View",
+            _showDeleteConfirmation: false,
+            _selectedCustomer: Blank(),
+            _customerToDelete: Blank()
+        });
+    Children:
+      - Customer_Container:
+          Control: GroupContainer@1.3.0
+          Variant: ManualLayout
+          Properties:
+            DropShadow: =DropShadow.None
+            Height: =Parent.Height
+            Width: =Parent.Width
+          Children:
+            - Customer_Header:
+                Control: GroupContainer@1.3.0
+                Variant: AutoLayout
+                Properties:
+                  DropShadow: =DropShadow.Regular
+                  Fill: =RGBA(0, 101, 161, 1)
+                  Height: =55
+                  LayoutAlignItems: =LayoutAlignItems.Center
+                  LayoutDirection: =LayoutDirection.Horizontal
+                  PaddingLeft: =15
+                  RadiusBottomLeft: =8
+                  RadiusBottomRight: =8
+                  RadiusTopLeft: =8
+                  RadiusTopRight: =8
+                  Width: =Parent.Width - 20
+                  X: =10
+                  Y: =10
+                Children:
+                  - Customer_MenuIcon:
+                      Control: Classic/Icon@2.5.0
+                      Properties:
+                        Color: =RGBA(255, 255, 255, 1)
+                        Height: =50
+                        Icon: =Icon.Hamburger
+                        OnSelect: |-
+                          =UpdateContext({_showMenu: !_showMenu})
+                        PaddingBottom: =10
+                        PaddingLeft: =10
+                        PaddingRight: =10
+                        PaddingTop: =10
+                        Width: =50
+                  - Customer_HeaderTitle:
+                      Control: Text@0.0.51
+                      Properties:
+                        Font: =Font.Lato
+                        FontColor: =Color.White
+                        Height: =50
+                        PaddingLeft: =20
+                        Size: =25
+                        Text: ="Customer Management"
+                        VerticalAlign: =VerticalAlign.Middle
+                        Weight: ='TextCanvas.Weight'.Medium
+                        Width: =Parent.Width - Customer_MenuIcon.Width - 40
+            - Customer_Content:
+                Control: GroupContainer@1.3.0
+                Variant: ManualLayout
+                Properties:
+                  DropShadow: =DropShadow.Regular
+                  Fill: =RGBA(255, 255, 255, 1)
+                  Height: =Parent.Height - 85
+                  RadiusBottomLeft: =10
+                  RadiusBottomRight: =10
+                  RadiusTopLeft: =10
+                  RadiusTopRight: =10
+                  Width: =Parent.Width - 20
+                  X: =10
+                  Y: =75
+                Children:
+                  - Customer_TableView:
+                      Control: GroupContainer@1.3.0
+                      Variant: ManualLayout
+                      Properties:
+                        Height: =Parent.Height
+                        Visible: =_currentMode = "View"
+                        Width: =Parent.Width
+                      Children:
+                        - Customer_ActionBar:
+                            Control: GroupContainer@1.3.0
+                            Variant: AutoLayout
+                            Properties:
+                              Fill: =RGBA(245, 245, 245, 1)
+                              Height: =50
+                              LayoutAlignItems: =LayoutAlignItems.Center
+                              LayoutDirection: =LayoutDirection.Horizontal
+                              LayoutGap: =10
+                              LayoutJustifyContent: =LayoutJustifyContent.End
+                              PaddingLeft: =15
+                              PaddingRight: =15
+                              RadiusTopLeft: =10
+                              RadiusTopRight: =10
+                              Width: =Parent.Width
+                            Children:
+                              - Customer_AddBtn:
+                                  Control: Button@0.0.45
+                                  Properties:
+                                    BasePaletteColor: =RGBA(0, 101, 161, 1)
+                                    Height: =35
+                                    Icon: ="Add"
+                                    OnSelect: |-
+                                      =UpdateContext({
+                                          _currentMode: "New",
+                                          _selectedCustomer: Blank()
+                                      })
+                                    Text: ="Add"
+                                    Width: =100
+                              - Customer_EditBtn:
+                                  Control: Button@0.0.45
+                                  Properties:
+                                    BasePaletteColor: =RGBA(100, 81, 61, 1)
+                                    DisplayMode: |-
+                                      =If(
+                                          IsBlankOrError(Customer_Table.Selected),
+                                          DisplayMode.Disabled,
+                                          DisplayMode.Edit
+                                      )
+                                    Height: =35
+                                    Icon: ="Edit"
+                                    OnSelect: |-
+                                      =UpdateContext({
+                                          _currentMode: "Edit",
+                                          _selectedCustomer: Customer_Table.Selected
+                                      })
+                                    Text: ="Edit"
+                                    Width: =80
+                              - Customer_DeleteBtn:
+                                  Control: Button@0.0.45
+                                  Properties:
+                                    BasePaletteColor: =RGBA(191, 25, 34, 1)
+                                    DisplayMode: |-
+                                      =If(
+                                          IsBlankOrError(Customer_Table.Selected),
+                                          DisplayMode.Disabled,
+                                          DisplayMode.Edit
+                                      )
+                                    Height: =35
+                                    Icon: ="Delete"
+                                    OnSelect: |-
+                                      =UpdateContext({
+                                          _customerToDelete: Customer_Table.Selected,
+                                          _showDeleteConfirmation: true
+                                      })
+                                    Text: ="Delete"
+                                    Width: =90
+                              - Customer_QRFolderBtn:
+                                  Control: Button@0.0.45
+                                  Properties:
+                                    BasePaletteColor: =RGBA(100, 81, 61, 1)
+                                    Height: =35
+                                    Icon: ="OpenInNewWindow"
+                                    OnSelect: |-
+                                      =Launch("https://nestle.sharepoint.com/teams/THFinancePowerPlatformSolutions/Shared Documents/Forms/AllItems.aspx?id=%2Fteams%2FTHFinancePowerPlatformSolutions%2FShared%20Documents%2FCash%20Customer%20Collection%2F03%2DQR%2DCodes%2FQR%20Lot%201%20ver%20%2Ejpeg")
+                                    Text: ="QR Folder"
+                                    Width: =120
+                              - Customer_CheckQRBtn:
+                                  Control: Button@0.0.45
+                                  Properties:
+                                    BasePaletteColor: =RGBA(0, 101, 161, 1)
+                                    Height: =35
+                                    Icon: ="Sync"
+                                    OnSelect: |-
+                                      =// Show loading notification
+                                      Notify("Checking QR availability for all customers...", NotificationType.Information);
+
+                                      // Call Power Automate flow
+                                      '[THFinance]CheckQRAvailability(PowerApps)'.Run();
+
+                                      // Refresh customer data
+                                      Refresh('[THFinanceCashCollection]Customers');
+
+                                      Notify("QR availability updated for all customers", NotificationType.Success)
+                                    Text: ="Check QR"
+                                    Width: =110
+                        - Customer_Table:
+                            Control: Table@1.0.278
+                            Properties:
+                              DateTimeFormat: ='PowerAppsOneGrid.DateTimeFormat'.ShortDate
+                              EnableRangeSelection: ='PowerAppsOneGrid.EnableRangeSelection'.Enable
+                              Height: =Parent.Height - 60
+                              Items: ='[THFinanceCashCollection]Customers'
+                              ReflowBehavior: ='PowerAppsOneGrid.ReflowBehavior'.Reflow
+                              ShowAvatar: ="no"
+                              Width: =Parent.Width - 20
+                              X: =10
+                              Y: =55
+                            Children:
+                              - Customer Code1:
+                                  Control: TableDataField@1.5.0
+                                  Variant: textualColumn
+                                  IsLocked: true
+                                  Properties:
+                                    FieldDisplayName: ="Customer Code"
+                                    FieldName: ="cr7bb_customercode"
+                                    FieldType: ="s"
+                                    Order: =1
+                              - Customer Name1:
+                                  Control: TableDataField@1.5.0
+                                  Variant: textualColumn
+                                  IsLocked: true
+                                  Properties:
+                                    FieldDisplayName: ="Customer Name"
+                                    FieldName: ="cr7bb_customername"
+                                    FieldType: ="s"
+                                    Order: =2
+                              - Region1:
+                                  Control: TableDataField@1.5.0
+                                  Variant: textualColumn
+                                  IsLocked: true
+                                  Properties:
+                                    FieldDisplayName: ="Region"
+                                    FieldName: ="nc_region"
+                                    FieldType: ="l"
+                                    Order: =3
+                              - Customer Email 11:
+                                  Control: TableDataField@1.5.0
+                                  Variant: textualColumn
+                                  IsLocked: true
+                                  Properties:
+                                    FieldDisplayName: ="Customer Email 1"
+                                    FieldName: ="cr7bb_customeremail1"
+                                    FieldType: ="s"
+                                    Order: =4
+                              - QR Code Available1:
+                                  Control: TableDataField@1.5.0
+                                  Variant: textualColumn
+                                  IsLocked: true
+                                  Properties:
+                                    FieldDisplayName: ="QR Code Available"
+                                    FieldName: ="cr7bb_qrcodeavailable"
+                                    FieldType: ="l"
+                                    Order: =5
+                              - Sales Email 11:
+                                  Control: TableDataField@1.5.0
+                                  Variant: textualColumn
+                                  IsLocked: true
+                                  Properties:
+                                    FieldDisplayName: ="Sales Email 1"
+                                    FieldName: ="cr7bb_salesemail1"
+                                    FieldType: ="s"
+                                    Order: =6
+                              - AR Backup Email 11:
+                                  Control: TableDataField@1.5.0
+                                  Variant: textualColumn
+                                  IsLocked: true
+                                  Properties:
+                                    FieldDisplayName: ="AR Backup Email 1"
+                                    FieldName: ="cr7bb_arbackupemail1"
+                                    FieldType: ="s"
+                                    Order: =7
+                  - Customer_FormView:
+                      Control: GroupContainer@1.3.0
+                      Variant: ManualLayout
+                      Properties:
+                        Height: =Parent.Height
+                        Visible: =_currentMode = "New" || _currentMode = "Edit"
+                        Width: =Parent.Width
+                      Children:
+                        - Customer_FormContainer:
+                            Control: GroupContainer@1.3.0
+                            Variant: AutoLayout
+                            Properties:
+                              Height: =Parent.Height - 50
+                              LayoutDirection: =LayoutDirection.Vertical
+                              LayoutGap: =15
+                              LayoutOverflowY: =LayoutOverflow.Scroll
+                              PaddingLeft: =20
+                              PaddingRight: =20
+                              PaddingTop: =20
+                              Width: =Parent.Width
+                            Children:
+                              - Customer_Form_Title:
+                                  Control: Text@0.0.51
+                                  Properties:
+                                    Font: =Font.Lato
+                                    FontColor: =RGBA(0, 0, 0, 1)
+                                    Height: =30
+                                    Size: =18
+                                    Text: |-
+                                      =If(
+                                          _currentMode = "New",
+                                          "Add New Customer",
+                                          "Edit Customer"
+                                      )
+                                    Weight: ='TextCanvas.Weight'.Bold
+                                    Width: =Parent.Width - 40
+                              - Customer_Form_BasicSection:
+                                  Control: Text@0.0.51
+                                  Properties:
+                                    Font: =Font.Lato
+                                    FontColor: =RGBA(100, 100, 100, 1)
+                                    Height: =25
+                                    Text: ="Basic Information"
+                                    Weight: ='TextCanvas.Weight'.Bold
+                                    Width: =Parent.Width - 40
+                              - Customer_Form_CustomerCodeLabel:
+                                  Control: Text@0.0.51
+                                  Properties:
+                                    Font: =Font.Lato
+                                    FontColor: =RGBA(100, 100, 100, 1)
+                                    Height: =25
+                                    Text: |-
+                                      ="Customer Code: *"
+                                    Weight: ='TextCanvas.Weight'.Semibold
+                                    Width: =Parent.Width - 40
+                              - Customer_Form_CustomerCodeInput:
+                                  Control: TextInput@0.0.54
+                                  Properties:
+                                    BasePaletteColor: =RGBA(0, 101, 161, 1)
+                                    DisplayMode: |-
+                                      =If(
+                                          _currentMode = "Edit",
+                                          DisplayMode.View,
+                                          DisplayMode.Edit
+                                      )
+                                    Height: =40
+                                    Value: |-
+                                      =If(
+                                          _currentMode = "Edit",
+                                          _selectedCustomer.cr7bb_customercode,
+                                          ""
+                                      )
+                                    Width: =Parent.Width - 40
+                              - Customer_Form_CustomerNameLabel:
+                                  Control: Text@0.0.51
+                                  Properties:
+                                    Font: =Font.Lato
+                                    FontColor: =RGBA(100, 100, 100, 1)
+                                    Height: =25
+                                    Text: |-
+                                      ="Customer Name: *"
+                                    Weight: ='TextCanvas.Weight'.Semibold
+                                    Width: =Parent.Width - 40
+                              - Customer_Form_CustomerNameInput:
+                                  Control: TextInput@0.0.54
+                                  Properties:
+                                    BasePaletteColor: =RGBA(0, 101, 161, 1)
+                                    Height: =40
+                                    Value: |-
+                                      =If(
+                                          _currentMode = "Edit",
+                                          _selectedCustomer.cr7bb_customername,
+                                          ""
+                                      )
+                                    Width: =Parent.Width - 40
+                              - Customer_Form_RegionLabel:
+                                  Control: Text@0.0.51
+                                  Properties:
+                                    Font: =Font.Lato
+                                    FontColor: =RGBA(100, 100, 100, 1)
+                                    Height: =25
+                                    Text: |-
+                                      ="Region: *"
+                                    Weight: ='TextCanvas.Weight'.Semibold
+                                    Width: =Parent.Width - 40
+                              - Customer_Form_RegionDropdown:
+                                  Control: ComboBox@0.0.51
+                                  Properties:
+                                    BasePaletteColor: =RGBA(0, 101, 161, 1)
+                                    DefaultSelectedItems: |-
+                                      =If(
+                                          _currentMode = "Edit" && !IsBlank(_selectedCustomer),
+                                          [_selectedCustomer.Region]
+                                      )
+                                    Height: =40
+                                    Items: =Choices('Region Choice')
+                                    Width: =Parent.Width - 40
+                              - Customer_Form_EmailSection:
+                                  Control: Text@0.0.51
+                                  Properties:
+                                    Font: =Font.Lato
+                                    FontColor: =RGBA(100, 100, 100, 1)
+                                    Height: =25
+                                    Text: ="Customer Emails"
+                                    Weight: ='TextCanvas.Weight'.Bold
+                                    Width: =Parent.Width - 40
+                              - Customer_Form_CustomerEmail1Label:
+                                  Control: Text@0.0.51
+                                  Properties:
+                                    Font: =Font.Lato
+                                    FontColor: =RGBA(100, 100, 100, 1)
+                                    Height: =25
+                                    Text: |-
+                                      ="Customer Email 1: *"
+                                    Weight: ='TextCanvas.Weight'.Semibold
+                                    Width: =Parent.Width - 40
+                              - Customer_Form_CustomerEmail1Input:
+                                  Control: TextInput@0.0.54
+                                  Properties:
+                                    BasePaletteColor: =RGBA(0, 101, 161, 1)
+                                    Height: =40
+                                    Value: |-
+                                      =If(
+                                          _currentMode = "Edit",
+                                          _selectedCustomer.cr7bb_customeremail1,
+                                          ""
+                                      )
+                                    Width: =Parent.Width - 40
+                              - Customer_Form_CustomerEmail2Label:
+                                  Control: Text@0.0.51
+                                  Properties:
+                                    Font: =Font.Lato
+                                    FontColor: =RGBA(100, 100, 100, 1)
+                                    Height: =25
+                                    Text: ="Customer Email 2:"
+                                    Weight: ='TextCanvas.Weight'.Semibold
+                                    Width: =Parent.Width - 40
+                              - Customer_Form_CustomerEmail2Input:
+                                  Control: TextInput@0.0.54
+                                  Properties:
+                                    BasePaletteColor: =RGBA(0, 101, 161, 1)
+                                    Height: =40
+                                    Value: |-
+                                      =If(
+                                          _currentMode = "Edit",
+                                          _selectedCustomer.cr7bb_customeremail2,
+                                          ""
+                                      )
+                                    Width: =Parent.Width - 40
+                              - Customer_Form_CustomerEmail3Label:
+                                  Control: Text@0.0.51
+                                  Properties:
+                                    Font: =Font.Lato
+                                    FontColor: =RGBA(100, 100, 100, 1)
+                                    Height: =25
+                                    Text: ="Customer Email 3:"
+                                    Weight: ='TextCanvas.Weight'.Semibold
+                                    Width: =Parent.Width - 40
+                              - Customer_Form_CustomerEmail3Input:
+                                  Control: TextInput@0.0.54
+                                  Properties:
+                                    BasePaletteColor: =RGBA(0, 101, 161, 1)
+                                    Height: =40
+                                    Value: |-
+                                      =If(
+                                          _currentMode = "Edit",
+                                          _selectedCustomer.cr7bb_customeremail3,
+                                          ""
+                                      )
+                                    Width: =Parent.Width - 40
+                              - Customer_Form_CustomerEmail4Label:
+                                  Control: Text@0.0.51
+                                  Properties:
+                                    Font: =Font.Lato
+                                    FontColor: =RGBA(100, 100, 100, 1)
+                                    Height: =25
+                                    Text: ="Customer Email 4:"
+                                    Weight: ='TextCanvas.Weight'.Semibold
+                                    Width: =Parent.Width - 40
+                              - Customer_Form_CustomerEmail4Input:
+                                  Control: TextInput@0.0.54
+                                  Properties:
+                                    BasePaletteColor: =RGBA(0, 101, 161, 1)
+                                    Height: =40
+                                    Value: |-
+                                      =If(
+                                          _currentMode = "Edit",
+                                          _selectedCustomer.cr7bb_customeremail4,
+                                          ""
+                                      )
+                                    Width: =Parent.Width - 40
+                              - Customer_Form_SalesSection:
+                                  Control: Text@0.0.51
+                                  Properties:
+                                    Font: =Font.Lato
+                                    FontColor: =RGBA(100, 100, 100, 1)
+                                    Height: =25
+                                    Text: ="Sales Team Emails"
+                                    Weight: ='TextCanvas.Weight'.Bold
+                                    Width: =Parent.Width - 40
+                              - Customer_Form_SalesEmail1Label:
+                                  Control: Text@0.0.51
+                                  Properties:
+                                    Font: =Font.Lato
+                                    FontColor: =RGBA(100, 100, 100, 1)
+                                    Height: =25
+                                    Text: |-
+                                      ="Sales Email 1: *"
+                                    Weight: ='TextCanvas.Weight'.Semibold
+                                    Width: =Parent.Width - 40
+                              - Customer_Form_SalesEmail1Input:
+                                  Control: TextInput@0.0.54
+                                  Properties:
+                                    BasePaletteColor: =RGBA(0, 101, 161, 1)
+                                    Height: =40
+                                    Value: |-
+                                      =If(
+                                          _currentMode = "Edit",
+                                          _selectedCustomer.cr7bb_salesemail1,
+                                          ""
+                                      )
+                                    Width: =Parent.Width - 40
+                              - Customer_Form_SalesEmail2Label:
+                                  Control: Text@0.0.51
+                                  Properties:
+                                    Font: =Font.Lato
+                                    FontColor: =RGBA(100, 100, 100, 1)
+                                    Height: =25
+                                    Text: ="Sales Email 2:"
+                                    Weight: ='TextCanvas.Weight'.Semibold
+                                    Width: =Parent.Width - 40
+                              - Customer_Form_SalesEmail2Input:
+                                  Control: TextInput@0.0.54
+                                  Properties:
+                                    BasePaletteColor: =RGBA(0, 101, 161, 1)
+                                    Height: =40
+                                    Value: |-
+                                      =If(
+                                          _currentMode = "Edit",
+                                          _selectedCustomer.cr7bb_salesemail2,
+                                          ""
+                                      )
+                                    Width: =Parent.Width - 40
+                              - Customer_Form_SalesEmail3Label:
+                                  Control: Text@0.0.51
+                                  Properties:
+                                    Font: =Font.Lato
+                                    FontColor: =RGBA(100, 100, 100, 1)
+                                    Height: =25
+                                    Text: ="Sales Email 3:"
+                                    Weight: ='TextCanvas.Weight'.Semibold
+                                    Width: =Parent.Width - 40
+                              - Customer_Form_SalesEmail3Input:
+                                  Control: TextInput@0.0.54
+                                  Properties:
+                                    BasePaletteColor: =RGBA(0, 101, 161, 1)
+                                    Height: =40
+                                    Value: |-
+                                      =If(
+                                          _currentMode = "Edit",
+                                          _selectedCustomer.cr7bb_salesemail3,
+                                          ""
+                                      )
+                                    Width: =Parent.Width - 40
+                              - Customer_Form_SalesEmail4Label:
+                                  Control: Text@0.0.51
+                                  Properties:
+                                    Font: =Font.Lato
+                                    FontColor: =RGBA(100, 100, 100, 1)
+                                    Height: =25
+                                    Text: ="Sales Email 4:"
+                                    Weight: ='TextCanvas.Weight'.Semibold
+                                    Width: =Parent.Width - 40
+                              - Customer_Form_SalesEmail4Input:
+                                  Control: TextInput@0.0.54
+                                  Properties:
+                                    BasePaletteColor: =RGBA(0, 101, 161, 1)
+                                    Height: =40
+                                    Value: |-
+                                      =If(
+                                          _currentMode = "Edit",
+                                          _selectedCustomer.cr7bb_salesemail4,
+                                          ""
+                                      )
+                                    Width: =Parent.Width - 40
+                              - Customer_Form_SalesEmail5Label:
+                                  Control: Text@0.0.51
+                                  Properties:
+                                    Font: =Font.Lato
+                                    FontColor: =RGBA(100, 100, 100, 1)
+                                    Height: =25
+                                    Text: ="Sales Email 5:"
+                                    Weight: ='TextCanvas.Weight'.Semibold
+                                    Width: =Parent.Width - 40
+                              - Customer_Form_SalesEmail5Input:
+                                  Control: TextInput@0.0.54
+                                  Properties:
+                                    BasePaletteColor: =RGBA(0, 101, 161, 1)
+                                    Height: =40
+                                    Value: |-
+                                      =If(
+                                          _currentMode = "Edit",
+                                          _selectedCustomer.cr7bb_salesemail5,
+                                          ""
+                                      )
+                                    Width: =Parent.Width - 40
+                              - Customer_Form_ARSection:
+                                  Control: Text@0.0.51
+                                  Properties:
+                                    Font: =Font.Lato
+                                    FontColor: =RGBA(100, 100, 100, 1)
+                                    Height: =25
+                                    Text: ="AR Backup Emails"
+                                    Weight: ='TextCanvas.Weight'.Bold
+                                    Width: =Parent.Width - 40
+                              - Customer_Form_ARBackupEmail1Label:
+                                  Control: Text@0.0.51
+                                  Properties:
+                                    Font: =Font.Lato
+                                    FontColor: =RGBA(100, 100, 100, 1)
+                                    Height: =25
+                                    Text: |-
+                                      ="AR Backup Email 1: *"
+                                    Weight: ='TextCanvas.Weight'.Semibold
+                                    Width: =Parent.Width - 40
+                              - Customer_Form_ARBackupEmail1Input:
+                                  Control: TextInput@0.0.54
+                                  Properties:
+                                    BasePaletteColor: =RGBA(0, 101, 161, 1)
+                                    Height: =40
+                                    Value: |-
+                                      =If(
+                                          _currentMode = "Edit",
+                                          _selectedCustomer.cr7bb_arbackupemail1,
+                                          ""
+                                      )
+                                    Width: =Parent.Width - 40
+                              - Customer_Form_ARBackupEmail2Label:
+                                  Control: Text@0.0.51
+                                  Properties:
+                                    Font: =Font.Lato
+                                    FontColor: =RGBA(100, 100, 100, 1)
+                                    Height: =25
+                                    Text: ="AR Backup Email 2:"
+                                    Weight: ='TextCanvas.Weight'.Semibold
+                                    Width: =Parent.Width - 40
+                              - Customer_Form_ARBackupEmail2Input:
+                                  Control: TextInput@0.0.54
+                                  Properties:
+                                    BasePaletteColor: =RGBA(0, 101, 161, 1)
+                                    Height: =40
+                                    Value: |-
+                                      =If(
+                                          _currentMode = "Edit",
+                                          _selectedCustomer.cr7bb_arbackupemail2,
+                                          ""
+                                      )
+                                    Width: =Parent.Width - 40
+                              - Customer_Form_ARBackupEmail3Label:
+                                  Control: Text@0.0.51
+                                  Properties:
+                                    Font: =Font.Lato
+                                    FontColor: =RGBA(100, 100, 100, 1)
+                                    Height: =25
+                                    Text: ="AR Backup Email 3:"
+                                    Weight: ='TextCanvas.Weight'.Semibold
+                                    Width: =Parent.Width - 40
+                              - Customer_Form_ARBackupEmail3Input:
+                                  Control: TextInput@0.0.54
+                                  Properties:
+                                    BasePaletteColor: =RGBA(0, 101, 161, 1)
+                                    Height: =40
+                                    Value: |-
+                                      =If(
+                                          _currentMode = "Edit",
+                                          _selectedCustomer.cr7bb_arbackupemail3,
+                                          ""
+                                      )
+                                    Width: =Parent.Width - 40
+                              - Customer_Form_ARBackupEmail4Label:
+                                  Control: Text@0.0.51
+                                  Properties:
+                                    Font: =Font.Lato
+                                    FontColor: =RGBA(100, 100, 100, 1)
+                                    Height: =25
+                                    Text: ="AR Backup Email 4:"
+                                    Weight: ='TextCanvas.Weight'.Semibold
+                                    Width: =Parent.Width - 40
+                              - Customer_Form_ARBackupEmail4Input:
+                                  Control: TextInput@0.0.54
+                                  Properties:
+                                    BasePaletteColor: =RGBA(0, 101, 161, 1)
+                                    Height: =40
+                                    Value: |-
+                                      =If(
+                                          _currentMode = "Edit",
+                                          _selectedCustomer.cr7bb_arbackupemail4,
+                                          ""
+                                      )
+                                    Width: =Parent.Width - 40
+                        - Customer_FormActionBar:
+                            Control: GroupContainer@1.3.0
+                            Variant: AutoLayout
+                            Properties:
+                              Fill: =RGBA(245, 245, 245, 1)
+                              Height: =50
+                              LayoutAlignItems: =LayoutAlignItems.Center
+                              LayoutDirection: =LayoutDirection.Horizontal
+                              LayoutGap: =10
+                              LayoutJustifyContent: =LayoutJustifyContent.End
+                              PaddingRight: =15
+                              Width: =Parent.Width
+                              Y: =Parent.Height - Self.Height
+                            Children:
+                              - Customer_Form_SaveBtn:
+                                  Control: Button@0.0.45
+                                  Properties:
+                                    BasePaletteColor: =RGBA(0, 101, 161, 1)
+                                    Height: =35
+                                    Icon: ="Save"
+                                    OnSelect: |-
+                                      =If(
+                                          _currentMode = "New",
+                                          Patch(
+                                              '[THFinanceCashCollection]Customers',
+                                              Defaults('[THFinanceCashCollection]Customers'),
+                                              {
+                                                  cr7bb_customercode: Customer_Form_CustomerCodeInput.Value,
+                                                  cr7bb_customername: Customer_Form_CustomerNameInput.Value,
+                                                  Region: Customer_Form_RegionDropdown.Selected.Value,
+                                                  cr7bb_customeremail1: Customer_Form_CustomerEmail1Input.Value,
+                                                  cr7bb_customeremail2: Customer_Form_CustomerEmail2Input.Value,
+                                                  cr7bb_customeremail3: Customer_Form_CustomerEmail3Input.Value,
+                                                  cr7bb_customeremail4: Customer_Form_CustomerEmail4Input.Value,
+                                                  cr7bb_salesemail1: Customer_Form_SalesEmail1Input.Value,
+                                                  cr7bb_salesemail2: Customer_Form_SalesEmail2Input.Value,
+                                                  cr7bb_salesemail3: Customer_Form_SalesEmail3Input.Value,
+                                                  cr7bb_salesemail4: Customer_Form_SalesEmail4Input.Value,
+                                                  cr7bb_salesemail5: Customer_Form_SalesEmail5Input.Value,
+                                                  cr7bb_arbackupemail1: Customer_Form_ARBackupEmail1Input.Value,
+                                                  cr7bb_arbackupemail2: Customer_Form_ARBackupEmail2Input.Value,
+                                                  cr7bb_arbackupemail3: Customer_Form_ARBackupEmail3Input.Value,
+                                                  cr7bb_arbackupemail4: Customer_Form_ARBackupEmail4Input.Value
+                                              }
+                                          ),
+                                          Patch(
+                                              '[THFinanceCashCollection]Customers',
+                                              _selectedCustomer,
+                                              {
+                                                  cr7bb_customername: Customer_Form_CustomerNameInput.Value,
+                                                  Region: Customer_Form_RegionDropdown.Selected.Value,
+                                                  cr7bb_customeremail1: Customer_Form_CustomerEmail1Input.Value,
+                                                  cr7bb_customeremail2: Customer_Form_CustomerEmail2Input.Value,
+                                                  cr7bb_customeremail3: Customer_Form_CustomerEmail3Input.Value,
+                                                  cr7bb_customeremail4: Customer_Form_CustomerEmail4Input.Value,
+                                                  cr7bb_salesemail1: Customer_Form_SalesEmail1Input.Value,
+                                                  cr7bb_salesemail2: Customer_Form_SalesEmail2Input.Value,
+                                                  cr7bb_salesemail3: Customer_Form_SalesEmail3Input.Value,
+                                                  cr7bb_salesemail4: Customer_Form_SalesEmail4Input.Value,
+                                                  cr7bb_salesemail5: Customer_Form_SalesEmail5Input.Value,
+                                                  cr7bb_arbackupemail1: Customer_Form_ARBackupEmail1Input.Value,
+                                                  cr7bb_arbackupemail2: Customer_Form_ARBackupEmail2Input.Value,
+                                                  cr7bb_arbackupemail3: Customer_Form_ARBackupEmail3Input.Value,
+                                                  cr7bb_arbackupemail4: Customer_Form_ARBackupEmail4Input.Value
+                                              }
+                                          )
+                                      );
+                                      If(
+                                          IsEmpty(Errors('[THFinanceCashCollection]Customers')),
+                                          Notify("Customer saved successfully", NotificationType.Success);
+                                          UpdateContext({_currentMode: "View"}),
+                                          Notify("Error saving customer: " & First(Errors('[THFinanceCashCollection]Customers')).Message, NotificationType.Error)
+                                      )
+                                    Text: =If(_currentMode = "New", "Add", "Save")
+                                    Width: =90
+                              - Customer_Form_CancelBtn:
+                                  Control: Button@0.0.45
+                                  Properties:
+                                    BasePaletteColor: =RGBA(100, 100, 100, 1)
+                                    Height: =35
+                                    Icon: ="Cancel"
+                                    OnSelect: |-
+                                      =UpdateContext({_currentMode: "View"})
+                                    Text: ="Cancel"
+                                    Width: =90
+            - Customer_NavigationMenu:
+                Control: CanvasComponent
+                ComponentName: NavigationMenu
+                Properties:
+                  Fill: =RGBA(255, 255, 255, 0.5)
+                  Height: =Parent.Height - 70
+                  Visible: =If(_showMenu, true, false)
+                  Width: =260
+                  Y: =70
+                  navItems: =Navigation
+                  navSelected: =currentScreen
+            - Customer_DeleteConfirmationOverlay:
+                Control: GroupContainer@1.3.0
+                Variant: ManualLayout
+                Properties:
+                  Fill: =RGBA(0, 0, 0, 0.5)
+                  Height: =Parent.Height
+                  Visible: =_showDeleteConfirmation
+                  Width: =Parent.Width
+                Children:
+                  - Customer_DeleteConfirmationBox:
+                      Control: GroupContainer@1.3.0
+                      Variant: AutoLayout
+                      Properties:
+                        DropShadow: =DropShadow.Regular
+                        Fill: =RGBA(255, 255, 255, 1)
+                        LayoutDirection: =LayoutDirection.Vertical
+                        LayoutGap: =20
+                        PaddingBottom: =20
+                        PaddingLeft: =20
+                        PaddingRight: =20
+                        PaddingTop: =20
+                        RadiusBottomLeft: =10
+                        RadiusBottomRight: =10
+                        RadiusTopLeft: =10
+                        RadiusTopRight: =10
+                        Width: =400
+                        X: =(Parent.Width - Self.Width) / 2
+                        Y: =(Parent.Height - Self.Height) / 2
+                      Children:
+                        - Customer_DeleteConfirmationText:
+                            Control: Text@0.0.51
+                            Properties:
+                              Font: =Font.Lato
+                              FontColor: =RGBA(0, 0, 0, 1)
+                              Height: =80
+                              Size: =16
+                              Text: |-
+                                ="Are you sure you want to delete '" & _customerToDelete.cr7bb_customername & "' (Code: " & _customerToDelete.cr7bb_customercode & ")?"
+                              VerticalAlign: =VerticalAlign.Top
+                              Weight: ='TextCanvas.Weight'.Semibold
+                              Width: =360
+                        - Customer_DeleteConfirmationButtons:
+                            Control: GroupContainer@1.3.0
+                            Variant: AutoLayout
+                            Properties:
+                              DropShadow: =DropShadow.None
+                              LayoutDirection: =LayoutDirection.Horizontal
+                              LayoutGap: =10
+                              LayoutJustifyContent: =LayoutJustifyContent.End
+                              LayoutMinHeight: =40
+                              LayoutMinWidth: =100
+                              Width: =360
+                            Children:
+                              - Customer_DeleteConfirmBtn:
+                                  Control: Button@0.0.45
+                                  Properties:
+                                    BasePaletteColor: =RGBA(191, 25, 34, 1)
+                                    Height: =35
+                                    Icon: ="Delete"
+                                    OnSelect: |-
+                                      =Remove('[THFinanceCashCollection]Customers', _customerToDelete);
+                                      Notify("Customer deleted successfully", NotificationType.Success);
+                                      UpdateContext({
+                                          _showDeleteConfirmation: false,
+                                          _customerToDelete: Blank()
+                                      });
+                                      Refresh('[THFinanceCashCollection]Customers')
+                                    Text: ="Yes, Delete"
+                                    Width: =150
+                              - Customer_DeleteCancelBtn:
+                                  Control: Button@0.0.45
+                                  Properties:
+                                    BasePaletteColor: =RGBA(100, 100, 100, 1)
+                                    Height: =35
+                                    Icon: ="Cancel"
+                                    OnSelect: |-
+                                      =UpdateContext({
+                                          _showDeleteConfirmation: false,
+                                          _customerToDelete: Blank()
+                                      })
+                                    Text: ="Cancel"
+                                    Width: =90

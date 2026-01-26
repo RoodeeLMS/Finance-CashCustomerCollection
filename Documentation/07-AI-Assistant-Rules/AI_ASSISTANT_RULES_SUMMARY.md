@@ -36,7 +36,7 @@
 |-------------------------|------------------------|
 | `nc_customercode` | `cr7bb_customercode` |
 | `nc_customername` | `cr7bb_customername` |
-| `nc_region` | `cr7bb_Region` (capital R) |
+| `cr7bb_region` | `nc_region` (different publisher prefix!) |
 | `nc_customeremail1` | `cr7bb_customeremail1` |
 | `nc_salesemail1` | `cr7bb_salesemail1` |
 | `nc_arbackupemail1` | `cr7bb_arbackupemail1` |
@@ -75,17 +75,19 @@
 
 **Choice fields have TWO names**:
 
-1. **Display Name** (for Table FieldName): `cr7bb_Region`
-2. **Logical Name** (for Patch operations): `Region` (no prefix)
+1. **Logical Name** (for Table FieldName): `nc_region` (note: different prefix!)
+2. **Display Name** (for Patch operations): `Region`
+
+**⚠️ Region Exception**: Region uses `nc_` prefix, NOT `cr7bb_` like other fields.
 
 **Pattern to Follow**:
 
 ```yaml
-# In Table control - use display name
+# In Table control - use logical name
 CustomerRegion:
   Control: TableDataField@1.5.0
   Properties:
-    FieldName: ="cr7bb_Region"  # Display name with prefix
+    FieldName: ="nc_region"  # Note: nc_ prefix for Region
 
 # In ComboBox - reference choice definition
 CustomerFormRegion:

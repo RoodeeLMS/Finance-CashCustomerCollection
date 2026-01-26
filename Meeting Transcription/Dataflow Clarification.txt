@@ -1,0 +1,217 @@
+# Dataflow Clarification
+
+  Meeting started: 1/9/2026, 4:53:40 PM
+  Duration: 23 minutes
+  Participants: Chamnong,Nick,TH-Bangkok,Information Technology, Nithijarernariya,Russarin,TH-Bangkok,Information Technology
+
+  [View original transcript](https://app.tactiq.io/api/2/u/m/r/y22gF0l2CfUoftFy2oAC?o=txt)
+
+    
+
+  
+
+  
+    ## Highlights
+
+    > 18:22 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: แล แล้วก็มันจะมีเป็น assignment
+> 18:28 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: คือไอ้ตัว assignment มันเหมือนโมไม่มั่นใจว่ายูสเซอร์เค้าใช้ทําอะไรอะคะ หนูว่าคือใน layout ที่เค้าเคยให้มาเค้าเค้ามีตัว accountment ด้วย
+> 18:37 Chamnong,Nick,TH-Bangkok,Information Technology: Account Accountment Accountment ด้วย assignment คืออันไหนฮะ อันนี้เหรอฮะ
+
+  ## Transcript
+
+  00:00 Chamnong,Nick,TH-Bangkok,Information Technology: เดี๋ยวผมแชร์ต่อนะฮะ เดี๋ยวแป๊บ ผมดึงข้อมูลได้แล้วฮะ จะเข้าจาก buble mate น่าจะดึงไปนั่นได้ละแล้วทีนี้ เดี๋ยวข้อมูลหน้าตาเป็นยังไงกันแน่ นะฮะ ขึ้นขึ้นขึ้นฮะ
+00:27 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: นะคะ
+00:31 Chamnong,Nick,TH-Bangkok,Information Technology: ก็ ก็คือก็คืออันนี้มันเหมือนผมจะไม่ได้ดึงที่รีพอร์ตเลย ผมจะดึงที่เซมติกโมเดลเลย มันต้องตั้งใจอย่างงี้ใช่มั้ยฮะ
+00:39 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: อ๋อ แม่ Report ไปถึงที่ smarttic model วันนึงที่รีพอร์ตไม่ได้ใช่ไหมคะ คุณนิก
+00:51 Chamnong,Nick,TH-Bangkok,Information Technology: หรือ ดึงที่ตรงนี้มันดีกว่า มันดี
+00:58 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: อ๋อ ก็ตัวตัว report อะ พอมี
+00:58 Chamnong,Nick,TH-Bangkok,Information Technology: เป็นคลีน คือคือผมสามารถเขียนชิวลี่ดึงที่ตรงนี้ได้เลยใน table อะไรก็ตามที่อยู่ในพอร์ตเลยฮะ ออกมาแล้วดี อาร์มีอาอีหลอมแมทเนี่ยแล้วผมจะเอาเนี่ยไปยัดใน dataverse work
+01:15 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: อ๋อ คือในตัว report อะค่ะ มันจะมีแบบ Delter เอาพวกค่าเหนาที่เอ่อ สมมุติ customer code เป็น naw มันก็จะ filter ออกไปด้วย แล้วก็จะมีเรื่องแบบเรียงตารางอะค่ะ เพราะ เพราะว่า
+01:35 Chamnong,Nick,TH-Bangkok,Information Technology: ครับ แต่ว่าแต่ว่าคําว่ามีคือ มัน process ที่เกิดตรง c c c customer line นี้คือคือ filter ตอนทํา report out ที่ report แต่ไม่ได้ฟิลเตอร์ที่โมเดลเองคือผมเปิดโมเดลไม่ได้ด้วยเรื่องของเรื่อง
+01:46 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: ใช่ค่ะ เอ่อ คือที่reportอะค่ะมันก็จะมี คือคือตอนตอนที่รีพอร์ตมันจะดึงเอาข้อมูลทุกอย่างที่มีสโนเฟล็กออกมาหมดเลย มันไม่ได้ไม่ได้จํากัดแค่ยูสเซอร์บางส่วนอะไรเงี้ยค่ะ แต่ว่าในตัวเซเมติกโมเดลเองอ่ะก็มีวันทูเมนี่ไว้แล้วล่ะ แต่ว่าที่เป็นอันหลักก็คือว่า ตัวเออ คอลัมน์ในตารางอะค่ะ คุณนิคมันไม่ได้เรียงไว้อย่างที่ที่ที่เป็น เออเค้าเรียกอะไรเป็นเลย์เอาท์ปกติที่ที่แบบ user เค้าใช้อะไรอย่างเงี้ย
+02:21 Chamnong,Nick,TH-Bangkok,Information Technology: หม หมายถึงคอลัมน์ ในตารางหมายถึง
+02:24 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: อย่างเมื่อกี้อ่ะค่ะ คุณหนิงก็เห็นใช่ไหมว่ามันแบบบีเล่นในไอ้เนี่ย มีคือก่อนหน้านี้อะค่ะ มันไม่ได้เรียงเป็น kunn n r b e l n r อย่างเงี้ยไม่ได้เรียนกันอย่างงี้คือมันก็จะเรียนกันแบบตามตัวอักษรก็คือ
+02:38 Chamnong,Nick,TH-Bangkok,Information Technology: ไม่ค่อยมีปัญหา เลยนะ ผมไม่ค่อยหวงนะฮะ ยังไงผมก็ไปฟิวแต่
+02:43 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: โอเคค่ะ
+02:43 Chamnong,Nick,TH-Bangkok,Information Technology: ถ้าเลือกถ้าประกาศคือเรื่องเรื่องนี้ไม่ค่อยห่วง แต่เรื่องฟิลเตอร์ผมยังห่วงกว่าเพราะผมกลายเป็นว่าผมไม่รู้ผมสคริปลอว์ติดฟิลเตอร์เค้ารึเปล่า
+02:52 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: เอ่อ putter เขาไม่มั่นใจว่ามัน skip รึเปล่า คือคือในใน smetic model month mo move ทําไว้แล้วคือเป็นแบบ one tom many ไว้แล้วอือ
+03:02 Chamnong,Nick,TH-Bangkok,Information Technology: จัดทําวันทูไอ นี่มันเป็นแค่ตัวเอง แต่ไม่ใช่ฟิลเตอร์ป่ะฮะ
+03:08 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: เอ่อ เอ่อ คือตอนที่เช็คในตัวแดชบอร์ดของพาวเวอร์บีไออะค่ะ มันมันมันเอาค่าของเอ่ออันที่ไม่เกี่ยวออกไปแล้วแต่มันก็ไม่มั่นใจเหมือนกันว่า
+03:18 Chamnong,Nick,TH-Bangkok,Information Technology: ครับผมเดิน ครับผมเดินที่เซนติเมตรของตก
+03:19 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: ถ้าถ้าดึงมันจะเป็นอย่างนั้นมั้ย
+03:21 Chamnong,Nick,TH-Bangkok,Information Technology: คือผมว่าตอนผมดึงมันจะเป็นในหน้าของโมเดลอะฮะ ดึงตารางในหน้าโมเดลเลยไม่ใช่ดึงหน้าเลยพอร์ตฮะ
+03:29 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: อ๋อ
+03:31 Chamnong,Nick,TH-Bangkok,Information Technology: ฉันจะ ฉันจะไม่ไม่ฟิลเตอร์ใช่มั้ยฮะ แต่ผมว่าผมอาจจะทวิตเตอร์เองอาจจะดีกว่า อืม ผมว่าผมว่าจะเกลียดชีวิตได้ อืม ผมว่าผม อาจจะขอคุณโมว่าคุณโมเขียนยังไงไว้บ้างฮะ จะได้ผมจะได้ meake sure ว่า
+03:49 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: ก็คือถ้าถ้าคิวดีใจ เอ่อ ถ้าในพาวเวอร์วีไออะค่ะ เขียนคิวลี่แค่ตัวสโนฟิคตัวเดียวเลยก็คือแบบแค่ดึงทั้งหมดของ snowft ออกมาอะค่ะ ทีเนี้ยที่เชื่อม nattaward เพราะว่าเผื่อว่าเราจะฟิลเตอร์ผ่านพาวเวอร์ p i
+04:03 Chamnong,Nick,TH-Bangkok,Information Technology: ซุปเปอร์ ใช่ แต่ทีนี้คุณโมก็เอามาลิ้งค์กันในในโมเดลถูกมั้ยฮะ
+04:08 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: Lin Link กันในโมเดลไปแล้ว
+04:10 Chamnong,Nick,TH-Bangkok,Information Technology: คุณโม พอจะแชร์จะให้คุณดูได้ไหมฮะ
+04:12 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: ได้ค่ะ สักครู่นะคะ
+05:12 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: ก็ ก็คือว่ามีดึงตัวตัวนี้โมเดลเห็นเห็นจอมั้ยคะ
+05:16 Chamnong,Nick,TH-Bangkok,Information Technology: นะครับ ซึ่งอันนี้โอเค แต่นี้คือทํายังไงฮะ
+05:18 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: ก็คือตัวเนี้ยค่อนข้างตัวนี้จะเป็นตัวที่ดึงจาก snowfic ใช่มั้ยคะ อันนี้เป็นที่ดึงจากตัว nattawse ทีเนี้ย ตอนทําวัน home many อะค่ะ มันมันดึงมันมันฟิลเตอร์ให้แล้วจากหน้าที่โมเห็นตรงนี้จากกรี๊ดผลวิวแถมโมไม่มั่นใจ
+05:36 Chamnong,Nick,TH-Bangkok,Information Technology: อ๋อ ขอดูมั้ยฮะ ขอดูด้วย portview เค้าตั้งตั้งตั้ง data ที่โลงเป็นอันไหน
+05:42 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: ต้าที่หลวง
+05:43 Chamnong,Nick,TH-Bangkok,Information Technology: กฎกดที่เรียก pil เลยฮะ กดกดที่พูดผิดกฎที่tableนะฮะ กดที่ตลาดนะฮะ แล้วกดที่visualization นะ ห่างขวาเปิดตัว คอลัมน์ เลยโอเค คอลัมน์ เลย ทําไมถึงฟิลเตอร์ละ อันไหนคือเลขเลขลูกค้าที่ทํามาคือคุณ cannumber ใช่ไหม อันแรกคนนับแรกถูกไหมฮะ
+06:06 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: ใช่ค่ะ ใช่ค่ะอันนี้
+06:08 Chamnong,Nick,TH-Bangkok,Information Technology: ทําไมถึงฟิลเตอร์นะ ผมยังงงอยู่มันเป็น relate นะ เพราะคุณโบว์โอเทเลอร์เอาเอาเอาคอลลาห์หลักเป็นเป็นเป็นลูกค้าเอง
+06:16 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: ไม่ ไม่
+06:18 Chamnong,Nick,TH-Bangkok,Information Technology: คิดก่อนนะ มันก็เลยเวิร์ที่ตัวมันเองอยู่แล้ว เพราะว่าคอลัมน์ที่ใช้คิวของเขาดูตัวโมเดลอยู่ด้วยกัน ขอดูแถวที่2 อันกลาง อันกลางฮะ ชั้นกลางของกลางล่อง 2 วันถูกมั้ยฮะ นี้เป็นลายไอเทม กิโลลองดูได้ไหมฮะ ว่านี้มีอันว่างหรือเปล่า กิโลลองดูได้ไหมฮะ ว่านี้มีอันว่างหรือเปล่า
+06:40 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: มันว่าเหรอคะ
+06:44 Chamnong,Nick,TH-Bangkok,Information Technology: ไม่ ไม่มีก็แปลว่านี่ฟิลเตอร์แล้ว เอ้ย ก็ไม่ใช่เพราะคุณโมบอกว่าไม่ไม่ได้แปลว่าอันนี้อันนี้อันนี้คันนัมเบอร์มันมาจากสโนว์เฟ็กซ์ ถูกมั้ยฮะ ไม่ใช่อันที่มาจาก
+06:54 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: ใช่ ใช่ใช่ค่ะ แต่ว่าอันนี้
+06:56 Chamnong,Nick,TH-Bangkok,Information Technology: ของั้นขอดูเรื่องพอร์ตสิมันมันตรงไหนนะ ผมยังไม่เห็นทวิตเตอร์เลย
+07:01 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: ก็คือ ติวเต ติวเตอร์ที่มองหมายถึงคือหมายถึงว่าตัวตัวเนี้ยค่ะ มันถ้าถ้าเป็นตารางตัวนี้มันคือเอาลูกค้าทุกคนเลยไม่ใช่แค่ cash customer มา
+07:13 Chamnong,Nick,TH-Bangkok,Information Technology: ใช่ฮะ
+07:14 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: ใช่แล้วก็ฟิลเตอร์ด้วย เอ่อ customer umer ที่มีอยู่เฉยๆค่ะ
+07:19 Chamnong,Nick,TH-Bangkok,Information Technology: ขอดูฉันขอดูรึเปล่า report อีกทีนึงคือ มัน filter มัน filter เพราะอะไรนะฮะ มัน filter เพราะอะไรนะฮะ
+07:28 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: เอ่อ มดไม่มั่นใจเหมือนกันเท่าคนนี้เพราะว่าอันนี้ก็ครั้งแรกที่ทําของผมวีไอเหมือนกัน แต่ว่าที่เข้าใจก็คือว่า
+07:34 Chamnong,Nick,TH-Bangkok,Information Technology: แต่คุณมันไม่ฟิลเตอร์แล้วครับ ถ้าเท่าที่เห็นเนี่ยไม่ฟิลเตอร์
+07:39 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: อือ
+07:40 Chamnong,Nick,TH-Bangkok,Information Technology: แป๊บ แป๊บนึงแล้วกันฮะถ้า แป๊บนึงแล้วกันฮะ ถ้าอย่างงี้เดี๋ยวนะผมคิดก่อน คุณโมเพิ่มโรเพิ่ม คอลัมน์ ได้มั้ยฮะ เพิ่มคอลัมน์ในโมเดล
+07:52 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: ไหนคะ
+07:52 Chamnong,Nick,TH-Bangkok,Information Technology: คือ เพิ่มเพิ่มตรงนั้นดีกว่าครับ เพิ่มๆๆที่โมเดลอยู่ เพิ่มเพิ่มตรงนั้นดีกว่าครับ เพิ่มๆๆ
+07:59 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: ที่ผ่อนวิวหรอกค่ะ
+08:01 Chamnong,Nick,TH-Bangkok,Information Technology: ไม่ใช่ ไม่ใช่ที่โมเดลวิวฮะ อันกลาง อันกลางอ่ะ อันกลางอันที่อันที่มันอยู่ตรงกลางระหว่าง 2 อันอันอันซ้ายไม่ใช่อันซ้าย ซ้ายซ้ายคือ table week อันนี้นะฮะ โมเดล อ้อ table wealth ค่ะ เพิ่มเพิ่ม new colum เลยฮะ
+08:09 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: นี้ โอเค นั่งตรงไหนล่ะค่ะ ดีใช่มั้ย โอเค
+08:21 Chamnong,Nick,TH-Bangkok,Information Technology: นิดนึง ขอดูทางขวานิดนึง อันนี้ก็ได้ไม่เป็นไรเขียนว่าอะไรดีนะ bist active หรอ คิดว่าพี่ว่า customer active เนี่ย คอลัมน์แก้คําว่า คอลัมน์ เป็น customer active ฮะ เอาใหม่ฮะ ต้องต้องพิมพ์เลยต้องต้องเต้อเร็วก่อนเลยก็ตามมันจะหายหมดเลย
+08:38 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: ก็เลยขึ้น อ๋อคิดซักทีเหรอคะ
+08:43 Chamnong,Nick,TH-Bangkok,Information Technology: ยิ่งไปครับ ว่า customer isive อะไร อัฐ อัฐิ customer นะฮะ customer ที่ดิน เท่ากับ Gointer ครับแกะที่ใหม่เลย
+08:58 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: แก้ได้มั้ยครับ
+09:02 Chamnong,Nick,TH-Bangkok,Information Technology: อ่า es active customer เท่ากับ relate relate r e l a t b e d แล้วก็ผ่าหา infactive Ac Active ใช่ครับ enterter เลยฮะ
+09:25 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: มีพวกเล็กปิดมั้ยคะ
+09:27 Chamnong,Nick,TH-Bangkok,Information Technology: ต้องมีฮะ เซ็นเตอร์เลย
+09:28 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: โอเค
+09:31 Chamnong,Nick,TH-Bangkok,Information Technology: กู้เนี่ยไม่มีเค นี้ลอง ฟิลเตอร์ลอง ฟิลเตอร์ อิเวกทีฟดูด้วยมั้ยฮะ ดูว่ามีอันที่มีที่ปะอันเนี้ย yes เอาเอาแค่ yes อะฮะ เนี่ย ถึงจะเป็นอันที่อันเนี้ย ถึงจะติวเตอร์แล้ว
+09:48 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: อ๋อพี่มาปล่อยอันนี้มึงไปเสร็จเอ๊ะ
+09:52 Chamnong,Nick,TH-Bangkok,Information Technology: คือคุณโมลองปิดตั้งแต่คุณมโนปิดฟิลเตอร์นี้ก่อนฮะ เคลียร์เคลียร์ฟิลเตอร์นี้
+09:52 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: โอเค
+10:01 Chamnong,Nick,TH-Bangkok,Information Technology: โบว์ ลองดูว่ามี 7268523 ในในรีพอร์ตรึเปล่า
+10:12 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: เดี๋ยว เดี๋ยวนะ 726 ใช่มั้ย
+10:21 Chamnong,Nick,TH-Bangkok,Information Technology: 726 นี่นี่ไงฮะ ไม่ไม่ได้ preter ฮะเนี่ย เพิ่ง pretter
+10:29 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: ถ้า 23
+10:33 Chamnong,Nick,TH-Bangkok,Information Technology: แปลว่าแต่มันมีมันมีรีเลชันก็จริง แต่คุณโมไม่ได้บอกให้มันติวเตอร์
+10:39 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: อาฮะ อันนี้โมจะปรึกษานิดนึงค่ะ คุณนิค พอดีว่าตอนเนี้ยเราเชื่อ metaverse เป็น miroom dept เนาะ ถ้าถ้าเราฟิลเตอร์ตรงเนี้ยแล้วถึงเวลาที่เราเออย้ายเอ็นไวรอนเมนต์ไปใช้ pot มันต้องมาแก้ใน power b i อีกมั้ยคะ
+10:56 Chamnong,Nick,TH-Bangkok,Information Technology: ไม่ต้องแก้ผมต้องแต่ผมต้องทําออโตเมติกอีกรอบนึงที่อีกหนึ่งฮะ แต่ไม่มีอะไรเพราะผมผมไม่เกรดไปด้วยกันตอนตอนตอนอยู่ในโซลูชันอยู่แล้วครับ
+11:05 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: ถ้าอย่างงั้นมันควรเป็นตัวพาวเวอร์วีไอที่เป็นคนฟิวเจอร์ไปให้คุณอีก อันนี้ถูกมั้ยคะ
+11:12 Chamnong,Nick,TH-Bangkok,Information Technology: ไม่ต้องครับ แค่นี้เสร็จหรอฮะ แค่นี้เดี๋ยวผมฟิลเตอร์เอง
+11:15 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: อ๋อ ถ้าอย่างงั้น เอ๊ะ แล้วอย่างงี้แปลว่าตัว
+11:20 Chamnong,Nick,TH-Bangkok,Information Technology: เป็นที่โมเดลฮะที่ไปกับที่เทเบิลวิว เนี่ยเดี๋ยวเดี๋ยวผมคิดว่าผมจะเขียนคิลลี่เอาอันนี้ที่อันนี้เป็นเยสก็เสร็จละ
+11:33 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: อ๋อ ok
+11:34 Chamnong,Nick,TH-Bangkok,Information Technology: แล แล้วผมคิดว่าวิธีของผมคือไม่คือสุดท้ายแล้วคอมพิวเตอร์ตอนเนี่ยคือเพ้าออโตเมท ไม่ใช่ไม่ใช่บีไอด้วย ซึ่ง ซึ่งจริงๆ ซึ่งจริงๆก็ดีใช่ป่ะหรือเปล่า
+11:48 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: ไม่รู้ค่ะ
+11:49 Chamnong,Nick,TH-Bangkok,Information Technology: เพราะ เพราะว่าเดี๋ยวอีกหน่อยเรื่องโปรเจคนึงใช่มั้ยฮะ เราจะมีโปรเจกต์นึงที่เป็นตัวของที่
+11:55 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: กาซี่ ใช่ไหมคะ
+11:57 Chamnong,Nick,TH-Bangkok,Information Technology: ใช่ ซึ่งแปลว่า table นี้ใช้ด้วยกันได้ใช่มั้ย เราก็แค่ทําคอลัมน์นี่คอลัมน์หนึ่ง โดยติวเตอร์กับ data อีกชุดนึง ว่า ว่าเดิมสวย ไม่ต้องอันนี้ก็ก็ก็ดึงทีเดียวนะไอ้ไอ้ตัว data flow ก็ลังครั้งเดียวด้วย
+12:05 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: ใช่ ก็ได้ค่ะ
+12:13 Chamnong,Nick,TH-Bangkok,Information Technology: น่าจะโอเคแบบ
+12:13 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: ได้ได้ได้น่าจะดีกว่า
+12:17 Chamnong,Nick,TH-Bangkok,Information Technology: ดีดีคุยเพราะว่าไม่งั้นถ้าไม่ได้ทําคอลัมน์นี้ผมทําไม่ได้เลยนะฮะ
+12:22 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: โอ โอเคได้ค่ะ
+12:23 Chamnong,Nick,TH-Bangkok,Information Technology: ถ้าไม่เอาคอลัมน์ที แต่ว่าผมอาจจะต้องเป็นคิวรี่ไอ้ไอ้ไอ้คัสโตเมอร์ริสตาแล้วแล้วทําแมชชิ่งในอะตเมอร์เมตจะยากทีเดียวเลยประมาณนี้
+12:33 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: เคได้ค่ะ เอ๊ะ โมต้อง publ
+12:34 Chamnong,Nick,TH-Bangkok,Information Technology: ทีนี้ถ้าถ้าคุณโมอยากให้เล่นผ่อนนี่ ฟิลเตอร์คุณโมต้องทําคุณโมต้องทําอะไรแล้วนะเมเชอร์อ่ะฮะ ต้องทําเมเชอร์ฟิวเจอร์ไอ้แบบที่อันนี้เราถึงจะดึงดาต้านั้นมาโชว์
+12:47 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: เหรอคะ
+12:48 Chamnong,Nick,TH-Bangkok,Information Technology: ใช่ นี่ผมผมใช้ชัดแจ้งให้
+12:50 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: ไว้ให้มันเป็นเรื่องของอนาคตละกัน
+12:53 Chamnong,Nick,TH-Bangkok,Information Technology: ผมไม่ได้ใช้ report นะ ใช้แทนก่อนผมไม่ซื้อ report ทีนี้ แต่ที่คุณโม้
+12:56 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: โอ โอเคได้ค่ะ เอ๊ะ ถ้าอย่างงี้ที่
+12:59 Chamnong,Nick,TH-Bangkok,Information Technology: โมตั้งรีออโต้รีเฟลไปแล้วใช่ไหมฮะ ทั้งเสร็จ
+13:01 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: ค่ะ ตั้งลอตเตอรี่เฟดละทุกวันตอน6 โมงหรือ 7 โมงลูกจะ 7 โมงใช่ 7 โมงเช้า
+13:03 Chamnong,Nick,TH-Bangkok,Information Technology: รถติดแล้วก็ 7 โมงเช้าเราต้องส่งอีเมล์กี่โมงฮะ
+13:14 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: เอ่อ เอ่อ ไม่เกิน 8 โมงค่ะ
+13:16 Chamnong,Nick,TH-Bangkok,Information Technology: ผม ผมขอเลื่อนเป็น 6 โมงได้มั้ยฮะ
+13:19 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: ค่ะแป๊บนึงค่ะ
+13:21 Chamnong,Nick,TH-Bangkok,Information Technology: ผม กลัวไม่ทันมันมัน run นานแค่ไหนขอดูได้มั้ยฮะ ขอดูขอดูขอดูประวัติการณ์ deface ได้มั้ยฮะ
+13:32 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: อันนี้ไม่เกี่ยว
+13:34 Chamnong,Nick,TH-Bangkok,Information Technology: 5 นาที ไม่เกี่ยวหรอกฮะ
+13:36 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: ไม่ ไม่เกี่ยวค่ะ อันนี้คือมันมีปัญหานิดหน่อยก็เลยเฟลไป
+13:39 Chamnong,Nick,TH-Bangkok,Information Technology: ไม่แต่อันบนอ่ะ อันบน นี่ฮะ 15 นาทีนานะฮะเนี่ย รัน15นา 30 ห 35 นาที ผมต้องมาจิ้นไว้ครึ่งชั่วโมงผมรันอีกไม่รู้ครึ่งชั่วโมงหรือเปล่า ผมรันโฟร์รันอีก6คอร์สเปลี่ยนเป็น 6 โมงดีกว่าฮะ
+13:56 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: ใช่ค่ะ โอเค
+13:57 Chamnong,Nick,TH-Bangkok,Information Technology: จะ จะได้มีมาร์ชิ้นเวลาหน่อยแล้วก็จริงจริงอันนี้อะฮะ ถ้าคุณ
+14:00 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: แล้ว แล้วหนูใช้แล้วหมอใช้ u t c ด้วยนะ ใช้ team สภาพเดี๋ยวนะ เขาหาแป๊บนึง ควรจะเป็น 6 หมู่บ้าน
+14:09 Chamnong,Nick,TH-Bangkok,Information Technology: ก็เปลี่ยนเป็นพื้นที่วิฟนี่น่าจะดีกว่าฮะ จริงจริงแล้วเป็น weekly ลองลองลองดูแล้วแล้วติ๊กเสาร์อาทิตย์ออกมาจะไม่รันเสาร์อาทิตย์ ประหยัด ประหยัด เงินเดี๋ยวเขาจะคิดเงินแล้วนะฮะ
+14:25 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: โอเค อ้าวหรอ โอเคได้ได้ค่ะ
+14:28 Chamnong,Nick,TH-Bangkok,Information Technology: เอ้ย ต้องบอกคุณ เอ้ย ต้องบอกคุณมองว่า อันนี้ขายตังค์นะฮะ แพงนะฮะ จริงจริงแล้วถ้าถ้ามาดูจริงๆแล้วอาจ ผมไม่รู้
+14:35 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: ว้าวเอาแล้ว ไม่เป็นไร
+14:38 Chamnong,Nick,TH-Bangkok,Information Technology: เนี่ยผมว่ามีฮอตอยู่เพราะว่ามันรัน15มันนานเหมือนกัน
+14:40 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: ไม่เป็นไรเรา เราเราหลับตา
+14:46 Chamnong,Nick,TH-Bangkok,Information Technology: จริงจริงแล้วผมเพิ่งคิดได้ว่ามีท่าที่สวยกว่านี้ แต่ไม่รู้ว่าทําได้หรือเปล่าวันนี้ แต่อย่างนี้ก็ดีแล้วเพราะเสร็จแล้วถ้านั้นคือ data flow ของของ Powerfow app เองอ่ะครับ
+14:58 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: ฉัน ฉันเชื่อมกับ snup ได้เหรอคะ
+15:00 Chamnong,Nick,TH-Bangkok,Information Technology: ไม่รู้ ไม่รู้เหมือนกัน แต่อันนี้ก็คือ data flow คนนี้ชอบได้ไง มันมันคือตัวเดียวเหมือนกัน เขียนเหมือนกันเลยนะฮะ
+15:07 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: แต่ว่าคือมันมันจะมีเหมือนแบบ policy ของของ global เค้าอะค่ะว่าแบบเค้าจะให้ให้มั้ยอะไรอย่างเงี้ย คือแบบอย่างพาวเวอร์แอปมันได้
+15:15 Chamnong,Nick,TH-Bangkok,Information Technology: แต่ว่าแต่ว่ามีมีคนลองรึยัง เพราะว่าเพราะว่าดาต้าโฟนตอนนี้เวิร์กตรงนั้นก็น่าจะเหมือนเวิร์คเหมือนกัน แต่ว่าแต่ก็ไม่เป็นไร
+15:22 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: เป็นพาวเวอร์มันเป็นดาต้าโฟร์ตัวเดียวกันกับพวกออโตเมติกมั้ยคะ
+15:26 Chamnong,Nick,TH-Bangkok,Information Technology: เขียนเหมือนกันเป๊ะเลยฮะ
+15:28 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: คือเพราะอย่าง automate อย่างเงี้ย เชื่อมกับเอ่อตัว snoplex ไม่ได้ คือมัน against กับ global เค้าเค้าไม่ให้
+15:34 Chamnong,Nick,TH-Bangkok,Information Technology: ใช่ ใช่ใช่ คือคือเพราะว่าไม่ใช่บอกว่าผู้หญิงไม่ใช่คนเดียว ออโต้เมทเป็นแต่เป็นตัวเดียวกับบีไอ คือถ้า
+15:42 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: น่าจะยังไม่เคยมีคนร้อง
+15:43 Chamnong,Nick,TH-Bangkok,Information Technology: เพราะว่าแอพอะเค้าแอพดึงdataได้2ท่าหลักหลักก็คือก็คือ automate กับ data flow data flow มันจะทํางานเหมือน data flow ของ biเลย ผมเลยคิดว่าจริงจริง ตัวเนี่ยอาจจะ work ก็ได้ เพราะตัวนี้ work prod data flow ตัวตัวนี้มัน work ผมเล็ก เอ๊ะ มีใครลองรึยังนะ เพราะถ้าทําแบบนั้นอ่ะ data มันจะดึงมาเข้าเข้าเข้า dataword โดยตรงเลยไม่ผ่าน semic model ด้วยซ้ํา เพราะว่าแอพอะเค้า
+16:06 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: อือ
+16:08 Chamnong,Nick,TH-Bangkok,Information Technology: อย่างท่าที่ผมทําออโตเมทนี้ ผมก็ skip skip skip แชร์พอยต์ไปเลยนะฮะ อันนี้เป็นไรบ้างฮะ
+16:14 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: ไม่เป็นไร ไม่เป็นไรค่ะ
+16:15 Chamnong,Nick,TH-Bangkok,Information Technology: ถ้าจะไม่เป็นไรนะฮะ เพราะว่า ถ้าจะไม่เป็นไร
+16:17 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: เราไม่ได้ใช้อะ เราไม่ได้ใช้อะไรใน shape แล้วนะคะ ได้แบบไม่ผิดไม่ไม่มีอันนี้
+16:21 Chamnong,Nick,TH-Bangkok,Information Technology: ใช้ ใช้ใช้เยอะเหมือนกันฮะ ใช้ใช้ใช้วันหยุดใน sharepoint ใช้ customer เอา customer เป็นวันหยุดก็ เดี๋ยวค่อยคุยกันนะ จริงจริงแล้วเรื่องเรื่อง maintenan ใน share point หรือ maintain ในแอปเนี่ย ผมแค่กดปุ่มเดียวเองเลย คือผมจะ sing หรือไม่ sing แค่นั้นเองฮะ
+16:31 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: หยุด
+16:39 Chamnong,Nick,TH-Bangkok,Information Technology: คือ u i
+16:39 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: คือคือเท่าที่โมคุยกับ เอ่อ ยูเซอร์มาค่ะ เขาอยากให้ทุกอย่างมันถ้าจะแทบจะไปอยู่ในพาวเวอร์แอปก็เพราะแอปให้หมดอะไรเงี้ยคือเขาจะได้ไม่ต้องแบบ ใช้ย้ายไป ใช่ยายไปย้ายมา
+16:49 Chamnong,Nick,TH-Bangkok,Information Technology: แต่ แต่สุดท้ายมันมีอะไรพี่หมีหนีไม่รอดคือ คือไอ้นี่ฮะ คือ คือคือ คือคือ คิวอาร์
+17:00 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: ค่ะ
+17:00 Chamnong,Nick,TH-Bangkok,Information Technology: จริงจริง คิวอาร์
+17:00 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: ค่ะ อันนั้นไม่น่าเป็นไรค่ะ มันไม่ได้ management บ่อย แต่ว่าพวกแบบอย่างวันหยุดอย่างเงี้ย มันก็คือคือต้องใช้คําว่า เออ คืออ ย่าง q r อย่างเงี้ย เวลาเขาจะทําอะไรขึ้นมาทีนึงเขาก็ต้องแบบไปแจ้งธนาคารเพื่อที่จะขอ q r มันจะมีเรื่องการเดินเอกสารใดใดอะไรอย่างเงี้ย ซึ่งมันจะมีแบบบางคนที่เขาจะต้องเป็นคนทํา ซึ่งแต่พอถ้าสมมุติว่า เป็นคนใหม่มาอย่างเงี้ยแล้วเขาจะสอนงานอะค่ะ เขาก็ต้องแบบว่า
+17:26 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: เขาก็เหมือนไม่อยากให้มันแบบ ไหวแบบ เออ อันนี้ต้องทําอันนี้อะไรอย่างเงี้ยใช่
+17:34 Chamnong,Nick,TH-Bangkok,Information Technology: อืม อืมครับ ก็โอเคตามนี้ ok ทีนี้เรื่องถัดไปนะฮะ เรื่องถัดไปจะเป็นเรื่องของแข่งต่อ ถัดไปจะเป็นเรื่อง data เอง จะถามซ้ําหลายรอบแล้วแต่ 3 ีที่ได้ อันนี้คือเลขคัสตอมเมอร์นะฮะ ใช่มั้ยฮะ
+17:56 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: ใช่ค่ะ ใช่ค่ะ
+17:58 Chamnong,Nick,TH-Bangkok,Information Technology: นี้จะเรียก customer แล้วก็เบล n r นี่คือเลข bill ใช่มั้ยฮะ
+18:03 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: Gen Generare คือ document number ใช่ไหมนะเดี๋ยวเดี๋ยวโมขอเปิด จําไม่ค่อยได้แล้วเหมือนกัน
+18:16 Chamnong,Nick,TH-Bangkok,Information Technology: Documentable ใช่แล้วก็ อันนี้คืออะไรไม่รู้
+18:22 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: แล แล้วก็มันจะมีเป็น assignment
+18:23 Chamnong,Nick,TH-Bangkok,Information Technology: ไม่ใช้
+18:28 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: คือไอ้ตัว assignment มันเหมือนโมไม่มั่นใจว่ายูสเซอร์เค้าใช้ทําอะไรอะคะ หนูว่าคือใน layout ที่เค้าเคยให้มาเค้าเค้ามีตัว accountment ด้วย
+18:37 Chamnong,Nick,TH-Bangkok,Information Technology: Account Accountment Accountment ด้วย assignment คืออันไหนฮะ อันนี้เหรอฮะ
+18:41 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: ตัวตัว ตัวตัวแซด ใช่ค่ะ แซดอยู่
+18:44 Chamnong,Nick,TH-Bangkok,Information Technology: ผมต้องทํา
+18:45 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: จะไม่ต้องทําอะไรกับมันนะคิดว่าอย่างนั้นเพราะว่าแบบมันมันแค่แบบเหมือนใช้บันทึก
+18:52 Chamnong,Nick,TH-Bangkok,Information Technology: โอเค โอเค เอาเป็นว่า
+18:52 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: ข้อมูลอะไรสักอย่างใน s a p ใช่ไม่มั่นใจเหมือนกันไม่รู้เหมือนกันว่าเค้าใช้ทําอะไร
+18:57 Chamnong,Nick,TH-Bangkok,Information Technology: แล้วแล้ว นี่คือท้ายสุดจะเป็น d r กับดี อาร์นี่คือนี่คือ dabit จริงๆ d g คือ credit ใช่มั้ยฮะ
+19:04 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: ฮิวแมนไทยค่ะ อ๋อค่ะ พี่จดไปสักครู่นึง D Pr คือ invoice ค่ะ d g คือ cm
+19:27 Chamnong,Nick,TH-Bangkok,Information Technology: โอเค เครดิตโน๊ตแล้วเอ็มไอคืออะไรเนี้ย
+19:30 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: M i คือ เอ่อ ตัวชาร์จสอนลดเงินสดค่ะ อันนี้คือเป็น m i ที่เค้าคํานวณแล้วอยู่ในตัว s a p แล้ว ลูกค้าบางคนเขาเขามี m i ของเขา ส่วนเรื่องการคํานวณเดี๋ยวเดี๋ยวผมไปถามมาอีกรอบนึง
+19:46 Chamnong,Nick,TH-Bangkok,Information Technology: ขอขอด่วนเลยนะฮะ เพราะว่าต้องต้องต้องจะเอาผมมาอาทิตย์หน้าใช่มั้ย
+19:48 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: ได้ได้ค่ะ ได้ครับ ได้แต่โบว์ไปทํามาให้อีกรอบ
+19:54 Chamnong,Nick,TH-Bangkok,Information Technology: โอเค อันนี้วันที่ถูกมั้ยฮะ อันนี้วันที่วันนี้คือวันที่วางบิลนะฮะ อันนี้คือวันที่วันที่นิวเดต
+20:01 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: ใช่ค่ะ ใช่ค่ะ
+20:03 Chamnong,Nick,TH-Bangkok,Information Technology: ศ 0601 ซึ่งซึ่งเดี๋ยวนะฮะ ซึ่งแปลว่าผมไม่ต้องสด อันนี้ผมสดอันนี้ถูกไหมฮะ
+20:13 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: ใช่ค่ะ ส่วนดิอเดช ใช่ค่ะ
+20:13 Chamnong,Nick,TH-Bangkok,Information Technology: ก็ ครับผม ครับผม บิลเดย์ สมดิวเดด ก็คือเพื่อเอาไปทําลอจิกว่าจะจัดส่งเรื่อง m i ri เรื่องอะไรนะ เรื่องส่วนลดรึยังใช่มั้ยฮะ
+20:23 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: ใช่ ใช่ค่ะ ใช่ค่ะ
+20:25 Chamnong,Nick,TH-Bangkok,Information Technology: มันคือเกิน 3 วันป่ะฮะ ใช่ไหมฮะ
+20:31 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: ถ้าจําไม่ผิดใช่ใช่เดือนเดอะมอลล์เปิดเอกสารแบบนั้น
+20:36 Chamnong,Nick,TH-Bangkok,Information Technology: ก็จะมียังไม่ถึง
+20:56 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: แบบ แบบว่า
+21:04 Chamnong,Nick,TH-Bangkok,Information Technology: คุณโมค่อยส่งให้ผมอีกทีก็ได้
+21:07 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: คุณนิค ยังมีเอกสารอันนั้นอยู่มั้ยครับ แต่หรือไม่เดี๋ยวเดี๋ยวโมไปคอนเฟิร์มกับยูสเซอร์ทอมกันก็ได้ค่ะ ตอนนี้มันแก้นานนะคะ ถ้าจาก3ัญ เป็นวันอื่นเลย
+21:16 Chamnong,Nick,TH-Bangkok,Information Technology: ไม่ยากแก้แก้ง่ายมากแค่ไหน
+21:17 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: โอเคได้ค่ะ งั้นเดี๋ยวโบว์คอนเฟิร์มให้ก่อน
+21:20 Chamnong,Nick,TH-Bangkok,Information Technology: ก็อันนี้ อันนี้ก็คือยอดๆของบิลนี้ถูกมั้ยฮะ แต่ไม่มีไม่มี ไม่มี ไม่มียอด ปัจจุบันคงเหลือทั้งหมดต้องบวกกันเองถูกมั้ย อันนี้แล้วก็แล้วก็อันนี้ไม่สนใจ ผมไม่ต้องใช้อะไร แล้วผมไม่ต้องใช้คําว่ายกเลิกด้วยซ้ํา เพราะว่าผมใช้ c r d r ได้เลยใช่มั้ยฮะ ถ้าจําไม่ผิด คุณคุณว่าคือแปลว่าผมไม่ได้ ไม่ต้องใช้อะไร แล้วตอนนี้ไม่มี o k ก็ x b l n r นี้ผมก็ไม่ต้องใช้ใช่ไหมฮะ
+21:28 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: ได้ ได้ค่ะ ใช่ใช่ค่ะ ใช่ month expose of ให้แล้ว ใช่ค่ะ เป็น referen ใช่ค่ะ เป็น reference เฉยเฉย
+21:50 Chamnong,Nick,TH-Bangkok,Information Technology: โอ โอเคได้ครับผมก็น่าจะเคลียร์ประมาณนี้ อีกเรื่องก็คือว่าตอนนี้มันกลายเป็นว่าผมต้องสแนปช็อตเองถูกมั้ยฮะ แต่ละวันเพราะว่าดาต้าไม่มีสแนปช แล้ว ปกป้อง
+22:01 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: แนปช็อต หมายถึงว่ายังไงนะคะ
+22:04 Chamnong,Nick,TH-Bangkok,Information Technology: แล้วชอบหมายความว่ามันไม่ใช่ table ที่ run ไปเรื่อย ถูกมั้ยฮะ ถ้าอันไหนอันไหนเคลียร์แล้วโลว์มันจะหายไปเลยถูกปะ dataนี้
+22:12 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: ท่าไหนเคลียร์ ใช่ค่ะ
+22:14 Chamnong,Nick,TH-Bangkok,Information Technology: มันจะหายไปเลย ทั้งหมดที่ขึ้นคือโลที่ยังค้างอยู่ถูกมั้ยฮะใน
+22:19 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: ได้ค่ะ ทั้งหมดเป็นที่ค้างอยู่
+22:21 Chamnong,Nick,TH-Bangkok,Information Technology: เค เค้าก็ เค้าก็ผมต้อง snapchot หมายความว่าทุกวันผมก็ต้องเก็บดึงทั้งหมดเลย แล้วก็ใส่วันที่แบบว่านี่คือรายการของวันที่ 9 อะไรอย่างเงี้ย พอวันที่ 10 ก็จะเป็น tybery ทั้งหมดอีกรอบนึงเป็น darnpisit ถ้าถ้าระบบจะยังคงอยู่ เหมือนเดิม p p p ไว้ก่อน ผมก็จะใช้แหละ โอเคครับ ได้ครับ
+22:38 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: ใช่ค่ะ
+22:43 Chamnong,Nick,TH-Bangkok,Information Technology: โอเคก็น่าจะประมาณนี้ฮะ น่าจะไม่มี
+22:46 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: Ok โอเคได้ค่ะ เดี๋ยวโมไปคอนเฟิร์มเรื่อง เอ่อ m i ที่เป็นแบบ human ไทยใช้คํานวณหรือเปล่า แล้วก็คํานวณ m i 3 วันหลังจากเน็ตยูเดดเนอะ โอเคค่ะ
+23:00 Chamnong,Nick,TH-Bangkok,Information Technology: ครับ ครับผม โอเคครับ เอ๊ะ อาร์วีเลย อาร์วีคืออะไร
+23:02 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: ได้ บาร์วี อาร์วี มันคือซีเอ็นแบบหนึ่งค่ะ
+23:08 Chamnong,Nick,TH-Bangkok,Information Technology: ผมฝากเอาทุกแบบที่มีที่ผมต้องใช้เลยละกันฮะ โอเคอะไรครับ
+23:11 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: ได้ค่ะ โอเคได้ครับ
+23:14 Chamnong,Nick,TH-Bangkok,Information Technology: โอ โอเคครับ
+23:15 Nithijarernariya,Russarin,TH-Bangkok,Information Technology: ได้ค่ะ โอเคค่ะค่ะ ขอบคุณค่ะ คุณนิค สวัสดีค่ะ
+23:18 Chamnong,Nick,TH-Bangkok,Information Technology: ได้ครับ ขอบคุณมากครับผม ครับ ครับผม
+  

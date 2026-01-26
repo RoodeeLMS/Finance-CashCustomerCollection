@@ -20,7 +20,7 @@ Screens:
         )
     Children:
       - CustHistory_Container:
-          Control: GroupContainer@1.3.0
+          Control: GroupContainer@1.4.0
           Variant: ManualLayout
           Properties:
             DropShadow: =DropShadow.None
@@ -28,7 +28,7 @@ Screens:
             Width: =Parent.Width
           Children:
             - CustHistory_Header:
-                Control: GroupContainer@1.3.0
+                Control: GroupContainer@1.4.0
                 Variant: AutoLayout
                 Properties:
                   DropShadow: =DropShadow.Regular
@@ -51,6 +51,8 @@ Screens:
                         Color: =RGBA(255, 255, 255, 1)
                         Height: =50
                         Icon: =Icon.Hamburger
+                        LayoutMaxHeight: =
+                        LayoutMaxWidth: =
                         OnSelect: |-
                           =UpdateContext({_showMenu: !_showMenu})
                         PaddingBottom: =10
@@ -64,6 +66,8 @@ Screens:
                         Font: =Font.Lato
                         FontColor: =Color.White
                         Height: =50
+                        LayoutMaxHeight: =
+                        LayoutMaxWidth: =
                         PaddingLeft: =20
                         Size: =25
                         Text: ="Customer History"
@@ -71,7 +75,7 @@ Screens:
                         Weight: ='TextCanvas.Weight'.Medium
                         Width: =Parent.Width - CustHistory_MenuIcon.Width - 40
             - CustHistory_Content:
-                Control: GroupContainer@1.3.0
+                Control: GroupContainer@1.4.0
                 Variant: ManualLayout
                 Properties:
                   DropShadow: =DropShadow.Regular
@@ -86,7 +90,7 @@ Screens:
                   Y: =75
                 Children:
                   - CustHistory_CustomerSelectionPanel:
-                      Control: GroupContainer@1.3.0
+                      Control: GroupContainer@1.4.0
                       Variant: AutoLayout
                       Properties:
                         DropShadow: =DropShadow.None
@@ -103,13 +107,15 @@ Screens:
                         Width: =Parent.Width
                       Children:
                         - CustHistory_SelectionRow:
-                            Control: GroupContainer@1.3.0
+                            Control: GroupContainer@1.4.0
                             Variant: AutoLayout
                             Properties:
                               DropShadow: =DropShadow.None
                               LayoutAlignItems: =LayoutAlignItems.Center
                               LayoutDirection: =LayoutDirection.Horizontal
                               LayoutGap: =15
+                              LayoutMaxHeight: =
+                              LayoutMaxWidth: =
                               LayoutMinHeight: =40
                               LayoutMinWidth: =100
                               Width: =Parent.Width - 30
@@ -120,6 +126,8 @@ Screens:
                                     Font: =Font.Lato
                                     FontColor: =RGBA(0, 0, 0, 1)
                                     Height: =40
+                                    LayoutMaxHeight: =
+                                    LayoutMaxWidth: =
                                     Text: |-
                                       ="Date: "
                                     VerticalAlign: =VerticalAlign.Middle
@@ -130,6 +138,8 @@ Screens:
                                   Properties:
                                     BasePaletteColor: =RGBA(0, 101, 161, 1)
                                     Height: =40
+                                    LayoutMaxHeight: =
+                                    LayoutMaxWidth: =
                                     OnChange: |-
                                       =UpdateContext({
                                           _filterDate: Self.SelectedDate
@@ -142,6 +152,8 @@ Screens:
                                     Font: =Font.Lato
                                     FontColor: =RGBA(0, 0, 0, 1)
                                     Height: =40
+                                    LayoutMaxHeight: =
+                                    LayoutMaxWidth: =
                                     Text: ="Select Customer:"
                                     VerticalAlign: =VerticalAlign.Middle
                                     Weight: ='TextCanvas.Weight'.Semibold
@@ -154,6 +166,8 @@ Screens:
                                     Height: =40
                                     InputTextPlaceholder: ="Search customers..."
                                     Items: =colCustomers
+                                    LayoutMaxHeight: =
+                                    LayoutMaxWidth: =
                                     OnChange: |-
                                       =UpdateContext({
                                           _selectedCustomer: If(
@@ -173,16 +187,16 @@ Screens:
                                                   ),
                                                   TransactionTypeText,
                                                   If(
-                                                      cr7bb_transactiontype = 'Transaction Type Choice'.'Credit Note',
+                                                      'Transaction Type' = 'Transaction Type Choice'.'Credit Note',
                                                       "CN",
                                                       If(
-                                                          cr7bb_transactiontype = 'Transaction Type Choice'.'Debit Note',
+                                                          'Transaction Type' = 'Transaction Type Choice'.'Debit Note',
                                                           "DN",
                                                           ""
                                                       )
                                                   ),
                                                   AmountFormatted,
-                                                  "฿" & Text(cr7bb_amountlocalcurrency, "#,##0.00")
+                                                  "฿" & Text('Amount (Local Currency)', "#,##0.00")
                                               )
                                           );
                                           ClearCollect(
@@ -193,7 +207,7 @@ Screens:
                                                       Customer.'[THFinanceCashCollection]Customer' = _selectedCustomer.'[THFinanceCashCollection]Customer'
                                                   ),
                                                   AmountFormatted,
-                                                  "฿" & Text(cr7bb_totalamount, "#,##0.00")
+                                                  "฿" & Text('Total Amount', "#,##0.00")
                                               )
                                           )
                                       )
@@ -216,13 +230,15 @@ Screens:
                                           FieldType: ="s"
                                           Order: =2
                         - CustHistory_CustomerInfoRow:
-                            Control: GroupContainer@1.3.0
+                            Control: GroupContainer@1.4.0
                             Variant: AutoLayout
                             Properties:
                               DropShadow: =DropShadow.None
                               LayoutAlignItems: =LayoutAlignItems.Center
                               LayoutDirection: =LayoutDirection.Horizontal
                               LayoutGap: =20
+                              LayoutMaxHeight: =
+                              LayoutMaxWidth: =
                               LayoutMinHeight: =25
                               LayoutMinWidth: =100
                               Visible: =!IsBlank(_selectedCustomer)
@@ -234,6 +250,8 @@ Screens:
                                     Font: =Font.Lato
                                     FontColor: =RGBA(0, 101, 161, 1)
                                     Height: =25
+                                    LayoutMaxHeight: =
+                                    LayoutMaxWidth: =
                                     Text: =_selectedCustomer.cr7bb_customername
                                     VerticalAlign: =VerticalAlign.Middle
                                     Weight: ='TextCanvas.Weight'.Bold
@@ -244,6 +262,8 @@ Screens:
                                     Font: =Font.Lato
                                     FontColor: =RGBA(100, 100, 100, 1)
                                     Height: =25
+                                    LayoutMaxHeight: =
+                                    LayoutMaxWidth: =
                                     Text: |-
                                       ="Code: " & _selectedCustomer.cr7bb_customercode
                                     VerticalAlign: =VerticalAlign.Middle
@@ -254,12 +274,14 @@ Screens:
                                     Font: =Font.Lato
                                     FontColor: =RGBA(100, 100, 100, 1)
                                     Height: =25
+                                    LayoutMaxHeight: =
+                                    LayoutMaxWidth: =
                                     Text: |-
                                       ="Region: " & Text(_selectedCustomer.Region)
                                     VerticalAlign: =VerticalAlign.Middle
                                     Width: =150
                   - CustHistory_TransactionSection:
-                      Control: GroupContainer@1.3.0
+                      Control: GroupContainer@1.4.0
                       Variant: ManualLayout
                       Properties:
                         DropShadow: =DropShadow.None
@@ -270,7 +292,7 @@ Screens:
                         Y: =100
                       Children:
                         - CustHistory_TransactionHeader:
-                            Control: GroupContainer@1.3.0
+                            Control: GroupContainer@1.4.0
                             Variant: AutoLayout
                             Properties:
                               DropShadow: =DropShadow.None
@@ -290,19 +312,23 @@ Screens:
                                     Font: =Font.Lato
                                     FontColor: =RGBA(0, 0, 0, 1)
                                     Height: =40
+                                    LayoutMaxHeight: =
+                                    LayoutMaxWidth: =
                                     Size: =18
                                     Text: ="Transaction History"
                                     VerticalAlign: =VerticalAlign.Middle
                                     Weight: ='TextCanvas.Weight'.Bold
                                     Width: =200
                               - CustHistory_TransactionFilters:
-                                  Control: GroupContainer@1.3.0
+                                  Control: GroupContainer@1.4.0
                                   Variant: AutoLayout
                                   Properties:
                                     DropShadow: =DropShadow.None
                                     LayoutAlignItems: =LayoutAlignItems.Center
                                     LayoutDirection: =LayoutDirection.Horizontal
                                     LayoutGap: =10
+                                    LayoutMaxHeight: =
+                                    LayoutMaxWidth: =
                                     LayoutMinHeight: =40
                                     LayoutMinWidth: =100
                                   Children:
@@ -312,6 +338,8 @@ Screens:
                                           Font: =Font.Lato
                                           FontColor: =RGBA(100, 100, 100, 1)
                                           Height: =35
+                                          LayoutMaxHeight: =
+                                          LayoutMaxWidth: =
                                           Text: ="Type:"
                                           VerticalAlign: =VerticalAlign.Middle
                                           Weight: ='TextCanvas.Weight'.Semibold
@@ -322,6 +350,8 @@ Screens:
                                           DefaultSelectedItems: =["All"]
                                           Height: =35
                                           Items: =["All", "CN", "DN"]
+                                          LayoutMaxHeight: =
+                                          LayoutMaxWidth: =
                                           OnChange: |-
                                             =UpdateContext({
                                                 _transactionTypeFilter: Self.Selected.Value
@@ -333,6 +363,8 @@ Screens:
                                           Font: =Font.Lato
                                           FontColor: =RGBA(100, 100, 100, 1)
                                           Height: =35
+                                          LayoutMaxHeight: =
+                                          LayoutMaxWidth: =
                                           Text: ="Period:"
                                           VerticalAlign: =VerticalAlign.Middle
                                           Visible: =false
@@ -344,6 +376,8 @@ Screens:
                                           DefaultSelectedItems: =["Last 30 Days"]
                                           Height: =35
                                           Items: =["Last 7 Days", "Last 30 Days", "Last 90 Days", "Last 180 Days", "Last 365 Days"]
+                                          LayoutMaxHeight: =
+                                          LayoutMaxWidth: =
                                           OnChange: |-
                                             =UpdateContext({
                                                 _transactionDateRange: Switch(
@@ -371,11 +405,11 @@ Screens:
                                     SortByColumns(
                                         Filter(
                                             colCustomerTransactions,
-                                            cr7bb_recordtype = 'Record Type Choice'.Transaction &&
+                                            'Record Type' = 'Record Type Choice'.Transaction &&
                                             (_transactionTypeFilter = "All" ||
-                                             (_transactionTypeFilter = "CN" && cr7bb_transactiontype = 'Transaction Type Choice'.'Credit Note') ||
-                                             (_transactionTypeFilter = "DN" && cr7bb_transactiontype = 'Transaction Type Choice'.'Debit Note')) &&
-                                            cr7bb_transactionprocessdate >= _filterDate && cr7bb_transactionprocessdate < DateAdd(_filterDate, 1, TimeUnit.Days)
+                                             (_transactionTypeFilter = "CN" && 'Transaction Type' = 'Transaction Type Choice'.'Credit Note') ||
+                                             (_transactionTypeFilter = "DN" && 'Transaction Type' = 'Transaction Type Choice'.'Debit Note')) &&
+                                            'Transaction Process Date' >= _filterDate && 'Transaction Process Date' < DateAdd(_filterDate, 1, TimeUnit.Days)
                                         ),
                                         "cr7bb_documentdate",
                                         SortOrder.Descending
@@ -449,7 +483,7 @@ Screens:
                                     Order: =6
                                     Width: =100
                         - CustHistory_TransactionSummary:
-                            Control: GroupContainer@1.3.0
+                            Control: GroupContainer@1.4.0
                             Variant: AutoLayout
                             Properties:
                               DropShadow: =DropShadow.None
@@ -470,19 +504,21 @@ Screens:
                                     Font: =Font.Lato
                                     FontColor: =RGBA(0, 0, 0, 1)
                                     Height: =35
+                                    LayoutMaxHeight: =
+                                    LayoutMaxWidth: =
                                     Size: =16
                                     Text: |-
                                       ="Total: ฿" & Text(
                                           Sum(
                                               Filter(
                                                   colCustomerTransactions,
-                                                  cr7bb_recordtype = 'Record Type Choice'.Transaction &&
+                                                  'Record Type' = 'Record Type Choice'.Transaction &&
                                                   (_transactionTypeFilter = "All" ||
-                                                   (_transactionTypeFilter = "CN" && cr7bb_transactiontype = 'Transaction Type Choice'.'Credit Note') ||
-                                                   (_transactionTypeFilter = "DN" && cr7bb_transactiontype = 'Transaction Type Choice'.'Debit Note')) &&
-                                                  cr7bb_transactionprocessdate >= _filterDate && cr7bb_transactionprocessdate < DateAdd(_filterDate, 1, TimeUnit.Days)
+                                                   (_transactionTypeFilter = "CN" && 'Transaction Type' = 'Transaction Type Choice'.'Credit Note') ||
+                                                   (_transactionTypeFilter = "DN" && 'Transaction Type' = 'Transaction Type Choice'.'Debit Note')) &&
+                                                  'Transaction Process Date' >= _filterDate && 'Transaction Process Date' < DateAdd(_filterDate, 1, TimeUnit.Days)
                                               ),
-                                              cr7bb_amountlocalcurrency
+                                              'Amount (Local Currency)'
                                           ),
                                           "#,##0.00"
                                       )
@@ -495,20 +531,22 @@ Screens:
                                     Font: =Font.Lato
                                     FontColor: =RGBA(191, 25, 34, 1)
                                     Height: =35
+                                    LayoutMaxHeight: =
+                                    LayoutMaxWidth: =
                                     Size: =16
                                     Text: |-
                                       ="Outstanding: ฿" & Text(
                                           Sum(
                                               Filter(
                                                   colCustomerTransactions,
-                                                  cr7bb_recordtype = 'Record Type Choice'.Transaction &&
+                                                  'Record Type' = 'Record Type Choice'.Transaction &&
                                                   (_transactionTypeFilter = "All" ||
-                                                   (_transactionTypeFilter = "CN" && cr7bb_transactiontype = 'Transaction Type Choice'.'Credit Note') ||
-                                                   (_transactionTypeFilter = "DN" && cr7bb_transactiontype = 'Transaction Type Choice'.'Debit Note')) &&
-                                                  cr7bb_transactionprocessdate >= _filterDate && cr7bb_transactionprocessdate < DateAdd(_filterDate, 1, TimeUnit.Days) &&
-                                                  !cr7bb_isprocessed
+                                                   (_transactionTypeFilter = "CN" && 'Transaction Type' = 'Transaction Type Choice'.'Credit Note') ||
+                                                   (_transactionTypeFilter = "DN" && 'Transaction Type' = 'Transaction Type Choice'.'Debit Note')) &&
+                                                  'Transaction Process Date' >= _filterDate && 'Transaction Process Date' < DateAdd(_filterDate, 1, TimeUnit.Days) &&
+                                                  !'Is Processed'
                                               ),
-                                              cr7bb_amountlocalcurrency
+                                              'Amount (Local Currency)'
                                           ),
                                           "#,##0.00"
                                       )
@@ -534,17 +572,17 @@ Screens:
                                 =IsBlank(_selectedCustomer) || CountRows(
                                     Filter(
                                         colCustomerTransactions,
-                                        cr7bb_recordtype = 'Record Type Choice'.Transaction &&
+                                        'Record Type' = 'Record Type Choice'.Transaction &&
                                         (_transactionTypeFilter = "All" ||
-                                         (_transactionTypeFilter = "CN" && cr7bb_transactiontype = 'Transaction Type Choice'.'Credit Note') ||
-                                         (_transactionTypeFilter = "DN" && cr7bb_transactiontype = 'Transaction Type Choice'.'Debit Note')) &&
-                                        cr7bb_documentdate >= DateAdd(Today(), -_transactionDateRange, TimeUnit.Days)
+                                         (_transactionTypeFilter = "CN" && 'Transaction Type' = 'Transaction Type Choice'.'Credit Note') ||
+                                         (_transactionTypeFilter = "DN" && 'Transaction Type' = 'Transaction Type Choice'.'Debit Note')) &&
+                                        'Document Date' >= DateAdd(Today(), -_transactionDateRange, TimeUnit.Days)
                                     )
                                 ) = 0
                               Width: =Parent.Width
                               Y: =(Parent.Height - Self.Height) / 2
                   - CustHistory_EmailSection:
-                      Control: GroupContainer@1.3.0
+                      Control: GroupContainer@1.4.0
                       Variant: ManualLayout
                       Properties:
                         DropShadow: =DropShadow.None
@@ -555,7 +593,7 @@ Screens:
                         Y: =110 + (Parent.Height - 100) / 2
                       Children:
                         - CustHistory_EmailHeader:
-                            Control: GroupContainer@1.3.0
+                            Control: GroupContainer@1.4.0
                             Variant: AutoLayout
                             Properties:
                               DropShadow: =DropShadow.None
@@ -575,19 +613,23 @@ Screens:
                                     Font: =Font.Lato
                                     FontColor: =RGBA(0, 0, 0, 1)
                                     Height: =40
+                                    LayoutMaxHeight: =
+                                    LayoutMaxWidth: =
                                     Size: =18
                                     Text: ="Email History"
                                     VerticalAlign: =VerticalAlign.Middle
                                     Weight: ='TextCanvas.Weight'.Bold
                                     Width: =200
                               - CustHistory_EmailFilters:
-                                  Control: GroupContainer@1.3.0
+                                  Control: GroupContainer@1.4.0
                                   Variant: AutoLayout
                                   Properties:
                                     DropShadow: =DropShadow.None
                                     LayoutAlignItems: =LayoutAlignItems.Center
                                     LayoutDirection: =LayoutDirection.Horizontal
                                     LayoutGap: =10
+                                    LayoutMaxHeight: =
+                                    LayoutMaxWidth: =
                                     LayoutMinHeight: =40
                                     LayoutMinWidth: =100
                                   Children:
@@ -597,6 +639,8 @@ Screens:
                                           Font: =Font.Lato
                                           FontColor: =RGBA(100, 100, 100, 1)
                                           Height: =35
+                                          LayoutMaxHeight: =
+                                          LayoutMaxWidth: =
                                           Text: ="Period:"
                                           VerticalAlign: =VerticalAlign.Middle
                                           Visible: =false
@@ -608,6 +652,8 @@ Screens:
                                           DefaultSelectedItems: =["Last 90 Days"]
                                           Height: =35
                                           Items: =["Last 30 Days", "Last 90 Days", "Last 180 Days", "Last 365 Days"]
+                                          LayoutMaxHeight: =
+                                          LayoutMaxWidth: =
                                           OnChange: |-
                                             =UpdateContext({
                                                 _emailDateRange: Switch(
@@ -697,7 +743,7 @@ Screens:
                                     Order: =5
                                     Width: =100
                         - CustHistory_EmailSummary:
-                            Control: GroupContainer@1.3.0
+                            Control: GroupContainer@1.4.0
                             Variant: AutoLayout
                             Properties:
                               DropShadow: =DropShadow.None
@@ -718,6 +764,8 @@ Screens:
                                     Font: =Font.Lato
                                     FontColor: =RGBA(0, 0, 0, 1)
                                     Height: =35
+                                    LayoutMaxHeight: =
+                                    LayoutMaxWidth: =
                                     Size: =16
                                     Text: |-
                                       ="Total Emails: " & CountRows(
@@ -735,6 +783,8 @@ Screens:
                                     Font: =Font.Lato
                                     FontColor: =RGBA(0, 101, 161, 1)
                                     Height: =35
+                                    LayoutMaxHeight: =
+                                    LayoutMaxWidth: =
                                     Size: =16
                                     Text: |-
                                       =If(

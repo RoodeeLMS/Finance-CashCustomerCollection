@@ -1,0 +1,457 @@
+{
+  "properties": {
+    "connectionReferences": {
+      "shared_excelonlinebusiness": {
+        "runtimeSource": "embedded",
+        "connection": {
+          "connectionReferenceLogicalName": "nc_sharedexcelonlinebusiness_67d04"
+        },
+        "api": {
+          "name": "shared_excelonlinebusiness"
+        }
+      },
+      "shared_commondataserviceforapps": {
+        "runtimeSource": "embedded",
+        "connection": {
+          "connectionReferenceLogicalName": "new_sharedcommondataserviceforapps_7e300"
+        },
+        "api": {
+          "name": "shared_commondataserviceforapps"
+        }
+      }
+    },
+    "definition": {
+      "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+      "contentVersion": "1.0.0.0",
+      "parameters": {
+        "$connections": {
+          "defaultValue": {},
+          "type": "Object"
+        },
+        "$authentication": {
+          "defaultValue": {},
+          "type": "SecureObject"
+        }
+      },
+      "triggers": {
+        "manual": {
+          "metadata": {
+            "operationMetadataId": "0ea6983c-90a4-49e6-9263-64bb7d54457d"
+          },
+          "type": "Request",
+          "kind": "PowerAppV2",
+          "inputs": {
+            "schema": {
+              "type": "object",
+              "properties": {},
+              "required": []
+            }
+          }
+        }
+      },
+      "actions": {
+        "Initialize_varSyncStartTime": {
+          "runAfter": {},
+          "metadata": {
+            "operationMetadataId": "4ca4d1d4-2abe-472c-91e9-9aa817418081"
+          },
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "varSyncStartTime",
+                "type": "string",
+                "value": "@utcNow()"
+              }
+            ]
+          }
+        },
+        "Initialize_varCustomersCreated": {
+          "runAfter": {
+            "Initialize_varSyncStartTime": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "a1b2c3d4-e5f6-7890-abcd-ef1234567891"
+          },
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "varCustomersCreated",
+                "type": "integer",
+                "value": 0
+              }
+            ]
+          }
+        },
+        "Initialize_varCustomersUpdated": {
+          "runAfter": {
+            "Initialize_varCustomersCreated": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "b2c3d4e5-f6a7-8901-bcde-f12345678902"
+          },
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "varCustomersUpdated",
+                "type": "integer",
+                "value": 0
+              }
+            ]
+          }
+        },
+        "Initialize_varErrors": {
+          "runAfter": {
+            "Initialize_varCustomersUpdated": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "c3d4e5f6-a7b8-9012-cdef-123456789903"
+          },
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "varErrors",
+                "type": "array",
+                "value": []
+              }
+            ]
+          }
+        },
+        "List_rows_in_Excel": {
+          "runAfter": {
+            "Initialize_variable": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "d4e5f6a7-b8c9-0123-def0-123456789904",
+            "tableId": "{58D5239F-7322-4F5F-A432-6FA55CE6FE4E}",
+            "01B47NF3BEUMVG4ZZQNBDZFRXT2ZRQNNPG": "/Cash Customer Collection/02-Customer-Master-Data/Current/Master Data Customer Cash.xlsx"
+          },
+          "type": "OpenApiConnection",
+          "inputs": {
+            "host": {
+              "connectionName": "shared_excelonlinebusiness",
+              "operationId": "GetItems",
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_excelonlinebusiness"
+            },
+            "parameters": {
+              "source": "groups/02ebed5f-6782-4117-8509-f2a24646f258",
+              "drive": "b!-jBuElvcHUepxeIS8jlWyaETtSFBsJBGqCTRaDVYBTQs-l439a4iRbJ_XNJ0mnSo",
+              "file": "01B47NF3BEUMVG4ZZQNBDZFRXT2ZRQNNPG",
+              "table": "{58D5239F-7322-4F5F-A432-6FA55CE6FE4E}"
+            },
+            "authentication": "@parameters('$authentication')"
+          }
+        },
+        "Apply_to_each_row": {
+          "foreach": "@outputs('List_rows_in_Excel')?['body/value']",
+          "actions": {
+            "Condition_Validate_Required_Fields": {
+              "actions": {
+                "List_existing_customer": {
+                  "runAfter": {},
+                  "metadata": {
+                    "operationMetadataId": "01104a0a-f35f-4ee0-869d-5c6683c12208"
+                  },
+                  "type": "OpenApiConnection",
+                  "inputs": {
+                    "host": {
+                      "connectionName": "shared_commondataserviceforapps",
+                      "operationId": "ListRecords",
+                      "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps"
+                    },
+                    "parameters": {
+                      "entityName": "cr7bb_thfinancecashcollectioncustomers",
+                      "$filter": "cr7bb_customercode eq '@{items('Apply_to_each_row')?['Customer code']}'"
+                    },
+                    "authentication": "@parameters('$authentication')"
+                  }
+                },
+                "Condition_Customer_Exists": {
+                  "actions": {
+                    "Increment_CustomersUpdated": {
+                      "runAfter": {
+                        "Apply_to_each_2": [
+                          "Succeeded"
+                        ]
+                      },
+                      "metadata": {
+                        "operationMetadataId": "87ea1fb6-e340-47c2-aafa-d9e5c0ede1e3"
+                      },
+                      "type": "IncrementVariable",
+                      "inputs": {
+                        "name": "varCustomersUpdated",
+                        "value": 1
+                      }
+                    },
+                    "Apply_to_each_2": {
+                      "foreach": "@outputs('List_existing_customer')?['body/value']",
+                      "actions": {
+                        "Update_Customer": {
+                          "runAfter": {},
+                          "metadata": {
+                            "operationMetadataId": "0e49d7aa-2388-4494-81b1-17632716e754"
+                          },
+                          "type": "OpenApiConnection",
+                          "inputs": {
+                            "host": {
+                              "connectionName": "shared_commondataserviceforapps",
+                              "operationId": "UpdateRecord",
+                              "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps"
+                            },
+                            "parameters": {
+                              "entityName": "cr7bb_thfinancecashcollectioncustomers",
+                              "recordId": "@first(outputs('List_existing_customer')?['body/value'])?['cr7bb_thfinancecashcollectioncustomerid']",
+                              "item/cr7bb_customercode": "@items('Apply_to_each_row')?['Customer code']",
+                              "item/cr7bb_customername": "@items('Apply_to_each_row')?['Customer Name']",
+                              "item/cr7bb_arbackupemail1": "@items('Apply_to_each_row')?['AR Backup email 1 (Owner)']",
+                              "item/cr7bb_arbackupemail2": "@items('Apply_to_each_row')?['AR Backup email 2']",
+                              "item/cr7bb_arbackupemail3": "@items('Apply_to_each_row')?['AR Backup email 3']",
+                              "item/cr7bb_arbackupemail4": "@items('Apply_to_each_row')?['AR Backup email 4']",
+                              "item/cr7bb_customeremail1": "@items('Apply_to_each_row')?['Customer email']",
+                              "item/cr7bb_customeremail2": "@items('Apply_to_each_row')?['Customer email2']",
+                              "item/cr7bb_customeremail3": "@items('Apply_to_each_row')?['Customer email3']",
+                              "item/cr7bb_customeremail4": "@items('Apply_to_each_row')?['Customer email4']",
+                              "item/cr7bb_isactive": true,
+                              "item/nc_region": "@if(equals(items('Apply_to_each_row')?['Region'], 'NO'), 124850000, if(equals(items('Apply_to_each_row')?['Region'], 'NE'), 124850001,\r\n  if(equals(items('Apply_to_each_row')?['Region'], 'CE'), 124850002, if(equals(items('Apply_to_each_row')?['Region'], 'SO'), 124850003,\r\n  if(equals(items('Apply_to_each_row')?['Region'], 'BKK'), 124850004, if(equals(items('Apply_to_each_row')?['Region'], 'BK'), 124850004,\r\n  if(equals(items('Apply_to_each_row')?['Region'], 'CW'), 153920001, if(equals(items('Apply_to_each_row')?['Region'], 'EA'), 124850005, null))))))))",
+                              "item/cr7bb_salesemail1": "@items('Apply_to_each_row')?['Sales Email 1']",
+                              "item/cr7bb_salesemail2": "@items('Apply_to_each_row')?['Sales Email 2']",
+                              "item/cr7bb_salesemail3": "@items('Apply_to_each_row')?['Sales Email 3']",
+                              "item/cr7bb_salesemail4": "@items('Apply_to_each_row')?['Sales Email 4']",
+                              "item/cr7bb_salesemail5": "@items('Apply_to_each_row')?['Sales Email 5']"
+                            },
+                            "authentication": "@parameters('$authentication')"
+                          }
+                        }
+                      },
+                      "runAfter": {},
+                      "metadata": {
+                        "operationMetadataId": "8b7ce142-b540-4376-9b83-f2e3f8f55437"
+                      },
+                      "type": "Foreach"
+                    }
+                  },
+                  "runAfter": {
+                    "List_existing_customer": [
+                      "Succeeded"
+                    ]
+                  },
+                  "else": {
+                    "actions": {
+                      "Create_Customer": {
+                        "runAfter": {},
+                        "metadata": {
+                          "operationMetadataId": "b21ae8b8-d71f-45e1-9443-6f49a218a749"
+                        },
+                        "type": "OpenApiConnection",
+                        "inputs": {
+                          "host": {
+                            "connectionName": "shared_commondataserviceforapps",
+                            "operationId": "CreateRecord",
+                            "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps"
+                          },
+                          "parameters": {
+                            "entityName": "cr7bb_thfinancecashcollectioncustomers",
+                            "item/cr7bb_customercode": "@items('Apply_to_each_row')?['Customer code']",
+                            "item/cr7bb_customername": "@items('Apply_to_each_row')?['Customer Name']",
+                            "item/cr7bb_arbackupemail1": "@items('Apply_to_each_row')?['AR Backup email 1 (Owner)']",
+                            "item/cr7bb_arbackupemail2": "@items('Apply_to_each_row')?['AR Backup email 2']",
+                            "item/cr7bb_arbackupemail3": "@items('Apply_to_each_row')?['AR Backup email 3']",
+                            "item/cr7bb_arbackupemail4": "@items('Apply_to_each_row')?['AR Backup email 4']",
+                            "item/cr7bb_customeremail1": "@items('Apply_to_each_row')?['Customer email']",
+                            "item/cr7bb_customeremail2": "@items('Apply_to_each_row')?['Customer email2']",
+                            "item/cr7bb_customeremail3": "@items('Apply_to_each_row')?['Customer email3']",
+                            "item/cr7bb_customeremail4": "@items('Apply_to_each_row')?['Customer email4']",
+                            "item/cr7bb_isactive": true,
+                            "item/nc_region": "@if(equals(items('Apply_to_each_row')?['Region'], 'NO'), 124850000, if(equals(items('Apply_to_each_row')?['Region'], 'NE'), 124850001,\r\n  if(equals(items('Apply_to_each_row')?['Region'], 'CE'), 124850002, if(equals(items('Apply_to_each_row')?['Region'], 'SO'), 124850003,\r\n  if(equals(items('Apply_to_each_row')?['Region'], 'BKK'), 124850004, if(equals(items('Apply_to_each_row')?['Region'], 'BK'), 124850004,\r\n  if(equals(items('Apply_to_each_row')?['Region'], 'CW'), 153920001, if(equals(items('Apply_to_each_row')?['Region'], 'EA'), 124850005, null))))))))",
+                            "item/cr7bb_salesemail1": "@items('Apply_to_each_row')?['Sales Email 1']",
+                            "item/cr7bb_salesemail2": "@items('Apply_to_each_row')?['Sales Email 2']",
+                            "item/cr7bb_salesemail3": "@items('Apply_to_each_row')?['Sales Email 3']",
+                            "item/cr7bb_salesemail4": "@items('Apply_to_each_row')?['Sales Email 4']",
+                            "item/cr7bb_salesemail5": "@items('Apply_to_each_row')?['Sales Email 5']"
+                          },
+                          "authentication": "@parameters('$authentication')"
+                        }
+                      },
+                      "Increment_CustomersCreated": {
+                        "runAfter": {
+                          "Create_Customer": [
+                            "Succeeded"
+                          ]
+                        },
+                        "metadata": {
+                          "operationMetadataId": "db9fd8ff-d186-4279-89ad-7b79e445112c"
+                        },
+                        "type": "IncrementVariable",
+                        "inputs": {
+                          "name": "varCustomersCreated",
+                          "value": 1
+                        }
+                      }
+                    }
+                  },
+                  "expression": {
+                    "greater": [
+                      "@length(outputs('List_existing_customer')?['body/value'])",
+                      0
+                    ]
+                  },
+                  "metadata": {
+                    "operationMetadataId": "fda83741-ca02-4994-bc16-18cdd897f288"
+                  },
+                  "type": "If"
+                }
+              },
+              "runAfter": {},
+              "else": {
+                "actions": {
+                  "Append_Validation_Error": {
+                    "runAfter": {},
+                    "metadata": {
+                      "operationMetadataId": "b6b2b72e-4d5c-454e-af84-0cdfa3934d62"
+                    },
+                    "type": "AppendToArrayVariable",
+                    "inputs": {
+                      "name": "varErrors",
+                      "value": "Row skipped: CustomerCode=@{items('Apply_to_each_row')?['Customer code']} - Missing required fields"
+                    }
+                  }
+                }
+              },
+              "expression": {
+                "and": [
+                  {
+                    "not": {
+                      "equals": [
+                        "@items('Apply_to_each_row')?['Customer code']",
+                        ""
+                      ]
+                    }
+                  },
+                  {
+                    "not": {
+                      "equals": [
+                        "@items('Apply_to_each_row')?['Customer Name']",
+                        ""
+                      ]
+                    }
+                  },
+                  {
+                    "or": [
+                      {
+                        "not": {
+                          "equals": [
+                            "@items('Apply_to_each_row')?['Customer email']",
+                            ""
+                          ]
+                        }
+                      },
+                      {
+                        "not": {
+                          "equals": [
+                            "@items('Apply_to_each_row')?['Customer email2']",
+                            ""
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                ]
+              },
+              "metadata": {
+                "operationMetadataId": "d575f38d-2837-4e3b-921f-aea6e649e78e"
+              },
+              "type": "If"
+            }
+          },
+          "runAfter": {
+            "List_rows_in_Excel": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "e5f6a7b8-c9d0-1234-ef01-234567890905"
+          },
+          "type": "Foreach"
+        },
+        "Respond_to_a_Power_App_or_flow": {
+          "runAfter": {
+            "Apply_to_each_row": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "fcf8d172-0502-4d02-96ec-d322c4e8b079"
+          },
+          "type": "Response",
+          "kind": "PowerApp",
+          "inputs": {
+            "statusCode": 200,
+            "body": {
+              "status": "@{if(greater(length(variables('varErrors')), 0), 'Failed', 'Success')}",
+              "message": "@{concat('Customers Created: ', variables('varCustomersCreated'), ', Updated: ', variables('varCustomersUpdated'), ', Errors: ', length(variables('varErrors')))}",
+              "customerscreated": "@{variables('varCustomersCreated')}",
+              "customersupdated": "@{variables('varCustomersUpdated')}"
+            },
+            "schema": {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "title": "status",
+                  "x-ms-dynamically-added": true,
+                  "type": "string"
+                },
+                "message": {
+                  "title": "message",
+                  "x-ms-dynamically-added": true,
+                  "type": "string"
+                },
+                "customerscreated": {
+                  "title": "customersCreated",
+                  "x-ms-dynamically-added": true,
+                  "type": "number"
+                },
+                "customersupdated": {
+                  "title": "customersUpdated",
+                  "x-ms-dynamically-added": true,
+                  "type": "number"
+                }
+              }
+            }
+          }
+        },
+        "Initialize_variable": {
+          "runAfter": {
+            "Initialize_varErrors": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "b2781145-b2b5-412a-b34c-3ee17db8f601"
+          },
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "varStatusValue",
+                "type": "integer"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "templateName": ""
+  },
+  "schemaVersion": "1.0.0.0"
+}

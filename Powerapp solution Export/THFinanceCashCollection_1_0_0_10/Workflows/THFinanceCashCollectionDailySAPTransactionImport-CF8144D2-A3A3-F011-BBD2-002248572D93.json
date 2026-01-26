@@ -1,0 +1,518 @@
+{
+  "properties": {
+    "connectionReferences": {
+      "shared_commondataserviceforapps-1": {
+        "api": {
+          "name": "shared_commondataserviceforapps"
+        },
+        "connection": {
+          "connectionReferenceLogicalName": "new_sharedcommondataserviceforapps_1501b"
+        },
+        "runtimeSource": "embedded"
+      },
+      "shared_commondataserviceforapps": {
+        "api": {
+          "name": "shared_commondataserviceforapps"
+        },
+        "connection": {
+          "connectionReferenceLogicalName": "new_sharedcommondataserviceforapps_7e300"
+        },
+        "runtimeSource": "embedded"
+      },
+      "shared_powerbi-1": {
+        "api": {
+          "name": "shared_powerbi"
+        },
+        "connection": {
+          "connectionReferenceLogicalName": "new_sharedpowerbi_414ae"
+        },
+        "runtimeSource": "embedded"
+      }
+    },
+    "definition": {
+      "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+      "contentVersion": "1.0.0.0",
+      "parameters": {
+        "$authentication": {
+          "defaultValue": {},
+          "type": "SecureObject"
+        },
+        "$connections": {
+          "defaultValue": {},
+          "type": "Object"
+        }
+      },
+      "triggers": {
+        "Recurrence": {
+          "type": "Recurrence",
+          "recurrence": {
+            "frequency": "Week",
+            "interval": 1,
+            "timeZone": "SE Asia Standard Time",
+            "schedule": {
+              "weekDays": [
+                "Monday",
+                "Tuesday",
+                "Wednesday",
+                "Thursday",
+                "Friday"
+              ],
+              "hours": [
+                "7"
+              ],
+              "minutes": [
+                0
+              ]
+            }
+          },
+          "metadata": {
+            "operationMetadataId": "b203eaca-549d-4e7b-a781-b1e494e77377"
+          }
+        }
+      },
+      "actions": {
+        "Initialize_varProcessDate": {
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "varProcessDate",
+                "type": "string",
+                "value": "@{formatDateTime(utcNow(), 'yyyy-MM-dd')}"
+              }
+            ]
+          },
+          "runAfter": {},
+          "metadata": {
+            "operationMetadataId": "5c146933-9345-4e1f-8506-756822c4405b"
+          }
+        },
+        "Initialize_varBatchID": {
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "varBatchID",
+                "type": "string",
+                "value": "@{formatDateTime(utcNow(), 'yyyyMMdd_HHmmss')}"
+              }
+            ]
+          },
+          "runAfter": {
+            "Initialize_varProcessDate": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "74b8b639-6f0a-4464-b18c-45bf4bfded52"
+          }
+        },
+        "Initialize_varRowCounter": {
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "varRowCounter",
+                "type": "integer",
+                "value": 0
+              }
+            ]
+          },
+          "runAfter": {
+            "Initialize_varBatchID": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "357da4bc-ac0a-4ff2-aaba-38f17c6a13e0"
+          }
+        },
+        "Initialize_varErrorCount": {
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "varErrorCount",
+                "type": "integer",
+                "value": 0
+              }
+            ]
+          },
+          "runAfter": {
+            "Initialize_varRowCounter": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "b275fe6d-1716-432e-a3ee-6de5607e4007"
+          }
+        },
+        "Initialize_varTransactionCount": {
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "varTransactionCount",
+                "type": "integer",
+                "value": 0
+              }
+            ]
+          },
+          "runAfter": {
+            "Initialize_varErrorCount": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "8707cdf5-88f4-4018-b8b4-7906f40d2fe6"
+          }
+        },
+        "Initialize_varProcessLogID": {
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "varProcessLogID",
+                "type": "string"
+              }
+            ]
+          },
+          "runAfter": {
+            "Initialize_varTransactionCount": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "e8085083-8bc7-4330-a6a6-cecfaf29f87f"
+          }
+        },
+        "Initialize_varErrorMessages": {
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "varErrorMessages",
+                "type": "array",
+                "value": []
+              }
+            ]
+          },
+          "runAfter": {
+            "Initialize_varProcessLogID": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "5f52201c-832c-4b4b-92c7-3295b6a80e29"
+          }
+        },
+        "Initialize_varFileName": {
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "varFileName",
+                "type": "string"
+              }
+            ]
+          },
+          "runAfter": {
+            "Initialize_varErrorMessages": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "9328baa0-8131-4632-8f01-436452b90d70"
+          }
+        },
+        "Initialize_varSourceFilePath": {
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "varSourceFilePath",
+                "type": "string"
+              }
+            ]
+          },
+          "runAfter": {
+            "Initialize_varFileName": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+          }
+        },
+        "Create_Process_Log": {
+          "type": "OpenApiConnection",
+          "inputs": {
+            "parameters": {
+              "entityName": "cr7bb_thfinancecashcollectionprocesslogs",
+              "item/cr7bb_processdate": "@variables('varProcessDate')",
+              "item/cr7bb_emailsfailed": 0,
+              "item/cr7bb_emailssent": 0,
+              "item/cr7bb_processedby": "@{workflow()?['run']?['name']}",
+              "item/cr7bb_sourcefilepath": "Power BI",
+              "item/cr7bb_starttime": "@utcNow()",
+              "item/cr7bb_status": 676180000,
+              "item/cr7bb_totalcustomers": 0,
+              "item/cr7bb_transactionsexcluded": 0,
+              "item/cr7bb_transactionsprocessed": 0
+            },
+            "host": {
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+              "operationId": "CreateRecord",
+              "connectionName": "shared_commondataserviceforapps-1"
+            }
+          },
+          "runAfter": {
+            "Get_Transactions_From_PowerBI": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "67c17423-5488-452b-94a5-4023c95902ed"
+          }
+        },
+        "Set_varProcessLogID": {
+          "type": "SetVariable",
+          "inputs": {
+            "name": "varProcessLogID",
+            "value": "@outputs('Create_Process_Log')?['body/cr7bb_thfinancecashcollectionprocesslogid']"
+          },
+          "runAfter": {
+            "Create_Process_Log": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "fb6a98ef-cff8-48d0-bb24-a0ce246971c1"
+          }
+        },
+        "Apply_to_each_Transaction": {
+          "type": "Foreach",
+          "foreach": "@outputs('Get_Transactions_From_PowerBI')?['body/firstTableRows']",
+          "actions": {
+            "Get_DueDate_WDN": {
+              "type": "OpenApiConnection",
+              "inputs": {
+                "parameters": {
+                  "entityName": "nc_thfinancecashcollectionworkingdaycalendars",
+                  "$filter": "nc_name eq '@{formatDateTime(items('Apply_to_each_Transaction')?['[NetDueDate]'], 'yyyy-MM-dd')}'",
+                  "$top": 1
+                },
+                "host": {
+                  "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+                  "operationId": "ListRecords",
+                  "connectionName": "shared_commondataserviceforapps"
+                }
+              },
+              "runAfter": {
+                "Compose_2": [
+                  "Succeeded"
+                ]
+              },
+              "metadata": {
+                "operationMetadataId": "fb72e15b-df86-4e22-b221-cb91fe186452"
+              }
+            },
+            "Calculated_ArrearDays": {
+              "type": "Compose",
+              "inputs": "@sub(\n  variables('varTodayWDN'),\n  coalesce(\n    first(outputs('Get_DueDate_WDN')?['body/value'])?['nc_workingdaynumber'],\n    0\n  )\n)",
+              "runAfter": {
+                "Get_DueDate_WDN": [
+                  "Succeeded"
+                ]
+              },
+              "metadata": {
+                "operationMetadataId": "f8c0014a-059e-4cf7-9841-b7ed9416e01c"
+              }
+            },
+            "Compose_TransactionType": {
+              "type": "Compose",
+              "inputs": "@if(\r\n  less(items('Apply_to_each_Transaction')?['[Amount]'], 0),\r\n  'CN',\r\n  'DN'\r\n)",
+              "runAfter": {
+                "Calculated_ArrearDays": [
+                  "Succeeded"
+                ]
+              },
+              "metadata": {
+                "operationMetadataId": "40e5018b-be7a-4cc5-9506-3c02bb95b9a9"
+              }
+            },
+            "Add_a_new_row": {
+              "type": "OpenApiConnection",
+              "inputs": {
+                "parameters": {
+                  "entityName": "cr7bb_thfinancecashcollectiontransactions",
+                  "item/cr7bb_documentnumber": "@items('Apply_to_each_Transaction')?['[DocumentNumber]']",
+                  "item/cr7bb_amountlocalcurrency": "@items('Apply_to_each_Transaction')?['[Amount]']",
+                  "item/cr7bb_arrearsdays": "@outputs('Calculated_ArrearDays')",
+                  "item/cr7bb_assignment": "@items('Apply_to_each_Transaction')?['[Assignment]']",
+                  "item/cr7bb_Customer@odata.bind": "cr7bb_thfinancecashcollectioncustomers(cr7bb_customercode='@{items('Apply_to_each_Transaction')?['[CustomerCode]']}')",
+                  "item/nc_customercodepowerbi": "@items('Apply_to_each_Transaction')?['[CustomerCode]']",
+                  "item/cr7bb_daycount": "@outputs('Calculated_ArrearDays')",
+                  "item/cr7bb_documentdate": "@concat(\n    substring(items('Apply_to_each_Transaction')?['[DocumentDate]'], 0, 4),\n    '-',\n    substring(items('Apply_to_each_Transaction')?['[DocumentDate]'], 4, 2),\n    '-',\n    substring(items('Apply_to_each_Transaction')?['[DocumentDate]'], 6, 2)\n)",
+                  "item/cr7bb_documenttype": "@{items('Apply_to_each_Transaction')?['[DocumentType]']}\n",
+                  "item/cr7bb_emailsent": false,
+                  "item/cr7bb_isexcluded": false,
+                  "item/cr7bb_isprocessed": false,
+                  "item/cr7bb_netduedate": "@items('Apply_to_each_Transaction')?['[NetDueDate]']",
+                  "item/cr7bb_processbatch": "@variables('varProcessLogID')",
+                  "item/cr7bb_recordtype": 676180000,
+                  "item/cr7bb_referenceinformation": "@items('Apply_to_each_Transaction')?['[Reference]']",
+                  "item/cr7bb_textfield": "@items('Apply_to_each_Transaction')?['[ItemText]']",
+                  "item/cr7bb_transactionprocessdate": "@formatDateTime(utcNow(), 'yyyy-MM-dd')",
+                  "item/cr7bb_transactiontype": "@if(less(items('Apply_to_each_Transaction')?['[Amount]'], 0), 676180000, 676180001)"
+                },
+                "host": {
+                  "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+                  "operationId": "CreateRecord",
+                  "connectionName": "shared_commondataserviceforapps"
+                }
+              },
+              "runAfter": {
+                "Compose_TransactionType": [
+                  "Succeeded"
+                ]
+              },
+              "metadata": {
+                "operationMetadataId": "658b9691-70bc-4b0c-bb80-c756a1d1bfcf"
+              }
+            },
+            "Compose_2": {
+              "type": "Compose",
+              "inputs": "@items('Apply_to_each_Transaction')",
+              "metadata": {
+                "operationMetadataId": "e74b2303-9293-48e7-8979-52fa4916a739"
+              }
+            }
+          },
+          "runAfter": {
+            "Set_varProcessLogID": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "9b3c42b7-98f6-4742-9484-de570714f64e"
+          }
+        },
+        "Update_Process_Log": {
+          "type": "OpenApiConnection",
+          "inputs": {
+            "parameters": {
+              "entityName": "cr7bb_thfinancecashcollectionprocesslogs",
+              "recordId": "@variables('varProcessLogID')",
+              "item/cr7bb_endtime": "@utcNow()",
+              "item/cr7bb_status": 676180001,
+              "item/cr7bb_summary": "Imported @{length(outputs('Get_Transactions_From_PowerBI')?['body/firstTableRows'])} transactions from Power BI",
+              "item/cr7bb_transactionsprocessed": "@length(outputs('Get_Transactions_From_PowerBI')?['body/firstTableRows'])"
+            },
+            "host": {
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+              "operationId": "UpdateRecord",
+              "connectionName": "shared_commondataserviceforapps-1"
+            }
+          },
+          "runAfter": {
+            "Apply_to_each_Transaction": [
+              "Succeeded",
+              "Failed",
+              "Skipped",
+              "TimedOut"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "0b5e8e24-5b12-48cf-add4-0aecd2598735"
+          }
+        },
+        "Initialize_varTodayWDN": {
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "varTodayWDN",
+                "type": "integer",
+                "value": 0
+              }
+            ]
+          },
+          "runAfter": {
+            "Initialize_varSourceFilePath": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "d47f1719-03cd-40a7-a7aa-46e5db48ae61"
+          }
+        },
+        "Get_Today_WDN": {
+          "type": "OpenApiConnection",
+          "inputs": {
+            "parameters": {
+              "entityName": "nc_thfinancecashcollectionworkingdaycalendars",
+              "$filter": "nc_name eq '@{formatDateTime(utcNow(), 'yyyy-MM-dd')}'",
+              "$top": 1
+            },
+            "host": {
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+              "operationId": "ListRecords",
+              "connectionName": "shared_commondataserviceforapps"
+            }
+          },
+          "runAfter": {
+            "Initialize_varTodayWDN": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "bc91a55e-1237-4aad-be94-9ffb54160049"
+          }
+        },
+        "Set_varTodayWDN": {
+          "type": "SetVariable",
+          "inputs": {
+            "name": "varTodayWDN",
+            "value": "@coalesce(first(outputs('Get_Today_WDN')?['body/value'])?['nc_workingdaynumber'], 0)"
+          },
+          "runAfter": {
+            "Get_Today_WDN": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "77374606-5212-42e3-9d73-ab51eaa0eeb7"
+          }
+        },
+        "Get_Transactions_From_PowerBI": {
+          "type": "OpenApiConnection",
+          "inputs": {
+            "parameters": {
+              "groupid": "6ce03b34-6792-4b14-8c18-c403a3334008",
+              "datasetid": "a63023b7-e42c-4eee-a11c-a5e3dbab50d2",
+              "specification/query": "EVALUATE\nFILTER(\n    SELECTCOLUMNS(\n        'CCC: Customer Line Item',\n        \"CustomerCode\", [KUNNR],\n        \"DocumentNumber\", [BELNR],\n        \"DocumentType\", [BLART],\n        \"DocumentDate\", [BLDAT],\n        \"NetDueDate\", [NETDT],\n        \"Amount\", [S_DMBTR],\n        \"ItemText\", [SGTXT],\n        \"Reference\", [XBLNR],\n        \"Assignment\", [ZUORN],\n        \"IsActiveCustomer\", [IsActiveCustomer]\n    ),\n    AND(\n        NOT(ISBLANK([CustomerCode])),\n        [IsActiveCustomer] = TRUE\n    )\n)",
+              "specification/serializerSettings/includeNulls": false
+            },
+            "host": {
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_powerbi",
+              "operationId": "ExecuteDatasetQuery",
+              "connectionName": "shared_powerbi-1"
+            }
+          },
+          "runAfter": {
+            "Set_varTodayWDN": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "15584505-030b-4edb-8a53-4d88a993d34d"
+          }
+        }
+      },
+      "outputs": {}
+    },
+    "templateName": null
+  },
+  "schemaVersion": "1.0.0.0"
+}

@@ -1,0 +1,405 @@
+# Finance - Cash Customer Collection
+
+  Meeting started: 10/8/2025, 10:01:10 AM
+  Duration: 60 minutes
+  Participants: Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal, Chamnong,Nick,TH-Bangkok,Information Technology, Changsalak,Alisara,TH-Bangkok,Accounts Receivable, Jintasatien,Rakkan,TH-Bangkok,IT Workforce 360, Nawawitrattana,Siri,TH-Bangkok,Credit Management
+
+  [View original transcript](https://app.tactiq.io/api/2/u/m/r/VROZuVLo0sGIhgvMr9Xg?o=txt)
+
+    
+
+  
+
+  
+    ## Highlights
+
+    > 06:49 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: เป็นฐาน test preport ให้ให้ให้เฉพาะ tester เข้าไปได้ถูกป่ะ คราวนี้ พอ นัดสร้าง security group เสร็จนัดก็ assign เข้าไปเลยว่า app เนี้ย security gup group นี้ที่สร้างอะเข้าได้แบบนี้ป่ะคะ
+
+  ## Transcript
+
+  00:00 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: ได้ค่ะ
+00:02 Chamnong,Nick,TH-Bangkok,Information Technology: เดี๋ยวๆให้ดูนะฮะ
+00:04 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: ใช่ค่ะ
+00:09 Chamnong,Nick,TH-Bangkok,Information Technology: ปัญหา policy ฮะ 2 ปัญหา 2 อย่าง
+00:14 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: ดูปัญหาใหญ่ อะได้ค่ะ
+00:26 Chamnong,Nick,TH-Bangkok,Information Technology: สัญจรมั้ยครับ ครับ ครับ คืออันนี้ทํา flow indest ข้อมูลแล้วนะฮะ ค่อนข้าง
+00:48 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: สอนไหมคะ
+00:57 Chamnong,Nick,TH-Bangkok,Information Technology: หลัก หล หลักหลักก็คือก็คืออ่านข้อมูลล่ะฮะ แล้วก็เอามาผ่านแล้วก็สร้างสร้างสร้างโรงในดาต้าเวิร์ดที่นี้มันไปติดตรงอ่างเอ็กเซลอะฮะ ตอนนี้ติดติดอันนี้ประมาณ 23 โปรเจ็กต์เลยฮะ คือ มันมัน
+01:10 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: ค่ะ
+01:12 Chamnong,Nick,TH-Bangkok,Information Technology: ถ้าอ่าน excel ตรงตรงมันมีปัญหาเรื่องนี้ฮะ คือไฟล์ปกติมันมาแบบนี้ใช่มั้ยฮะ อันนี้มันอ่านไม่ได้ มันต้องสร้างมันต้องสร้างเซเว่นก่อน
+01:28 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: หมายถึง หมายถึงว่าไฟจากแซบตรงตรงอ่านไม่ได้หรือว่ามันเป็นเพราะฟอร์แมต หรือเป็นเพราะอะไรอะคะ
+01:32 Chamnong,Nick,TH-Bangkok,Information Technology: จริงจริงคือมันมี fard excel ทั้งหมดเลยอะฮะ คือ microsoft มันไม่ยอมให้ใช้ ดีละ มันไม่ยอมให้ใช้ ก่อนหน้านี้มัน ลิสท์โรลอินอะเวิร์กชีท ถูกมั้ยฮะเหมือนเราจะอ่านเวิร์กชีทถูกมั้ยฮะ เพราะว่ามันฟีดเดต้าอย่างเงี้ยฮะ
+01:50 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: ค่ะ
+01:54 Chamnong,Nick,TH-Bangkok,Information Technology: มันไม่ใช่ละมันให้ให้เป็นให้เป็น table แทน ซึ่ง table เนี่ย มันต้องกล้าตั้งอีก ตรงนี้จริงๆก็ไม่ยากนะ ก็แค่นี้แหละ เสร็จละต้องเป็นแบบนี้มันถึงจะอ่านได้แล้วก็ต้องตั้งชื่อตรงนี้ครับ แต่ทีนี้เนี่ยถ้าทําแบบเนี้ยเราก็ต้องมานั่งทําอย่างงี้ทุกวันฮะ Wal ว่าไฟล์ที่เอาต์พุทธออกมามันไม่ได้อาจจะโอ้ย อัตโนมัติ ก็เลยต้องหลบไปท่า c s v แทน
+02:24 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: เอ้า กําลังจะถามว่าเปลี่ยน format for ได้ไหม กํา
+02:28 Chamnong,Nick,TH-Bangkok,Information Technology: ก็จะไปติดปัญหาที่ 2 แทนเค้าไม่ยอม ไม่ใช่เค้าไม่ยอม
+02:30 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: อ่ะ อ่ะ โอเคปัญหาที่ 2
+02:34 Chamnong,Nick,TH-Bangkok,Information Technology: Col ซี ไม่ยอมให้โหลดไฟล์
+02:42 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: อันนี้คือหมายความว่า ไม่ให้เพราะว่าคุณนิคไม่ได้อยู่ในอ๊อกซ หรือว่าพาวเวอร์ออโตเมตไม่ให้เลยนะคะ คือสมมุติถ้าถ้าเป็นถ้าเป็น
+02:48 Chamnong,Nick,TH-Bangkok,Information Technology: ไปได้ฮะ เป็นไป เป็นไปได้
+02:53 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: เอ็ม พลอย ยี่เนสท์เล่แล้วทําตัวเนี้ยไอ้ตัวสิ่งนี้มันจะหายไปไหม อะไร อะไรครับ อะไรครับ
+03:00 Chamnong,Nick,TH-Bangkok,Information Technology: ลองดูได้ไหมฮะ เดี๋ยวจะฝากลองกับเด็ก ผมฟังพี่ซิ ก็คือ set file แล้วก็ get content นะฮะ ตรงนี้แหละติดฟอร์บิทเดินเลยก็เลย
+03:13 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: แต่คนนี้บอกว่ามันติดทุกแอพติดหลายแอปใช่มั้ยที่มาที่ต้องใช้เอกซ์เซลเป็นตัวเริ่ม
+03:19 Chamnong,Nick,TH-Bangkok,Information Technology: เห็นคุณคุณยุทธนาติดอีกแอพหนึ่งผมไม่รู้เหมือนกันหรือเปล่า เขาแจ้ง support อยู่สักผ่อนยังไม่ตอบฮะ ก็จะประมาณนี้ แต่ว่าจริงจริงโตเสร็จแล้วเหลือแค่โต๊ะปัญหาเรื่อง
+03:32 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: เรื่อง เรื่องนี้
+03:33 Chamnong,Nick,TH-Bangkok,Information Technology: แล้วก็ flow evil ก็เสร็จแล้ว อีเมลก็ก็ไม่ process หรอก ต้องอีกอัน โฟลว์อีเมลก็เสร็จแล้วแต่ก็ไม่ได้มีอะไร ก็แต่ว่าผมมีบัตรให้มันส่งหา แมว แมวกลางหรืออะไรสักอย่าง เรื่องเวลามีโนติพิเคชั่นแล้วก็ ก็มีเช็คว่า เป็นโหมดอะไรในฮะ คือถ้าเทสแล้วไม่อยากส่งลูกค้าจริงอะฮะ เราก็จะส่งไปเมลอะไรสักอย่างที่เราตั้งขึ้นมาด้วย อันนี้ทําไม่หมด เหลือแค่ล้าน ถ้าสั่งอีกใช่ก็เกือบเสร็จละ
+04:15 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: ใช่แสดงว่าถ้าทําเป็นซีเอสวี ไฟล์ได้ปัญหาแรกแก้แก้ได้แล้วมาติดปัญหาที่ 2 ที่ไม่ให้ดาวน์โหลดใช่ไหมคะ
+04:16 Chamnong,Nick,TH-Bangkok,Information Technology: ว่าเพราะว่า การคํานวณ เก็บ เก็บตี้ เก็บตี้ไม่ได้
+04:26 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: อันนี้มันเป็น excel ทั้งหมด คุณคุณนิคแบบ หมายถึงว่าหมายถึงว่ามีปัญหากับ format fly ที่เป็น excel ทั้งหมดที่เอาเข้าพาวเวอร์แอพไอ้พาวเวอร์ออโตเมี่ยหรอคะ หมายถึงแอป อื่นอื่นในในในในอดีตด้วยอะไรเงี้ย
+04:38 Chamnong,Nick,TH-Bangkok,Information Technology: มันจะเป็น กลุ่มจริงจริง ผมไม่เคยต้องใช้เพราะว่าตัวเองผมใช้ดาต้า เพราะผมทํา out of ใหม่แล้วมีไปใช้ dotta plusolo จ
+04:47 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: อ๋อ ใช้ dataflow ใช้
+04:49 Chamnong,Nick,TH-Bangkok,Information Technology: ดาต้า Data flow มันทําซ้อนแบบนี้ไม่ได้นะฮะ
+04:55 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: อ่าเข เข้าใจ
+04:56 Chamnong,Nick,TH-Bangkok,Information Technology: เพราะมันมีคํานวณด้วยไงฮะ มันมีคํานวณเรื่องแบบ ไอ้อะไรนะไอ้วันที่จะทวงใช่ฮะ
+05:01 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: เรื่องวันที่ ซีเอสวี ถ้าแกนางต้องแก้ไอ้ตรงนี้นางต้องไปถามใครล่ะเนี่ย เดี๋ยวก่อนนะ พอปิดเต้นนะ
+05:09 Chamnong,Nick,TH-Bangkok,Information Technology: แต่เดี๋ยวผมลองหาทางก่อน ผมกําลังคิดว่าผมเพิ่งคิดได้ว่าจริงจริงถ้าเปลี่ยนไปใช้คอม แต่ผมไม่รู้ว่าติดตรงไหนมัน
+05:13 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: อ่อ 7 เค้าอ่ะ
+05:19 Chamnong,Nick,TH-Bangkok,Information Technology: คือถ้าผมเปิดในคอมอีกเครื่องนึงแล้วมันจะหายอย่างงี้เหรอ มันก็ดูไม่เมคเซ้นส์ใช่มั้ยฮะ คือผมไม่ได้ใช้คอมเม้นท์ไม่ได้ทําด้วยไงฮะ
+05:25 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: ใช่ คุณนิค คุณนิค คุณนิค เอ้อ คุณนิค ลอง ลอง สแนปไอ ปัญหานี้ส่งเมลให้นัดนิดนึง เดี๋ยวนะขอไปไปปรึกษาทางทีมซีเคียวริตี้ของของของออฟฟิศแป๊ปนึงว่ามันต้องไปแบบท่าไหนต่ออะไรอย่างเงี้ย เออ
+05:39 Chamnong,Nick,TH-Bangkok,Information Technology: ได้ครับ ได้ครับ ได้ครับ ได้ครับ ได้ครับ
+05:39 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: ใช่ค่ะ เออแล้วสแนปไว้ระดับนึงแล้วแต่ว่าอยากให้คุณหนิงอธิบายนิดนึงว่าว่าเออปัญหาตอนนี้มันมันแบบมันเป็นแบบนี้อะไรอย่างเงี้ยแล้วเดี๋ยวนัดลองไปฝึกซิเคียวริตี้ว่ามันเป็นเพราะคุณนิค เป็นเพราะ เป็นเพราะฝ้าย หรือเป็นเพราะอะไร เป็นเพราะฝ้าย หรือเป็นเพราะอะไรเนาะ
+05:55 Chamnong,Nick,TH-Bangkok,Information Technology: แต่ แต่ผมก็ไม่รู้ไงมันก็
+05:56 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: ใช่ เออ เออ ได้อันนี้ถามนิดนึง คุณนิคคือตอนเนี้ยนะ เข้าใจว่าตัวตัวที่คุณนิคทําอะมันอยู่ในในเอนไวรอนเมนท์ที่เป็นเดฟถูกมั้ยคะ
+06:08 Chamnong,Nick,TH-Bangkok,Information Technology: อ๋อ ใช่จริงผมฝากรองลาดูเลยก็ได้ยินแล้วใช่ไหมครับ เดี๋ยวนะผมลองดูได้ไหมฮะ
+06:11 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: เออ แนท น่าจะเข้าเด็บได้นะเดี๋ยวก่อนนะนัทต้องเข้า
+06:16 Chamnong,Nick,TH-Bangkok,Information Technology: ว่าตายครับผมลบไปแล้ว
+06:16 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: มาเยอะ มาเยอะ อ๋อ โอเค อ๋อ ก็น่าจะถามอีกอีกแอพหนึ่งด้วยอะว่านัดก็ยังเห็นมันอยู่ในในเดฟเหมือนกัน คือตอนนี้อีกแอพหนึ่งที่ไอ้ตัว customer มาสเตอร์ data อะค่ะ นัดกําลัง work เรื่อง license อยู่ พอดีว่าจริงจริงเบลขอแหละมันแบบเออ ไอทีมันไปเด้งผิดกรุ๊ปหรือยัง รู้มันเลยยังมันเลย ยังไม่ได้กําลัง follow up อยู่กับอีกอันนึงที่อยากจะปรึกษาคือเรื่องซีเคียวริตี้ กรุ๊ปที่วันนั้นเราคุยกันว่าน่าจะสร้าง security group ขึ้นมาอันนึง เออ 2 อันอันนึงเนี่ยเป็นพอร์ตใช่มั้ยคะ อีกอันนึงเป็น
+06:49 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: เป็นฐาน test preport ให้ให้ให้เฉพาะ tester เข้าไปได้ถูกป่ะ คราวนี้ พอ นัดสร้าง security group เสร็จนัดก็ assign เข้าไปเลยว่า app เนี้ย security gup group นี้ที่สร้างอะเข้าได้แบบนี้ป่ะคะ
+07:05 Chamnong,Nick,TH-Bangkok,Information Technology: ใช่ครับ
+07:06 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: ถูกไหม ถูกไหม แต่ว่าคราวนี้พอดีนะ เราเข้าไปดูในแอบอะ แล้วยังไม่เห็นมันอยู่ใน prepo ตนะ ก็เลยเข้าใจว่าตอนนี้คุณหนิงยังเก็บเอาไว้ในเดฟอยู่ป่ะ
+07:13 Chamnong,Nick,TH-Bangkok,Information Technology: ไม่ใช่อยู่ในพี่พอร์ตแล้วนะฮะ แอพมาดี ตัวตัวของมาสเตอร์คอน ซูเมอร์ ใช่ไหมฮะ
+07:15 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: อ๋อ อยู่ใน preport แล้วหรอ ใช่ใช่ใช่อีกอีกแอปนึงอ่ะค่ะ
+07:21 Chamnong,Nick,TH-Bangkok,Information Technology: พี่พจน์ ล่ะฮะ
+07:23 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: เอ้เหรอเดี๋ยวก่อนนะ ขอ นะ แอบดูอะไรเงี้ย เพราะว่าเมื่อวานพยายามจะ work อันนี้มันแล้วต้องเข้าในพาวเวอร์พาวเวอร์แอป หรือ per automate นะ power app เออใช่มั้ย เพราะวันนั้นหาไม่เจอเดี๋ยวก่อนนะ ขอแอบแชร์แป๊บนึงนะ โอเค อันนี้พาวเวอร์แอปที่เห็นพอ เป็น prepod เนี่ย นัดไม่เห็น เออ นัดไม่เห็น app อะค่ะ แต่แนทไม่แน่ใจว่า
+07:47 Chamnong,Nick,TH-Bangkok,Information Technology: มันไม่ใช่ใหม่เราดดอได้มั้ยฮะ
+07:51 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: กดตรงไหนนะ อ๋อ โอเค อ๋อ โอเค โอเค get ละก็โง่เองฮะ โอเคค่ะได้
+07:55 Chamnong,Nick,TH-Bangkok,Information Technology: ไม่มี ไม่มีอยู่ดี
+07:58 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: ไม่มีอยู่ดีใช่อะเออ เพราะว่านัทอ่ะเหมือนนัทเห็นในในเดฟ
+07:59 Chamnong,Nick,TH-Bangkok,Information Technology: ๆ เพราะผมไม่ได้แชร์ให้ทุกคนแชร์ให้
+08:07 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: อ๋อเอ้ย แต่อันนี้ก็ไม่เห็นอยู่ดีปะ เดี๋ยวทีม เดี๋ยวพิมพ์เมมเบอร์ ใช่ครับ โต๊ะมาร์ช service human ใช่ใช่ ไม่เป็นไรเดี๋ยวเด ไม่เป็นไรเดี๋ยวเดี๋ยวอันนี้ไล่อีกทีก็ได้ ถ้าเดี๋ยวนัดจะได้ขอครีเอทซีเคียวริตี้กรุ๊ปเลย
+08:34 Chamnong,Nick,TH-Bangkok,Information Technology: ผม ผมให้คุณคุณนัทเป็นโคโรเนอร์เลยนะฮะตัวนี้
+08:37 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: ได้ค่ะ ได้ค่ะ
+08:54 Chamnong,Nick,TH-Bangkok,Information Technology: แต่คุณนัทเอาเซ็คนิตี้กรุ๊ปเข้ามาในเอ็นไวรอนเมนต์เนี่ย
+08:56 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: ยังยังยังค่ะ ยังแต่ว่านัดดาไปฝึกพี่เต๋ามา นะ เข้าใจว่ามันต้องเห็นแอพก่อนแล้วนะ ถึงจะเหมือนแชร์ แชร์ว่าให้แอปเนี้ย ใครเข้าให้ skillety group ไหนเข้ามาดูได้ แต่ตอนนี้ น่า น่าจะ requires cre security group ละใช่เอออะไรนะคะ
+09:13 Chamnong,Nick,TH-Bangkok,Information Technology: คุณ คุณคุณณัฐ ผมยังแชร์มีปัญหามาอีกแล้ว
+09:18 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: คุณนิค ลอง แชร์ได้แต่แต่ระหว่างนั้นน่ะค่ะ ไอ้กลับกลับไปกลับไปแอปแอปของวันนี้คือไอ้ตัวแคชคัสโตเมอร์คอลเล็กชั่นอะ ตัวโฟลว์ไม่ได้มีคําถามอะไรใช่มั้ยคะ
+09:28 Chamnong,Nick,TH-Bangkok,Information Technology: ตอนนี้ยังไม่มีฮะ
+09:28 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: คือ ก็หมายถึงว่าตัวตัวคําถามของโฟลว์ตัวโลจิกอะไรอย่างเงี้ยค่ะ ที่ต้องรีไควร์ บิสเนส ไม่ไม่ไม่มีคําถามอะไรเนอะ โอเค ก็หม
+09:30 Chamnong,Nick,TH-Bangkok,Information Technology: แล้วคิด แล้วคิดว่ามันก็เสมอ ยังไม่มีฮะ หรือถ้าเอาข้อมูลเข้าแล้วเราอาจจะเห็นฮะ ตอนนี้เค้าข้อมูลลบกับข้อมูลเข้าอยู่ อันนี้ฮะ
+09:43 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: อ๋อได้ ถ้าอย่างนั้นไม่เป็นไร ถ้าอย่างงั้นพี่อ้อพี่อ้อ น้องเอ๊ะอะไรดรอปไปก็ได้นะเดี๋ยวพี่เวิร์คกับคุณณัฏฐะที่เป็นเทคนิคอลอันนี้จะได้ไม่ไม่อ๋อ โอเคไม่ได้
+09:52 Chamnong,Nick,TH-Bangkok,Information Technology: เค้าจะมีมีมีถามนิดนึงคือชื่อว่าที่ที่แจ้งมาว่า จะจะไปคอนเฟิร์มไปเหมือนไปเคลียร์เรื่องเรื่องอะไรนะฮะ เรื่องซัพเอกซ์เอกพอร์ตอ่ะ อันนี้เรียบร้อยแล้วฮะ
+10:03 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: แบบเอ็กซ์ปอร์ตตัวไฟล์ป่ะคะ
+10:04 Chamnong,Nick,TH-Bangkok,Information Technology: คุยกันคราว คุยกันคราวที่แล้วอะฮะ ที่เหมือนกับว่า จะไป make sure ว่ามันอะไรสักอย่างที่แบบ
+10:09 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: หัวขอรุ่ง คอลัมน์ เอ่อ เซ็ทเลย์เอาท์เหมือนเซตแล้ว เออ น่าจะเลย์เอาท์เดอร์มั้ย น้องน้องเอ๊ะ
+10:09 Changsalak,Alisara,TH-Bangkok,Accounts Receivable: รีเซ รีเซ็ตเลยเอามั้ยคะ
+10:11 Chamnong,Nick,TH-Bangkok,Information Technology: ไหมฮะ ไฟ Fiffil วันที่7 อันนี้คือโอเคแล้วใช่มั้ยฮะ file file
+10:19 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: ไฟล์ที่เซฟไว้คือไฟนอลเลยเอาแล้วเนอะน้องเอ๊ะที่เซฟให้คุณนิค ใช่ค่ะ เลย์เอาท์นี้เลย
+10:22 Changsalak,Alisara,TH-Bangkok,Accounts Receivable: ใช่ค่ะ มีคุณนิ้งเดี๋ยวเอ๋ ไปลบ2เดือนเต้าออกค่ะ เดี๋ยวเริ่มใช้เป็นของเดือน10 แทน
+10:28 Chamnong,Nick,TH-Bangkok,Information Technology: ได้ครับ อันนี้ผมผมรบกวนขอขอ iport ทุกวันเหมือนกัน ข้ามฮะใช่มั้ยฮะ มันข้ามเสาร์อาทิตย์นะ
+10:35 Changsalak,Alisara,TH-Bangkok,Accounts Receivable: เสาร์ อาทิตย์ ไม่ได้ exp เสาร์ อาทิตย์ ไม่ได้ export ค่ะ ใช้แค่วันทําการ
+10:37 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: ได้ ได้ทําก็คือสุขแต่อีก
+10:38 Chamnong,Nick,TH-Bangkok,Information Technology: อ้าวเดี๋ยวได้เราเพิ่งเริ่มวันศุกร์แล้วก็มีวันจันทร์ใช่มั้ยเหมือนผมเห็นแค่2ฝ่าย
+10:43 Changsalak,Alisara,TH-Bangkok,Accounts Receivable: ตัวเอ๋ใส่ให้ทุกวันนะ แต่วันเนี้ยยังไม่ได้ใส่ให้ค่ะ
+10:47 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: ได้แต่เดี๋ยวเรามีวันศุกร์นี้เสร็จแล้วมันน่าจะข้ามอีกที เป็นวันอังคารเลยนะคุณคุณนิค เพราะว่าวันจันทร์ละวันหยุดเนาะเออ
+10:47 Chamnong,Nick,TH-Bangkok,Information Technology: ได้ครับ ได้ครับ อ๋อครับครับ ได้ครับ
+10:56 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: เฮ้ย น้องเอ๊ะ ขอถามอีกรอบค่ะ ถ้าถ้า
+10:57 Chamnong,Nick,TH-Bangkok,Information Technology: อ๋อ มี12361236 ใช่ไหม 12367นะฮะ12367
+11:02 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: หาหนึ่ง ใช่มั้ยครับอ้า
+11:04 Chamnong,Nick,TH-Bangkok,Information Technology: ติถิ่น อะไร
+11:06 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: 12 เออไม่มี45 ใช่อย่างเงี้ยเฮ้ย น้องเอ๊ะอย่างเงี้ย ถ้าเราถ้า13เราเป็นวันหยุดอะ คือเราก็ไม่นับเป็น working day ถูกมั้ย เวลาที่เราอ่าแล้วไม่นับเนอะก็คือทวงเอ็มไออะไรก็นับวันที่14เป็นเป็นเป็นวันถัดไปเนอะก็คือข้ามทั้งเสาร์อาทิตย์จันทร์ เพราะว่าเพราะว่า เป็นวันหยุดนักขัตฤกษ์ โอเคค่ะ
+11:14 Changsalak,Alisara,TH-Bangkok,Accounts Receivable: เป็นวันหยุดแบงก์เราเอ้า ใช่ค่ะ เราไม่ไม่ส่งค่ะใช่
+11:27 Chamnong,Nick,TH-Bangkok,Information Technology: อ๋อ เราก็มีอีกเรื่องนึงผมอันนี้ผมคุณรักษ์ กาคุณสโตม เข้ามา นะฮะ
+11:32 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: ได้ค่ะ เอาคุณสโตน โอเค
+11:33 Chamnong,Nick,TH-Bangkok,Information Technology: พร พรุ่งนี้คุณตอนจะเป็นคนคนช่วยดูดด้วยนะฮะ ช่วงช่วงซับซ้อน 23 อาทิตย์นี้ฮะ
+11:42 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: ได้ค่ะ
+11:43 Chamnong,Nick,TH-Bangkok,Information Technology: ครับผม โอเคครับ ประมาณนี้ฮะ
+11:47 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: ได้ถ้าอย่างนั้นพาร์ที่อยากจะคอนเฟิร์มบิสซิเนสไม่มีอะไรแล้วนะจะได้รีลีสพี่พี่พี่อ้อกับน้องน้องบอกแล้วเดี๋ยวเราเวิร์คกันตัวตัวไอ้ตัวนี้ต่อได้พี่พี่อ้อมีอะไรมั้ยคะ โอเค ขอบคุณค่ะทุกคนได้ค่ะ
+11:59 Nawawitrattana,Siri,TH-Bangkok,Credit Management: อะ ok Ok ค่ะไม่มีไม่มีค่ะ ขอบคุณค่ะ หวัดดีค่ะ
+12:03 Changsalak,Alisara,TH-Bangkok,Accounts Receivable: คุณเชียงใหม่
+12:05 Chamnong,Nick,TH-Bangkok,Information Technology: คุณคุณคุณด คุณคุณคุณ ดัทแชจจอเลยครับ น่าจะเห็นเลย น่าจะเห็นอยู่อีกอะไรนะไอ้ไอ้แอบนะ
+12:07 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: ได้เดินนัดแชร์ต่อ แล้วต้องดูแล้วต้องเข้าฐานไหนคะ ฐานเด็ดหรือฐานเด็บเนอะ
+12:14 Chamnong,Nick,TH-Bangkok,Information Technology: ก็ต้อง ก็ต้องเข้ารีพอร์ตฮะพรีปอต
+12:17 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: เพราะพี่ เพราะพี่ขอโอเค เพราะพี่ขอโอเค
+12:19 Chamnong,Nick,TH-Bangkok,Information Technology: บ้าไหมฮะ นายวิทมีอะ
+12:21 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: อันนี้มะนี่ไง อันนี้ปะคะ ไฟแนนซ์คัสโตเมอร์ดาต้า รีเควสต์ถูกมั้ยคะ
+12:23 Chamnong,Nick,TH-Bangkok,Information Technology: มา ร้านได้ไหม ร้านได้ไหมฮะ คุณรันได้อะไรขึ้นเพียง
+12:28 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: เออ ยังไม่ได้ใช่ เออ ลายเซ็นเดี๋ยวก่อนนะ ไม่ได้ใช่ใช่ไม่ว่านัดแอบเช็คเมื่อ 2 วันก่อนนัดน่าจะยังไม่ได้นะ
+12:40 Chamnong,Nick,TH-Bangkok,Information Technology: ผมมีปัญหากับ policy กับมันหมดเลยตอนนี้
+12:43 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: เออ ไม่เป็นไรเดี๋ยวแถวบ้านแก้ได้มันจะแก้ได้หมดได้ยังไงก็ค่อยค่อยค่อยค่อยแก้ไป ไม่ได้
+12:52 Chamnong,Nick,TH-Bangkok,Information Technology: ได้ฮะ ได้ได้อันนี้อันนี้คือน่าจะได้
+12:52 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: เดี๋ยวก่อนนะ อ๋อได้แล้วอ๋อ
+12:56 Chamnong,Nick,TH-Bangkok,Information Technology: ไม่แน่มันอาจจะเปิดได้แต่ว่า run run run ไอ้นั่นไม่ได้ แต่จริงจริงจริงจริง take อย่างงี้ได้นะฮะ test ใน inter ได้นะฮะ อาจจะได้ลองดู
+13:05 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: เอ๊ะ อันเนี้ย นัดมันมันหมุนอยู่ โอเคได้ได้
+13:07 Chamnong,Nick,TH-Bangkok,Information Technology: คุณหมอครับ ต้องรอต้องรอครับนานครับ ทําไมบางครั้งก็นาน
+13:16 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: ก็แสดงว่าอันนี้ license ได้แล้วสิ
+13:18 Chamnong,Nick,TH-Bangkok,Information Technology: ไม่แน่ เพราะคุณนัทคุณณัฐกดอยู่แล้วฮะเมื่อกี้
+13:21 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: ไม่ได้กดอะไรเลยค่ะ กดแค่คลิกเข้าไปเฉยๆเลยอ่ะ ไม่ได้กดอะไรเลยค่ะ
+13:24 Chamnong,Nick,TH-Bangkok,Information Technology: อันนั้นคือ ebit ฮะ
+13:26 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: อ๋อ โอเคเรียนทั้งหมด alouph
+13:27 Chamnong,Nick,TH-Bangkok,Information Technology: ถ้าคุณน้ําตกครับ ได้ก็ร้าวอาหาว
+13:38 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: อย่างนี้ท่าจะเขียนซีเคียวริตี้กรุ๊ปแล้วนะก็ขอแอดแบบไทยแลนด์ยูสเซอร์เข้าไปในหนึ่งกรุ๊ป
+13:47 Chamnong,Nick,TH-Bangkok,Information Technology: ใช้หมดเลยทั้ง thailand
+13:49 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: คือ ใช่เพราะว่าเดาว่ามันง่ายกว่าต้องมา maintain แต่ว่ามันจะต้องมีฟิลิปปินส์บางกลุ่มอันนี้คือหมิ่นตัว plot เนาะ แต่เดี๋ยวนัทเริ่มจาก prepot ก่อนก็ได้จะได้
+14:02 Chamnong,Nick,TH-Bangkok,Information Technology: ยิ่งปรึกษาคุณเต๋า น่าจะโอเคคุณเต่าเขาไม่ได้ตัวเองมานานแล้ว
+14:06 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: ใช่ใช่เมื่อวานโทรหาพี่ต่อเนี่ย ผู้โทรหาคนอื่นแล้วงงไปหมด อุ๊ย อุ๊ย เหม อุ๊ย เหมือนจะได้นะ อุ๊ย เหมือนจะได้นะ
+14:14 Chamnong,Nick,TH-Bangkok,Information Technology: อันนี้ก็น่าจะได้อยู่แล้วฮะ เพราะคุณคุณอาจตอนทําแรกแรกเขาก็นั่งทําเลยเสร็จเปิดเปิดแอพตัวเองไม่ได้
+14:22 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: อ๋อหรอพี่เต๋าอ่ะเหรอ
+14:23 Chamnong,Nick,TH-Bangkok,Information Technology: มันมันมันหลีดได้อ่ะ แต่แต่เราไม่ได้เรากดรันดีฮะ
+14:28 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: มันตรงไหนเอ่ย เดี๋ยวก่อนนะ นัดก็โง่เรื่องนี้มากขวา
+14:30 Chamnong,Nick,TH-Bangkok,Information Technology: เรื่องเว็บผมเคยปุ่มเพลย์อ่ะเพลย์
+14:34 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: ผมเพลโอเคค่ะ ผมเพล ผมเพลโอ
+14:36 Chamnong,Nick,TH-Bangkok,Information Technology: เนี่ย มิรอนด้า ว่าคุณ ถ้าคุณนัทลองไปดูข้างนอกอ่ะฮะ ลองไปดูตรง
+14:40 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: Ok
+14:45 Chamnong,Nick,TH-Bangkok,Information Technology: ลองแบคออกเป็นต้องปิดก่อนฮะ ปิดกากบาทอะ ไม่ใช่ไม่ใช่กากบาทใช่ ลองแบคออก กดแบล็คออกไป ตอน save เรียนตอน save T Toytonce นะ วันนี้ทําอะไร เด เดี๋ยวผมขอคุณนัทว่างใช่มั้ยฮะ ผมขอเวลาสักครู่นึง
+15:16 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: ใช่เพราะว่านัดดันไป10ถึง11อยู่แล้วถูกไหม ใช่เพราะว่านัดดันไป10ถึง11อยู่แล้วถูกมั้ย ใช่ใช่ใช่ ใช่ใช่ใช่ นัดไว้ถึง11 โมงเนี่ยเมื่อกี้ถ้ามันไม่ได้มี part business ก็จะได้ไม่ต้อง
+15:25 Chamnong,Nick,TH-Bangkok,Information Technology: ผมจะให้คุณนัดลอง
+15:27 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: ได้ ได้ได้ แล้วเรื่อง แล้วเรื่องแอปเนาะ
+15:38 Chamnong,Nick,TH-Bangkok,Information Technology: อ๋อ แอบใช่ครับ
+15:39 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: ได้ค่ะ แล แล้วถ้าจะบอกคุณนิงว่าไม่ค่อยเก่งเรื่อง
+15:44 Chamnong,Nick,TH-Bangkok,Information Technology: ไม่ใช่ออกฮะ กดเพลงกดเพลกดเพลย์เลยฮะ กดกด กดกด กด กดกด กด กดกด กดกดเพลงถูกไหมฮะอ้อยถูกแล้วกดกดเพล ไม่ใช่ข้างล่างมันไม่มีอะต้องเอาตรงที่แอปเราอ่ะ
+15:52 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: เรียนหน่อยอ่ะ อ๋อ อันนี้ใช่มั้ย
+15:55 Chamnong,Nick,TH-Bangkok,Information Technology: ทางฟอร์ด ใช่ ไม่ได้ว่ะ ทําไม่ได้ล่ะ คุณคุณนัทมีไรหรือเปล่าฮะเนี่ย เอาไม่ได้
+16:04 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: ไม่มีนี่ไง โอ้ย
+16:07 Chamnong,Nick,TH-Bangkok,Information Technology: มันโหลดเลยมีความหวัง
+16:09 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: เออให้ได้โอเคเดี๋ยว นัทต้องไปตามเรื่องไลเซนส์ก่อนอีกเรื่องนึงแล้วเดี๋ยวนัดครีเอทซีเคียวริตี้กรุ๊ปแล้วเดี๋ยวเอาอันนี้ขึ้นก่อนแล้วฝากคุณนิค เดี๋ยว เดี๋ยวเดี๋ยวก่อนนะเดี๋ยวขอไลเซนส์ก่อน ฝากคุณนิคส่งไอ้ตัวที่ติดโพลีเซียนนั้นมาเดี๋ยว นัท ขอลองดูว่าทําอะไรได้บ้าง อันนี้พี่เต๋าติดมั้ยอะ ถ้าพี่เต๋าติดไม่น่าจะได้มีเพื่อนติด
+16:34 Chamnong,Nick,TH-Bangkok,Information Technology: นี่ตอนไม่ตอนนี้ยังตอนนี้ยังฮะ เหมือนจะติดคุณเค้าทําไมคุณเคพี่ที่ติด
+16:38 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: อ๋อ ยังไปไม่ถึงจุดติดใช่มั้ย อ๋อหรอ เคก็ติดใช่มั้ย คือมันติดทุกเอกซ์เซลเลยใช่มั้ยคะที่เอาเข้า
+16:47 Chamnong,Nick,TH-Bangkok,Information Technology: อะไรที่มันต้องเอ็กเซลไปวางที่แชร์พอยต์แล้วดึงกลับเข้ามา
+16:51 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: ถ้าไม่อย่างงั้นทําอะไรได้อะได้เดี๋ยว นัดลองไปปรึกษาเว้ยเนี่ย แดงแล้วเนี่ย ทีมหน้าขณะนั้นไปตามอันนี้ด้วย โอเค คุณนิคทําอะไรไม่ได้แล้ว อันนี้ได้นัททําอะไรต่อมาเลยค่ะ มีเวลา
+17:03 Chamnong,Nick,TH-Bangkok,Information Technology: 6
+17:07 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: ได้เลยได้เลย ออฟฟิศคุณนิ้งอยู่ไหนเนี่ย
+17:14 Chamnong,Nick,TH-Bangkok,Information Technology: ทําออฟฟิศอยู่ตรงราชเทวี แต่ส่วนใหญ่อยู่บ้านค่อยไปออฟฟิศกันเท่าไหร่ อยู่บ้าน บ้านตอนอยู่ใกล้กันเอง อยู่ใกล้ออฟฟิศ
+17:27 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: บ้านหมู่บ้านอยู่ใกล้กันกะทีมมั้ยอะ
+17:30 Chamnong,Nick,TH-Bangkok,Information Technology: ไม่ใช่ห่าเลยพี่บ้านง่ายกว่า
+17:35 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: เออ รถติดเอ้ย ตรวจเดือนนี้รถไม่ค่อยติดแอสซื้อรถขอ นั้นดูนั้นติดอะไรเนี่ย
+17:47 Chamnong,Nick,TH-Bangkok,Information Technology: ไม่ได้เซฟแอป แก้เลย
+19:28 Chamnong,Nick,TH-Bangkok,Information Technology: ผมพาคุณนัทไปทีดีกว่าดูจากดูเถอะ
+19:30 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: ได้ๆๆ โอเคแต่วันนี้แน่นนิดนึง แต่ว่าจริงจริงประชุมเนี้ยถึง 11 โมง ถ้าก่อน11 โมงคุณนิกทักมาได้ตลอดเลย ได้ๆๆ
+19:37 Chamnong,Nick,TH-Bangkok,Information Technology: ปะครับ ได้ครับผม
+19:38 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: อ๋อ จริงๆได้จริง จริงได้ถึงได้ได้ถึงเที่ยงเลย ณ นัดนัดบล็อกเวลาเอาไว้บอกไว้เฉยเฉย นี่นะบอกเวลาไปทํางานโอเค โอเคได้ค่ะ
+19:42 Chamnong,Nick,TH-Bangkok,Information Technology: ผมผมผมมี ผมมี
+19:48 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: ดีค่ะ
+19:48 Chamnong,Nick,TH-Bangkok,Information Technology: ข หลวงสตูล
+19:56 Jintasatien,Rakkan,TH-Bangkok,IT Workforce 360: ติดไรเลย มันติดไรอะ
+20:03 Chamnong,Nick,TH-Bangkok,Information Technology: ปิดมันปิด 2 อย่างอันแรก คือถ้าดึงเอ็กซ์เซลตรงตรงอะเอ็กซ์เซลไม่มีไม่มีtable
+20:08 Jintasatien,Rakkan,TH-Bangkok,IT Workforce 360: อันนี้เอ็นเอ เอ็นเอ็ม อันนี้มันติดจริงเหรอวะ ทําไมเฟอร์ผมไม่เฟิร์นผมไม่เจอวะ
+20:14 Chamnong,Nick,TH-Bangkok,Information Technology: ตรงนั้น เพชร กับการที่เฟลด้วยเหรออาจารย์เป็นไง มีมีโฟลว์อ่านเอ็กเซลหรอ
+20:19 Jintasatien,Rakkan,TH-Bangkok,IT Workforce 360: ก็ data flow อะ
+20:20 Chamnong,Nick,TH-Bangkok,Information Technology: อ่านกเฟลเหรอ ไม่ใช่ data flow ที่มัน automab
+20:24 Jintasatien,Rakkan,TH-Bangkok,IT Workforce 360: อ๋อ ก็คือคือของพี่มัน ถ้าเอิร์ธผมคือไม่ได้เลยใช่ไหม
+20:30 Chamnong,Nick,TH-Bangkok,Information Technology: กา กาตาร์โฟลว์ไม่ได้ทําเลยอะไม่คิดว่ามีปัญหาอะ คือคือคือแบบ อืม มันมันหลายอย่างเกินมันส่งเมลมันเหี้ยมันหาอะไรด้วย มันดาต้าโฟลว์มันมันยากอะ
+20:35 Jintasatien,Rakkan,TH-Bangkok,IT Workforce 360: หรอ
+20:42 Chamnong,Nick,TH-Bangkok,Information Technology: หน้าจอให้ดูข้างไหนก็อยู่ห้องนี้ล่ะ เช้า
+20:51 Jintasatien,Rakkan,TH-Bangkok,IT Workforce 360: มันดึงเอ็กเซล ก็มาอ่านเราอีก อ่านแล้วก็ส่งเมล
+20:56 Chamnong,Nick,TH-Bangkok,Information Technology: ไม่อะ คือกูไม่ใช่ คือคือมันเป็นเอ็กเซลมาแล้วมันอ่านทีละบรรทัดแล้วมันเอาบรรทัดไปแมตช์กับ customer แต่ แต่มันก็พยายามกรอบอะ ส่วนสุดท้ายก็คือมันพยายามจะเก็บ transaction อะ ตอนนี้อ่านแม่งงี่เง่าก็คือแม่ง
+21:12 Jintasatien,Rakkan,TH-Bangkok,IT Workforce 360: เออ เออ เออ อ๋อ มันมันคนละแบบกับของผมที่ผมแค่รีทรีท เอ็กเซลเข้าดาต้าเบสใช่มั้ย พี่สิ่งที่พี่กําลังจะบอก
+21:20 Chamnong,Nick,TH-Bangkok,Information Technology: ใช่ ใช่ใช่ใช่ มันมี process มีอะไรด้วย ปล่อยcontent jare content P นั่นกู นั่นกูลบ นั่นกูลบไปแล้วหรอ ก็ได้ คอนเทนต์ จริงจริง จริงจริง ต่อให้แม่งเวิร์คกูก็ทําไม่ได้อยู่ดีปะวะ แต่ก็ลองดูก็ได้โทร เพราะ เพราะว่า พี่ พี่ว่าไปติดไอ้นี่เว้ย ไอ้ปัญหาเวย์เนี่ย
+22:02 Jintasatien,Rakkan,TH-Bangkok,IT Workforce 360: อย อยู่ในห้องเค้านะ อย่าลืม
+22:06 Chamnong,Nick,TH-Bangkok,Information Technology: เราไปเราไปลงทุนมีเราดีกว่า
+29:34 Chamnong,Nick,TH-Bangkok,Information Technology: ฮัลโหล เนี่ย เปอร์เซ็นต์เคสล่ะ แม่งน่าจะเซฟแอดถ้าเซฟแอดก็จบละ ควรจะซื้อแอด 2 ท่าแยกกันไปเลย
+29:52 Jintasatien,Rakkan,TH-Bangkok,IT Workforce 360: คือทางไหน
+29:52 Chamnong,Nick,TH-Bangkok,Information Technology: กลายเป็นต้องมานั่งแก้กลับไปกลับมาเชี่ยเมื่อกี้กูก็ไม่ซื้อแอดอีก เราก็นึกว่ากูซื้อแอดมึงชาติละ โอ้ย เผื่อแก้เก่ามาอีกนะ โอเคเมื่อกี้ไม่เคยมาแล้ว มันตอนนี้ก็ทําไมไม่เคยแอดอีกรอบนึงไร้สาระคนโสด ทํา
+30:42 Chamnong,Nick,TH-Bangkok,Information Technology: ผ่านพันผ่านผ่าน ตู้มเหมือนเดิมต้องแล้ว
+31:42 Chamnong,Nick,TH-Bangkok,Information Technology: ตอนได้นี่ปะได้เมลอะไรป้ะ
+31:49 Jintasatien,Rakkan,TH-Bangkok,IT Workforce 360: เมลเหรอ
+31:51 Chamnong,Nick,TH-Bangkok,Information Technology: พี่คือพี่อินไว้ว่าความ
+31:52 Jintasatien,Rakkan,TH-Bangkok,IT Workforce 360: เซลล์ เวฮะแป๊บนึงนะ เปิดแป๊บ
+31:58 Chamnong,Nick,TH-Bangkok,Information Technology: เปิดเปิดเลยวะ เดี๋ยวมันถามอะไรมาว่างว่างก็เปิดด้วย คิด คิดไว้ว่าคนนั้น
+32:11 Jintasatien,Rakkan,TH-Bangkok,IT Workforce 360: ไม่มีเลยเฮ้ยเยอะมาแล้วว่ะ มาแล้วหว่ะมาแล้วหวะเนี่ยเพิ่งมาตะกี้เลย
+32:16 Chamnong,Nick,TH-Bangkok,Information Technology: เป็นหลายปีมาเฉยๆ คือต้องแก้อะไรนะ
+32:18 Jintasatien,Rakkan,TH-Bangkok,IT Workforce 360: อ๋อ ตั้งใจ
+32:41 Jintasatien,Rakkan,TH-Bangkok,IT Workforce 360: สรุปลองแล้วพี่เอาบีไอออกแม่งหายจริง
+32:44 Chamnong,Nick,TH-Bangkok,Information Technology: หายเลยครับ
+32:46 Jintasatien,Rakkan,TH-Bangkok,IT Workforce 360: อย่างเร็วอ่ะ
+32:47 Chamnong,Nick,TH-Bangkok,Information Technology: ซี ไอตัว 3 พอเปิดสตงก็เป็นใช่ไหมก่อนหน้านี้
+32:53 Jintasatien,Rakkan,TH-Bangkok,IT Workforce 360: ไม่เป็น แต่ว่าไม่ไม่ไม่ช้า แบบที่ที่ผมเห็นจอพี่อ่ะ
+32:58 Chamnong,Nick,TH-Bangkok,Information Technology: ตัวจะเห็นจอ จอพี่ช้างได้ไง มันๆๆไม่ได้ปึ๊บ ป๊อป เออเวลาแชร์มันต้องมันต้องมันต้องช้าเหมือนกันเปล่าไม่รู้
+33:00 Jintasatien,Rakkan,TH-Bangkok,IT Workforce 360: พี่แชร์ไง
+33:07 Chamnong,Nick,TH-Bangkok,Information Technology: เขาไม่เข้าเหรอ
+33:09 Jintasatien,Rakkan,TH-Bangkok,IT Workforce 360: แบบเปิดปุ๊บ มันแอบเด้งเลยอะ คือแบบว่าอย่างเร็วอ่ะ เร็วเลยอ่ะ ดูไม่รู้ว่าเกี่ยวหรือเปล่านะ
+33:37 Chamnong,Nick,TH-Bangkok,Information Technology: ควร คิดก่อน ถ้าพี่แชร์นี้ขอแต่เค้ามีแอคเซสการ์เวิร์ดอยู่แล้ว เพื่อเพื่อความชัวร์ชัวร์ ใช่เราจะ solution มันไม่มีให้แชร์ป่ะ solution ไม่มีเจ้าของป้ะ ทําไมถึงไม่มีออนแอป แอปก็ต้องมีพอร์ต หายไปเลยอะ เออ สโตร์ มันมีร็อคคิวเม้นอยู่นะไอ้ไอ้ไอ้เนี่ยจริงจริงแล้วอะ ได้เริ่มไมโครซอฟท์มันมีเหมือนกับreference ของ object อยู่นะ
+34:24 Jintasatien,Rakkan,TH-Bangkok,IT Workforce 360: เหรอ
+34:25 Chamnong,Nick,TH-Bangkok,Information Technology: เออ เพิ่งเห็น
+34:25 Jintasatien,Rakkan,TH-Bangkok,IT Workforce 360: ไม่จริง จริงจริงจริง ผมเคยเห็นไอ้พวก microsoft m c p อยู่นะที่มันแบบมันจะเก็บด็อกทั้งหมดของของ product microsoft ทั้งหมด แล้วแบบ
+34:33 Chamnong,Nick,TH-Bangkok,Information Technology: เมีย
+34:34 Jintasatien,Rakkan,TH-Bangkok,IT Workforce 360: แล้วแบบว่าให้แบบว่าคนเข้าไปดูแต่แต่ผมไม่แน่ใจว่ามันมันจะมีพวกเขาแอบรึเปล่า เออ เออเนี่ย ประมาณอย่างเงี้ย
+34:35 Chamnong,Nick,TH-Bangkok,Information Technology: เนี่ยอยู่เนี่ย เนี่ยพี่ให้ตรงไปพยายามดูดมาดูแล้วเอามาทําเป็นเจนเป็นไอที่พี่พี่ส่งให้เมื่อคืนอะ
+34:51 Jintasatien,Rakkan,TH-Bangkok,IT Workforce 360: เป็น control modern ด้วยใช่มั้ย ถ้า classic คือไม่ได้
+34:53 Chamnong,Nick,TH-Bangkok,Information Technology: มันมันผสมกันเว้ย โคตรเชี่ยหลายหลายไอ้เชี่ยนี่ก็ไม่ยอมบอก แต่ว่าเวอร์ชั่นอะไร เพราะว่าตอนเราคอลันออกมามันมีเวอร์ชั่น
+34:56 Jintasatien,Rakkan,TH-Bangkok,IT Workforce 360: เออ ใช่ใช่ ใช่ใช่ใช่ที่มันแอทแชร์บอทตอนแอท
+35:04 Chamnong,Nick,TH-Bangkok,Information Technology: ใช่ใช่ ใช่ใช่ใช่ Document ที่ส้นตีนมาก นาย นายติดร้านเกิดแอปด้วยว่ะ อ่าว อ่าว ว่างว่างทําแอปถัดไปแทน
+35:47 Chamnong,Nick,TH-Bangkok,Information Technology: คุณไม่ได้ทําศพอะไรแบบไป ซุปซุปเปอร์ยูสเซอร์ นี่นี่เพลต์เลยนะ เพลสเพลสอะไอ้ นั่นเลยนะ
+36:15 Jintasatien,Rakkan,TH-Bangkok,IT Workforce 360: แย่มากมีแสงเงาด้วย มีแบบว่าจบ background ลงด้วยอะ
+36:18 Chamnong,Nick,TH-Bangkok,Information Technology: แน่นอน ลืมกดเนื้อ Apart Apartment เนี่ยปัญหาโลกแตกเสมอเลย
+36:36 Jintasatien,Rakkan,TH-Bangkok,IT Workforce 360: พลา พลาสติก อ่ะแทนไม่ใช่คลาสสิคอ่ะ
+36:58 Chamnong,Nick,TH-Bangkok,Information Technology: เค้าไม่เข้ามาล่ะจะให้เค้าเทสเค้าไม่ใช่ L Log in อีกแล้ว ทําไมมันถึงมีคอร์สโค้ดอยู่ในนี้ล่ะ ถอดรกรมา กกว่านี้
+38:04 Chamnong,Nick,TH-Bangkok,Information Technology: พระสุ พระสุรพเหมนท์ คลาสสิก เทคเหี้ยไรเต็มไปหมดเลยเนี่ย
+39:04 Chamnong,Nick,TH-Bangkok,Information Technology: คุณไม่เข คุณไม่เข้ามาเลยอะ อัดแล้วด้วยนะ ไหนบอกว่า อ๋อว่าไงครับ
+39:16 Jintasatien,Rakkan,TH-Bangkok,IT Workforce 360: เคยมีอยู่ในห้องอยู่ในห้องเขา นะ อย่าลืม
+40:11 Jintasatien,Rakkan,TH-Bangkok,IT Workforce 360: ที่ให้ผมใช้ได้ไหม
+40:14 Chamnong,Nick,TH-Bangkok,Information Technology: อะไรนะ อะไรนะ
+40:14 Jintasatien,Rakkan,TH-Bangkok,IT Workforce 360: ที่เหลือให้ผมใช้ได้นึง คอร์ส
+40:16 Chamnong,Nick,TH-Bangkok,Information Technology: เหลืออยู่แล้ว มันนี่ไม่ใช่ของตัวเองอยู่ด้วยซ้ํา เออ คือก็คือพอมันโดนล็อกอินถัดไปพี่ก็จะถามสโตร์แล้วไง
+40:25 Jintasatien,Rakkan,TH-Bangkok,IT Workforce 360: ว่าผมโดนผมเข้ามาห้าทุ่มร้อยเปอร์เซ็นต์
+40:30 Chamnong,Nick,TH-Bangkok,Information Technology: อ้าวเหรอ
+40:33 Jintasatien,Rakkan,TH-Bangkok,IT Workforce 360: ผมก็โอเคนอน
+40:33 Chamnong,Nick,TH-Bangkok,Information Technology: ตอนนี้วิวิคลี่พี่ 96%
+40:39 Jintasatien,Rakkan,TH-Bangkok,IT Workforce 360: น่ากลัวจังวะ
+40:39 Chamnong,Nick,TH-Bangkok,Information Technology: เราก็ลืมได้ พรุ่งนี้ไง
+40:42 Jintasatien,Rakkan,TH-Bangkok,IT Workforce 360: ผมสง ผมสงสารเอไอว่ะ ที่มันเกิดมารับใช้พี่อะ
+40:44 Chamnong,Nick,TH-Bangkok,Information Technology: เออ เออ กู เออ กูจัดหนักอ่ะ
+40:48 Jintasatien,Rakkan,TH-Bangkok,IT Workforce 360: เชิด เชิดหนักจริง
+40:50 Chamnong,Nick,TH-Bangkok,Information Technology: สรุป สรุปมาให้หมด
+40:52 Jintasatien,Rakkan,TH-Bangkok,IT Workforce 360: โคตรใจร้ายอ่ะ
+40:57 Chamnong,Nick,TH-Bangkok,Information Technology: อย่างอันเนี้ย พี่ก็บอกว่าแก้แก้แก้ทุกสตรีม10สตรีน่ะที่มีคําว่าคลาสสิกทั้งหมด ลื่น ลงไปแล้วอะ
+41:22 Jintasatien,Rakkan,TH-Bangkok,IT Workforce 360: เค้าหมายถึงให้เราคอลกะเค้าป่ะ
+41:26 Chamnong,Nick,TH-Bangkok,Information Technology: พี่ก็ทักไปแล้วอะ ให้พี่โทรศัพท์เลยเหรอ พี่ไม่มีเบอร์โทรศัพท์พี่จะโทร
+41:29 Jintasatien,Rakkan,TH-Bangkok,IT Workforce 360: ไม่ไม่ call แบบคอลแบบอินไว้ในมีตติ้งอะ
+41:32 Chamnong,Nick,TH-Bangkok,Information Technology: หมดแล้วกดไปฝั่งแรกเลย
+41:33 Jintasatien,Rakkan,TH-Bangkok,IT Workforce 360: พูดไรใช่ไหม โอเค พูดไรใช่ไหม เอ๋ เขาชอบทํากัน
+41:38 Chamnong,Nick,TH-Bangkok,Information Technology: เนี่ย นรกนะ เพราะแอปเนี้ย ทําไอ้นี่มัน แอปเนี่ยมันใช่ใช่
+41:59 Jintasatien,Rakkan,TH-Bangkok,IT Workforce 360: ก็ ก็ถ้าต้องไปย่างซากเทบนแยกไม่ใช่พ้อยท์ใช่มั้ย
+42:02 Chamnong,Nick,TH-Bangkok,Information Technology: พร้อมเลย พร้อมเลยครับ พี่ทําให้ประมาณจะว่าไปแล้ว ยังไงก็ไหนไหนและ ไปก่อนเดี๋ยวลืม เฮ้ย แล้วเพจที่สร้างก็คือถ่ายไปไหนอะ เป็นผู้อยู่ใน เป็นผู้อยู่ในนี้ อ๋อ ไม่กดดาวน์ไว้
+42:35 Jintasatien,Rakkan,TH-Bangkok,IT Workforce 360: ไม่ติดดาวอะไร
+42:37 Chamnong,Nick,TH-Bangkok,Information Technology: ยังไงวะดาว พูดยังไงก่อน
+42:43 Jintasatien,Rakkan,TH-Bangkok,IT Workforce 360: ดาวจะคิดข้างข้างระหว่างชื่ออะ วิกออกไปน่าตะกี้ก่อน ที่ให้เลือก
+43:00 Chamnong,Nick,TH-Bangkok,Information Technology: ตัว
+43:09 Jintasatien,Rakkan,TH-Bangkok,IT Workforce 360: หน้าจอพี่มันกระตุกขนาดนี้ว่ะ
+43:12 Chamnong,Nick,TH-Bangkok,Information Technology: ไม่ได้กระโตกไอ้เน็ตมันไม่ดีป้ะ
+43:15 Jintasatien,Rakkan,TH-Bangkok,IT Workforce 360: อ๋อ โอเค คือพี่ไม่ได้เห็นกระตุกใช่มั้ย
+43:18 Chamnong,Nick,TH-Bangkok,Information Technology: ไม่เห็นการ ไม่เห็นการ์ตูน
+43:20 Jintasatien,Rakkan,TH-Bangkok,IT Workforce 360: เออ นั่นแหละ
+43:24 Chamnong,Nick,TH-Bangkok,Information Technology: ทําเทเบอร์ให้เทเบอร์หนึ่งละ
+43:29 Jintasatien,Rakkan,TH-Bangkok,IT Workforce 360: ทําไมอะพี่แป๊บนึงนะพี่จะต้องช้าช้าหน่อยแม่งดีเลย์
+43:56 Jintasatien,Rakkan,TH-Bangkok,IT Workforce 360: พี่อยู่หน้าไหนแล้วเนี่ย
+43:57 Chamnong,Nick,TH-Bangkok,Information Technology: ทําไมมันไม่ไปอัพเดทเลยว่ะ มันช้าทั้งนั้นเลยหรอ
+44:01 Jintasatien,Rakkan,TH-Bangkok,IT Workforce 360: เออผมยัง ผมยังเห็นหน้าพี่อยู่ i c r super user อยู่เลย ทํามา
+44:07 Chamnong,Nick,TH-Bangkok,Information Technology: ขย ขยับนิดนึงมั้ง มีแคนดิเดตเนมเอ็มโพยี แอเรีย กับแอเรีย ซึ่งอันนี้เป็นฟรีเทคนะเว้ย เป็นฟรีเทคแล้วก็แอพพลิเค
+44:16 Jintasatien,Rakkan,TH-Bangkok,IT Workforce 360: โอเค
+44:19 Chamnong,Nick,TH-Bangkok,Information Technology: ชั่นเครดิตแม่งเลยหว่ะ
+44:19 Jintasatien,Rakkan,TH-Bangkok,IT Workforce 360: เย็นนี้มันคือแบด คือ basic black to dispay contest เวอร์ชันหนึ่ง
+44:25 Chamnong,Nick,TH-Bangkok,Information Technology: ยัง แก๊สยังไงว่ะ
+44:28 Jintasatien,Rakkan,TH-Bangkok,IT Workforce 360: ยู ไอเท็ม
+44:30 Chamnong,Nick,TH-Bangkok,Information Technology: นี่นี่อันนี้อันนี้ก็จะมีที่อยากให้กดยาเอาไปกันใหญ่ละ รกเลยเนี่ย เหยียดเกลียดแม่งจริงๆเลยว่ะ เดี๋ยวนะ โอ้ยอีนี่จะอีนี่อ่ะ แต่แอ๊ดอะทําไงอะ ก็ไม่ใช่ แอสอะ แอดโลว์ใหม่
+44:54 Jintasatien,Rakkan,TH-Bangkok,IT Workforce 360: การ
+44:58 Chamnong,Nick,TH-Bangkok,Information Technology: เทพไม่ใช่ปุ่มประเทศเลย โอเคได้ละ ซึ่งฝั่งสโตนไม่อัพเดทด้วยนะ ที่ต้องคอยขยับปะ ก็ ก็นี้ปกติ area area พี่ file ไว้ให้แล้ว ให้แล้ว นี้มีเอ็มวีอัพโหลดอันเดอร์ รีวิวพาร์ต หรือปลาเอ็มพาสเอ็ม คือคือผ่าน คือ คือผ่านไอสเต็ปแรกอะรีวิวเอกสารคะแนนอ่ะ แล้วก็ approve อะครับ
+45:27 Jintasatien,Rakkan,TH-Bangkok,IT Workforce 360: ครับ อ๋อ ผ่านรีวิว
+45:31 Chamnong,Nick,TH-Bangkok,Information Technology: แอปพรูฟอะ คือผ่านๆผ่านไอ้นี่ผ่านโควต้า แล้วก็พาร์ตเนอร์อ่ะ คือไม่ผ่านโควต้า คือคือผ่านไอเหี้ยนี่แต่ไม่ผ่านโควต้าเข้าใจป่ะ ได้มั้ย มันจะมีประชุมอีก
+45:44 Jintasatien,Rakkan,TH-Bangkok,IT Workforce 360: ก็คือที่ว่าที่ว่าศูนย์คะแนนก็ผ่านได้
+45:47 Chamnong,Nick,TH-Bangkok,Information Technology: ไม่มีใคร ไม่มีใครไม่ใช่ไม่ใช่ไม่ใช่ๆไอ้ นั่นคือผ่านแรก ไม่มีใครไม่ใช่ไม่ใช่ไม่ใช่ๆไอ้ นั่นคือผ่านแรก
+45:48 Jintasatien,Rakkan,TH-Bangkok,IT Workforce 360: ถูกคะแนนก็ approve ได้ อ้าวเหรอ อันนั้นคืออะไรหรอ
+45:51 Chamnong,Nick,TH-Bangkok,Information Technology: แล้วคืออันแรกรีวิวคือเหมือนกับว่ามันจะมีลิสต์คนที่ผ่านผ่านเหมือนกับเข้าเกณฑ์มาก่อนแล้วสุดท้ายเค้าจะมาเลือกตามจํานวนไง มันอาจจะผ่านเข้าเกณฑ์ 20 คน แต่เค้าจะเอาแค่สิบอะเก็ตป่ะ มันผ่าแหละตอนที่ถูกเลือก
+46:04 Jintasatien,Rakkan,TH-Bangkok,IT Workforce 360: ก็คือ เอฟเอฟ อาร์เอ็มต้องเป็นคนรีวิว
+46:08 Chamnong,Nick,TH-Bangkok,Information Technology: รีวิวอีกชั้นนึง ซึ่งพี่ยังงงอยู่ว่าใครเป็นคนรีวิว แต่พี่พี่เดาว่ามันประชุมกันเอง แล้วก็ให้ให้คนที่ชื่ออะไรนะ เค้าชื่ออะไรนะคนนั้นน่ะ เซฟ เซฟเซฟใช่ไหมเออให้เซฟอ่ะ ให้เซฟเป็นคนสรุปมั้งเอามาแล้วมาละโอเค
+46:27 Jintasatien,Rakkan,TH-Bangkok,IT Workforce 360: มาพี่
+46:31 Chamnong,Nick,TH-Bangkok,Information Technology: ที่เค้าคุยด้วยอยู่ที่
+46:40 Jintasatien,Rakkan,TH-Bangkok,IT Workforce 360: เอาข้อใหม่แบบทําไมผมไม่ผมไม่เห็นอัพเดทอะไรเลย
+46:44 Chamnong,Nick,TH-Bangkok,Information Technology: ไหว้เค้าคุยข้างนอกคุยข้างนอก ไหว้เค้าคุยข้างนอกคุย
+46:57 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: ฮัลโหลค่ามา ราคาโทษทีค่ะ
+47:01 Chamnong,Nick,TH-Bangkok,Information Technology: ครับ หวัดดีครับผม ครับ หวัดดีครับ ฝากคุณนัทเข้าไปในผับอ่าปลงอ่ะฮะ แล้วคุณนัทเห็นโปรมั้ย คุณนัทแชจได้มั้ยฮะ เดี๋ยวผมลองดู
+47:12 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: ได้ได้เดี๋ยว นัดนัดเมื่อกี้นัดปิดทุกอย่างหมดแล้วอาจจะต้องเลือกเปิดใหม่ได้ เค้าพอแอพได้ยังไงนะ มันเข้าทางนี้รึเปล่านะ ไม่เข้าแบบนี้ ไม่เข้าแบบนี้เหรอ หยุดเจอมากค่ะ ได้ค่ะ ได้ค่ะ มาแล้วค่ะ ได้ค่ะ มาแล้วค่ะ อันเข้าพรีพอร์ตรีพอร์ตเลยนะคะ
+48:02 Chamnong,Nick,TH-Bangkok,Information Technology: ขอบคุณมากแทจจอได้มั้ยครับ
+48:04 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: แชร์แล้วนะ
+48:07 Chamnong,Nick,TH-Bangkok,Information Technology: เห็นปะ
+48:09 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: นัด นัดแชร์ใหม่ผมนึงนะ แชร์แล้วนะอะ เห็นมั้ยคะเค
+48:15 Chamnong,Nick,TH-Bangkok,Information Technology: เย็ดแล้วครับผมไปที่พาวออโตเมทฮะ
+48:19 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: ในพอร์โตเมทหรอคะ
+48:44 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: นี้รึเปล่า
+48:45 Chamnong,Nick,TH-Bangkok,Information Technology: ไปที่มายโฟลว์ฮะ อ้อเปลี่ยนเปลี่ยนนี่ก่อนใช่ใช่เปลี่ยนเป็น s c l d ครับ
+48:50 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: เล็บก่อนเนอะ ok และไม่โฟลว์ค่ะ
+49:02 Chamnong,Nick,TH-Bangkok,Information Technology: เนื้อเรื่องนะ
+49:04 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: ไปที่มายโฟลว์หรือเปล่าคะ
+49:06 Chamnong,Nick,TH-Bangkok,Information Technology: ครับผม
+49:07 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: โอเคได้
+49:14 Chamnong,Nick,TH-Bangkok,Information Technology: ไม่ไม่มี ไม่มีลิสต์ คือเอาไงดี คิดสั้น แอทเท่านั้น ไอ้ สตูลตะกี้ได้อีเมล์ใช่มั้ย อ๋อ นี่นี่ใช่
+49:24 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: อัน อันนี้ปะคะ แชร์วิทเมย์ปะออมต้องอาจจะต้องเลือกแชร์วิทเมย์ก่อน
+49:27 Chamnong,Nick,TH-Bangkok,Information Technology: กดกดอีกดอีเนี่ย กดกดจริงจริง กดกดกดอ่าเปลี่ยนเปลี่ยนแบบเนี้ยกลับไป
+49:29 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: อีดิดอันนี้เนอะ ตัวอันนี้อะ แต่ แต่กลับกลับค่ะ
+49:35 Chamnong,Nick,TH-Bangkok,Information Technology: ที่ชื่อมาเฉยๆอะฮะ ที่ชื่อมาเฉยๆอะฮะ
+49:37 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: คนที่ชื่อมัน ok ค่ะ
+49:41 Chamnong,Nick,TH-Bangkok,Information Technology: แล้วก็ทีนี้กฏซีแอลคอลเลคชั่นเรฟเฟอเรนซ์ฮะ
+49:46 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: ตัวอยู่ตรงไหนอ่ะ
+49:47 Chamnong,Nick,TH-Bangkok,Information Technology: ขวาทางขวา ความหวาดขวาพึ่งขึ้น คือนั่นแหละฮะขวา c all cloget corral
+49:57 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: อ๋อ อ๋อ ซิโอเค สวัสดี
+50:00 Chamnong,Nick,TH-Bangkok,Information Technology: เอ๊ะ เอ๊ะ คุณนัท ลบได้มั้ยฮะ กดเลือกได้ไหมฮะ
+50:03 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: อันไหนคะ
+50:05 Chamnong,Nick,TH-Bangkok,Information Technology: ไหนก็ได้เลือกมัน ไม่ได้ครับ อืม แล้วผมก็เป็นเคารพเองไม่ได้เคารพตรงนั้น
+50:18 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: เพราะมันเป็นแค่ reference ป่ะ
+50:23 Chamnong,Nick,TH-Bangkok,Information Technology: ทั้งหมดเลย โอ โอเค คุณนัท ลองมีเฟซได้มั้ยฮะ
+50:31 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: Refresh
+50:40 Chamnong,Nick,TH-Bangkok,Information Technology: กรดซี ออลล์ ตรงคอนเนคชั่นเล่นไอพี กดอะไรไม่ได้เลย กดอะไรไม่ได้เลย
+50:45 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: มันกดไม่ได้แต่มันกลายเป็นไอ้เป็นตัวสีแดง เมื่อกี้มันเป็นเขียวเขียว
+50:47 Chamnong,Nick,TH-Bangkok,Information Technology: ไม่เป็นไรง่ายง่าย กดงั้นกดอินอิดเลยฮะ อิดิท อาจจะต้องใส่ข้างใน
+50:52 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: ตรงนี้เหรอ edit detail ป่ะ
+50:55 Chamnong,Nick,TH-Bangkok,Information Technology: อีดิ บนซ้าย อะ
+50:58 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: บนซ้าย ok ไม่รู้เรื่อง
+51:07 Chamnong,Nick,TH-Bangkok,Information Technology: ทําไมเหมือนผมไม่เห็นมี ลอง ลองกดที่เก็ตฟลายอ่ะฮะ ข้างล่าง อะ ข้างล่าง
+51:15 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: ข้างล่าง ทาง ทางออกตรงนี้ใช่มั้ย กดเลยอะ
+51:23 Chamnong,Nick,TH-Bangkok,Information Technology: ตรงเชน connection reference ครับ ข้างล่างฮะ ข้างล่างไหม ข้างล่างไหมครับ คือ คือมันต้องใช้ connect wear on pemich แล้วก็ categay ครับผม ผมจะ งั้นอายุไม่ได้อ่ะ อ๋อคุณนัทติ๊กออกฮะ ติ๊กออกฮะ ขบวนขวาฮะ ตรงตรงข้างข้างตัวอักษร ที่นี่ ที่นี่มันเป่าป๊อปป๊อปอัพไว้ฮะ ที่นี่มันเป่าป๊อปป๊อปอัพไว้ฮะไอ้ตรงข้างข้างวายแอลไอวอะฮะ ในเบราว์เซอร์อะฮะ
+52:04 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: ข้างข้าง ur ข้างข้าง u
+52:05 Chamnong,Nick,TH-Bangkok,Information Technology: กว่านิดนึงฮะ ปิดปิดนะฮะ ขั้นตอนอ่าใช่ใช่ใช่ลาวฮะ
+52:07 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: อันนี้ป้ะ ไม่ ไม่เป็น aloun ok
+52:14 Chamnong,Nick,TH-Bangkok,Information Technology: ครับ ใส่อีกไหมฮะ ใส่ไม่ต้องติ๊ก ไม่ต้องติ๊ก ไม่ต้องติ๊ก
+52:14 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: Ok คุณแม่น้องติ๊กนะ ได้ได้คุณเล็กใจเย็นเดี๋ยวน้องจะพยายาม
+52:26 Chamnong,Nick,TH-Bangkok,Information Technology: กิเลน ครับ โอเค งั้นลองเล่นลงไปข้างล่างได้มั้ยอ้า โอเคแล้วเลื่อนลงไปข้างล่างเลื่อนเลื่อนเลย แบบเลื่อนตรงข้างตรงกลางอะฮะ นี่ฮะ อันนี้อันนี้อีกฮะ เนี่ยกดอะไรครับ ข้างล่างทําเหมือนกันเลยฮะ
+52:50 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: กดได้เลยป้ะคะ หรือว่าเอ๊ะ
+52:52 Chamnong,Nick,TH-Bangkok,Information Technology: ถ้าจะลองกดได้เลยนะฮะ กดกดได้เลยนะฮะ ลองกดดูฮะ
+52:56 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: แอดนี่หรอคะ กดอันนี้
+52:57 Chamnong,Nick,TH-Bangkok,Information Technology: ดังนั้นนะครับครับ ล่างต่อ เลยฮะ ก็ได้มั้งฮะ เต็มไปหมดเลย ครับ กด public ฮะเอ้ย กด save draft public ก็ได้มั้ง
+53:28 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: เอาไหนก่อน
+53:29 Chamnong,Nick,TH-Bangkok,Information Technology: เอาไปเลยครับอยู่แล้ว
+53:30 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: เอา เอาบัตรนะ โอเค
+53:33 Chamnong,Nick,TH-Bangkok,Information Technology: รอสัก 5 นาที
+53:35 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: ได้ ได้นะ เป็น user ค่ะ เป็น user ที่ลงมา
+53:41 Chamnong,Nick,TH-Bangkok,Information Technology: ดู ดูซิตรงนั้นจะเป็นหรือเปล่า
+53:43 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: อุ๊ง อิ๊งค์น้ําตาจะไหลขอให้ไม่เป็นเดี๋ยวต้องรอให้นาทีอะค่ะ
+53:47 Chamnong,Nick,TH-Bangkok,Information Technology: มันแล้ว แต่ อารม ณ ์ มัน น่ะ มันจะ ขึ้น top bit ขึ้น toblishing ตรงกลาง เห็นมั้ย ฮะ
+53:53 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: มง มงกลางอ่ะ ตรงนี้อ่ะเหรอ
+53:55 Chamnong,Nick,TH-Bangkok,Information Technology: ใช่ฮะ ต้องมองเป็นเซฟอะฮะ นี่คือนี่คือเราจะเซฟแค่นั้นเองนะเนี่ย
+53:57 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: อ๋อ ได้ได้
+54:01 Chamnong,Nick,TH-Bangkok,Information Technology: ทําให้พี่พี่ผมเบื่อมากเลย พี่แบบเฟลจริงจริง 5นาที คุณทีนานมากเลย อะไรเนี่ย กดฟ
+54:22 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: อยู่หากโพรแค่นั้น
+54:23 Chamnong,Nick,TH-Bangkok,Information Technology: กดฟิค กดฟิคชั่น ทําไมมันขนาดนั้นเลยล่ะ คุณ คุณต้องไปเปิดหน้าใหม่ล่ะ ลองเลื่อนลงไปได้มั้ยฮะ rescumer เลื่อนเป็นคาร่าฮะ เดี๋ยวเราจะหลุดไปอันนึง อ๋อ มันมีข้างในอีกกดกดเผินอะไม่ใช่ฮะไอ้ apply to eat low ฮะ
+54:42 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: มีปะคะ อ๋อ โอเค
+54:50 Chamnong,Nick,TH-Bangkok,Information Technology: แล แล้วก็กดอันนี้ไปเรื่อยเรื่อย ไม่ใช่ไม่ใช่กดไอ้ไอ้ใช่กดไปเรื่อยเรื่อยเลยฮะ
+54:56 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: ไม่ต้องกด ไม่ต้องกดอันไหนต่อ
+54:58 Chamnong,Nick,TH-Bangkok,Information Technology: ครับ
+55:00 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: อ๋อ โอเค
+55:01 Chamnong,Nick,TH-Bangkok,Information Technology: อยู่ตรงนี้ ok อันไหนก็ไล่ไล่เลยก็ได้ฮะ กดดันไปอีก ไม่ใช่อยากกดตรงนั้นนะฮะ ตรงนั้นอันตรายมากเลยครับกลุ่มนั้น
+55:09 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: กดไปแล้ว
+55:10 Chamnong,Nick,TH-Bangkok,Information Technology: เป็นไรฮะ ถ้าถ้ากดต่อนี่จะจะพังเลย
+55:14 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: กลัวพัง หมดยังไง อ๋อ นี่โอเค โหเยอะเหมือนกันนะเนี่ย ได้ lock here
+55:26 Chamnong,Nick,TH-Bangkok,Information Technology: ทาง ทางขวาฮะ ทางขวามีเหมือนมีเหมือน ขึ้นนะฮะ อ๋อ ละฮะ โอเค public อีกทีฮะ
+55:38 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: แล้ว แล้วเนอะ แล้วเนอะ หมดจริงใช่มั้ย
+55:41 Chamnong,Nick,TH-Bangkok,Information Technology: ซึ่งผม
+55:41 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: ได้ค่ะ
+55:41 Chamnong,Nick,TH-Bangkok,Information Technology: คือผมไม่ได้เพราะมีสําเร็จครับ
+57:39 Chamnong,Nick,TH-Bangkok,Information Technology: เสร็จแล้วกดเทสต์ครับ
+57:43 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: เซตดราฟ อะค่ะ เทส
+57:49 Chamnong,Nick,TH-Bangkok,Information Technology: ของ ของพี่กดไปก็รอนานไปหมด
+57:53 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: ไม่เป็น ไม่เป็นไร
+58:39 Chamnong,Nick,TH-Bangkok,Information Technology: มาแล้วแมน อะมาแล้วแมนมูเอ
+58:41 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: เนอรี่อ่ะค่ะ โอเค กดเทสเลยเนาะ
+58:47 Chamnong,Nick,TH-Bangkok,Information Technology: Low f Low flow Low flow ครับ
+58:49 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: คนนี้ ตื่นเต้นไปด้วย
+58:51 Chamnong,Nick,TH-Bangkok,Information Technology: อย่าเพิ่งกดนะฮะ กดกด lung for page ทั้งหมด กด lunch for page ทั้งหมด
+58:53 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: กดอะไรเลย Ok ok
+59:03 Chamnong,Nick,TH-Bangkok,Information Technology: กดกดไอตอนแรกมันท่อนแรกอ่ะครับ กดกดที่ชื่ออ่ะ กดกดที่แบบไอ้ลิงค์เงินทางซ้ายอ่ะฮะไม่รู้
+59:11 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: นี่เนาะ
+59:11 Chamnong,Nick,TH-Bangkok,Information Technology: ก็ก็ ก็ก็ เลี้ยงมาดูฮะ ฟังที่ไหน เฮ้ยเอ้ยเอ้ย แต่ดูดูดูได้ เฮ้ยเอ้ยเอ
+59:24 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: อื้ม อื้ม ดูคือไม่ติดไอตัวนั้นโน้ตถ้าแบบว่า ดูคือไม่ติด
+59:26 Jintasatien,Rakkan,TH-Bangkok,IT Workforce 360: เก็ทเก็ทไฟล์ได้ปะ
+59:26 Chamnong,Nick,TH-Bangkok,Information Technology: รู้ว่า ไม่ว่าคุณนัทใช้ได้เดินทางตรงอื่นฮะ
+59:32 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: เออ เออแปลว่าโอเค หมายถึงว่าตัว
+59:35 Chamnong,Nick,TH-Bangkok,Information Technology: แล้วแล แล้วแล้วถ้าผมถ้าผมใช้คุณของคุณนั้นเลย
+59:37 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: แต่เค้าเขียนอย่างงี้นะครีเอทเอสเอเอสวีเทเบิลเฟลอันนี้
+59:41 Chamnong,Nick,TH-Bangkok,Information Technology: ไม่ไม่เป็นไรฮะ อันอื่นแล้วฮะ เดี๋ยวผมลองดูว่าผมใช้คอนเนคชั่นคุณนักมั้ย เดี๋ยวเดี๋ยวผมเดี๋ยวได้เดี๋ยวผมลองดูฮะ แต่แต่คุณนัทไม่ติดเป็นที่เป็นที่พวกผมอย่างเดียวจริงจริงด้วย
+59:43 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: อ๋อ โอเค โอเคแปลว่าดี
+59:55 Chamnong,Nick,TH-Bangkok,Information Technology: ครับ โอเคครับ ได้ครับ เดี๋ยวเดี๋ยวผมต้องไปประชุมอีกอันนึงก่อน
+59:58 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: โอ โอเคได้คุณนิค มีอะไรทักได้เลยเพราะแต่ว่าเดี๋ยวนัทจะไม่อยู่เหมือนกัน วีค 20 20 ถึง24 ได้
+01:00:07 Chamnong,Nick,TH-Bangkok,Information Technology: ที่อยู่ตั้งแต่วิกหน้าถึงการพฤศจิกอะ
+01:00:09 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: โอเคได้ได้ได้โอเคค่ะ นี่แหละทักมาได้เลย ขอบคุณค่ะ สวัสดีค่ะ อันนี้นะ ปิดได้เลยเนาะนัด
+01:00:16 Jintasatien,Rakkan,TH-Bangkok,IT Workforce 360: ดีครับ
+01:00:18 Chamnong,Nick,TH-Bangkok,Information Technology: ปิดได้เลยครับ
+01:00:18 Arayasomboon,Chalitda,TH-Bangkok,IT Finance & Legal: รัฐปิดได้หมดเลยใช่ป่ะ อันนั้นแม่ต้องทําอะไรเนาะ โอเคกลัวพัง หวัดดีค่ะ
+  
