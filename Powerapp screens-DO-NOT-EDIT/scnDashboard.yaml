@@ -1,28 +1,50 @@
 Screens:
-  scnCustomer:
+  scnDashboard:
     Properties:
       Fill: =RGBA(243, 242, 241, 1)
       LoadingSpinnerColor: =RGBA(0, 101, 161, 1)
       OnVisible: |-
-        =UpdateContext({
-            currentScreen: "Customer Management",
-            _showMenu: false,
-            _currentMode: "View",
-            _showDeleteConfirmation: false,
-            _selectedCustomer: Blank(),
-            _customerToDelete: Blank()
-        });
+        =Set(_showMenu, false);
+        Set(_showDatePicker, false);
+        UpdateContext({currentScreen: "Daily Control Center"});
+
+        /* Set date if not already set */
+        If(IsBlank(_selectedDate), Set(_selectedDate, Today()));
+
+        /* Refresh data */
+        Refresh('[THFinanceCashCollection]Process Logs');
+        Refresh('[THFinanceCashCollection]Emaillogs');
+
+        /* Cache ProcessLog for selected date */
+        Set(_processLog,
+            First(Filter('[THFinanceCashCollection]Process Logs',
+                cr7bb_processdate = Text(_selectedDate, "yyyy-mm-dd"))));
+
+        /* Cache email stats */
+        ClearCollect(colTodayEmails,
+            Filter('[THFinanceCashCollection]Emaillogs',
+                cr7bb_processdate >= _selectedDate && cr7bb_processdate < DateAdd(_selectedDate, 1, TimeUnit.Days)));
+
+        /* Calculate stats */
+        Set(_emailCount, CountRows(colTodayEmails));
+        Set(_totalOutstanding, Sum(colTodayEmails, cr7bb_totalamount));
+        Set(_day12Count, CountRows(Filter(colTodayEmails, cr7bb_maxdaycount <= 2)));
+        Set(_day3Count, CountRows(Filter(colTodayEmails, cr7bb_maxdaycount = 3)));
+        Set(_day4PlusCount, CountRows(Filter(colTodayEmails, cr7bb_maxdaycount >= 4)));
+        Set(_sentCount, CountRows(Filter(colTodayEmails, cr7bb_sendstatus = 'Send Status Choice'.Success)));
+        Set(_failedCount, CountRows(Filter(colTodayEmails, cr7bb_sendstatus = 'Send Status Choice'.Failed)));
+        Set(_pendingCount, CountRows(Filter(colTodayEmails, cr7bb_sendstatus = 'Send Status Choice'.Pending)));
     Children:
-      - Customer_Container:
-          Control: GroupContainer@1.3.0
+      - Dash_Container:
+          Control: GroupContainer@1.4.0
           Variant: ManualLayout
           Properties:
             DropShadow: =DropShadow.None
             Height: =Parent.Height
             Width: =Parent.Width
           Children:
-            - Customer_Header:
-                Control: GroupContainer@1.3.0
+            - Dash_Header:
+                Control: GroupContainer@1.4.0
                 Variant: AutoLayout
                 Properties:
                   DropShadow: =DropShadow.Regular
@@ -30,7 +52,10 @@ Screens:
                   Height: =55
                   LayoutAlignItems: =LayoutAlignItems.Center
                   LayoutDirection: =LayoutDirection.Horizontal
+                  LayoutGap: =10
+                  LayoutJustifyContent: =LayoutJustifyContent.SpaceBetween
                   PaddingLeft: =15
+                  PaddingRight: =15
                   RadiusBottomLeft: =8
                   RadiusBottomRight: =8
                   RadiusTopLeft: =8
@@ -39,730 +64,1165 @@ Screens:
                   X: =10
                   Y: =10
                 Children:
-                  - Customer_MenuIcon:
+                  - Dash_MenuIcon:
                       Control: Classic/Icon@2.5.0
                       Properties:
                         Color: =RGBA(255, 255, 255, 1)
                         Height: =50
                         Icon: =Icon.Hamburger
-                        OnSelect: |-
-                          =UpdateContext({_showMenu: !_showMenu})
+                        OnSelect: =Set(_showMenu, !_showMenu)
                         PaddingBottom: =10
                         PaddingLeft: =10
                         PaddingRight: =10
                         PaddingTop: =10
                         Width: =50
-                  - Customer_HeaderTitle:
+                  - Dash_HeaderTitle:
                       Control: Text@0.0.51
                       Properties:
+                        FillPortions: =1
                         Font: =Font.Lato
                         FontColor: =Color.White
                         Height: =50
-                        PaddingLeft: =20
-                        Size: =25
-                        Text: ="Customer Management"
+                        Size: =24
+                        Text: ="Daily Control Center"
                         VerticalAlign: =VerticalAlign.Middle
                         Weight: ='TextCanvas.Weight'.Medium
-                        Width: =Parent.Width - Customer_MenuIcon.Width - 40
-            - Customer_Content:
-                Control: GroupContainer@1.3.0
-                Variant: ManualLayout
+                  - Dash_RefreshBtn:
+                      Control: Button@0.0.45
+                      Properties:
+                        Appearance: ='ButtonCanvas.Appearance'.Primary
+                        BasePaletteColor: =RGBA(255, 255, 255, 0.2)
+                        Height: =40
+                        Icon: ="ArrowClockwise"
+                        OnSelect: |-
+                          =Refresh('[THFinanceCashCollection]Process Logs');
+                          Refresh('[THFinanceCashCollection]Emaillogs');
+                          Set(_processLog,
+                              First(Filter('[THFinanceCashCollection]Process Logs',
+                                  cr7bb_processdate = Text(_selectedDate, "yyyy-mm-dd"))));
+                          ClearCollect(colTodayEmails,
+                              Filter('[THFinanceCashCollection]Emaillogs',
+                                  cr7bb_processdate >= _selectedDate && cr7bb_processdate < DateAdd(_selectedDate, 1, TimeUnit.Days)));
+                          Set(_emailCount, CountRows(colTodayEmails));
+                          Set(_totalOutstanding, Sum(colTodayEmails, cr7bb_totalamount));
+                          Set(_day12Count, CountRows(Filter(colTodayEmails, cr7bb_maxdaycount <= 2)));
+                          Set(_day3Count, CountRows(Filter(colTodayEmails, cr7bb_maxdaycount = 3)));
+                          Set(_day4PlusCount, CountRows(Filter(colTodayEmails, cr7bb_maxdaycount >= 4)));
+                          Set(_sentCount, CountRows(Filter(colTodayEmails, cr7bb_sendstatus = 'Send Status Choice'.Success)));
+                          Set(_failedCount, CountRows(Filter(colTodayEmails, cr7bb_sendstatus = 'Send Status Choice'.Failed)));
+                          Set(_pendingCount, CountRows(Filter(colTodayEmails, cr7bb_sendstatus = 'Send Status Choice'.Pending)));
+                          Notify("Data refreshed", NotificationType.Success);
+                        Text: ="Refresh"
+                        Width: =100
+            - Dash_DateNav:
+                Control: GroupContainer@1.4.0
+                Variant: AutoLayout
                 Properties:
-                  DropShadow: =DropShadow.Regular
                   Fill: =RGBA(255, 255, 255, 1)
-                  Height: =Parent.Height - 85
-                  RadiusBottomLeft: =10
-                  RadiusBottomRight: =10
-                  RadiusTopLeft: =10
-                  RadiusTopRight: =10
+                  Height: =50
+                  LayoutAlignItems: =LayoutAlignItems.Center
+                  LayoutDirection: =LayoutDirection.Horizontal
+                  LayoutGap: =10
+                  LayoutJustifyContent: =LayoutJustifyContent.Center
+                  PaddingLeft: =15
+                  PaddingRight: =15
+                  RadiusBottomLeft: =8
+                  RadiusBottomRight: =8
+                  RadiusTopLeft: =8
+                  RadiusTopRight: =8
                   Width: =Parent.Width - 20
                   X: =10
                   Y: =75
                 Children:
-                  - Customer_TableView:
-                      Control: GroupContainer@1.3.0
-                      Variant: ManualLayout
+                  - Dash_PrevBtn:
+                      Control: Button@0.0.45
                       Properties:
-                        Height: =Parent.Height
-                        Visible: =_currentMode = "View"
-                        Width: =Parent.Width
+                        BasePaletteColor: =RGBA(100, 100, 100, 1)
+                        Height: =35
+                        OnSelect: |-
+                          =Set(_selectedDate, DateAdd(_selectedDate, -1, TimeUnit.Days));
+                          Set(_processLog,
+                              First(Filter('[THFinanceCashCollection]Process Logs',
+                                  cr7bb_processdate = Text(_selectedDate, "yyyy-mm-dd"))));
+                          ClearCollect(colTodayEmails,
+                              Filter('[THFinanceCashCollection]Emaillogs',
+                                  cr7bb_processdate >= _selectedDate && cr7bb_processdate < DateAdd(_selectedDate, 1, TimeUnit.Days)));
+                          Set(_emailCount, CountRows(colTodayEmails));
+                          Set(_totalOutstanding, Sum(colTodayEmails, cr7bb_totalamount));
+                          Set(_day12Count, CountRows(Filter(colTodayEmails, cr7bb_maxdaycount <= 2)));
+                          Set(_day3Count, CountRows(Filter(colTodayEmails, cr7bb_maxdaycount = 3)));
+                          Set(_day4PlusCount, CountRows(Filter(colTodayEmails, cr7bb_maxdaycount >= 4)));
+                          Set(_sentCount, CountRows(Filter(colTodayEmails, cr7bb_sendstatus = 'Send Status Choice'.Success)));
+                          Set(_failedCount, CountRows(Filter(colTodayEmails, cr7bb_sendstatus = 'Send Status Choice'.Failed)));
+                          Set(_pendingCount, CountRows(Filter(colTodayEmails, cr7bb_sendstatus = 'Send Status Choice'.Pending)));
+                        Text: ="< Prev"
+                        Width: =80
+                  - Dash_DateDisplay:
+                      Control: Text@0.0.51
+                      Properties:
+                        Align: ='TextCanvas.Align'.Center
+                        FillPortions: =1
+                        Font: =Font.Lato
+                        FontColor: =RGBA(0, 101, 161, 1)
+                        Height: =35
+                        Size: =16
+                        Text: =Text(_selectedDate, "dd/mm/yyyy") & If(_selectedDate = Today(), " (Today)", "")
+                        VerticalAlign: =VerticalAlign.Middle
+                        Weight: ='TextCanvas.Weight'.Semibold
+                  - Dash_NextBtn:
+                      Control: Button@0.0.45
+                      Properties:
+                        BasePaletteColor: =RGBA(100, 100, 100, 1)
+                        Height: =35
+                        OnSelect: |-
+                          =Set(_selectedDate, DateAdd(_selectedDate, 1, TimeUnit.Days));
+                          Set(_processLog,
+                              First(Filter('[THFinanceCashCollection]Process Logs',
+                                  cr7bb_processdate = Text(_selectedDate, "yyyy-mm-dd"))));
+                          ClearCollect(colTodayEmails,
+                              Filter('[THFinanceCashCollection]Emaillogs',
+                                  cr7bb_processdate >= _selectedDate && cr7bb_processdate < DateAdd(_selectedDate, 1, TimeUnit.Days)));
+                          Set(_emailCount, CountRows(colTodayEmails));
+                          Set(_totalOutstanding, Sum(colTodayEmails, cr7bb_totalamount));
+                          Set(_day12Count, CountRows(Filter(colTodayEmails, cr7bb_maxdaycount <= 2)));
+                          Set(_day3Count, CountRows(Filter(colTodayEmails, cr7bb_maxdaycount = 3)));
+                          Set(_day4PlusCount, CountRows(Filter(colTodayEmails, cr7bb_maxdaycount >= 4)));
+                          Set(_sentCount, CountRows(Filter(colTodayEmails, cr7bb_sendstatus = 'Send Status Choice'.Success)));
+                          Set(_failedCount, CountRows(Filter(colTodayEmails, cr7bb_sendstatus = 'Send Status Choice'.Failed)));
+                          Set(_pendingCount, CountRows(Filter(colTodayEmails, cr7bb_sendstatus = 'Send Status Choice'.Pending)));
+                        Text: ="Next >"
+                        Width: =80
+                  - Dash_TodayBtn:
+                      Control: Button@0.0.45
+                      Properties:
+                        BasePaletteColor: =RGBA(0, 101, 161, 1)
+                        Height: =35
+                        OnSelect: |-
+                          =Set(_selectedDate, Today());
+                          Set(_processLog,
+                              First(Filter('[THFinanceCashCollection]Process Logs',
+                                  cr7bb_processdate = Text(_selectedDate, "yyyy-mm-dd"))));
+                          ClearCollect(colTodayEmails,
+                              Filter('[THFinanceCashCollection]Emaillogs',
+                                  cr7bb_processdate >= _selectedDate && cr7bb_processdate < DateAdd(_selectedDate, 1, TimeUnit.Days)));
+                          Set(_emailCount, CountRows(colTodayEmails));
+                          Set(_totalOutstanding, Sum(colTodayEmails, cr7bb_totalamount));
+                          Set(_day12Count, CountRows(Filter(colTodayEmails, cr7bb_maxdaycount <= 2)));
+                          Set(_day3Count, CountRows(Filter(colTodayEmails, cr7bb_maxdaycount = 3)));
+                          Set(_day4PlusCount, CountRows(Filter(colTodayEmails, cr7bb_maxdaycount >= 4)));
+                          Set(_sentCount, CountRows(Filter(colTodayEmails, cr7bb_sendstatus = 'Send Status Choice'.Success)));
+                          Set(_failedCount, CountRows(Filter(colTodayEmails, cr7bb_sendstatus = 'Send Status Choice'.Failed)));
+                          Set(_pendingCount, CountRows(Filter(colTodayEmails, cr7bb_sendstatus = 'Send Status Choice'.Pending)));
+                        Text: ="Today"
+                        Width: =80
+                  - Dash_PickBtn:
+                      Control: Button@0.0.45
+                      Properties:
+                        BasePaletteColor: =RGBA(100, 81, 61, 1)
+                        Height: =35
+                        OnSelect: =Set(_showDatePicker, true)
+                        Text: ="Pick"
+                        Width: =70
+            - Dash_Content:
+                Control: GroupContainer@1.4.0
+                Variant: AutoLayout
+                Properties:
+                  DropShadow: =DropShadow.None
+                  Fill: =RGBA(243, 242, 241, 1)
+                  Height: =Parent.Height - 145
+                  LayoutDirection: =LayoutDirection.Vertical
+                  LayoutGap: =15
+                  LayoutOverflowY: =LayoutOverflow.Scroll
+                  PaddingBottom: =20
+                  PaddingLeft: =10
+                  PaddingRight: =10
+                  PaddingTop: =15
+                  Width: =Parent.Width
+                  Y: =135
+                Children:
+                  - Dash_StatusRow:
+                      Control: GroupContainer@1.4.0
+                      Variant: AutoLayout
+                      Properties:
+                        DropShadow: =DropShadow.None
+                        FillPortions: =0
+                        Height: =175
+                        LayoutDirection: =LayoutDirection.Horizontal
+                        LayoutGap: =15
+                        LayoutMinHeight: =175
+                        LayoutMinWidth: =100
+                        Width: =Parent.Width - 20
                       Children:
-                        - Customer_ActionBar:
-                            Control: GroupContainer@1.3.0
+                        - Dash_SAPPanel:
+                            Control: GroupContainer@1.4.0
                             Variant: AutoLayout
                             Properties:
-                              Fill: =RGBA(245, 245, 245, 1)
-                              Height: =50
-                              LayoutAlignItems: =LayoutAlignItems.Center
-                              LayoutDirection: =LayoutDirection.Horizontal
-                              LayoutGap: =10
-                              LayoutJustifyContent: =LayoutJustifyContent.End
+                              DropShadow: =DropShadow.Regular
+                              Fill: =RGBA(255, 255, 255, 1)
+                              LayoutDirection: =LayoutDirection.Vertical
+                              LayoutGap: =8
+                              LayoutMinWidth: =100
+                              PaddingBottom: =15
                               PaddingLeft: =15
                               PaddingRight: =15
+                              PaddingTop: =15
+                              RadiusBottomLeft: =10
+                              RadiusBottomRight: =10
                               RadiusTopLeft: =10
                               RadiusTopRight: =10
-                              Width: =Parent.Width
                             Children:
-                              - Customer_AddBtn:
-                                  Control: Button@0.0.45
+                              - Dash_SAPHeader:
+                                  Control: GroupContainer@1.4.0
+                                  Variant: AutoLayout
                                   Properties:
-                                    BasePaletteColor: =RGBA(0, 101, 161, 1)
-                                    Height: =35
-                                    Icon: ="Add"
-                                    OnSelect: |-
-                                      =UpdateContext({
-                                          _currentMode: "New",
-                                          _selectedCustomer: Blank()
-                                      })
-                                    Text: ="Add"
-                                    Width: =100
-                              - Customer_EditBtn:
-                                  Control: Button@0.0.45
+                                    DropShadow: =DropShadow.None
+                                    FillPortions: =0
+                                    Height: =25
+                                    LayoutAlignItems: =LayoutAlignItems.Center
+                                    LayoutDirection: =LayoutDirection.Horizontal
+                                    LayoutGap: =8
+                                    LayoutMinHeight: =25
+                                    LayoutMinWidth: =100
+                                    Width: =Parent.Width - 30
+                                  Children:
+                                    - Dash_SAPIcon:
+                                        Control: Classic/Icon@2.5.0
+                                        Properties:
+                                          Color: =RGBA(0, 101, 161, 1)
+                                          Height: =24
+                                          Icon: =Icon.Download
+                                          Width: =24
+                                    - Dash_SAPTitle:
+                                        Control: Text@0.0.51
+                                        Properties:
+                                          FillPortions: =1
+                                          Font: =Font.Lato
+                                          FontColor: =RGBA(0, 101, 161, 1)
+                                          Height: =25
+                                          Text: ="SAP IMPORT"
+                                          VerticalAlign: =VerticalAlign.Middle
+                                          Weight: ='TextCanvas.Weight'.Semibold
+                              - Dash_SAPStatus:
+                                  Control: GroupContainer@1.4.0
+                                  Variant: AutoLayout
                                   Properties:
-                                    BasePaletteColor: =RGBA(100, 81, 61, 1)
-                                    DisplayMode: |-
-                                      =If(
-                                          IsBlankOrError(Customer_Table.Selected),
-                                          DisplayMode.Disabled,
-                                          DisplayMode.Edit
-                                      )
-                                    Height: =35
-                                    Icon: ="Edit"
-                                    OnSelect: |-
-                                      =UpdateContext({
-                                          _currentMode: "Edit",
-                                          _selectedCustomer: Customer_Table.Selected
-                                      })
-                                    Text: ="Edit"
-                                    Width: =80
-                              - Customer_DeleteBtn:
-                                  Control: Button@0.0.45
+                                    DropShadow: =DropShadow.None
+                                    FillPortions: =0
+                                    Height: =22
+                                    LayoutAlignItems: =LayoutAlignItems.Center
+                                    LayoutDirection: =LayoutDirection.Horizontal
+                                    LayoutGap: =5
+                                    LayoutMinHeight: =22
+                                    LayoutMinWidth: =100
+                                    Width: =Parent.Width - 30
+                                  Children:
+                                    - Dash_SAPStatusIcon:
+                                        Control: Classic/Icon@2.5.0
+                                        Properties:
+                                          Color: |-
+                                            =If(IsBlank(_processLog), RGBA(128, 128, 128, 1),
+                                              If(_processLog.cr7bb_status = 'Status Choice'.Completed, RGBA(16, 124, 16, 1),
+                                              If(_processLog.cr7bb_status = 'Status Choice'.Running, RGBA(255, 185, 0, 1),
+                                              RGBA(168, 0, 0, 1))))
+                                          Height: =20
+                                          Icon: |-
+                                            =If(IsBlank(_processLog), Icon.Clock,
+                                              If(_processLog.cr7bb_status = 'Status Choice'.Completed, Icon.CheckBadge,
+                                              If(_processLog.cr7bb_status = 'Status Choice'.Running, Icon.Clock,
+                                              Icon.CancelBadge)))
+                                          Width: =20
+                                    - Dash_SAPStatusText:
+                                        Control: Text@0.0.51
+                                        Properties:
+                                          FillPortions: =1
+                                          Font: =Font.Lato
+                                          FontColor: =RGBA(100, 100, 100, 1)
+                                          Height: =22
+                                          Size: =12
+                                          Text: |-
+                                            =If(IsBlank(_processLog), "Not started",
+                                              If(_processLog.cr7bb_status = 'Status Choice'.Completed, "Completed " & Text(_processLog.cr7bb_endtime, "hh:mm"),
+                                              If(_processLog.cr7bb_status = 'Status Choice'.Running, "Running...",
+                                              "Failed")))
+                                          VerticalAlign: =VerticalAlign.Middle
+                              - Dash_SAPStats:
+                                  Control: GroupContainer@1.4.0
+                                  Variant: AutoLayout
                                   Properties:
-                                    BasePaletteColor: =RGBA(191, 25, 34, 1)
-                                    DisplayMode: |-
-                                      =If(
-                                          IsBlankOrError(Customer_Table.Selected),
-                                          DisplayMode.Disabled,
-                                          DisplayMode.Edit
-                                      )
-                                    Height: =35
-                                    Icon: ="Delete"
-                                    OnSelect: |-
-                                      =UpdateContext({
-                                          _customerToDelete: Customer_Table.Selected,
-                                          _showDeleteConfirmation: true
-                                      })
-                                    Text: ="Delete"
-                                    Width: =90
-                        - Customer_Table:
-                            Control: Table@1.0.278
-                            Properties:
-                              DateTimeFormat: ='PowerAppsOneGrid.DateTimeFormat'.ShortDate
-                              EnableRangeSelection: ='PowerAppsOneGrid.EnableRangeSelection'.Enable
-                              Height: =Parent.Height - 60
-                              Items: ='[THFinanceCashCollection]Customers'
-                              ReflowBehavior: ='PowerAppsOneGrid.ReflowBehavior'.Reflow
-                              ShowAvatar: ="no"
-                              Width: =Parent.Width - 20
-                              X: =10
-                              Y: =55
-                            Children:
-                              - Customer Code1:
-                                  Control: TableDataField@1.5.0
-                                  Variant: textualColumn
-                                  IsLocked: true
-                                  Properties:
-                                    FieldDisplayName: ="Customer Code"
-                                    FieldName: ="cr7bb_customercode"
-                                    FieldType: ="s"
-                                    Order: =1
-                              - Customer Name1:
-                                  Control: TableDataField@1.5.0
-                                  Variant: textualColumn
-                                  IsLocked: true
-                                  Properties:
-                                    FieldDisplayName: ="Customer Name"
-                                    FieldName: ="cr7bb_customername"
-                                    FieldType: ="s"
-                                    Order: =2
-                              - Region1:
-                                  Control: TableDataField@1.5.0
-                                  Variant: textualColumn
-                                  IsLocked: true
-                                  Properties:
-                                    FieldDisplayName: ="Region"
-                                    FieldName: ="nc_region"
-                                    FieldType: ="l"
-                                    Order: =3
-                              - Customer Email 11:
-                                  Control: TableDataField@1.5.0
-                                  Variant: textualColumn
-                                  IsLocked: true
-                                  Properties:
-                                    FieldDisplayName: ="Customer Email 1"
-                                    FieldName: ="cr7bb_customeremail1"
-                                    FieldType: ="s"
-                                    Order: =4
-                              - QR Code Available1:
-                                  Control: TableDataField@1.5.0
-                                  Variant: textualColumn
-                                  IsLocked: true
-                                  Properties:
-                                    FieldDisplayName: ="QR Code Available"
-                                    FieldName: ="cr7bb_qrcodeavailable"
-                                    FieldType: ="l"
-                                    Order: =5
-                              - Sales Email 11:
-                                  Control: TableDataField@1.5.0
-                                  Variant: textualColumn
-                                  IsLocked: true
-                                  Properties:
-                                    FieldDisplayName: ="Sales Email 1"
-                                    FieldName: ="cr7bb_salesemail1"
-                                    FieldType: ="s"
-                                    Order: =6
-                              - AR Backup Email 11:
-                                  Control: TableDataField@1.5.0
-                                  Variant: textualColumn
-                                  IsLocked: true
-                                  Properties:
-                                    FieldDisplayName: ="AR Backup Email 1"
-                                    FieldName: ="cr7bb_arbackupemail1"
-                                    FieldType: ="s"
-                                    Order: =7
-                  - Customer_FormView:
-                      Control: GroupContainer@1.3.0
-                      Variant: ManualLayout
-                      Properties:
-                        Height: =Parent.Height
-                        Visible: =_currentMode = "New" || _currentMode = "Edit"
-                        Width: =Parent.Width
-                      Children:
-                        - Customer_FormContainer:
-                            Control: GroupContainer@1.3.0
+                                    DropShadow: =DropShadow.None
+                                    LayoutDirection: =LayoutDirection.Vertical
+                                    LayoutGap: =3
+                                    LayoutMinHeight: =90
+                                    LayoutMinWidth: =100
+                                    Width: =Parent.Width - 30
+                                  Children:
+                                    - Dash_SAPTransCount:
+                                        Control: Text@0.0.51
+                                        Properties:
+                                          Font: =Font.Lato
+                                          FontColor: =RGBA(50, 50, 50, 1)
+                                          Height: =20
+                                          Size: =13
+                                          Text: |-
+                                            ="Transactions: " & If(IsBlank(_processLog), "-", Text(_processLog.cr7bb_transactionsprocessed))
+                                          VerticalAlign: =VerticalAlign.Middle
+                                          Width: =Parent.Width - 30
+                                    - Dash_SAPUnprocessed:
+                                        Control: Text@0.0.51
+                                        Properties:
+                                          Font: =Font.Lato
+                                          FontColor: =RGBA(100, 100, 100, 1)
+                                          Height: =20
+                                          Size: =12
+                                          Text: |-
+                                            ="Unprocessed: " & Text(CountRows(Filter('[THFinanceCashCollection]Transactions', cr7bb_transactionprocessdate >= _selectedDate && cr7bb_transactionprocessdate < DateAdd(_selectedDate, 1, TimeUnit.Days) && cr7bb_isprocessed = false)))
+                                          VerticalAlign: =VerticalAlign.Middle
+                                          Width: =Parent.Width - 30
+                                    - Dash_SAPExcluded:
+                                        Control: Text@0.0.51
+                                        Properties:
+                                          Font: =Font.Lato
+                                          FontColor: =RGBA(168, 0, 0, 1)
+                                          Height: =20
+                                          Size: =12
+                                          Text: |-
+                                            ="Excluded: " & Text(CountRows(Filter('[THFinanceCashCollection]Transactions', cr7bb_transactionprocessdate >= _selectedDate && cr7bb_transactionprocessdate < DateAdd(_selectedDate, 1, TimeUnit.Days) && cr7bb_isexcluded = true)))
+                                          VerticalAlign: =VerticalAlign.Middle
+                                          Width: =Parent.Width - 30
+                                    - Dash_SAPEmailed:
+                                        Control: Text@0.0.51
+                                        Properties:
+                                          Font: =Font.Lato
+                                          FontColor: =RGBA(16, 124, 16, 1)
+                                          Height: =20
+                                          Size: =12
+                                          Text: |-
+                                            ="In Emails: " & Text(CountRows(Filter('[THFinanceCashCollection]Transactions', cr7bb_transactionprocessdate >= _selectedDate && cr7bb_transactionprocessdate < DateAdd(_selectedDate, 1, TimeUnit.Days) && cr7bb_emailsent = true)))
+                                          VerticalAlign: =VerticalAlign.Middle
+                                          Width: =Parent.Width - 30
+                        - Dash_EmailGenPanel:
+                            Control: GroupContainer@1.4.0
                             Variant: AutoLayout
                             Properties:
-                              Height: =Parent.Height - 50
+                              DropShadow: =DropShadow.Regular
+                              Fill: =RGBA(255, 255, 255, 1)
                               LayoutDirection: =LayoutDirection.Vertical
-                              LayoutGap: =15
-                              LayoutOverflowY: =LayoutOverflow.Scroll
-                              PaddingLeft: =20
-                              PaddingRight: =20
-                              PaddingTop: =20
-                              Width: =Parent.Width
-                            Children:
-                              - Customer_Form_Title:
-                                  Control: Text@0.0.51
-                                  Properties:
-                                    Font: =Font.Lato
-                                    FontColor: =RGBA(0, 0, 0, 1)
-                                    Height: =30
-                                    Size: =18
-                                    Text: |-
-                                      =If(
-                                          _currentMode = "New",
-                                          "Add New Customer",
-                                          "Edit Customer"
-                                      )
-                                    Weight: ='TextCanvas.Weight'.Bold
-                                    Width: =Parent.Width - 40
-                              - Customer_Form_BasicSection:
-                                  Control: Text@0.0.51
-                                  Properties:
-                                    Font: =Font.Lato
-                                    FontColor: =RGBA(100, 100, 100, 1)
-                                    Height: =25
-                                    Text: ="Basic Information"
-                                    Weight: ='TextCanvas.Weight'.Bold
-                                    Width: =Parent.Width - 40
-                              - Customer_Form_CustomerCodeLabel:
-                                  Control: Text@0.0.51
-                                  Properties:
-                                    Font: =Font.Lato
-                                    FontColor: =RGBA(100, 100, 100, 1)
-                                    Height: =25
-                                    Text: |-
-                                      ="Customer Code: *"
-                                    Weight: ='TextCanvas.Weight'.Semibold
-                                    Width: =Parent.Width - 40
-                              - Customer_Form_CustomerCodeInput:
-                                  Control: TextInput@0.0.54
-                                  Properties:
-                                    BasePaletteColor: =RGBA(0, 101, 161, 1)
-                                    DisplayMode: |-
-                                      =If(
-                                          _currentMode = "Edit",
-                                          DisplayMode.View,
-                                          DisplayMode.Edit
-                                      )
-                                    Height: =40
-                                    Value: |-
-                                      =If(
-                                          _currentMode = "Edit",
-                                          _selectedCustomer.cr7bb_customercode,
-                                          ""
-                                      )
-                                    Width: =Parent.Width - 40
-                              - Customer_Form_CustomerNameLabel:
-                                  Control: Text@0.0.51
-                                  Properties:
-                                    Font: =Font.Lato
-                                    FontColor: =RGBA(100, 100, 100, 1)
-                                    Height: =25
-                                    Text: |-
-                                      ="Customer Name: *"
-                                    Weight: ='TextCanvas.Weight'.Semibold
-                                    Width: =Parent.Width - 40
-                              - Customer_Form_CustomerNameInput:
-                                  Control: TextInput@0.0.54
-                                  Properties:
-                                    BasePaletteColor: =RGBA(0, 101, 161, 1)
-                                    Height: =40
-                                    Value: |-
-                                      =If(
-                                          _currentMode = "Edit",
-                                          _selectedCustomer.cr7bb_customername,
-                                          ""
-                                      )
-                                    Width: =Parent.Width - 40
-                              - Customer_Form_RegionLabel:
-                                  Control: Text@0.0.51
-                                  Properties:
-                                    Font: =Font.Lato
-                                    FontColor: =RGBA(100, 100, 100, 1)
-                                    Height: =25
-                                    Text: |-
-                                      ="Region: *"
-                                    Weight: ='TextCanvas.Weight'.Semibold
-                                    Width: =Parent.Width - 40
-                              - Customer_Form_RegionDropdown:
-                                  Control: ComboBox@0.0.51
-                                  Properties:
-                                    BasePaletteColor: =RGBA(0, 101, 161, 1)
-                                    DefaultSelectedItems: |-
-                                      =If(
-                                          _currentMode = "Edit" && !IsBlank(_selectedCustomer),
-                                          [_selectedCustomer.Region]
-                                      )
-                                    Height: =40
-                                    Items: =Choices('Region Choice')
-                                    Width: =Parent.Width - 40
-                              - Customer_Form_EmailSection:
-                                  Control: Text@0.0.51
-                                  Properties:
-                                    Font: =Font.Lato
-                                    FontColor: =RGBA(100, 100, 100, 1)
-                                    Height: =25
-                                    Text: ="Customer Emails"
-                                    Weight: ='TextCanvas.Weight'.Bold
-                                    Width: =Parent.Width - 40
-                              - Customer_Form_CustomerEmail1Label:
-                                  Control: Text@0.0.51
-                                  Properties:
-                                    Font: =Font.Lato
-                                    FontColor: =RGBA(100, 100, 100, 1)
-                                    Height: =25
-                                    Text: |-
-                                      ="Customer Email 1: *"
-                                    Weight: ='TextCanvas.Weight'.Semibold
-                                    Width: =Parent.Width - 40
-                              - Customer_Form_CustomerEmail1Input:
-                                  Control: TextInput@0.0.54
-                                  Properties:
-                                    BasePaletteColor: =RGBA(0, 101, 161, 1)
-                                    Height: =40
-                                    Value: |-
-                                      =If(
-                                          _currentMode = "Edit",
-                                          _selectedCustomer.cr7bb_customeremail1,
-                                          ""
-                                      )
-                                    Width: =Parent.Width - 40
-                              - Customer_Form_CustomerEmail2Label:
-                                  Control: Text@0.0.51
-                                  Properties:
-                                    Font: =Font.Lato
-                                    FontColor: =RGBA(100, 100, 100, 1)
-                                    Height: =25
-                                    Text: ="Customer Email 2:"
-                                    Weight: ='TextCanvas.Weight'.Semibold
-                                    Width: =Parent.Width - 40
-                              - Customer_Form_CustomerEmail2Input:
-                                  Control: TextInput@0.0.54
-                                  Properties:
-                                    BasePaletteColor: =RGBA(0, 101, 161, 1)
-                                    Height: =40
-                                    Value: |-
-                                      =If(
-                                          _currentMode = "Edit",
-                                          _selectedCustomer.cr7bb_customeremail2,
-                                          ""
-                                      )
-                                    Width: =Parent.Width - 40
-                              - Customer_Form_CustomerEmail3Label:
-                                  Control: Text@0.0.51
-                                  Properties:
-                                    Font: =Font.Lato
-                                    FontColor: =RGBA(100, 100, 100, 1)
-                                    Height: =25
-                                    Text: ="Customer Email 3:"
-                                    Weight: ='TextCanvas.Weight'.Semibold
-                                    Width: =Parent.Width - 40
-                              - Customer_Form_CustomerEmail3Input:
-                                  Control: TextInput@0.0.54
-                                  Properties:
-                                    BasePaletteColor: =RGBA(0, 101, 161, 1)
-                                    Height: =40
-                                    Value: |-
-                                      =If(
-                                          _currentMode = "Edit",
-                                          _selectedCustomer.cr7bb_customeremail3,
-                                          ""
-                                      )
-                                    Width: =Parent.Width - 40
-                              - Customer_Form_CustomerEmail4Label:
-                                  Control: Text@0.0.51
-                                  Properties:
-                                    Font: =Font.Lato
-                                    FontColor: =RGBA(100, 100, 100, 1)
-                                    Height: =25
-                                    Text: ="Customer Email 4:"
-                                    Weight: ='TextCanvas.Weight'.Semibold
-                                    Width: =Parent.Width - 40
-                              - Customer_Form_CustomerEmail4Input:
-                                  Control: TextInput@0.0.54
-                                  Properties:
-                                    BasePaletteColor: =RGBA(0, 101, 161, 1)
-                                    Height: =40
-                                    Value: |-
-                                      =If(
-                                          _currentMode = "Edit",
-                                          _selectedCustomer.cr7bb_customeremail4,
-                                          ""
-                                      )
-                                    Width: =Parent.Width - 40
-                              - Customer_Form_SalesSection:
-                                  Control: Text@0.0.51
-                                  Properties:
-                                    Font: =Font.Lato
-                                    FontColor: =RGBA(100, 100, 100, 1)
-                                    Height: =25
-                                    Text: ="Sales Team Emails"
-                                    Weight: ='TextCanvas.Weight'.Bold
-                                    Width: =Parent.Width - 40
-                              - Customer_Form_SalesEmail1Label:
-                                  Control: Text@0.0.51
-                                  Properties:
-                                    Font: =Font.Lato
-                                    FontColor: =RGBA(100, 100, 100, 1)
-                                    Height: =25
-                                    Text: |-
-                                      ="Sales Email 1: *"
-                                    Weight: ='TextCanvas.Weight'.Semibold
-                                    Width: =Parent.Width - 40
-                              - Customer_Form_SalesEmail1Input:
-                                  Control: TextInput@0.0.54
-                                  Properties:
-                                    BasePaletteColor: =RGBA(0, 101, 161, 1)
-                                    Height: =40
-                                    Value: |-
-                                      =If(
-                                          _currentMode = "Edit",
-                                          _selectedCustomer.cr7bb_salesemail1,
-                                          ""
-                                      )
-                                    Width: =Parent.Width - 40
-                              - Customer_Form_SalesEmail2Label:
-                                  Control: Text@0.0.51
-                                  Properties:
-                                    Font: =Font.Lato
-                                    FontColor: =RGBA(100, 100, 100, 1)
-                                    Height: =25
-                                    Text: ="Sales Email 2:"
-                                    Weight: ='TextCanvas.Weight'.Semibold
-                                    Width: =Parent.Width - 40
-                              - Customer_Form_SalesEmail2Input:
-                                  Control: TextInput@0.0.54
-                                  Properties:
-                                    BasePaletteColor: =RGBA(0, 101, 161, 1)
-                                    Height: =40
-                                    Value: |-
-                                      =If(
-                                          _currentMode = "Edit",
-                                          _selectedCustomer.cr7bb_salesemail2,
-                                          ""
-                                      )
-                                    Width: =Parent.Width - 40
-                              - Customer_Form_SalesEmail3Label:
-                                  Control: Text@0.0.51
-                                  Properties:
-                                    Font: =Font.Lato
-                                    FontColor: =RGBA(100, 100, 100, 1)
-                                    Height: =25
-                                    Text: ="Sales Email 3:"
-                                    Weight: ='TextCanvas.Weight'.Semibold
-                                    Width: =Parent.Width - 40
-                              - Customer_Form_SalesEmail3Input:
-                                  Control: TextInput@0.0.54
-                                  Properties:
-                                    BasePaletteColor: =RGBA(0, 101, 161, 1)
-                                    Height: =40
-                                    Value: |-
-                                      =If(
-                                          _currentMode = "Edit",
-                                          _selectedCustomer.cr7bb_salesemail3,
-                                          ""
-                                      )
-                                    Width: =Parent.Width - 40
-                              - Customer_Form_SalesEmail4Label:
-                                  Control: Text@0.0.51
-                                  Properties:
-                                    Font: =Font.Lato
-                                    FontColor: =RGBA(100, 100, 100, 1)
-                                    Height: =25
-                                    Text: ="Sales Email 4:"
-                                    Weight: ='TextCanvas.Weight'.Semibold
-                                    Width: =Parent.Width - 40
-                              - Customer_Form_SalesEmail4Input:
-                                  Control: TextInput@0.0.54
-                                  Properties:
-                                    BasePaletteColor: =RGBA(0, 101, 161, 1)
-                                    Height: =40
-                                    Value: |-
-                                      =If(
-                                          _currentMode = "Edit",
-                                          _selectedCustomer.cr7bb_salesemail4,
-                                          ""
-                                      )
-                                    Width: =Parent.Width - 40
-                              - Customer_Form_SalesEmail5Label:
-                                  Control: Text@0.0.51
-                                  Properties:
-                                    Font: =Font.Lato
-                                    FontColor: =RGBA(100, 100, 100, 1)
-                                    Height: =25
-                                    Text: ="Sales Email 5:"
-                                    Weight: ='TextCanvas.Weight'.Semibold
-                                    Width: =Parent.Width - 40
-                              - Customer_Form_SalesEmail5Input:
-                                  Control: TextInput@0.0.54
-                                  Properties:
-                                    BasePaletteColor: =RGBA(0, 101, 161, 1)
-                                    Height: =40
-                                    Value: |-
-                                      =If(
-                                          _currentMode = "Edit",
-                                          _selectedCustomer.cr7bb_salesemail5,
-                                          ""
-                                      )
-                                    Width: =Parent.Width - 40
-                              - Customer_Form_ARSection:
-                                  Control: Text@0.0.51
-                                  Properties:
-                                    Font: =Font.Lato
-                                    FontColor: =RGBA(100, 100, 100, 1)
-                                    Height: =25
-                                    Text: ="AR Backup Emails"
-                                    Weight: ='TextCanvas.Weight'.Bold
-                                    Width: =Parent.Width - 40
-                              - Customer_Form_ARBackupEmail1Label:
-                                  Control: Text@0.0.51
-                                  Properties:
-                                    Font: =Font.Lato
-                                    FontColor: =RGBA(100, 100, 100, 1)
-                                    Height: =25
-                                    Text: |-
-                                      ="AR Backup Email 1: *"
-                                    Weight: ='TextCanvas.Weight'.Semibold
-                                    Width: =Parent.Width - 40
-                              - Customer_Form_ARBackupEmail1Input:
-                                  Control: TextInput@0.0.54
-                                  Properties:
-                                    BasePaletteColor: =RGBA(0, 101, 161, 1)
-                                    Height: =40
-                                    Value: |-
-                                      =If(
-                                          _currentMode = "Edit",
-                                          _selectedCustomer.cr7bb_arbackupemail1,
-                                          ""
-                                      )
-                                    Width: =Parent.Width - 40
-                              - Customer_Form_ARBackupEmail2Label:
-                                  Control: Text@0.0.51
-                                  Properties:
-                                    Font: =Font.Lato
-                                    FontColor: =RGBA(100, 100, 100, 1)
-                                    Height: =25
-                                    Text: ="AR Backup Email 2:"
-                                    Weight: ='TextCanvas.Weight'.Semibold
-                                    Width: =Parent.Width - 40
-                              - Customer_Form_ARBackupEmail2Input:
-                                  Control: TextInput@0.0.54
-                                  Properties:
-                                    BasePaletteColor: =RGBA(0, 101, 161, 1)
-                                    Height: =40
-                                    Value: |-
-                                      =If(
-                                          _currentMode = "Edit",
-                                          _selectedCustomer.cr7bb_arbackupemail2,
-                                          ""
-                                      )
-                                    Width: =Parent.Width - 40
-                              - Customer_Form_ARBackupEmail3Label:
-                                  Control: Text@0.0.51
-                                  Properties:
-                                    Font: =Font.Lato
-                                    FontColor: =RGBA(100, 100, 100, 1)
-                                    Height: =25
-                                    Text: ="AR Backup Email 3:"
-                                    Weight: ='TextCanvas.Weight'.Semibold
-                                    Width: =Parent.Width - 40
-                              - Customer_Form_ARBackupEmail3Input:
-                                  Control: TextInput@0.0.54
-                                  Properties:
-                                    BasePaletteColor: =RGBA(0, 101, 161, 1)
-                                    Height: =40
-                                    Value: |-
-                                      =If(
-                                          _currentMode = "Edit",
-                                          _selectedCustomer.cr7bb_arbackupemail3,
-                                          ""
-                                      )
-                                    Width: =Parent.Width - 40
-                              - Customer_Form_ARBackupEmail4Label:
-                                  Control: Text@0.0.51
-                                  Properties:
-                                    Font: =Font.Lato
-                                    FontColor: =RGBA(100, 100, 100, 1)
-                                    Height: =25
-                                    Text: ="AR Backup Email 4:"
-                                    Weight: ='TextCanvas.Weight'.Semibold
-                                    Width: =Parent.Width - 40
-                              - Customer_Form_ARBackupEmail4Input:
-                                  Control: TextInput@0.0.54
-                                  Properties:
-                                    BasePaletteColor: =RGBA(0, 101, 161, 1)
-                                    Height: =40
-                                    Value: |-
-                                      =If(
-                                          _currentMode = "Edit",
-                                          _selectedCustomer.cr7bb_arbackupemail4,
-                                          ""
-                                      )
-                                    Width: =Parent.Width - 40
-                        - Customer_FormActionBar:
-                            Control: GroupContainer@1.3.0
-                            Variant: AutoLayout
-                            Properties:
-                              Fill: =RGBA(245, 245, 245, 1)
-                              Height: =50
-                              LayoutAlignItems: =LayoutAlignItems.Center
-                              LayoutDirection: =LayoutDirection.Horizontal
-                              LayoutGap: =10
-                              LayoutJustifyContent: =LayoutJustifyContent.End
+                              LayoutGap: =8
+                              LayoutMinWidth: =100
+                              PaddingBottom: =15
+                              PaddingLeft: =15
                               PaddingRight: =15
-                              Width: =Parent.Width
-                              Y: =Parent.Height - Self.Height
+                              PaddingTop: =15
+                              RadiusBottomLeft: =10
+                              RadiusBottomRight: =10
+                              RadiusTopLeft: =10
+                              RadiusTopRight: =10
                             Children:
-                              - Customer_Form_SaveBtn:
-                                  Control: Button@0.0.45
+                              - Dash_EmailGenHeader:
+                                  Control: GroupContainer@1.4.0
+                                  Variant: AutoLayout
                                   Properties:
-                                    BasePaletteColor: =RGBA(0, 101, 161, 1)
-                                    Height: =35
-                                    Icon: ="Save"
-                                    OnSelect: |-
-                                      =If(
-                                          _currentMode = "New",
-                                          Patch(
-                                              '[THFinanceCashCollection]Customers',
-                                              Defaults('[THFinanceCashCollection]Customers'),
-                                              {
-                                                  cr7bb_customercode: Customer_Form_CustomerCodeInput.Value,
-                                                  cr7bb_customername: Customer_Form_CustomerNameInput.Value,
-                                                  Region: Customer_Form_RegionDropdown.Selected.Value,
-                                                  cr7bb_customeremail1: Customer_Form_CustomerEmail1Input.Value,
-                                                  cr7bb_customeremail2: Customer_Form_CustomerEmail2Input.Value,
-                                                  cr7bb_customeremail3: Customer_Form_CustomerEmail3Input.Value,
-                                                  cr7bb_customeremail4: Customer_Form_CustomerEmail4Input.Value,
-                                                  cr7bb_salesemail1: Customer_Form_SalesEmail1Input.Value,
-                                                  cr7bb_salesemail2: Customer_Form_SalesEmail2Input.Value,
-                                                  cr7bb_salesemail3: Customer_Form_SalesEmail3Input.Value,
-                                                  cr7bb_salesemail4: Customer_Form_SalesEmail4Input.Value,
-                                                  cr7bb_salesemail5: Customer_Form_SalesEmail5Input.Value,
-                                                  cr7bb_arbackupemail1: Customer_Form_ARBackupEmail1Input.Value,
-                                                  cr7bb_arbackupemail2: Customer_Form_ARBackupEmail2Input.Value,
-                                                  cr7bb_arbackupemail3: Customer_Form_ARBackupEmail3Input.Value,
-                                                  cr7bb_arbackupemail4: Customer_Form_ARBackupEmail4Input.Value
-                                              }
-                                          ),
-                                          Patch(
-                                              '[THFinanceCashCollection]Customers',
-                                              _selectedCustomer,
-                                              {
-                                                  cr7bb_customername: Customer_Form_CustomerNameInput.Value,
-                                                  Region: Customer_Form_RegionDropdown.Selected.Value,
-                                                  cr7bb_customeremail1: Customer_Form_CustomerEmail1Input.Value,
-                                                  cr7bb_customeremail2: Customer_Form_CustomerEmail2Input.Value,
-                                                  cr7bb_customeremail3: Customer_Form_CustomerEmail3Input.Value,
-                                                  cr7bb_customeremail4: Customer_Form_CustomerEmail4Input.Value,
-                                                  cr7bb_salesemail1: Customer_Form_SalesEmail1Input.Value,
-                                                  cr7bb_salesemail2: Customer_Form_SalesEmail2Input.Value,
-                                                  cr7bb_salesemail3: Customer_Form_SalesEmail3Input.Value,
-                                                  cr7bb_salesemail4: Customer_Form_SalesEmail4Input.Value,
-                                                  cr7bb_salesemail5: Customer_Form_SalesEmail5Input.Value,
-                                                  cr7bb_arbackupemail1: Customer_Form_ARBackupEmail1Input.Value,
-                                                  cr7bb_arbackupemail2: Customer_Form_ARBackupEmail2Input.Value,
-                                                  cr7bb_arbackupemail3: Customer_Form_ARBackupEmail3Input.Value,
-                                                  cr7bb_arbackupemail4: Customer_Form_ARBackupEmail4Input.Value
-                                              }
-                                          )
-                                      );
-                                      If(
-                                          IsEmpty(Errors('[THFinanceCashCollection]Customers')),
-                                          Notify("Customer saved successfully", NotificationType.Success);
-                                          UpdateContext({_currentMode: "View"}),
-                                          Notify("Error saving customer: " & First(Errors('[THFinanceCashCollection]Customers')).Message, NotificationType.Error)
-                                      )
-                                    Text: =If(_currentMode = "New", "Add", "Save")
-                                    Width: =90
-                              - Customer_Form_CancelBtn:
-                                  Control: Button@0.0.45
+                                    DropShadow: =DropShadow.None
+                                    FillPortions: =0
+                                    Height: =25
+                                    LayoutAlignItems: =LayoutAlignItems.Center
+                                    LayoutDirection: =LayoutDirection.Horizontal
+                                    LayoutGap: =8
+                                    LayoutMinHeight: =25
+                                    LayoutMinWidth: =100
+                                    Width: =Parent.Width - 30
+                                  Children:
+                                    - Dash_EmailGenIcon:
+                                        Control: Classic/Icon@2.5.0
+                                        Properties:
+                                          Color: =RGBA(0, 101, 161, 1)
+                                          Height: =24
+                                          Icon: =Icon.Mail
+                                          Width: =24
+                                    - Dash_EmailGenTitle:
+                                        Control: Text@0.0.51
+                                        Properties:
+                                          FillPortions: =1
+                                          Font: =Font.Lato
+                                          FontColor: =RGBA(0, 101, 161, 1)
+                                          Height: =25
+                                          Text: ="EMAIL GENERATION"
+                                          VerticalAlign: =VerticalAlign.Middle
+                                          Weight: ='TextCanvas.Weight'.Semibold
+                              - Dash_EmailGenStatus:
+                                  Control: GroupContainer@1.4.0
+                                  Variant: AutoLayout
                                   Properties:
-                                    BasePaletteColor: =RGBA(100, 100, 100, 1)
-                                    Height: =35
-                                    Icon: ="Cancel"
-                                    OnSelect: |-
-                                      =UpdateContext({_currentMode: "View"})
-                                    Text: ="Cancel"
-                                    Width: =90
-            - Customer_NavigationMenu:
-                Control: CanvasComponent
-                ComponentName: NavigationMenu
-                Properties:
-                  Fill: =RGBA(255, 255, 255, 0.5)
-                  Height: =Parent.Height - 70
-                  Visible: =If(_showMenu, true, false)
-                  Width: =260
-                  Y: =70
-                  navItems: =Navigation
-                  navSelected: =currentScreen
-            - Customer_DeleteConfirmationOverlay:
-                Control: GroupContainer@1.3.0
-                Variant: ManualLayout
-                Properties:
-                  Fill: =RGBA(0, 0, 0, 0.5)
-                  Height: =Parent.Height
-                  Visible: =_showDeleteConfirmation
-                  Width: =Parent.Width
-                Children:
-                  - Customer_DeleteConfirmationBox:
-                      Control: GroupContainer@1.3.0
+                                    DropShadow: =DropShadow.None
+                                    FillPortions: =0
+                                    Height: =22
+                                    LayoutAlignItems: =LayoutAlignItems.Center
+                                    LayoutDirection: =LayoutDirection.Horizontal
+                                    LayoutGap: =5
+                                    LayoutMinHeight: =22
+                                    LayoutMinWidth: =100
+                                    Width: =Parent.Width - 30
+                                  Children:
+                                    - Dash_EmailGenStatusIcon:
+                                        Control: Classic/Icon@2.5.0
+                                        Properties:
+                                          Color: =If(_emailCount > 0, RGBA(16, 124, 16, 1), RGBA(128, 128, 128, 1))
+                                          Height: =20
+                                          Icon: =If(_emailCount > 0, Icon.CheckBadge, Icon.Clock)
+                                          Width: =20
+                                    - Dash_EmailGenStatusText:
+                                        Control: Text@0.0.51
+                                        Properties:
+                                          FillPortions: =1
+                                          Font: =Font.Lato
+                                          FontColor: =RGBA(100, 100, 100, 1)
+                                          Height: =22
+                                          Size: =12
+                                          Text: =If(_emailCount > 0, "Completed", "Not run")
+                                          VerticalAlign: =VerticalAlign.Middle
+                              - Dash_EmailGenStats:
+                                  Control: GroupContainer@1.4.0
+                                  Variant: AutoLayout
+                                  Properties:
+                                    DropShadow: =DropShadow.None
+                                    LayoutDirection: =LayoutDirection.Vertical
+                                    LayoutGap: =3
+                                    LayoutMinHeight: =40
+                                    LayoutMinWidth: =100
+                                    Width: =Parent.Width - 30
+                                  Children:
+                                    - Dash_EmailGenCount:
+                                        Control: Text@0.0.51
+                                        Properties:
+                                          Font: =Font.Lato
+                                          FontColor: =RGBA(50, 50, 50, 1)
+                                          Height: =20
+                                          Size: =13
+                                          Text: |-
+                                            ="Emails Created: " & Text(_emailCount)
+                                          VerticalAlign: =VerticalAlign.Middle
+                                          Width: =Parent.Width - 30
+                                    - Dash_EmailGenCustomers:
+                                        Control: Text@0.0.51
+                                        Properties:
+                                          Font: =Font.Lato
+                                          FontColor: =RGBA(100, 100, 100, 1)
+                                          Height: =20
+                                          Size: =12
+                                          Text: |-
+                                            ="Customers: " & Text(_emailCount)
+                                          VerticalAlign: =VerticalAlign.Middle
+                                          Width: =Parent.Width - 30
+                  - Dash_OutstandingPanel:
+                      Control: GroupContainer@1.4.0
                       Variant: AutoLayout
                       Properties:
                         DropShadow: =DropShadow.Regular
                         Fill: =RGBA(255, 255, 255, 1)
+                        FillPortions: =0
                         LayoutDirection: =LayoutDirection.Vertical
-                        LayoutGap: =20
+                        LayoutGap: =12
+                        LayoutMinHeight: =200
+                        LayoutMinWidth: =100
+                        PaddingBottom: =15
+                        PaddingLeft: =15
+                        PaddingRight: =15
+                        PaddingTop: =15
+                        RadiusBottomLeft: =10
+                        RadiusBottomRight: =10
+                        RadiusTopLeft: =10
+                        RadiusTopRight: =10
+                        Width: =Parent.Width - 20
+                      Children:
+                        - Dash_OutstandingHeader:
+                            Control: GroupContainer@1.4.0
+                            Variant: AutoLayout
+                            Properties:
+                              DropShadow: =DropShadow.None
+                              FillPortions: =0
+                              Height: =25
+                              LayoutAlignItems: =LayoutAlignItems.Center
+                              LayoutDirection: =LayoutDirection.Horizontal
+                              LayoutGap: =8
+                              LayoutMinHeight: =25
+                              LayoutMinWidth: =100
+                              Width: =Parent.Width - 30
+                            Children:
+                              - Dash_OutstandingIcon:
+                                  Control: Classic/Icon@2.5.0
+                                  Properties:
+                                    Color: =RGBA(0, 101, 161, 1)
+                                    Height: =24
+                                    Icon: =Icon.Currency
+                                    Width: =24
+                              - Dash_OutstandingTitle:
+                                  Control: Text@0.0.51
+                                  Properties:
+                                    FillPortions: =1
+                                    Font: =Font.Lato
+                                    FontColor: =RGBA(0, 101, 161, 1)
+                                    Height: =25
+                                    Text: ="TODAY'S OUTSTANDING"
+                                    VerticalAlign: =VerticalAlign.Middle
+                                    Weight: ='TextCanvas.Weight'.Semibold
+                        - Dash_OutstandingSummary:
+                            Control: GroupContainer@1.4.0
+                            Variant: AutoLayout
+                            Properties:
+                              DropShadow: =DropShadow.None
+                              FillPortions: =0
+                              Height: =40
+                              LayoutAlignItems: =LayoutAlignItems.Center
+                              LayoutDirection: =LayoutDirection.Horizontal
+                              LayoutJustifyContent: =LayoutJustifyContent.SpaceBetween
+                              LayoutMinHeight: =40
+                              LayoutMinWidth: =100
+                              Width: =Parent.Width - 30
+                            Children:
+                              - Dash_TotalAmount:
+                                  Control: Text@0.0.51
+                                  Properties:
+                                    FillPortions: =1
+                                    Font: =Font.Lato
+                                    FontColor: =RGBA(0, 101, 161, 1)
+                                    Height: =40
+                                    Size: =28
+                                    Text: ="฿" & Text(_totalOutstanding, "#,##0")
+                                    VerticalAlign: =VerticalAlign.Middle
+                                    Weight: ='TextCanvas.Weight'.Bold
+                              - Dash_CustomerCount:
+                                  Control: Text@0.0.51
+                                  Properties:
+                                    Align: ='TextCanvas.Align'.End
+                                    Font: =Font.Lato
+                                    FontColor: =RGBA(100, 100, 100, 1)
+                                    Height: =40
+                                    Text: =Text(_emailCount) & " Customers"
+                                    VerticalAlign: =VerticalAlign.Middle
+                                    Width: =120
+                        - Dash_DayCountCards:
+                            Control: GroupContainer@1.4.0
+                            Variant: AutoLayout
+                            Properties:
+                              DropShadow: =DropShadow.None
+                              LayoutDirection: =LayoutDirection.Horizontal
+                              LayoutGap: =10
+                              LayoutMinHeight: =80
+                              LayoutMinWidth: =100
+                              Width: =Parent.Width - 30
+                            Children:
+                              - Dash_Day12Card:
+                                  Control: GroupContainer@1.4.0
+                                  Variant: AutoLayout
+                                  Properties:
+                                    Fill: =RGBA(128, 128, 128, 1)
+                                    LayoutAlignItems: =LayoutAlignItems.Center
+                                    LayoutDirection: =LayoutDirection.Vertical
+                                    LayoutGap: =5
+                                    LayoutJustifyContent: =LayoutJustifyContent.Center
+                                    LayoutMinHeight: =80
+                                    LayoutMinWidth: =80
+                                    PaddingBottom: =10
+                                    PaddingLeft: =10
+                                    PaddingRight: =10
+                                    PaddingTop: =10
+                                    RadiusBottomLeft: =8
+                                    RadiusBottomRight: =8
+                                    RadiusTopLeft: =8
+                                    RadiusTopRight: =8
+                                  Children:
+                                    - Dash_Day12Label:
+                                        Control: Text@0.0.51
+                                        Properties:
+                                          Align: ='TextCanvas.Align'.Center
+                                          AutoHeight: =true
+                                          Font: =Font.Lato
+                                          FontColor: =RGBA(255, 255, 255, 1)
+                                          Size: =12
+                                          Text: ="Day 1-2"
+                                          Weight: ='TextCanvas.Weight'.Semibold
+                                          Width: =80
+                                    - Dash_Day12Count:
+                                        Control: Text@0.0.51
+                                        Properties:
+                                          Align: ='TextCanvas.Align'.Center
+                                          AutoHeight: =true
+                                          Font: =Font.Lato
+                                          FontColor: =RGBA(255, 255, 255, 1)
+                                          Size: =20
+                                          Text: =Text(_day12Count)
+                                          Weight: ='TextCanvas.Weight'.Bold
+                                          Width: =80
+                                    - Dash_Day12Status:
+                                        Control: Text@0.0.51
+                                        Properties:
+                                          Align: ='TextCanvas.Align'.Center
+                                          AutoHeight: =true
+                                          Font: =Font.Lato
+                                          FontColor: =RGBA(255, 255, 255, 0.8)
+                                          Size: =10
+                                          Text: ="Standard"
+                                          Width: =80
+                              - Dash_Day3Card:
+                                  Control: GroupContainer@1.4.0
+                                  Variant: AutoLayout
+                                  Properties:
+                                    Fill: =RGBA(255, 185, 0, 1)
+                                    LayoutAlignItems: =LayoutAlignItems.Center
+                                    LayoutDirection: =LayoutDirection.Vertical
+                                    LayoutGap: =5
+                                    LayoutJustifyContent: =LayoutJustifyContent.Center
+                                    LayoutMinHeight: =80
+                                    LayoutMinWidth: =80
+                                    PaddingBottom: =10
+                                    PaddingLeft: =10
+                                    PaddingRight: =10
+                                    PaddingTop: =10
+                                    RadiusBottomLeft: =8
+                                    RadiusBottomRight: =8
+                                    RadiusTopLeft: =8
+                                    RadiusTopRight: =8
+                                  Children:
+                                    - Dash_Day3Label:
+                                        Control: Text@0.0.51
+                                        Properties:
+                                          Align: ='TextCanvas.Align'.Center
+                                          AutoHeight: =true
+                                          Font: =Font.Lato
+                                          FontColor: =RGBA(255, 255, 255, 1)
+                                          Size: =12
+                                          Text: ="Day 3"
+                                          Weight: ='TextCanvas.Weight'.Semibold
+                                          Width: =80
+                                    - Dash_Day3Count:
+                                        Control: Text@0.0.51
+                                        Properties:
+                                          Align: ='TextCanvas.Align'.Center
+                                          AutoHeight: =true
+                                          Font: =Font.Lato
+                                          FontColor: =RGBA(255, 255, 255, 1)
+                                          Size: =20
+                                          Text: =Text(_day3Count)
+                                          Weight: ='TextCanvas.Weight'.Bold
+                                          Width: =80
+                                    - Dash_Day3Status:
+                                        Control: Text@0.0.51
+                                        Properties:
+                                          Align: ='TextCanvas.Align'.Center
+                                          AutoHeight: =true
+                                          Font: =Font.Lato
+                                          FontColor: =RGBA(255, 255, 255, 0.8)
+                                          Size: =10
+                                          Text: ="Warning"
+                                          Width: =80
+                              - Dash_Day4PlusCard:
+                                  Control: GroupContainer@1.4.0
+                                  Variant: AutoLayout
+                                  Properties:
+                                    Fill: =RGBA(168, 0, 0, 1)
+                                    LayoutAlignItems: =LayoutAlignItems.Center
+                                    LayoutDirection: =LayoutDirection.Vertical
+                                    LayoutGap: =5
+                                    LayoutJustifyContent: =LayoutJustifyContent.Center
+                                    LayoutMinHeight: =80
+                                    LayoutMinWidth: =80
+                                    PaddingBottom: =10
+                                    PaddingLeft: =10
+                                    PaddingRight: =10
+                                    PaddingTop: =10
+                                    RadiusBottomLeft: =8
+                                    RadiusBottomRight: =8
+                                    RadiusTopLeft: =8
+                                    RadiusTopRight: =8
+                                  Children:
+                                    - Dash_Day4PlusLabel:
+                                        Control: Text@0.0.51
+                                        Properties:
+                                          Align: ='TextCanvas.Align'.Center
+                                          AutoHeight: =true
+                                          Font: =Font.Lato
+                                          FontColor: =RGBA(255, 255, 255, 1)
+                                          Size: =12
+                                          Text: ="Day 4+"
+                                          Weight: ='TextCanvas.Weight'.Semibold
+                                          Width: =80
+                                    - Dash_Day4PlusCount:
+                                        Control: Text@0.0.51
+                                        Properties:
+                                          Align: ='TextCanvas.Align'.Center
+                                          AutoHeight: =true
+                                          Font: =Font.Lato
+                                          FontColor: =RGBA(255, 255, 255, 1)
+                                          Size: =20
+                                          Text: =Text(_day4PlusCount)
+                                          Weight: ='TextCanvas.Weight'.Bold
+                                          Width: =80
+                                    - Dash_Day4PlusStatus:
+                                        Control: Text@0.0.51
+                                        Properties:
+                                          Align: ='TextCanvas.Align'.Center
+                                          AutoHeight: =true
+                                          Font: =Font.Lato
+                                          FontColor: =RGBA(255, 255, 255, 0.8)
+                                          Size: =10
+                                          Text: ="Urgent"
+                                          Width: =80
+                  - Dash_EmailStatusPanel:
+                      Control: GroupContainer@1.4.0
+                      Variant: AutoLayout
+                      Properties:
+                        DropShadow: =DropShadow.Regular
+                        Fill: =RGBA(255, 255, 255, 1)
+                        FillPortions: =0
+                        Height: =150
+                        LayoutDirection: =LayoutDirection.Vertical
+                        LayoutGap: =12
+                        LayoutMinHeight: =150
+                        LayoutMinWidth: =100
+                        PaddingBottom: =15
+                        PaddingLeft: =15
+                        PaddingRight: =15
+                        PaddingTop: =15
+                        RadiusBottomLeft: =10
+                        RadiusBottomRight: =10
+                        RadiusTopLeft: =10
+                        RadiusTopRight: =10
+                        Width: =Parent.Width - 20
+                      Children:
+                        - Dash_EmailStatusHeader:
+                            Control: GroupContainer@1.4.0
+                            Variant: AutoLayout
+                            Properties:
+                              DropShadow: =DropShadow.None
+                              FillPortions: =0
+                              Height: =25
+                              LayoutAlignItems: =LayoutAlignItems.Center
+                              LayoutDirection: =LayoutDirection.Horizontal
+                              LayoutGap: =8
+                              LayoutMinHeight: =25
+                              LayoutMinWidth: =100
+                              Width: =Parent.Width - 30
+                            Children:
+                              - Dash_EmailStatusIcon:
+                                  Control: Classic/Icon@2.5.0
+                                  Properties:
+                                    Color: =RGBA(0, 101, 161, 1)
+                                    Height: =24
+                                    Icon: =Icon.Send
+                                    Width: =24
+                              - Dash_EmailStatusTitle:
+                                  Control: Text@0.0.51
+                                  Properties:
+                                    FillPortions: =1
+                                    Font: =Font.Lato
+                                    FontColor: =RGBA(0, 101, 161, 1)
+                                    Height: =25
+                                    Text: ="EMAIL SEND STATUS"
+                                    VerticalAlign: =VerticalAlign.Middle
+                                    Weight: ='TextCanvas.Weight'.Semibold
+                        - Dash_EmailStatusBadges:
+                            Control: GroupContainer@1.4.0
+                            Variant: AutoLayout
+                            Properties:
+                              DropShadow: =DropShadow.None
+                              FillPortions: =0
+                              Height: =40
+                              LayoutAlignItems: =LayoutAlignItems.Center
+                              LayoutDirection: =LayoutDirection.Horizontal
+                              LayoutGap: =15
+                              LayoutMinHeight: =40
+                              LayoutMinWidth: =100
+                              Width: =Parent.Width - 30
+                            Children:
+                              - Dash_SentBadge:
+                                  Control: GroupContainer@1.4.0
+                                  Variant: AutoLayout
+                                  Properties:
+                                    DropShadow: =DropShadow.None
+                                    Fill: =RGBA(16, 124, 16, 0.15)
+                                    FillPortions: =0
+                                    Height: =35
+                                    LayoutAlignItems: =LayoutAlignItems.Center
+                                    LayoutDirection: =LayoutDirection.Horizontal
+                                    LayoutGap: =5
+                                    LayoutMinHeight: =35
+                                    LayoutMinWidth: =50
+                                    PaddingLeft: =12
+                                    PaddingRight: =12
+                                    RadiusBottomLeft: =18
+                                    RadiusBottomRight: =18
+                                    RadiusTopLeft: =18
+                                    RadiusTopRight: =18
+                                    Width: =100
+                                  Children:
+                                    - Dash_SentIcon:
+                                        Control: Classic/Icon@2.5.0
+                                        Properties:
+                                          Color: =RGBA(16, 124, 16, 1)
+                                          Height: =18
+                                          Icon: =Icon.CheckBadge
+                                          Width: =18
+                                    - Dash_SentText:
+                                        Control: Text@0.0.51
+                                        Properties:
+                                          FillPortions: =1
+                                          Font: =Font.Lato
+                                          FontColor: =RGBA(16, 124, 16, 1)
+                                          Height: =35
+                                          Size: =13
+                                          Text: =Text(_sentCount) & " Sent"
+                                          VerticalAlign: =VerticalAlign.Middle
+                                          Weight: ='TextCanvas.Weight'.Semibold
+                              - Dash_FailedBadge:
+                                  Control: GroupContainer@1.4.0
+                                  Variant: AutoLayout
+                                  Properties:
+                                    DropShadow: =DropShadow.None
+                                    Fill: =RGBA(168, 0, 0, 0.15)
+                                    FillPortions: =0
+                                    Height: =35
+                                    LayoutAlignItems: =LayoutAlignItems.Center
+                                    LayoutDirection: =LayoutDirection.Horizontal
+                                    LayoutGap: =5
+                                    LayoutMinHeight: =35
+                                    LayoutMinWidth: =50
+                                    PaddingLeft: =12
+                                    PaddingRight: =12
+                                    RadiusBottomLeft: =18
+                                    RadiusBottomRight: =18
+                                    RadiusTopLeft: =18
+                                    RadiusTopRight: =18
+                                    Visible: =_failedCount > 0
+                                    Width: =110
+                                  Children:
+                                    - Dash_FailedIcon:
+                                        Control: Classic/Icon@2.5.0
+                                        Properties:
+                                          Color: =RGBA(168, 0, 0, 1)
+                                          Height: =18
+                                          Icon: =Icon.Warning
+                                          Width: =18
+                                    - Dash_FailedText:
+                                        Control: Text@0.0.51
+                                        Properties:
+                                          FillPortions: =1
+                                          Font: =Font.Lato
+                                          FontColor: =RGBA(168, 0, 0, 1)
+                                          Height: =35
+                                          Size: =13
+                                          Text: =Text(_failedCount) & " Failed"
+                                          VerticalAlign: =VerticalAlign.Middle
+                                          Weight: ='TextCanvas.Weight'.Semibold
+                              - Dash_PendingBadge:
+                                  Control: GroupContainer@1.4.0
+                                  Variant: AutoLayout
+                                  Properties:
+                                    DropShadow: =DropShadow.None
+                                    Fill: =RGBA(128, 128, 128, 0.15)
+                                    FillPortions: =0
+                                    Height: =35
+                                    LayoutAlignItems: =LayoutAlignItems.Center
+                                    LayoutDirection: =LayoutDirection.Horizontal
+                                    LayoutGap: =5
+                                    LayoutMinHeight: =35
+                                    LayoutMinWidth: =50
+                                    PaddingLeft: =12
+                                    PaddingRight: =12
+                                    RadiusBottomLeft: =18
+                                    RadiusBottomRight: =18
+                                    RadiusTopLeft: =18
+                                    RadiusTopRight: =18
+                                    Visible: =_pendingCount > 0
+                                    Width: =120
+                                  Children:
+                                    - Dash_PendingIcon:
+                                        Control: Classic/Icon@2.5.0
+                                        Properties:
+                                          Color: =RGBA(128, 128, 128, 1)
+                                          Height: =18
+                                          Icon: =Icon.Clock
+                                          Width: =18
+                                    - Dash_PendingText:
+                                        Control: Text@0.0.51
+                                        Properties:
+                                          FillPortions: =1
+                                          Font: =Font.Lato
+                                          FontColor: =RGBA(128, 128, 128, 1)
+                                          Height: =35
+                                          Size: =13
+                                          Text: =Text(_pendingCount) & " Waiting"
+                                          VerticalAlign: =VerticalAlign.Middle
+                                          Weight: ='TextCanvas.Weight'.Semibold
+                        - Dash_EmailActions:
+                            Control: GroupContainer@1.4.0
+                            Variant: AutoLayout
+                            Properties:
+                              DropShadow: =DropShadow.None
+                              FillPortions: =0
+                              Height: =40
+                              LayoutAlignItems: =LayoutAlignItems.Center
+                              LayoutDirection: =LayoutDirection.Horizontal
+                              LayoutGap: =10
+                              LayoutMinHeight: =40
+                              LayoutMinWidth: =100
+                              Width: =Parent.Width - 30
+                            Children:
+                              - Dash_ReviewEmailsBtn:
+                                  Control: Button@0.0.45
+                                  Properties:
+                                    BasePaletteColor: =RGBA(0, 101, 161, 1)
+                                    Height: =35
+                                    Icon: ="Mail"
+                                    OnSelect: =Navigate(scnEmailApproval, ScreenTransition.None)
+                                    Text: ="Review Emails"
+                                    Width: =150
+                              - Dash_ViewFailedBtn:
+                                  Control: Button@0.0.45
+                                  Properties:
+                                    BasePaletteColor: =RGBA(168, 0, 0, 1)
+                                    Height: =35
+                                    Icon: ="Warning"
+                                    OnSelect: |-
+                                      =Navigate(scnEmailApproval, ScreenTransition.None, {_statusFilter: "Failed"})
+                                    Text: ="View Failed"
+                                    Visible: =_failedCount > 0
+                                    Width: =130
+                  - Dash_OverduePanel:
+                      Control: GroupContainer@1.4.0
+                      Variant: AutoLayout
+                      Properties:
+                        DropShadow: =DropShadow.Regular
+                        Fill: =RGBA(255, 255, 255, 1)
+                        FillPortions: =0
+                        Height: =250
+                        LayoutDirection: =LayoutDirection.Vertical
+                        LayoutGap: =10
+                        LayoutMinHeight: =250
+                        LayoutMinWidth: =100
+                        PaddingBottom: =15
+                        PaddingLeft: =15
+                        PaddingRight: =15
+                        PaddingTop: =15
+                        RadiusBottomLeft: =10
+                        RadiusBottomRight: =10
+                        RadiusTopLeft: =10
+                        RadiusTopRight: =10
+                        Width: =Parent.Width - 20
+                      Children:
+                        - Dash_OverdueHeader:
+                            Control: GroupContainer@1.4.0
+                            Variant: AutoLayout
+                            Properties:
+                              DropShadow: =DropShadow.None
+                              FillPortions: =0
+                              Height: =30
+                              LayoutAlignItems: =LayoutAlignItems.Center
+                              LayoutDirection: =LayoutDirection.Horizontal
+                              LayoutJustifyContent: =LayoutJustifyContent.SpaceBetween
+                              LayoutMinHeight: =30
+                              LayoutMinWidth: =100
+                              Width: =Parent.Width - 30
+                            Children:
+                              - Dash_OverdueHeaderLeft:
+                                  Control: GroupContainer@1.4.0
+                                  Variant: AutoLayout
+                                  Properties:
+                                    DropShadow: =DropShadow.None
+                                    Height: =30
+                                    LayoutAlignItems: =LayoutAlignItems.Center
+                                    LayoutDirection: =LayoutDirection.Horizontal
+                                    LayoutGap: =8
+                                    LayoutMinHeight: =30
+                                    LayoutMinWidth: =100
+                                  Children:
+                                    - Dash_OverdueIcon:
+                                        Control: Classic/Icon@2.5.0
+                                        Properties:
+                                          Color: =RGBA(168, 0, 0, 1)
+                                          Height: =24
+                                          Icon: =Icon.Warning
+                                          Width: =24
+                                    - Dash_OverdueTitle:
+                                        Control: Text@0.0.51
+                                        Properties:
+                                          FillPortions: =1
+                                          Font: =Font.Lato
+                                          FontColor: =RGBA(168, 0, 0, 1)
+                                          Height: =30
+                                          Text: ="TOP OVERDUE (Day 4+)"
+                                          VerticalAlign: =VerticalAlign.Middle
+                                          Weight: ='TextCanvas.Weight'.Semibold
+                        - Dash_OverdueGallery:
+                            Control: Gallery@2.15.0
+                            Variant: BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0
+                            Properties:
+                              BorderColor: =RGBA(0, 0, 0, 0)
+                              Height: =Parent.Height - 50
+                              Items: |-
+                                =
+                                    SortByColumns(
+                                        Filter(colTodayEmails, cr7bb_maxdaycount >= 4),
+                                        "cr7bb_totalamount",
+                                        SortOrder.Descending
+                                    )
+                              LayoutMinHeight: =100
+                              LayoutMinWidth: =100
+                              TemplateSize: =60
+                              Width: =Parent.Width - 30
+                            Children:
+                              - Dash_OverdueCard:
+                                  Control: GroupContainer@1.4.0
+                                  Variant: AutoLayout
+                                  Properties:
+                                    DropShadow: =DropShadow.None
+                                    Fill: =RGBA(248, 248, 248, 1)
+                                    Height: =55
+                                    LayoutAlignItems: =LayoutAlignItems.Center
+                                    LayoutDirection: =LayoutDirection.Horizontal
+                                    LayoutGap: =10
+                                    PaddingLeft: =10
+                                    PaddingRight: =10
+                                    RadiusBottomLeft: =8
+                                    RadiusBottomRight: =8
+                                    RadiusTopLeft: =8
+                                    RadiusTopRight: =8
+                                    Width: =Parent.TemplateWidth - 10
+                                  Children:
+                                    - Dash_OverdueCustomerName:
+                                        Control: Text@0.0.51
+                                        Properties:
+                                          FillPortions: =1
+                                          Font: =Font.Lato
+                                          FontColor: =RGBA(50, 50, 50, 1)
+                                          Height: =55
+                                          Size: =13
+                                          Text: =ThisItem.Customer.'Customer Name'
+                                          VerticalAlign: =VerticalAlign.Middle
+                                          Weight: ='TextCanvas.Weight'.Semibold
+                                    - Dash_OverdueAmount:
+                                        Control: Text@0.0.51
+                                        Properties:
+                                          Align: ='TextCanvas.Align'.End
+                                          Font: =Font.Lato
+                                          FontColor: =RGBA(168, 0, 0, 1)
+                                          Height: =55
+                                          Size: =13
+                                          Text: ="฿" & Text(ThisItem.cr7bb_totalamount, "#,##0")
+                                          VerticalAlign: =VerticalAlign.Middle
+                                          Weight: ='TextCanvas.Weight'.Bold
+                                          Width: =100
+                                    - Dash_OverdueDays:
+                                        Control: Text@0.0.51
+                                        Properties:
+                                          Align: ='TextCanvas.Align'.Center
+                                          Font: =Font.Lato
+                                          FontColor: =RGBA(100, 100, 100, 1)
+                                          Height: =55
+                                          Size: =12
+                                          Text: =Text(ThisItem.cr7bb_maxdaycount) & " days"
+                                          VerticalAlign: =VerticalAlign.Middle
+                                          Width: =60
+                                    - Dash_OverdueViewBtn:
+                                        Control: Button@0.0.45
+                                        Properties:
+                                          BasePaletteColor: =RGBA(100, 81, 61, 1)
+                                          Height: =30
+                                          OnSelect: |-
+                                            =Set(gblSelectedCustomer, ThisItem.Customer);
+                                            Navigate(scnCustomerHistory, ScreenTransition.None)
+                                          Text: ="View"
+                                          Width: =70
+                  - Dash_QuickActionsPanel:
+                      Control: GroupContainer@1.4.0
+                      Variant: AutoLayout
+                      Properties:
+                        DropShadow: =DropShadow.Regular
+                        Fill: =RGBA(255, 255, 255, 1)
+                        FillPortions: =0
+                        Height: =90
+                        LayoutDirection: =LayoutDirection.Vertical
+                        LayoutGap: =10
+                        LayoutMinHeight: =80
+                        LayoutMinWidth: =100
+                        PaddingBottom: =15
+                        PaddingLeft: =15
+                        PaddingRight: =15
+                        PaddingTop: =15
+                        RadiusBottomLeft: =10
+                        RadiusBottomRight: =10
+                        RadiusTopLeft: =10
+                        RadiusTopRight: =10
+                        Width: =Parent.Width - 20
+                      Children:
+                        - Dash_QuickActionsTitle:
+                            Control: Text@0.0.51
+                            Properties:
+                              Font: =Font.Lato
+                              FontColor: =RGBA(100, 100, 100, 1)
+                              Height: =18
+                              Size: =12
+                              Text: ="QUICK ACTIONS"
+                              VerticalAlign: =VerticalAlign.Middle
+                              Weight: ='TextCanvas.Weight'.Semibold
+                              Width: =Parent.Width - 30
+                        - Dash_QuickActionsBtns:
+                            Control: GroupContainer@1.4.0
+                            Variant: AutoLayout
+                            Properties:
+                              DropShadow: =DropShadow.None
+                              LayoutAlignItems: =LayoutAlignItems.Center
+                              LayoutDirection: =LayoutDirection.Horizontal
+                              LayoutGap: =10
+                              LayoutMinHeight: =35
+                              LayoutMinWidth: =100
+                              Width: =Parent.Width - 30
+                            Children:
+                              - Dash_CustomersBtn:
+                                  Control: Button@0.0.45
+                                  Properties:
+                                    BasePaletteColor: =RGBA(0, 101, 161, 1)
+                                    FillPortions: =1
+                                    Height: =35
+                                    Icon: ="People"
+                                    OnSelect: =Navigate(scnCustomer, ScreenTransition.None)
+                                    Text: ="Customers"
+                              - Dash_TransactionsBtn:
+                                  Control: Button@0.0.45
+                                  Properties:
+                                    BasePaletteColor: =RGBA(100, 81, 61, 1)
+                                    FillPortions: =1
+                                    Height: =35
+                                    Icon: ="DocumentBulletList"
+                                    OnSelect: =Navigate(scnTransactions, ScreenTransition.None)
+                                    Text: ="Transactions"
+                              - Dash_CalendarBtn:
+                                  Control: Button@0.0.45
+                                  Properties:
+                                    BasePaletteColor: =RGBA(100, 81, 61, 1)
+                                    FillPortions: =1
+                                    Height: =35
+                                    Icon: ="Calendar"
+                                    OnSelect: =Navigate(scnCalendar, ScreenTransition.None)
+                                    Text: ="Calendar"
+            - Dash_DatePickerOverlay:
+                Control: GroupContainer@1.4.0
+                Variant: ManualLayout
+                Properties:
+                  Fill: =RGBA(0, 0, 0, 0.5)
+                  Height: =Parent.Height
+                  Visible: =_showDatePicker
+                  Width: =Parent.Width
+                Children:
+                  - Dash_DatePickerModal:
+                      Control: GroupContainer@1.4.0
+                      Variant: AutoLayout
+                      Properties:
+                        DropShadow: =DropShadow.Bold
+                        Fill: =RGBA(255, 255, 255, 1)
+                        Height: =350
+                        LayoutAlignItems: =LayoutAlignItems.Center
+                        LayoutDirection: =LayoutDirection.Vertical
+                        LayoutGap: =15
                         PaddingBottom: =20
                         PaddingLeft: =20
                         PaddingRight: =20
@@ -771,60 +1231,63 @@ Screens:
                         RadiusBottomRight: =10
                         RadiusTopLeft: =10
                         RadiusTopRight: =10
-                        Width: =400
+                        Width: =320
                         X: =(Parent.Width - Self.Width) / 2
                         Y: =(Parent.Height - Self.Height) / 2
                       Children:
-                        - Customer_DeleteConfirmationText:
+                        - Dash_DatePickerTitle:
                             Control: Text@0.0.51
                             Properties:
+                              Align: ='TextCanvas.Align'.Center
                               Font: =Font.Lato
-                              FontColor: =RGBA(0, 0, 0, 1)
-                              Height: =80
-                              Size: =16
-                              Text: |-
-                                ="Are you sure you want to delete '" & _customerToDelete.cr7bb_customername & "' (Code: " & _customerToDelete.cr7bb_customercode & ")?"
-                              VerticalAlign: =VerticalAlign.Top
+                              FontColor: =RGBA(0, 101, 161, 1)
+                              Height: =30
+                              Size: =18
+                              Text: ="Select Date"
+                              VerticalAlign: =VerticalAlign.Middle
                               Weight: ='TextCanvas.Weight'.Semibold
-                              Width: =360
-                        - Customer_DeleteConfirmationButtons:
-                            Control: GroupContainer@1.3.0
-                            Variant: AutoLayout
+                              Width: =280
+                        - Dash_DatePicker:
+                            Control: DatePicker@0.0.46
                             Properties:
-                              DropShadow: =DropShadow.None
-                              LayoutDirection: =LayoutDirection.Horizontal
-                              LayoutGap: =10
-                              LayoutJustifyContent: =LayoutJustifyContent.End
-                              LayoutMinHeight: =40
-                              LayoutMinWidth: =100
-                              Width: =360
-                            Children:
-                              - Customer_DeleteConfirmBtn:
-                                  Control: Button@0.0.45
-                                  Properties:
-                                    BasePaletteColor: =RGBA(191, 25, 34, 1)
-                                    Height: =35
-                                    Icon: ="Delete"
-                                    OnSelect: |-
-                                      =Remove('[THFinanceCashCollection]Customers', _customerToDelete);
-                                      Notify("Customer deleted successfully", NotificationType.Success);
-                                      UpdateContext({
-                                          _showDeleteConfirmation: false,
-                                          _customerToDelete: Blank()
-                                      });
-                                      Refresh('[THFinanceCashCollection]Customers')
-                                    Text: ="Yes, Delete"
-                                    Width: =150
-                              - Customer_DeleteCancelBtn:
-                                  Control: Button@0.0.45
-                                  Properties:
-                                    BasePaletteColor: =RGBA(100, 100, 100, 1)
-                                    Height: =35
-                                    Icon: ="Cancel"
-                                    OnSelect: |-
-                                      =UpdateContext({
-                                          _showDeleteConfirmation: false,
-                                          _customerToDelete: Blank()
-                                      })
-                                    Text: ="Cancel"
-                                    Width: =90
+                              Height: =220
+                              LayoutMinHeight: =200
+                              LayoutMinWidth: =260
+                              OnChange: |-
+                                =Set(_selectedDate, Self.SelectedDate);
+                                Set(_processLog,
+                                    First(Filter('[THFinanceCashCollection]Process Logs',
+                                        cr7bb_processdate = Text(_selectedDate, "yyyy-mm-dd"))));
+                                ClearCollect(colTodayEmails,
+                                    Filter('[THFinanceCashCollection]Emaillogs',
+                                        cr7bb_processdate >= _selectedDate && cr7bb_processdate < DateAdd(_selectedDate, 1, TimeUnit.Days)));
+                                Set(_emailCount, CountRows(colTodayEmails));
+                                Set(_totalOutstanding, Sum(colTodayEmails, cr7bb_totalamount));
+                                Set(_day12Count, CountRows(Filter(colTodayEmails, cr7bb_maxdaycount <= 2)));
+                                Set(_day3Count, CountRows(Filter(colTodayEmails, cr7bb_maxdaycount = 3)));
+                                Set(_day4PlusCount, CountRows(Filter(colTodayEmails, cr7bb_maxdaycount >= 4)));
+                                Set(_sentCount, CountRows(Filter(colTodayEmails, cr7bb_sendstatus = 'Send Status Choice'.Success)));
+                                Set(_failedCount, CountRows(Filter(colTodayEmails, cr7bb_sendstatus = 'Send Status Choice'.Failed)));
+                                Set(_pendingCount, CountRows(Filter(colTodayEmails, cr7bb_sendstatus = 'Send Status Choice'.Pending)));
+                                Set(_showDatePicker, false);
+                              SelectedDate: =_selectedDate
+                              Width: =280
+                        - Dash_DatePickerCancel:
+                            Control: Button@0.0.45
+                            Properties:
+                              BasePaletteColor: =RGBA(128, 128, 128, 1)
+                              Height: =35
+                              OnSelect: =Set(_showDatePicker, false)
+                              Text: ="Cancel"
+                              Width: =120
+            - Dash_NavigationMenu:
+                Control: CanvasComponent
+                ComponentName: NavigationMenu
+                Properties:
+                  Fill: =RGBA(255, 255, 255, 0.95)
+                  Height: =Parent.Height - 70
+                  Visible: =_showMenu
+                  Width: =260
+                  Y: =70
+                  navItems: =Navigation
+                  navSelected: =currentScreen

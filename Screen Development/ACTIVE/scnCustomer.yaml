@@ -14,7 +14,7 @@ Screens:
         });
     Children:
       - Customer_Container:
-          Control: GroupContainer@1.3.0
+          Control: GroupContainer@1.4.0
           Variant: ManualLayout
           Properties:
             DropShadow: =DropShadow.None
@@ -22,7 +22,7 @@ Screens:
             Width: =Parent.Width
           Children:
             - Customer_Header:
-                Control: GroupContainer@1.3.0
+                Control: GroupContainer@1.4.0
                 Variant: AutoLayout
                 Properties:
                   DropShadow: =DropShadow.Regular
@@ -65,7 +65,7 @@ Screens:
                         Weight: ='TextCanvas.Weight'.Medium
                         Width: =Parent.Width - Customer_MenuIcon.Width - 40
             - Customer_Content:
-                Control: GroupContainer@1.3.0
+                Control: GroupContainer@1.4.0
                 Variant: ManualLayout
                 Properties:
                   DropShadow: =DropShadow.Regular
@@ -80,7 +80,7 @@ Screens:
                   Y: =75
                 Children:
                   - Customer_TableView:
-                      Control: GroupContainer@1.3.0
+                      Control: GroupContainer@1.4.0
                       Variant: ManualLayout
                       Properties:
                         Height: =Parent.Height
@@ -88,7 +88,7 @@ Screens:
                         Width: =Parent.Width
                       Children:
                         - Customer_ActionBar:
-                            Control: GroupContainer@1.3.0
+                            Control: GroupContainer@1.4.0
                             Variant: AutoLayout
                             Properties:
                               Fill: =RGBA(245, 245, 245, 1)
@@ -159,9 +159,8 @@ Screens:
                                   Properties:
                                     BasePaletteColor: =RGBA(100, 81, 61, 1)
                                     Height: =35
-                                    Icon: ="OpenInNewWindow"
-                                    OnSelect: |-
-                                      =Launch("https://nestle.sharepoint.com/teams/THFinancePowerPlatformSolutions/Shared Documents/Forms/AllItems.aspx?id=%2Fteams%2FTHFinancePowerPlatformSolutions%2FShared%20Documents%2FCash%20Customer%20Collection%2F03%2DQR%2DCodes%2FQR%20Lot%201%20ver%20%2Ejpeg")
+                                    Icon: ="Open"
+                                    OnSelect: =Launch("https://nestle.sharepoint.com/teams/THFinancePowerPlatformSolutions/Shared Documents/Forms/AllItems.aspx?id=%2Fteams%2FTHFinancePowerPlatformSolutions%2FShared%20Documents%2FCash%20Customer%20Collection%2F03%2DQR%2DCodes%2FQR%20Lot%201%20ver%20%2Ejpeg")
                                     Text: ="QR Folder"
                                     Width: =120
                               - Customer_CheckQRBtn:
@@ -169,7 +168,7 @@ Screens:
                                   Properties:
                                     BasePaletteColor: =RGBA(0, 101, 161, 1)
                                     Height: =35
-                                    Icon: ="Sync"
+                                    Icon: ="ArrowClockwise"
                                     OnSelect: |-
                                       =// Show loading notification
                                       Notify("Checking QR availability for all customers...", NotificationType.Information);
@@ -182,7 +181,7 @@ Screens:
 
                                       Notify("QR availability updated for all customers", NotificationType.Success)
                                     Text: ="Check QR"
-                                    Width: =110
+                                    Width: =120
                         - Customer_Table:
                             Control: Table@1.0.278
                             Properties:
@@ -196,15 +195,6 @@ Screens:
                               X: =10
                               Y: =55
                             Children:
-                              - Customer Code1:
-                                  Control: TableDataField@1.5.0
-                                  Variant: textualColumn
-                                  IsLocked: true
-                                  Properties:
-                                    FieldDisplayName: ="Customer Code"
-                                    FieldName: ="cr7bb_customercode"
-                                    FieldType: ="s"
-                                    Order: =1
                               - Customer Name1:
                                   Control: TableDataField@1.5.0
                                   Variant: textualColumn
@@ -213,16 +203,19 @@ Screens:
                                     FieldDisplayName: ="Customer Name"
                                     FieldName: ="cr7bb_customername"
                                     FieldType: ="s"
-                                    Order: =2
+                                    Order: =3
+                                    Width: =220
                               - Region1:
                                   Control: TableDataField@1.5.0
                                   Variant: textualColumn
                                   IsLocked: true
                                   Properties:
+                                    CanGrow: =false
                                     FieldDisplayName: ="Region"
                                     FieldName: ="nc_region"
                                     FieldType: ="l"
-                                    Order: =3
+                                    Order: =6
+                                    Width: =100
                               - Customer Email 11:
                                   Control: TableDataField@1.5.0
                                   Variant: textualColumn
@@ -231,16 +224,20 @@ Screens:
                                     FieldDisplayName: ="Customer Email 1"
                                     FieldName: ="cr7bb_customeremail1"
                                     FieldType: ="s"
-                                    Order: =4
+                                    Order: =7
+                                    Width: =220
                               - QR Code Available1:
                                   Control: TableDataField@1.5.0
                                   Variant: textualColumn
                                   IsLocked: true
                                   Properties:
+                                    CanGrow: =false
                                     FieldDisplayName: ="QR Code Available"
                                     FieldName: ="cr7bb_qrcodeavailable"
                                     FieldType: ="l"
-                                    Order: =5
+                                    HeaderText: ="QR"
+                                    Order: =4
+                                    Width: =100
                               - Sales Email 11:
                                   Control: TableDataField@1.5.0
                                   Variant: textualColumn
@@ -249,7 +246,8 @@ Screens:
                                     FieldDisplayName: ="Sales Email 1"
                                     FieldName: ="cr7bb_salesemail1"
                                     FieldType: ="s"
-                                    Order: =6
+                                    Order: =15
+                                    Width: =220
                               - AR Backup Email 11:
                                   Control: TableDataField@1.5.0
                                   Variant: textualColumn
@@ -258,9 +256,134 @@ Screens:
                                     FieldDisplayName: ="AR Backup Email 1"
                                     FieldName: ="cr7bb_arbackupemail1"
                                     FieldType: ="s"
-                                    Order: =7
+                                    Order: =11
+                                    Width: =220
+                              - AR Backup Email 21:
+                                  Control: TableDataField@1.5.0
+                                  Variant: textualColumn
+                                  IsLocked: true
+                                  Properties:
+                                    FieldDisplayName: ="AR Backup Email 2"
+                                    FieldName: ="cr7bb_arbackupemail2"
+                                    FieldType: ="s"
+                                    Order: =12
+                                    Width: =220
+                              - AR Backup Email 31:
+                                  Control: TableDataField@1.5.0
+                                  Variant: textualColumn
+                                  IsLocked: true
+                                  Properties:
+                                    FieldDisplayName: ="AR Backup Email 3"
+                                    FieldName: ="cr7bb_arbackupemail3"
+                                    FieldType: ="s"
+                                    Order: =13
+                                    Width: =220
+                              - AR Backup Email 41:
+                                  Control: TableDataField@1.5.0
+                                  Variant: textualColumn
+                                  IsLocked: true
+                                  Properties:
+                                    FieldDisplayName: ="AR Backup Email 4"
+                                    FieldName: ="cr7bb_arbackupemail4"
+                                    FieldType: ="s"
+                                    Order: =14
+                                    Width: =220
+                              - Customer Email 21:
+                                  Control: TableDataField@1.5.0
+                                  Variant: textualColumn
+                                  IsLocked: true
+                                  Properties:
+                                    FieldDisplayName: ="Customer Email 2"
+                                    FieldName: ="cr7bb_customeremail2"
+                                    FieldType: ="s"
+                                    Order: =8
+                                    Width: =220
+                              - Customer Email 31:
+                                  Control: TableDataField@1.5.0
+                                  Variant: textualColumn
+                                  IsLocked: true
+                                  Properties:
+                                    FieldDisplayName: ="Customer Email 3"
+                                    FieldName: ="cr7bb_customeremail3"
+                                    FieldType: ="s"
+                                    Order: =9
+                                    Width: =220
+                              - Customer Email 41:
+                                  Control: TableDataField@1.5.0
+                                  Variant: textualColumn
+                                  IsLocked: true
+                                  Properties:
+                                    FieldDisplayName: ="Customer Email 4"
+                                    FieldName: ="cr7bb_customeremail4"
+                                    FieldType: ="s"
+                                    Order: =10
+                                    Width: =220
+                              - Is Active1:
+                                  Control: TableDataField@1.5.0
+                                  Variant: textualColumn
+                                  IsLocked: true
+                                  Properties:
+                                    CanGrow: =false
+                                    FieldDisplayName: ="Is Active"
+                                    FieldName: ="cr7bb_isactive"
+                                    FieldType: ="l"
+                                    HeaderText: ="Active"
+                                    Order: =5
+                                    Width: =100
+                              - Sales Email 21:
+                                  Control: TableDataField@1.5.0
+                                  Variant: textualColumn
+                                  IsLocked: true
+                                  Properties:
+                                    FieldDisplayName: ="Sales Email 2"
+                                    FieldName: ="cr7bb_salesemail2"
+                                    FieldType: ="s"
+                                    Order: =16
+                                    Width: =220
+                              - Sales Email 31:
+                                  Control: TableDataField@1.5.0
+                                  Variant: textualColumn
+                                  IsLocked: true
+                                  Properties:
+                                    FieldDisplayName: ="Sales Email 3"
+                                    FieldName: ="cr7bb_salesemail3"
+                                    FieldType: ="s"
+                                    Order: =17
+                                    Width: =220
+                              - Sales Email 41:
+                                  Control: TableDataField@1.5.0
+                                  Variant: textualColumn
+                                  IsLocked: true
+                                  Properties:
+                                    FieldDisplayName: ="Sales Email 4"
+                                    FieldName: ="cr7bb_salesemail4"
+                                    FieldType: ="s"
+                                    Order: =18
+                                    Width: =220
+                              - Sales Email 51:
+                                  Control: TableDataField@1.5.0
+                                  Variant: textualColumn
+                                  IsLocked: true
+                                  Properties:
+                                    FieldDisplayName: ="Sales Email 5"
+                                    FieldName: ="cr7bb_salesemail5"
+                                    FieldType: ="s"
+                                    Order: =18
+                                    Width: =220
+                              - Customer Code1:
+                                  Control: TableDataField@1.5.0
+                                  Variant: textualColumn
+                                  IsLocked: true
+                                  Properties:
+                                    CanGrow: =false
+                                    FieldDisplayName: ="Customer Code"
+                                    FieldName: ="cr7bb_customercode"
+                                    FieldType: ="s"
+                                    HeaderText: ="Code"
+                                    Order: =2
+                                    Width: =100
                   - Customer_FormView:
-                      Control: GroupContainer@1.3.0
+                      Control: GroupContainer@1.4.0
                       Variant: ManualLayout
                       Properties:
                         Height: =Parent.Height
@@ -268,7 +391,7 @@ Screens:
                         Width: =Parent.Width
                       Children:
                         - Customer_FormContainer:
-                            Control: GroupContainer@1.3.0
+                            Control: GroupContainer@1.4.0
                             Variant: AutoLayout
                             Properties:
                               Height: =Parent.Height - 50
@@ -376,6 +499,27 @@ Screens:
                                     Height: =40
                                     Items: =Choices('Region Choice')
                                     Width: =Parent.Width - 40
+                              - Customer_Form_IsActiveLabel:
+                                  Control: Text@0.0.51
+                                  Properties:
+                                    Font: =Font.Lato
+                                    FontColor: =RGBA(100, 100, 100, 1)
+                                    Height: =25
+                                    Text: ="Is Active:"
+                                    Weight: ='TextCanvas.Weight'.Semibold
+                                    Width: =Parent.Width - 40
+                              - Customer_Form_IsActiveToggle:
+                                  Control: Toggle@1.1.5
+                                  Properties:
+                                    BasePaletteColor: =RGBA(0, 101, 161, 1)
+                                    Checked: |-
+                                      =If(
+                                          _currentMode = "Edit",
+                                          _selectedCustomer.cr7bb_isactive = 'Is Active ([THFinanceCashCollection]Customers)'.Yes,
+                                          true
+                                      )
+                                    Height: =40
+                                    Width: =100
                               - Customer_Form_EmailSection:
                                   Control: Text@0.0.51
                                   Properties:
@@ -680,7 +824,7 @@ Screens:
                                       )
                                     Width: =Parent.Width - 40
                         - Customer_FormActionBar:
-                            Control: GroupContainer@1.3.0
+                            Control: GroupContainer@1.4.0
                             Variant: AutoLayout
                             Properties:
                               Fill: =RGBA(245, 245, 245, 1)
@@ -709,6 +853,7 @@ Screens:
                                                   cr7bb_customercode: Customer_Form_CustomerCodeInput.Value,
                                                   cr7bb_customername: Customer_Form_CustomerNameInput.Value,
                                                   Region: Customer_Form_RegionDropdown.Selected.Value,
+                                                  cr7bb_isactive: If(Customer_Form_IsActiveToggle.Checked, 'Is Active ([THFinanceCashCollection]Customers)'.Yes, 'Is Active ([THFinanceCashCollection]Customers)'.No),
                                                   cr7bb_customeremail1: Customer_Form_CustomerEmail1Input.Value,
                                                   cr7bb_customeremail2: Customer_Form_CustomerEmail2Input.Value,
                                                   cr7bb_customeremail3: Customer_Form_CustomerEmail3Input.Value,
@@ -730,6 +875,7 @@ Screens:
                                               {
                                                   cr7bb_customername: Customer_Form_CustomerNameInput.Value,
                                                   Region: Customer_Form_RegionDropdown.Selected.Value,
+                                                  cr7bb_isactive: If(Customer_Form_IsActiveToggle.Checked, 'Is Active ([THFinanceCashCollection]Customers)'.Yes, 'Is Active ([THFinanceCashCollection]Customers)'.No),
                                                   cr7bb_customeremail1: Customer_Form_CustomerEmail1Input.Value,
                                                   cr7bb_customeremail2: Customer_Form_CustomerEmail2Input.Value,
                                                   cr7bb_customeremail3: Customer_Form_CustomerEmail3Input.Value,
@@ -759,7 +905,7 @@ Screens:
                                   Properties:
                                     BasePaletteColor: =RGBA(100, 100, 100, 1)
                                     Height: =35
-                                    Icon: ="Cancel"
+                                    Icon: ="Dismiss"
                                     OnSelect: |-
                                       =UpdateContext({_currentMode: "View"})
                                     Text: ="Cancel"
@@ -776,7 +922,7 @@ Screens:
                   navItems: =Navigation
                   navSelected: =currentScreen
             - Customer_DeleteConfirmationOverlay:
-                Control: GroupContainer@1.3.0
+                Control: GroupContainer@1.4.0
                 Variant: ManualLayout
                 Properties:
                   Fill: =RGBA(0, 0, 0, 0.5)
@@ -785,7 +931,7 @@ Screens:
                   Width: =Parent.Width
                 Children:
                   - Customer_DeleteConfirmationBox:
-                      Control: GroupContainer@1.3.0
+                      Control: GroupContainer@1.4.0
                       Variant: AutoLayout
                       Properties:
                         DropShadow: =DropShadow.Regular
@@ -817,7 +963,7 @@ Screens:
                               Weight: ='TextCanvas.Weight'.Semibold
                               Width: =360
                         - Customer_DeleteConfirmationButtons:
-                            Control: GroupContainer@1.3.0
+                            Control: GroupContainer@1.4.0
                             Variant: AutoLayout
                             Properties:
                               DropShadow: =DropShadow.None

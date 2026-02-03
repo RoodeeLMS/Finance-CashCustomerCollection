@@ -360,6 +360,16 @@ Screens:
                                     FieldType: ="s"
                                     Order: =18
                                     Width: =220
+                              - Sales Email 51:
+                                  Control: TableDataField@1.5.0
+                                  Variant: textualColumn
+                                  IsLocked: true
+                                  Properties:
+                                    FieldDisplayName: ="Sales Email 5"
+                                    FieldName: ="cr7bb_salesemail5"
+                                    FieldType: ="s"
+                                    Order: =18
+                                    Width: =220
                               - Customer Code1:
                                   Control: TableDataField@1.5.0
                                   Variant: textualColumn
@@ -372,16 +382,6 @@ Screens:
                                     HeaderText: ="Code"
                                     Order: =2
                                     Width: =100
-                              - Sales Email 51:
-                                  Control: TableDataField@1.5.0
-                                  Variant: textualColumn
-                                  IsLocked: true
-                                  Properties:
-                                    FieldDisplayName: ="Sales Email 5"
-                                    FieldName: ="cr7bb_salesemail5"
-                                    FieldType: ="s"
-                                    Order: =18
-                                    Width: =220
                   - Customer_FormView:
                       Control: GroupContainer@1.4.0
                       Variant: ManualLayout
